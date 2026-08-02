@@ -23,7 +23,10 @@ class _PlayerScreenRootState extends State<PlayerScreenRoot> {
   @override
   void initState() {
     super.initState();
-    _cubit = getIt<PlayerCubit>()..openById(widget.bookId);
+    _cubit = getIt<PlayerCubit>();
+    if (_cubit.state.book?.id != widget.bookId) {
+      _cubit.openById(widget.bookId);
+    }
   }
 
   @override

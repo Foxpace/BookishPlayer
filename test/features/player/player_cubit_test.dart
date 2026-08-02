@@ -7,6 +7,9 @@ import 'package:bookish_player/features/player/domain/book_note.dart';
 import 'package:bookish_player/features/player/presentation/player_cubit.dart';
 import 'package:bookish_player/features/player/presentation/player_state.dart';
 import 'package:bookish_player/features/portability/domain/local_export_repository.dart';
+import 'package:bookish_player/core/presentation/now_playing_shell.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -110,6 +113,85 @@ void main() {
     expect(books.savedNote?.endPositionMs, 52000);
     expect(books.savedNote?.chapterTitle, 'Chapter two');
   });
+
+  test('stops a paused current book before switching queues', () async {
+    final first = Audiobook(
+      id: 'first',
+      title: 'First',
+      filePath: '/first.mp3',
+      durationMs: 60000,
+      addedAt: DateTime(2026),
+    );
+    final second = Audiobook(
+      id: 'second',
+      title: 'Second',
+      filePath: '/second.mp3',
+      durationMs: 90000,
+      addedAt: DateTime(2026),
+    );
+    final audio = _FakeAudioPlayer();
+    final books = _FakeBooks.withBooks([first, second]);
+    final cubit = PlayerCubit(audio, books, _FakeExports());
+    addTearDown(() async {
+      await cubit.close();
+      await audio.close();
+    });
+
+    await cubit.open(first);
+    expect(audio.playing, isFalse);
+    expect(audio.currentPosition, Duration.zero);
+    audio.currentPosition = const Duration(seconds: 12);
+
+    await cubit.open(second);
+
+    expect(audio.pauseCount, 1);
+    expect(cubit.state.book?.id, 'second');
+    expect(cubit.state.isPlaying, isFalse);
+    expect(audio.currentPosition, Duration.zero);
+    expect((await books.getBook('first'))?.positionMs, 12000);
+
+    await cubit.openById('first');
+
+    expect(cubit.state.book?.id, 'first');
+    expect(audio.currentPosition, const Duration(seconds: 12));
+  });
+
+  testWidgets('shows and controls the current book outside the player', (
+    tester,
+  ) async {
+    final book = Audiobook(
+      id: 'book',
+      title: 'Visible Book',
+      filePath: '/book.mp3',
+      durationMs: 60000,
+      addedAt: DateTime(2026),
+    );
+    final audio = _FakeAudioPlayer();
+    final cubit = PlayerCubit(audio, _FakeBooks(book), _FakeExports());
+    addTearDown(() async {
+      await cubit.close();
+      await audio.close();
+    });
+    await cubit.open(book);
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: cubit,
+        child: const MaterialApp(
+          home: NowPlayingShell(showMiniPlayer: true, child: SizedBox.expand()),
+        ),
+      ),
+    );
+
+    expect(find.text('Visible Book'), findsOneWidget);
+    expect(find.text('Paused'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Play'));
+    await tester.pump();
+
+    expect(find.byTooltip('Pause'), findsOneWidget);
+    expect(find.text('Playing'), findsOneWidget);
+  });
 }
 
 class _FakeAudioPlayer implements AudioPlayerRepository {
@@ -185,21 +267,41 @@ class _FakeAudioPlayer implements AudioPlayerRepository {
 }
 
 class _FakeBooks implements AudiobookRepository {
-  _FakeBooks(this.book);
+  _FakeBooks(this.book) : _books = {book.id: book};
+
+  _FakeBooks.withBooks(List<Audiobook> books)
+    : book = books.first,
+      _books = {for (final book in books) book.id: book};
+
   Audiobook book;
+  final Map<String, Audiobook> _books;
   Duration? progress;
   double? savedSpeed;
   BookNote? savedNote;
 
   @override
-  Future<Audiobook?> getBook(String id) async => book;
+  Future<Audiobook?> getBook(String id) async => _books[id];
   @override
-  Future<List<Audiobook>> getBooks() async => [book];
+  Future<List<Audiobook>> getBooks() async => _books.values.toList();
   @override
-  Future<void> saveBook(Audiobook book) async => this.book = book;
+  Future<void> saveBook(Audiobook book) async {
+    this.book = book;
+    _books[book.id] = book;
+  }
+
   @override
-  Future<void> updateProgress(String id, Duration position) async =>
-      progress = position;
+  Future<void> updateProgress(String id, Duration position) async {
+    progress = position;
+    final stored = _books[id];
+    if (stored != null) {
+      final updated = stored.copyWith(positionMs: position.inMilliseconds);
+      _books[id] = updated;
+      if (book.id == id) {
+        book = updated;
+      }
+    }
+  }
+
   @override
   Future<void> updatePlaybackSpeed(String id, double speed) async =>
       savedSpeed = speed;

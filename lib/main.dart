@@ -7,6 +7,9 @@ import 'package:just_audio/just_audio.dart';
 import 'core/di/injection.dart';
 import 'core/theme/bookish_theme.dart';
 import 'features/player/data/bookish_audio_handler.dart';
+import 'features/player/data/just_audio_player_repository.dart';
+import 'features/player/domain/audio_player_repository.dart';
+import 'features/player/presentation/player_cubit.dart';
 import 'features/settings/domain/theme_preference.dart';
 import 'features/settings/presentation/settings_cubit.dart';
 import 'features/settings/presentation/settings_state.dart';
@@ -29,6 +32,11 @@ Future<void> main() async {
     ),
   );
   getIt.registerSingleton<AudioHandler>(audioHandler);
+  final playerRepository = getIt<AudioPlayerRepository>();
+  if (playerRepository is! JustAudioPlayerRepository) {
+    throw StateError('The audio repository does not support audio_service.');
+  }
+  playerRepository.attachAudioHandler(audioHandler);
   runApp(const BookishAppRoot());
 }
 
@@ -41,16 +49,24 @@ class BookishAppRoot extends StatefulWidget {
 
 class _BookishAppRootState extends State<BookishAppRoot> {
   late final SettingsCubit _settingsCubit;
+  late final PlayerCubit _playerCubit;
 
   @override
   void initState() {
     super.initState();
     _settingsCubit = getIt<SettingsCubit>()..load();
+    _playerCubit = getIt<PlayerCubit>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(value: _settingsCubit, child: const BookishApp());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _settingsCubit),
+        BlocProvider.value(value: _playerCubit),
+      ],
+      child: const BookishApp(),
+    );
   }
 }
 

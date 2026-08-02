@@ -5,6 +5,7 @@ import '../../features/importing/presentation/import_screen_root.dart';
 import '../../features/library/presentation/library_screen_root.dart';
 import '../../features/player/presentation/player_screen_root.dart';
 import '../../features/settings/presentation/settings_screen_root.dart';
+import '../presentation/now_playing_shell.dart';
 
 abstract final class AppRoutes {
   static const library = 'library';
@@ -18,35 +19,44 @@ GoRouter createAppRouter() {
   return GoRouter(
     initialLocation: '/',
     routes: [
-      GoRoute(
-        path: '/',
-        name: AppRoutes.library,
-        builder: (_, _) => const LibraryScreenRoot(),
+      ShellRoute(
+        builder: (_, state, child) => NowPlayingShell(
+          showMiniPlayer: !state.matchedLocation.startsWith('/player/'),
+          child: child,
+        ),
         routes: [
           GoRoute(
-            path: 'import',
-            name: AppRoutes.import,
-            builder: (_, state) => ImportScreenRoot(
-              fromFinderTransfer: state.extra == ImportSource.finderTransfer,
-            ),
-          ),
-          GoRoute(
-            path: 'player/:bookId',
-            name: AppRoutes.player,
-            builder: (_, state) =>
-                PlayerScreenRoot(bookId: state.pathParameters['bookId']!),
-          ),
-          GoRoute(
-            path: 'settings',
-            name: AppRoutes.settings,
-            builder: (_, _) => const SettingsScreenRoot(),
-          ),
-          GoRoute(
-            path: 'book/:bookId/edit',
-            name: AppRoutes.editBook,
-            builder: (_, state) => MetadataEditorScreenRoot(
-              bookId: state.pathParameters['bookId']!,
-            ),
+            path: '/',
+            name: AppRoutes.library,
+            builder: (_, _) => const LibraryScreenRoot(),
+            routes: [
+              GoRoute(
+                path: 'import',
+                name: AppRoutes.import,
+                builder: (_, state) => ImportScreenRoot(
+                  fromFinderTransfer:
+                      state.extra == ImportSource.finderTransfer,
+                ),
+              ),
+              GoRoute(
+                path: 'player/:bookId',
+                name: AppRoutes.player,
+                builder: (_, state) =>
+                    PlayerScreenRoot(bookId: state.pathParameters['bookId']!),
+              ),
+              GoRoute(
+                path: 'settings',
+                name: AppRoutes.settings,
+                builder: (_, _) => const SettingsScreenRoot(),
+              ),
+              GoRoute(
+                path: 'book/:bookId/edit',
+                name: AppRoutes.editBook,
+                builder: (_, state) => MetadataEditorScreenRoot(
+                  bookId: state.pathParameters['bookId']!,
+                ),
+              ),
+            ],
           ),
         ],
       ),

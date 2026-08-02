@@ -2,8 +2,38 @@ import 'package:audio_service/audio_service.dart';
 import 'package:bookish_player/features/player/data/just_audio_player_repository.dart';
 import 'package:bookish_player/features/library/domain/audiobook.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:just_audio/just_audio.dart';
+
+class _RecordingAudioHandler extends BaseAudioHandler {
+  var playCount = 0;
+  var pauseCount = 0;
+
+  @override
+  Future<void> play() async {
+    playCount++;
+  }
+
+  @override
+  Future<void> pause() async {
+    pauseCount++;
+  }
+}
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  test('routes playback commands through the audio service handler', () async {
+    final repository = JustAudioPlayerRepository(AudioPlayer());
+    final handler = _RecordingAudioHandler();
+    repository.attachAudioHandler(handler);
+
+    await repository.play();
+    await repository.pause();
+
+    expect(handler.playCount, 1);
+    expect(handler.pauseCount, 1);
+  });
+
   test('duration probes always provide background audio metadata', () {
     final item = durationProbeMediaItem('/storage/emulated/0/Example Book.m4b');
 
