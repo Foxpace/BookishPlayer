@@ -30,6 +30,8 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     required String title,
     required String author,
     required String series,
+    required String narrator,
+    required String year,
     required String folder,
   }) async {
     final book = state.book;
@@ -41,9 +43,16 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
         title: title.trim(),
         author: author.trim(),
         series: series.trim(),
+        narrator: narrator.trim(),
+        year: _parseYear(year),
         folder: folder.trim().isEmpty ? 'Imported' : folder.trim(),
       ),
     );
+  }
+
+  int? _parseYear(String value) {
+    final parsed = int.tryParse(value.trim());
+    return parsed != null && parsed >= 1000 && parsed <= 2999 ? parsed : null;
   }
 
   Future<void> changeCover() async {

@@ -15,6 +15,8 @@ import 'package:bookish_player/features/editing/presentation/metadata_editor_cub
     as _i778;
 import 'package:bookish_player/features/importing/data/device_file_import_repository.dart'
     as _i979;
+import 'package:bookish_player/features/importing/data/embedded_audiobook_metadata_extractor.dart'
+    as _i674;
 import 'package:bookish_player/features/importing/data/iso_bmff_m4b_chapter_parser.dart'
     as _i138;
 import 'package:bookish_player/features/importing/data/metadata_audiobook_artwork_extractor.dart'
@@ -23,6 +25,8 @@ import 'package:bookish_player/features/importing/data/system_import_diagnostics
     as _i814;
 import 'package:bookish_player/features/importing/domain/audiobook_artwork_extractor.dart'
     as _i556;
+import 'package:bookish_player/features/importing/domain/audiobook_metadata_extractor.dart'
+    as _i25;
 import 'package:bookish_player/features/importing/domain/file_import_repository.dart'
     as _i550;
 import 'package:bookish_player/features/importing/domain/import_diagnostics_repository.dart'
@@ -81,6 +85,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i443.SettingsDao>(
       () => _i443.SettingsDao(gh<_i987.BookishDatabase>()),
+    );
+    gh.lazySingleton<_i25.AudiobookMetadataExtractor>(
+      () => _i674.EmbeddedAudiobookMetadataExtractor(),
     );
     gh.lazySingleton<_i23.LocalExportRepository>(
       () => _i40.FilePickerLocalExportRepository(),
@@ -141,6 +148,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i972.AudiobookRepository>(),
         gh<_i545.M4bChapterParser>(),
         gh<_i556.AudiobookArtworkExtractor>(),
+        gh<_i25.AudiobookMetadataExtractor>(),
         gh<_i955.ImportDiagnosticsRepository>(),
       ),
     );

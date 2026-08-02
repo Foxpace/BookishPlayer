@@ -11,6 +11,7 @@ enum ImportStage {
   analyzingChapters,
   extractingArtwork,
   savingBook,
+  removingOriginals,
 }
 
 @freezed

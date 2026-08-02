@@ -2,18 +2,73 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-class EmbeddedArtwork {
-  const EmbeddedArtwork({required this.bytes, required this.mimeType});
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  final Uint8List bytes;
-  final String mimeType;
+part 'embedded_audio_metadata_reader.freezed.dart';
+
+@freezed
+abstract class EmbeddedArtwork with _$EmbeddedArtwork {
+  const factory EmbeddedArtwork({
+    required Uint8List bytes,
+    required String mimeType,
+  }) = _EmbeddedArtwork;
 }
 
-class EmbeddedChapterMetadata {
-  const EmbeddedChapterMetadata({required this.title, required this.startMs});
+@freezed
+abstract class EmbeddedChapterMetadata with _$EmbeddedChapterMetadata {
+  const factory EmbeddedChapterMetadata({
+    required String title,
+    required int startMs,
+  }) = _EmbeddedChapterMetadata;
+}
 
-  final String title;
-  final int startMs;
+@freezed
+abstract class EmbeddedTextMetadata with _$EmbeddedTextMetadata {
+  const factory EmbeddedTextMetadata({
+    String? title,
+    String? author,
+    String? series,
+    String? narrator,
+    int? year,
+  }) = _EmbeddedTextMetadata;
+}
+
+EmbeddedTextMetadata readEmbeddedTextMetadata(File source) {
+  RandomAccessFile? file;
+  try {
+    file = source.openSync();
+    final length = file.lengthSync();
+    if (length < 4) {
+      return const EmbeddedTextMetadata();
+    }
+    final signature = _readAt(file, 0, length < 12 ? length : 12);
+    if (signature.length >= 3 &&
+        ascii.decode(signature.sublist(0, 3)) == 'ID3') {
+      return _readId3(file, 0)?.text ?? const EmbeddedTextMetadata();
+    }
+    if (signature.length >= 4 &&
+        ascii.decode(signature.sublist(0, 4)) == 'fLaC') {
+      return _readFlacTextMetadata(file, length);
+    }
+    if (signature.length >= 12 &&
+        ascii.decode(signature.sublist(4, 8)) == 'ftyp') {
+      return _readMp4TextMetadata(file, length);
+    }
+    if (signature.length >= 12 &&
+        ascii.decode(signature.sublist(0, 4)) == 'RIFF' &&
+        ascii.decode(signature.sublist(8, 12)) == 'WAVE') {
+      return _readWaveTextMetadata(file, length);
+    }
+    if (signature.length >= 4 &&
+        ascii.decode(signature.sublist(0, 4)) == 'OggS') {
+      return _readOggTextMetadata(file, length);
+    }
+  } catch (_) {
+    return const EmbeddedTextMetadata();
+  } finally {
+    file?.closeSync();
+  }
+  return const EmbeddedTextMetadata();
 }
 
 EmbeddedArtwork? readEmbeddedArtwork(File source) {
@@ -87,6 +142,7 @@ _Id3Metadata? _readId3(RandomAccessFile file, int offset) {
   var cursor = 0;
   EmbeddedArtwork? artwork;
   final chapters = <EmbeddedChapterMetadata>[];
+  final text = <String, String>{};
   while (cursor + (version == 2 ? 6 : 10) <= bytes.length) {
     final idLength = version == 2 ? 3 : 4;
     final id = ascii.decode(
@@ -119,11 +175,51 @@ _Id3Metadata? _readId3(RandomAccessFile file, int offset) {
       if (chapter != null) {
         chapters.add(chapter);
       }
+    } else if (_id3TextFrames.containsKey(id)) {
+      final value = _cleanText(_decodeText(payload));
+      if (value != null) {
+        text.putIfAbsent(_id3TextFrames[id]!, () => value);
+      }
+    } else if (id == 'TXXX' || id == 'TXX') {
+      final entry = _decodeId3UserText(payload);
+      if (entry != null) {
+        text.putIfAbsent(entry.key, () => entry.value);
+      }
     }
     cursor = payloadStart + size;
   }
   chapters.sort((a, b) => a.startMs.compareTo(b.startMs));
-  return _Id3Metadata(artwork: artwork, chapters: chapters);
+  return _Id3Metadata(
+    artwork: artwork,
+    chapters: chapters,
+    text: _metadataFromTags(text),
+  );
+}
+
+MapEntry<String, String>? _decodeId3UserText(Uint8List bytes) {
+  if (bytes.length < 3) {
+    return null;
+  }
+  final encoding = bytes.first;
+  final end = _terminatedTextEnd(bytes, 1, encoding);
+  if (end < 0) {
+    return null;
+  }
+  final terminatorLength = encoding == 1 || encoding == 2 ? 2 : 1;
+  final description = _cleanText(
+    _decodeText([encoding, ...bytes.sublist(1, end)]),
+  );
+  final valueStart = end + terminatorLength;
+  if (description == null || valueStart >= bytes.length) {
+    return null;
+  }
+  final value = _cleanText(
+    _decodeText([encoding, ...bytes.sublist(valueStart)]),
+  );
+  if (value == null) {
+    return null;
+  }
+  return MapEntry(description.toUpperCase().replaceAll(' ', '_'), value);
 }
 
 EmbeddedArtwork? _decodeId3Artwork(Uint8List bytes, int version) {
@@ -232,6 +328,294 @@ String _decodeText(List<int> bytes) {
   }
   return String.fromCharCodes(codes.where((code) => code != 0));
 }
+
+EmbeddedTextMetadata _metadataFromTags(Map<String, String> tags) {
+  String? first(List<String> keys) {
+    for (final key in keys) {
+      final value = _cleanText(tags[key]);
+      if (value != null) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  final rawYear = first(const ['YEAR', 'DATE', 'ORIGINALDATE']);
+  final yearMatch = rawYear == null
+      ? null
+      : RegExp(r'(?<!\d)(1\d{3}|2\d{3})(?!\d)').firstMatch(rawYear);
+  final year = int.tryParse(yearMatch?.group(1) ?? '');
+  return EmbeddedTextMetadata(
+    title: first(const ['TITLE']),
+    author: first(const ['AUTHOR', 'ALBUMARTIST', 'ALBUM_ARTIST', 'ARTIST']),
+    series: first(const ['SERIES', 'SERIES_NAME', 'GROUPING']),
+    narrator: first(const ['NARRATOR', 'NARRATED_BY']),
+    year: year != null && year >= 1000 && year <= 2999 ? year : null,
+  );
+}
+
+String? _cleanText(String? value) {
+  final cleaned = value?.replaceAll('\u0000', '').trim();
+  return cleaned == null || cleaned.isEmpty ? null : cleaned;
+}
+
+const _id3TextFrames = <String, String>{
+  'TIT2': 'TITLE',
+  'TT2': 'TITLE',
+  'TPE1': 'ARTIST',
+  'TP1': 'ARTIST',
+  'TPE2': 'ALBUMARTIST',
+  'TP2': 'ALBUMARTIST',
+  'TIT1': 'GROUPING',
+  'TT1': 'GROUPING',
+  'TDRC': 'DATE',
+  'TYER': 'YEAR',
+  'TYE': 'YEAR',
+};
+
+EmbeddedTextMetadata _readMp4TextMetadata(
+  RandomAccessFile file,
+  int fileLength,
+) {
+  final tags = <String, String>{};
+  _scanMp4Text(file, 0, fileLength, 0, tags);
+  return _metadataFromTags(tags);
+}
+
+void _scanMp4Text(
+  RandomAccessFile file,
+  int start,
+  int end,
+  int depth,
+  Map<String, String> tags,
+) {
+  if (depth > 12) {
+    return;
+  }
+  var offset = start;
+  while (offset + 8 <= end) {
+    final box = _readBox(file, offset, end);
+    if (box == null) {
+      return;
+    }
+    final tagKey = _mp4TextAtoms[box.type];
+    if (tagKey != null) {
+      final value = _readMp4ItemText(file, box.payloadStart, box.end);
+      if (value != null) {
+        tags.putIfAbsent(tagKey, () => value);
+      }
+    } else if (box.type == '----') {
+      final entry = _readMp4FreeformText(file, box.payloadStart, box.end);
+      if (entry != null) {
+        tags.putIfAbsent(entry.key, () => entry.value);
+      }
+    }
+    if (_mp4Containers.contains(box.type)) {
+      final childStart = box.payloadStart + (box.type == 'meta' ? 4 : 0);
+      _scanMp4Text(file, childStart, box.end, depth + 1, tags);
+    }
+    offset = box.end;
+  }
+}
+
+String? _readMp4ItemText(RandomAccessFile file, int start, int end) {
+  var offset = start;
+  while (offset + 8 <= end) {
+    final box = _readBox(file, offset, end);
+    if (box == null) {
+      return null;
+    }
+    if (box.type == 'data' && box.end - box.payloadStart > 8) {
+      return _cleanText(
+        utf8.decode(
+          _readAt(file, box.payloadStart + 8, box.end - box.payloadStart - 8),
+          allowMalformed: true,
+        ),
+      );
+    }
+    offset = box.end;
+  }
+  return null;
+}
+
+MapEntry<String, String>? _readMp4FreeformText(
+  RandomAccessFile file,
+  int start,
+  int end,
+) {
+  String? name;
+  String? value;
+  var offset = start;
+  while (offset + 8 <= end) {
+    final box = _readBox(file, offset, end);
+    if (box == null) {
+      return null;
+    }
+    if (box.type == 'name' && box.end - box.payloadStart > 4) {
+      name = _cleanText(
+        utf8.decode(
+          _readAt(file, box.payloadStart + 4, box.end - box.payloadStart - 4),
+          allowMalformed: true,
+        ),
+      );
+    } else if (box.type == 'data' && box.end - box.payloadStart > 8) {
+      value = _cleanText(
+        utf8.decode(
+          _readAt(file, box.payloadStart + 8, box.end - box.payloadStart - 8),
+          allowMalformed: true,
+        ),
+      );
+    }
+    offset = box.end;
+  }
+  if (name == null || value == null) {
+    return null;
+  }
+  return MapEntry(name.toUpperCase().replaceAll(' ', '_'), value);
+}
+
+EmbeddedTextMetadata _readFlacTextMetadata(
+  RandomAccessFile file,
+  int fileLength,
+) {
+  var offset = 4;
+  while (offset + 4 <= fileLength) {
+    final header = _readAt(file, offset, 4);
+    final isLast = header[0] & 0x80 != 0;
+    final type = header[0] & 0x7f;
+    final length = (header[1] << 16) | (header[2] << 8) | header[3];
+    offset += 4;
+    if (offset + length > fileLength) {
+      break;
+    }
+    if (type == 4) {
+      return _metadataFromTags(
+        _decodeVorbisComments(_readAt(file, offset, length)),
+      );
+    }
+    offset += length;
+    if (isLast) {
+      break;
+    }
+  }
+  return const EmbeddedTextMetadata();
+}
+
+EmbeddedTextMetadata _readWaveTextMetadata(
+  RandomAccessFile file,
+  int fileLength,
+) {
+  var offset = 12;
+  while (offset + 8 <= fileLength) {
+    final header = _readAt(file, offset, 8);
+    final type = ascii.decode(header.sublist(0, 4), allowInvalid: true);
+    final length = _u32le(header, 4);
+    final payloadStart = offset + 8;
+    if (payloadStart + length > fileLength) {
+      break;
+    }
+    if (type.toLowerCase() == 'id3 ') {
+      return _readId3(file, payloadStart)?.text ?? const EmbeddedTextMetadata();
+    }
+    offset = payloadStart + length + (length.isOdd ? 1 : 0);
+  }
+  return const EmbeddedTextMetadata();
+}
+
+EmbeddedTextMetadata _readOggTextMetadata(
+  RandomAccessFile file,
+  int fileLength,
+) {
+  var offset = 0;
+  final packet = BytesBuilder(copy: false);
+  while (offset + 27 <= fileLength && offset < 64 * 1024 * 1024) {
+    final header = _readAt(file, offset, 27);
+    if (ascii.decode(header.sublist(0, 4), allowInvalid: true) != 'OggS') {
+      break;
+    }
+    final segmentCount = header[26];
+    final lacing = _readAt(file, offset + 27, segmentCount);
+    final bodyLength = lacing.fold<int>(0, (total, value) => total + value);
+    final bodyStart = offset + 27 + segmentCount;
+    if (bodyStart + bodyLength > fileLength) {
+      break;
+    }
+    final body = _readAt(file, bodyStart, bodyLength);
+    var bodyCursor = 0;
+    for (final segmentLength in lacing) {
+      packet.add(body.sublist(bodyCursor, bodyCursor + segmentLength));
+      bodyCursor += segmentLength;
+      if (segmentLength < 255) {
+        final bytes = packet.takeBytes();
+        final comments = _decodeOggComments(bytes);
+        if (comments != null) {
+          return _metadataFromTags(comments);
+        }
+      }
+    }
+    offset = bodyStart + bodyLength;
+  }
+  return const EmbeddedTextMetadata();
+}
+
+Map<String, String>? _decodeOggComments(Uint8List packet) {
+  final isVorbis =
+      packet.length >= 7 &&
+      packet[0] == 3 &&
+      ascii.decode(packet.sublist(1, 7), allowInvalid: true) == 'vorbis';
+  final isOpus =
+      packet.length >= 8 &&
+      ascii.decode(packet.sublist(0, 8), allowInvalid: true) == 'OpusTags';
+  if (!isVorbis && !isOpus) {
+    return null;
+  }
+  return _decodeVorbisComments(packet, offset: isVorbis ? 7 : 8);
+}
+
+Map<String, String> _decodeVorbisComments(Uint8List bytes, {int offset = 0}) {
+  final tags = <String, String>{};
+  var cursor = offset;
+  if (cursor + 4 > bytes.length) {
+    return tags;
+  }
+  final vendorLength = _u32le(bytes, cursor);
+  cursor += 4 + vendorLength;
+  if (cursor + 4 > bytes.length) {
+    return tags;
+  }
+  final count = _u32le(bytes, cursor);
+  cursor += 4;
+  for (var index = 0; index < count && cursor + 4 <= bytes.length; index++) {
+    final length = _u32le(bytes, cursor);
+    cursor += 4;
+    if (length > bytes.length - cursor) {
+      break;
+    }
+    final comment = utf8.decode(
+      bytes.sublist(cursor, cursor + length),
+      allowMalformed: true,
+    );
+    cursor += length;
+    final separator = comment.indexOf('=');
+    if (separator <= 0) {
+      continue;
+    }
+    final key = comment.substring(0, separator).toUpperCase();
+    final value = _cleanText(comment.substring(separator + 1));
+    if (value != null) {
+      tags.putIfAbsent(key, () => value);
+    }
+  }
+  return tags;
+}
+
+const _mp4TextAtoms = <String, String>{
+  '©nam': 'TITLE',
+  'aART': 'ALBUMARTIST',
+  '©ART': 'ARTIST',
+  '©grp': 'GROUPING',
+  '©day': 'DATE',
+};
 
 EmbeddedArtwork? _scanMp4Artwork(
   RandomAccessFile file,
@@ -497,7 +881,7 @@ _Box? _readBox(RandomAccessFile file, int offset, int parentEnd) {
     return null;
   }
   return _Box(
-    ascii.decode(header.sublist(4, 8), allowInvalid: true),
+    latin1.decode(header.sublist(4, 8), allowInvalid: true),
     offset + headerSize,
     offset + size,
   );
@@ -583,8 +967,13 @@ class _Box {
 }
 
 class _Id3Metadata {
-  const _Id3Metadata({required this.artwork, required this.chapters});
+  const _Id3Metadata({
+    required this.artwork,
+    required this.chapters,
+    required this.text,
+  });
 
   final EmbeddedArtwork? artwork;
   final List<EmbeddedChapterMetadata> chapters;
+  final EmbeddedTextMetadata text;
 }

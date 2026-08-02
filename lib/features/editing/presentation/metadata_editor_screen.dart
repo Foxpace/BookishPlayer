@@ -44,6 +44,8 @@ class _EditorFormState extends State<_EditorForm> {
   late final TextEditingController _title;
   late final TextEditingController _author;
   late final TextEditingController _series;
+  late final TextEditingController _narrator;
+  late final TextEditingController _year;
   late final TextEditingController _folder;
 
   @override
@@ -52,6 +54,8 @@ class _EditorFormState extends State<_EditorForm> {
     _title = TextEditingController(text: widget.book.title);
     _author = TextEditingController(text: widget.book.author);
     _series = TextEditingController(text: widget.book.series);
+    _narrator = TextEditingController(text: widget.book.narrator);
+    _year = TextEditingController(text: widget.book.year?.toString() ?? '');
     _folder = TextEditingController(text: widget.book.folder);
   }
 
@@ -60,6 +64,8 @@ class _EditorFormState extends State<_EditorForm> {
     _title.dispose();
     _author.dispose();
     _series.dispose();
+    _narrator.dispose();
+    _year.dispose();
     _folder.dispose();
     super.dispose();
   }
@@ -103,6 +109,17 @@ class _EditorFormState extends State<_EditorForm> {
         ),
         const SizedBox(height: 12),
         TextField(
+          controller: _narrator,
+          decoration: const InputDecoration(labelText: 'Narrator'),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _year,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(labelText: 'Year'),
+        ),
+        const SizedBox(height: 12),
+        TextField(
           controller: _folder,
           decoration: const InputDecoration(labelText: 'Folder'),
         ),
@@ -112,6 +129,8 @@ class _EditorFormState extends State<_EditorForm> {
             title: _title.text,
             author: _author.text,
             series: _series.text,
+            narrator: _narrator.text,
+            year: _year.text,
             folder: _folder.text,
           ),
           child: const Text('Save details'),
