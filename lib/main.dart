@@ -14,17 +14,21 @@ import 'features/settings/presentation/settings_state.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
-  await AudioService.init(
+  final audioHandler = await AudioService.init(
     builder: () => BookishAudioHandler(getIt<AudioPlayer>()),
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'com.tomasrepcik.bookish.audio',
       androidNotificationChannelName: 'Bookish playback',
       androidNotificationIcon: 'drawable/ic_launcher_monochrome',
-      androidNotificationOngoing: true,
+      // Keep the media service foregrounded across brief interruptions. On
+      // Android 12+, a backgrounded app may otherwise be unable to promote the
+      // service again when playback resumes.
+      androidStopForegroundOnPause: false,
       fastForwardInterval: BookishAudioHandler.skipInterval,
       rewindInterval: BookishAudioHandler.skipInterval,
     ),
   );
+  getIt.registerSingleton<AudioHandler>(audioHandler);
   runApp(const BookishAppRoot());
 }
 

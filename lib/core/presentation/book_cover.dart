@@ -8,7 +8,7 @@ class BookCover extends StatelessWidget {
     this.artworkPath,
     this.size = 72,
     this.heightFactor = 1.22,
-    this.imageFit = BoxFit.cover,
+    this.imageFit = BoxFit.contain,
     this.heroTag,
     super.key,
   });
@@ -23,12 +23,13 @@ class BookCover extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = _paletteFor(title);
+    const coverRadius = BorderRadius.all(Radius.circular(4));
     final cover = Container(
       width: size,
       height: size * heightFactor,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(size * .15),
+        borderRadius: coverRadius,
         boxShadow: [
           BoxShadow(
             color: palette.last.withValues(alpha: .25),
@@ -38,7 +39,7 @@ class BookCover extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(size * .15),
+        borderRadius: coverRadius,
         child: artworkPath == null
             ? _FallbackCover(size: size, palette: palette)
             : Image.file(

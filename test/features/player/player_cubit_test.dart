@@ -80,6 +80,36 @@ void main() {
       expect(audio.currentPosition, const Duration(seconds: 65));
     },
   );
+
+  test('stores quote chapter and range metadata', () async {
+    final book = Audiobook(
+      id: 'book',
+      title: 'Book',
+      filePath: '/book.mp3',
+      durationMs: 120000,
+      addedAt: DateTime(2026),
+    );
+    final audio = _FakeAudioPlayer();
+    final books = _FakeBooks(book);
+    final cubit = PlayerCubit(audio, books, _FakeExports());
+    addTearDown(() async {
+      await cubit.close();
+      await audio.close();
+    });
+
+    await cubit.open(book);
+    await cubit.addNoteAt(
+      'A transcribed quote',
+      const Duration(seconds: 35),
+      chapterTitle: 'Chapter two',
+      endPosition: const Duration(seconds: 52),
+    );
+
+    expect(books.savedNote?.text, 'A transcribed quote');
+    expect(books.savedNote?.positionMs, 35000);
+    expect(books.savedNote?.endPositionMs, 52000);
+    expect(books.savedNote?.chapterTitle, 'Chapter two');
+  });
 }
 
 class _FakeAudioPlayer implements AudioPlayerRepository {
@@ -159,6 +189,7 @@ class _FakeBooks implements AudiobookRepository {
   Audiobook book;
   Duration? progress;
   double? savedSpeed;
+  BookNote? savedNote;
 
   @override
   Future<Audiobook?> getBook(String id) async => book;
@@ -177,7 +208,7 @@ class _FakeBooks implements AudiobookRepository {
   @override
   Future<List<BookNote>> getAllNotes() async => [];
   @override
-  Future<void> saveNote(BookNote note) async {}
+  Future<void> saveNote(BookNote note) async => savedNote = note;
   @override
   Future<void> deleteNote(String id) async {}
   @override

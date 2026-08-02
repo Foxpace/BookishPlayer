@@ -222,6 +222,19 @@ class PlayerCubit extends Cubit<PlayerState> with WidgetsBindingObserver {
   }
 
   Future<void> addNote(String text) async {
+    return addNoteAt(
+      text,
+      state.position,
+      chapterTitle: state.currentChapter?.title,
+    );
+  }
+
+  Future<void> addNoteAt(
+    String text,
+    Duration position, {
+    String? chapterTitle,
+    Duration? endPosition,
+  }) async {
     final book = state.book;
     final clean = text.trim();
     if (book == null || clean.isEmpty) {
@@ -230,9 +243,13 @@ class PlayerCubit extends Cubit<PlayerState> with WidgetsBindingObserver {
     final note = BookNote(
       id: _uuid.v4(),
       bookId: book.id,
-      positionMs: state.position.inMilliseconds,
+      positionMs: _clamp(position).inMilliseconds,
       text: clean,
       createdAt: DateTime.now(),
+      chapterTitle: chapterTitle,
+      endPositionMs: endPosition == null
+          ? null
+          : _clamp(endPosition).inMilliseconds,
     );
     await _books.saveNote(note);
     final notes = [...state.notes, note]

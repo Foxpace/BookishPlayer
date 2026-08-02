@@ -13,7 +13,7 @@ abstract class AppModule {
   Future<BookishDatabase> get database => BookishDatabase.open();
 
   @lazySingleton
-  AudioPlayer get audioPlayer => AudioPlayer();
+  AudioPlayer get audioPlayer => AudioPlayer(maxSkipsOnError: 3);
 
   @lazySingleton
   GoRouter get router => createAppRouter();

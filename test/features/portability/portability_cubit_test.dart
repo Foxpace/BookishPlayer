@@ -30,6 +30,8 @@ void main() {
       positionMs: 42000,
       text: 'A note',
       createdAt: DateTime.utc(2026, 1, 3),
+      chapterTitle: 'Chapter one',
+      endPositionMs: 48000,
     );
     final books = _Books([original], [note]);
     final settings = _Settings(ThemePreference.dark);
