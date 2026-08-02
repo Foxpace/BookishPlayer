@@ -10,9 +10,17 @@ class JustAudioPlayerRepository implements AudioPlayerRepository {
   JustAudioPlayerRepository(this._player);
 
   final AudioPlayer _player;
+  AudioHandler? _audioHandler;
   List<PlaybackSegment> _segments = const [];
   var _offsetsMs = const [0];
   var _totalDurationMs = 0;
+
+  void attachAudioHandler(AudioHandler audioHandler) {
+    if (_audioHandler != null) {
+      throw StateError('The audio handler is already attached.');
+    }
+    _audioHandler = audioHandler;
+  }
 
   Future<void> configure() async {
     final session = await AudioSession.instance;
@@ -101,22 +109,31 @@ class JustAudioPlayerRepository implements AudioPlayerRepository {
   }
 
   @override
-  Future<void> play() => _player.play();
+  Future<void> play() => _handler.play();
 
   @override
-  Future<void> pause() => _player.pause();
+  Future<void> pause() => _handler.pause();
 
   @override
-  Future<void> seek(Duration position) {
+  Future<void> seek(Duration position) async {
     final location = _locationFor(position);
-    return _player.seek(location.position, index: location.index);
+    await _handler.skipToQueueItem(location.index);
+    await _handler.seek(location.position);
   }
 
   @override
-  Future<void> setSpeed(double speed) => _player.setSpeed(speed);
+  Future<void> setSpeed(double speed) =>
+      _handler.customAction('setSpeed', {'speed': speed});
 
   @override
-  Future<void> dispose() => _player.dispose();
+  Future<void> dispose() async {
+    await _handler.stop();
+    await _player.dispose();
+  }
+
+  AudioHandler get _handler =>
+      _audioHandler ??
+      (throw StateError('The audio handler has not been attached.'));
 
   int get _currentOffsetMs {
     final index = _player.currentIndex ?? 0;

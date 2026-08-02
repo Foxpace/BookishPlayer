@@ -51,10 +51,18 @@ class PlayerCubit extends Cubit<PlayerState> with WidgetsBindingObserver {
   DateTime? _pausedAt;
   var _wasPlaying = false;
   var _progressWriteInFlight = false;
-  Duration? _pendingProgress;
+  ({String bookId, Duration position})? _pendingProgress;
 
   Future<void> open(Audiobook book) async {
-    await saveProgress();
+    final currentBook = state.book;
+    if (currentBook != null && currentBook.id != book.id) {
+      await _audio.pause();
+      await saveProgress();
+      _sleepTimer?.cancel();
+      _sleepTimer = null;
+    } else {
+      await saveProgress();
+    }
     emit(
       _withChapterTimeline(
         PlayerState(
@@ -82,7 +90,10 @@ class PlayerCubit extends Cubit<PlayerState> with WidgetsBindingObserver {
   }
 
   Future<void> openById(String bookId) async {
-    emit(const PlayerState(status: PlayerStatus.loading));
+    if (state.book?.id == bookId && state.status == PlayerStatus.ready) {
+      return;
+    }
+    emit(state.copyWith(status: PlayerStatus.loading));
     final book = await _books.getBook(bookId);
     if (book == null) {
       emit(
@@ -279,16 +290,16 @@ class PlayerCubit extends Cubit<PlayerState> with WidgetsBindingObserver {
     if (book == null) {
       return;
     }
-    _pendingProgress = _audio.position;
+    _pendingProgress = (bookId: book.id, position: _audio.position);
     if (_progressWriteInFlight) {
       return;
     }
     _progressWriteInFlight = true;
     try {
       while (_pendingProgress != null) {
-        final position = _pendingProgress!;
+        final pending = _pendingProgress!;
         _pendingProgress = null;
-        await _books.updateProgress(book.id, position);
+        await _books.updateProgress(pending.bookId, pending.position);
         _lastSavedAt = DateTime.now();
       }
     } finally {

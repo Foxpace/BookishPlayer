@@ -4,6 +4,7 @@ import 'package:just_audio/just_audio.dart';
 class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
   BookishAudioHandler(this._player) {
     _player.playbackEventStream.listen(_broadcastState);
+    _player.playingStream.listen((_) => _broadcastState(_player.playbackEvent));
     _player.sequenceStream.listen((_) => _broadcastQueue());
     _player.currentIndexStream.listen((_) => _broadcastCurrentItem());
   }
@@ -49,6 +50,26 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
     if (_player.hasPrevious) {
       await _player.seek(Duration.zero, index: _player.previousIndex);
     }
+  }
+
+  @override
+  Future<void> skipToQueueItem(int index) =>
+      _player.seek(Duration.zero, index: index);
+
+  @override
+  Future<dynamic> customAction(
+    String name, [
+    Map<String, dynamic>? extras,
+  ]) async {
+    if (name == 'setSpeed') {
+      final speed = extras?['speed'];
+      if (speed is! num) {
+        throw ArgumentError.value(speed, 'speed', 'must be a number');
+      }
+      await _player.setSpeed(speed.toDouble());
+      return null;
+    }
+    return super.customAction(name, extras);
   }
 
   @override
