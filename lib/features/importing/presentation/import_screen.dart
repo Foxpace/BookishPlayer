@@ -17,8 +17,12 @@ class ImportScreen extends StatelessWidget {
             padding: const EdgeInsets.all(40),
             child: BlocBuilder<ImportCubit, ImportState>(
               builder: (context, state) {
-                if (state.status == ImportStatus.failure) {
-                  return _ImportFailure(state: state);
+                if (state.status == ImportStatus.failure ||
+                    state.status == ImportStatus.cancelled) {
+                  return _ImportFailure(
+                    state: state,
+                    isCancelled: state.status == ImportStatus.cancelled,
+                  );
                 }
                 return Column(
                   mainAxisSize: MainAxisSize.min,
@@ -55,9 +59,10 @@ class ImportScreen extends StatelessWidget {
 }
 
 class _ImportFailure extends StatelessWidget {
-  const _ImportFailure({required this.state});
+  const _ImportFailure({required this.state, this.isCancelled = false});
 
   final ImportState state;
+  final bool isCancelled;
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +71,13 @@ class _ImportFailure extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.error_outline_rounded,
+            isCancelled
+                ? Icons.file_open_outlined
+                : Icons.error_outline_rounded,
             size: 56,
-            color: Theme.of(context).colorScheme.error,
+            color: isCancelled
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.error,
           ),
           const SizedBox(height: 20),
           Text(
@@ -130,7 +139,7 @@ class _ImportFailure extends StatelessWidget {
           FilledButton.icon(
             onPressed: context.read<ImportCubit>().retry,
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Try another file'),
+            label: Text(isCancelled ? 'Open file browser again' : 'Try again'),
           ),
           const SizedBox(height: 4),
           TextButton(

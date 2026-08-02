@@ -13,6 +13,8 @@ abstract class Audiobook with _$Audiobook {
     required DateTime addedAt,
     @Default('') String author,
     @Default('') String series,
+    @Default('') String narrator,
+    int? year,
     @Default('Imported') String folder,
     String? artworkPath,
     @Default(false) bool artworkScanned,

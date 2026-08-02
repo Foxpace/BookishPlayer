@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
@@ -50,10 +52,25 @@ class DeviceFileImportRepository implements FileImportRepository {
 
     return result.files
         .map(
-          (file) =>
-              SelectedAudioFile(sourcePath: file.path!, displayName: file.name),
+          (file) => SelectedAudioFile(
+            sourcePath: file.path!,
+            displayName: file.name,
+            sizeBytes: file.size,
+          ),
         )
         .toList();
+  }
+
+  @override
+  Future<void> clearTemporaryFiles() async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+    try {
+      await FilePicker.platform.clearTemporaryFiles();
+    } catch (_) {
+      // Cache cleanup is best-effort and must not invalidate a saved import.
+    }
   }
 
   @override
@@ -70,24 +87,34 @@ class DeviceFileImportRepository implements FileImportRepository {
         )
         .toList();
     files.sort((a, b) => a.path.compareTo(b.path));
-    return files
-        .map(
-          (file) => SelectedAudioFile(
-            sourcePath: file.path,
-            displayName: p.basename(file.path),
-          ),
-        )
-        .toList();
+    final selected = <SelectedAudioFile>[];
+    for (final file in files) {
+      selected.add(
+        SelectedAudioFile(
+          sourcePath: file.path,
+          displayName: p.basename(file.path),
+          sizeBytes: await file.length(),
+        ),
+      );
+    }
+    return selected;
   }
 
   @override
-  Future<ImportedAudioFile> importFile(SelectedAudioFile selected) async {
+  Future<ImportedAudioFile> importFile(
+    SelectedAudioFile selected, {
+    FileCopyProgress? onProgress,
+  }) async {
     final support = await getApplicationSupportDirectory();
     final library = Directory(p.join(support.path, 'audiobooks'));
     await library.create(recursive: true);
     final extension = p.extension(selected.displayName).toLowerCase();
     final destination = p.join(library.path, '${_uuid.v4()}$extension');
-    await File(selected.sourcePath).copy(destination);
+    await copyFileInBackground(
+      selected.sourcePath,
+      destination,
+      onProgress: onProgress,
+    );
     return ImportedAudioFile(
       path: destination,
       displayName: selected.displayName,
@@ -133,4 +160,146 @@ class DeviceFileImportRepository implements FileImportRepository {
       await file.delete();
     }
   }
+}
+
+Future<void> copyFileInBackground(
+  String sourcePath,
+  String destinationPath, {
+  FileCopyProgress? onProgress,
+}) async {
+  final partialPath = '$destinationPath.part';
+  final messages = ReceivePort();
+  final isolate = await Isolate.spawn(
+    _copyFileWorker,
+    _CopyRequest(
+      sourcePath: sourcePath,
+      destinationPath: destinationPath,
+      partialPath: partialPath,
+      sendPort: messages.sendPort,
+    ),
+    debugName: 'bookish-file-copy',
+    onError: messages.sendPort,
+    onExit: messages.sendPort,
+  );
+  try {
+    await for (final message in messages) {
+      if (message is _CopyProgress) {
+        onProgress?.call(message.copiedBytes, message.totalBytes);
+      } else if (message is _CopyComplete) {
+        return;
+      } else if (message is _CopyFailure) {
+        throw FileSystemException(message.message, sourcePath);
+      } else if (message is List && message.isNotEmpty) {
+        throw FileSystemException(
+          'The background copy isolate failed: ${message.first}',
+          sourcePath,
+        );
+      } else if (message == null) {
+        throw FileSystemException(
+          'The background copy stopped unexpectedly.',
+          sourcePath,
+        );
+      }
+    }
+    throw FileSystemException(
+      'The background copy stopped unexpectedly.',
+      sourcePath,
+    );
+  } finally {
+    messages.close();
+    isolate.kill(priority: Isolate.immediate);
+    final partial = File(partialPath);
+    if (partial.existsSync()) {
+      partial.deleteSync();
+    }
+  }
+}
+
+void _copyFileWorker(_CopyRequest request) {
+  RandomAccessFile? source;
+  RandomAccessFile? destination;
+  try {
+    final partial = File(request.partialPath);
+    if (partial.existsSync()) {
+      partial.deleteSync();
+    }
+    source = File(request.sourcePath).openSync(mode: FileMode.read);
+    destination = partial.openSync(mode: FileMode.write);
+    final totalBytes = source.lengthSync();
+    final buffer = Uint8List(4 * 1024 * 1024);
+    var copiedBytes = 0;
+    var lastReportedBytes = 0;
+    var lastReportedAt = DateTime.now();
+    request.sendPort.send(_CopyProgress(0, totalBytes));
+    while (true) {
+      final count = source.readIntoSync(buffer);
+      if (count == 0) {
+        break;
+      }
+      destination.writeFromSync(buffer, 0, count);
+      copiedBytes += count;
+      final now = DateTime.now();
+      if (copiedBytes - lastReportedBytes >= 16 * 1024 * 1024 ||
+          now.difference(lastReportedAt) >= const Duration(milliseconds: 250)) {
+        request.sendPort.send(_CopyProgress(copiedBytes, totalBytes));
+        lastReportedBytes = copiedBytes;
+        lastReportedAt = now;
+      }
+    }
+    destination.flushSync();
+    destination.closeSync();
+    destination = null;
+    source.closeSync();
+    source = null;
+    if (copiedBytes != totalBytes) {
+      throw FileSystemException(
+        'Copied $copiedBytes of $totalBytes bytes.',
+        request.sourcePath,
+      );
+    }
+    partial.renameSync(request.destinationPath);
+    request.sendPort.send(_CopyProgress(copiedBytes, totalBytes));
+    request.sendPort.send(const _CopyComplete());
+  } catch (error, stackTrace) {
+    try {
+      destination?.closeSync();
+      source?.closeSync();
+      final partial = File(request.partialPath);
+      if (partial.existsSync()) {
+        partial.deleteSync();
+      }
+    } catch (_) {}
+    request.sendPort.send(_CopyFailure('$error\n$stackTrace'));
+  }
+}
+
+class _CopyRequest {
+  const _CopyRequest({
+    required this.sourcePath,
+    required this.destinationPath,
+    required this.partialPath,
+    required this.sendPort,
+  });
+
+  final String sourcePath;
+  final String destinationPath;
+  final String partialPath;
+  final SendPort sendPort;
+}
+
+class _CopyProgress {
+  const _CopyProgress(this.copiedBytes, this.totalBytes);
+
+  final int copiedBytes;
+  final int totalBytes;
+}
+
+class _CopyComplete {
+  const _CopyComplete();
+}
+
+class _CopyFailure {
+  const _CopyFailure(this.message);
+
+  final String message;
 }

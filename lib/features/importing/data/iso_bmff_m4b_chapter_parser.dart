@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:injectable/injectable.dart';
@@ -64,12 +65,13 @@ class IsoBmffM4bChapterParser implements M4bChapterParser {
       }
     }
     try {
-      final chapters = readEmbeddedChapters(source)
+      final embeddedChapters = await Isolate.run(
+        () => readEmbeddedChapters(File(filePath)),
+      );
+      final chapters = embeddedChapters
           .map(
-            (chapter) => AudioChapter(
-              title: chapter.title,
-              startMs: chapter.startMs,
-            ),
+            (chapter) =>
+                AudioChapter(title: chapter.title, startMs: chapter.startMs),
           )
           .toList();
       diagnostics.add(

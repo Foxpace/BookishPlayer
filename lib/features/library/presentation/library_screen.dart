@@ -157,7 +157,8 @@ class _LibraryGroupingControl extends StatelessWidget {
 }
 
 Future<void> _importAudiobooks(BuildContext context) async {
-  if (Theme.of(context).platform == TargetPlatform.android) {
+  final isAndroid = Theme.of(context).platform == TargetPlatform.android;
+  if (isAndroid) {
     await _openImport(context, ImportSource.files);
     return;
   }
@@ -170,16 +171,18 @@ Future<void> _importAudiobooks(BuildContext context) async {
         children: [
           ListTile(
             leading: const Icon(Icons.folder_open_rounded),
-            title: const Text('Choose files'),
+            title: const Text('Copy from Files'),
             subtitle: const Text(
-              'Import from the Files app or another provider',
+              'Keep the originals and copy them into Bookish',
             ),
             onTap: () => Navigator.pop(sheetContext, ImportSource.files),
           ),
           ListTile(
             leading: const Icon(Icons.cable_rounded),
-            title: const Text('Import from Finder'),
-            subtitle: const Text('Import audiobooks transferred by USB cable'),
+            title: const Text('Move from Finder transfer'),
+            subtitle: const Text(
+              'Copy into Bookish, then remove the transferred originals',
+            ),
             onTap: () =>
                 Navigator.pop(sheetContext, ImportSource.finderTransfer),
           ),
@@ -201,6 +204,11 @@ Future<void> _openImport(BuildContext context, ImportSource source) async {
   );
   if (imported == true && context.mounted) {
     await context.read<LibraryCubit>().load();
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Audiobook imported into Bookish')),
+      );
+    }
   }
 }
 
@@ -367,7 +375,10 @@ class _BookTile extends StatelessWidget {
                 },
                 itemBuilder: (_) => const [
                   PopupMenuItem(value: 'edit', child: Text('Edit metadata')),
-                  PopupMenuItem(value: 'delete', child: Text('Remove')),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Text('Remove from device'),
+                  ),
                 ],
               ),
             ],
@@ -381,9 +392,10 @@ class _BookTile extends StatelessWidget {
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Remove audiobook?'),
+        title: const Text('Remove from this device?'),
         content: Text(
-          '“${book.title}” and its notes will be deleted from Bookish.',
+          '“${book.title}”, its notes, cover, and copied audio files will be '
+          'deleted from Bookish. Your original files are not affected.',
         ),
         actions: [
           TextButton(
@@ -392,7 +404,7 @@ class _BookTile extends StatelessWidget {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Remove'),
+            child: const Text('Remove from device'),
           ),
         ],
       ),
