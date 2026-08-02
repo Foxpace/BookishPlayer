@@ -1,0 +1,31 @@
+# Flutter and Dart tooling
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+test_samples/
+tst_smaples/
+
+# Platform-generated files
+android/.gradle/
+android/local.properties
+ios/Flutter/ephemeral/
+ios/Pods/
+ios/.symlinks/
+ios/Runner.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/xcuserdata/
+
+# IDE and operating system files
+.idea/
+*.iml
+.DS_Store
+
+# Signing material
+*.jks
+*.keystore
+*.mobileprovision
+*.p12
+*.cer

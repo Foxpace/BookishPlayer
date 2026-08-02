@@ -1,0 +1,19 @@
+import '../../library/domain/audiobook.dart';
+
+abstract interface class AudioPlayerRepository {
+  Stream<Duration> get positionStream;
+  Stream<Duration> get bufferedPositionStream;
+  Stream<Duration?> get durationStream;
+  Stream<bool> get playingStream;
+  Stream<bool> get completedStream;
+  Duration get position;
+  bool get isPlaying;
+
+  Future<Duration> probeDuration(String path);
+  Future<void> load(Audiobook book);
+  Future<void> play();
+  Future<void> pause();
+  Future<void> seek(Duration position);
+  Future<void> setSpeed(double speed);
+  Future<void> dispose();
+}

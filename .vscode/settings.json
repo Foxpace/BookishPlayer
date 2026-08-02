@@ -1,0 +1,4 @@
+{
+  "scm.repositories.selectionMode": "single",
+  "git.repositoryScanIgnoredFolders": ["node_modules", "build"]
+}
