@@ -11,6 +11,8 @@ abstract class BookNote with _$BookNote {
     required int positionMs,
     required String text,
     required DateTime createdAt,
+    String? chapterTitle,
+    int? endPositionMs,
   }) = _BookNote;
 
   factory BookNote.fromJson(Map<String, dynamic> json) =>

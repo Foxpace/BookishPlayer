@@ -1,16 +1,65 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/navigation/app_router.dart';
+import '../../../core/di/injection.dart';
 import '../../../core/presentation/book_cover.dart';
 import '../../../core/presentation/formatters.dart';
+import '../../settings/data/settings_dao.dart';
 import '../domain/audiobook.dart';
 import 'library_cubit.dart';
 import 'library_state.dart';
 
-class LibraryScreen extends StatelessWidget {
+enum _LibraryLayout { list, grid }
+
+class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
+
+  @override
+  State<LibraryScreen> createState() => _LibraryScreenState();
+}
+
+class _LibraryScreenState extends State<LibraryScreen> {
+  final _settings = getIt<SettingsDao>();
+  var _layout = _LibraryLayout.list;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_restoreLayout());
+  }
+
+  Future<void> _restoreLayout() async {
+    try {
+      final saved = await _settings.getLibraryLayout();
+      if (mounted) {
+        setState(() {
+          _layout = saved == _LibraryLayout.grid.name
+              ? _LibraryLayout.grid
+              : _LibraryLayout.list;
+        });
+      }
+    } catch (_) {
+      // Keep the default list layout if preferences cannot be read.
+    }
+  }
+
+  void _selectLayout(Set<_LibraryLayout> selection) {
+    final layout = selection.first;
+    setState(() => _layout = layout);
+    unawaited(_persistLayout(layout));
+  }
+
+  Future<void> _persistLayout(_LibraryLayout layout) async {
+    try {
+      await _settings.setLibraryLayout(layout.name);
+    } catch (_) {
+      // The selected layout still remains active for this session.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +95,28 @@ class LibraryScreen extends StatelessWidget {
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                       sliver: SliverToBoxAdapter(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: _LibraryGroupingControl(
-                            grouping: state.grouping,
-                          ),
+                        child: Row(
+                          children: [
+                            _LibraryGroupingControl(grouping: state.grouping),
+                            const Spacer(),
+                            SegmentedButton<_LibraryLayout>(
+                              segments: const [
+                                ButtonSegment(
+                                  value: _LibraryLayout.list,
+                                  icon: Icon(Icons.view_list_rounded),
+                                  tooltip: 'List view',
+                                ),
+                                ButtonSegment(
+                                  value: _LibraryLayout.grid,
+                                  icon: Icon(Icons.grid_view_rounded),
+                                  tooltip: 'Grid view',
+                                ),
+                              ],
+                              selected: {_layout},
+                              showSelectedIcon: false,
+                              onSelectionChanged: _selectLayout,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -68,6 +134,7 @@ class LibraryScreen extends StatelessWidget {
                         itemBuilder: (context, index) => _LibrarySectionView(
                           section: state.sections[index],
                           showTitle: state.grouping != LibraryGrouping.none,
+                          layout: _layout,
                         ),
                       ),
                     ),
@@ -213,10 +280,15 @@ Future<void> _openImport(BuildContext context, ImportSource source) async {
 }
 
 class _LibrarySectionView extends StatelessWidget {
-  const _LibrarySectionView({required this.section, required this.showTitle});
+  const _LibrarySectionView({
+    required this.section,
+    required this.showTitle,
+    required this.layout,
+  });
 
   final LibrarySection section;
   final bool showTitle;
+  final _LibraryLayout layout;
 
   @override
   Widget build(BuildContext context) {
@@ -234,10 +306,25 @@ class _LibrarySectionView extends StatelessWidget {
             ),
           ),
         ],
-        for (var index = 0; index < section.books.length; index++) ...[
-          if (index > 0) const SizedBox(height: 12),
-          _BookTile(book: section.books[index]),
-        ],
+        if (layout == _LibraryLayout.list)
+          for (var index = 0; index < section.books.length; index++) ...[
+            if (index > 0) const SizedBox(height: 12),
+            _BookTile(book: section.books[index]),
+          ]
+        else
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 220,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: .54,
+            ),
+            itemCount: section.books.length,
+            itemBuilder: (context, index) =>
+                _BookGridTile(book: section.books[index]),
+          ),
       ],
     );
   }
@@ -286,6 +373,100 @@ class _EmptyLibrary extends StatelessWidget {
   }
 }
 
+class _BookGridTile extends StatelessWidget {
+  const _BookGridTile({required this.book});
+
+  final Audiobook book;
+
+  @override
+  Widget build(BuildContext context) {
+    final duration = Duration(milliseconds: book.durationMs);
+    final position = Duration(milliseconds: book.positionMs);
+    final progress = book.durationMs == 0
+        ? 0.0
+        : (book.positionMs / book.durationMs).clamp(0.0, 1.0);
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => _openBook(context, book),
+        onLongPress: () => _confirmDelete(context, book),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final coverSize = constraints.maxWidth - 24;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                  child: Center(
+                    child: BookCover(
+                      title: book.title,
+                      artworkPath: book.artworkPath,
+                      size: coverSize,
+                      heroTag: book.id,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                book.title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.titleSmall
+                                    ?.copyWith(fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            _BookActionsMenu(book: book, compact: true),
+                          ],
+                        ),
+                        const Spacer(),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            minHeight: 5,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).progressIndicatorTheme.linearTrackColor,
+                          ),
+                        ),
+                        const SizedBox(height: 7),
+                        Text(
+                          book.positionMs > 0
+                              ? '${(progress * 100).round()}% · ${formatRemaining(position, duration)} left'
+                              : formatDuration(duration),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 class _BookTile extends StatelessWidget {
   const _BookTile({required this.book});
 
@@ -301,16 +482,8 @@ class _BookTile extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () async {
-          await context.pushNamed<void>(
-            AppRoutes.player,
-            pathParameters: {'bookId': book.id},
-          );
-          if (context.mounted) {
-            await context.read<LibraryCubit>().load();
-          }
-        },
-        onLongPress: () => _confirmDelete(context),
+        onTap: () => _openBook(context, book),
+        onLongPress: () => _confirmDelete(context, book),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
@@ -358,59 +531,100 @@ class _BookTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              PopupMenuButton<String>(
-                tooltip: 'Book actions',
-                onSelected: (action) async {
-                  if (action == 'edit') {
-                    await context.pushNamed<void>(
-                      AppRoutes.editBook,
-                      pathParameters: {'bookId': book.id},
-                    );
-                    if (context.mounted) {
-                      await context.read<LibraryCubit>().load();
-                    }
-                  } else if (action == 'delete' && context.mounted) {
-                    await _confirmDelete(context);
-                  }
-                },
-                itemBuilder: (_) => const [
-                  PopupMenuItem(value: 'edit', child: Text('Edit metadata')),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Text('Remove from device'),
-                  ),
-                ],
-              ),
+              _BookActionsMenu(book: book),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Future<void> _confirmDelete(BuildContext context) async {
-    final shouldDelete = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Remove from this device?'),
-        content: Text(
-          '“${book.title}”, its notes, cover, and copied audio files will be '
-          'deleted from Bookish. Your original files are not affected.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Remove from device'),
-          ),
-        ],
-      ),
+class _BookActionsMenu extends StatelessWidget {
+  const _BookActionsMenu({required this.book, this.compact = false});
+
+  final Audiobook book;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final button = PopupMenuButton<String>(
+      tooltip: 'Book actions',
+      padding: EdgeInsets.zero,
+      iconSize: compact ? 20 : 24,
+      onSelected: (action) async {
+        if (action == 'title') {
+          await _showFullTitle(context, book);
+        } else if (action == 'edit') {
+          await context.pushNamed<void>(
+            AppRoutes.editBook,
+            pathParameters: {'bookId': book.id},
+          );
+          if (context.mounted) {
+            await context.read<LibraryCubit>().load();
+          }
+        } else if (action == 'delete' && context.mounted) {
+          await _confirmDelete(context, book);
+        }
+      },
+      itemBuilder: (_) => const [
+        PopupMenuItem(value: 'title', child: Text('View full title')),
+        PopupMenuItem(value: 'edit', child: Text('Edit metadata')),
+        PopupMenuItem(value: 'delete', child: Text('Remove from device')),
+      ],
     );
-    if (shouldDelete == true && context.mounted) {
-      await context.read<LibraryCubit>().deleteBook(book);
-    }
+    return compact ? SizedBox.square(dimension: 40, child: button) : button;
+  }
+}
+
+Future<void> _openBook(BuildContext context, Audiobook book) async {
+  await context.pushNamed<void>(
+    AppRoutes.player,
+    pathParameters: {'bookId': book.id},
+  );
+  if (context.mounted) {
+    await context.read<LibraryCubit>().load();
+  }
+}
+
+Future<void> _showFullTitle(BuildContext context, Audiobook book) async {
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Full title'),
+      content: SelectableText(book.title),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext),
+          child: const Text('Close'),
+        ),
+      ],
+    ),
+  );
+}
+
+Future<void> _confirmDelete(BuildContext context, Audiobook book) async {
+  final shouldDelete = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Remove from this device?'),
+      content: Text(
+        '“${book.title}”, its notes, cover, and copied audio files will be '
+        'deleted from Bookish. Your original files are not affected.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: const Text('Remove from device'),
+        ),
+      ],
+    ),
+  );
+  if (shouldDelete == true && context.mounted) {
+    await context.read<LibraryCubit>().deleteBook(book);
   }
 }

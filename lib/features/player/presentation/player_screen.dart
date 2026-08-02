@@ -5,12 +5,25 @@ import 'package:go_router/go_router.dart';
 import '../../../core/navigation/app_router.dart';
 import '../../../core/presentation/book_cover.dart';
 import '../../../core/presentation/formatters.dart';
+import '../../library/domain/audiobook.dart';
+import '../../settings/data/settings_dao.dart';
+import '../../transcription/domain/transcription_repository.dart';
 import '../domain/book_note.dart';
+import '../domain/quote_time_range.dart';
 import 'player_cubit.dart';
 import 'player_state.dart';
+import 'quote_boundary_slider.dart';
+import 'transcription_preview_screen.dart';
 
 class PlayerScreen extends StatelessWidget {
-  const PlayerScreen({super.key});
+  const PlayerScreen({
+    required this.transcription,
+    required this.settings,
+    super.key,
+  });
+
+  final TranscriptionRepository transcription;
+  final SettingsDao settings;
 
   @override
   Widget build(BuildContext context) {
@@ -111,6 +124,7 @@ class PlayerScreen extends StatelessWidget {
                           : () => _showChapters(context, state.chapterTimeline),
                       onTimer: () => _showSleepTimer(context),
                       onNotes: () => _showNotes(context),
+                      onQuote: () => _showTranscription(context),
                     ),
                   ],
                 ),
@@ -193,6 +207,53 @@ class PlayerScreen extends StatelessWidget {
               await _addNote(context);
             }
           },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showTranscription(BuildContext context) async {
+    final cubit = context.read<PlayerCubit>();
+    final state = cubit.state;
+    final book = state.book;
+    if (book == null) {
+      return;
+    }
+    if (state.isPlaying) {
+      await cubit.togglePlayback();
+    }
+    if (!context.mounted) {
+      return;
+    }
+    final draft = await showModalBottomSheet<TranscriptionDraft>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => _TranscriptionSheet(
+        book: book,
+        chapterTitle: state.currentChapter?.title,
+        chapterStart: state.chapterStart,
+        chapterDuration: state.chapterDuration > Duration.zero
+            ? state.chapterDuration
+            : state.duration,
+        initialEnd: state.chapterPosition,
+        transcription: transcription,
+        settings: settings,
+      ),
+    );
+    if (draft == null || !context.mounted) {
+      return;
+    }
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => TranscriptionPreviewScreen(
+          draft: draft,
+          onSave: (text) => cubit.addNoteAt(
+            text,
+            draft.start,
+            chapterTitle: draft.chapterTitle,
+            endPosition: draft.end,
+          ),
         ),
       ),
     );
@@ -611,18 +672,30 @@ class _PlayerTools extends StatelessWidget {
     required this.onChapters,
     required this.onTimer,
     required this.onNotes,
+    required this.onQuote,
   });
 
   final PlayerState state;
   final VoidCallback? onChapters;
   final VoidCallback onTimer;
   final VoidCallback onNotes;
+  final VoidCallback onQuote;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(child: _SpeedButton(speed: state.speed)),
+        Expanded(
+          child: _ToolButton(
+            tooltip: 'Transcribe a quote',
+            onPressed: onQuote,
+            child: const _ToolVisual(
+              icon: Icons.format_quote_rounded,
+              label: 'Quote',
+            ),
+          ),
+        ),
         Expanded(
           child: _ToolButton(
             tooltip: 'Chapters',
@@ -796,6 +869,255 @@ class _NotesSheet extends StatelessWidget {
   }
 }
 
+class _TranscriptionSheet extends StatefulWidget {
+  const _TranscriptionSheet({
+    required this.book,
+    required this.chapterTitle,
+    required this.chapterStart,
+    required this.chapterDuration,
+    required this.initialEnd,
+    required this.transcription,
+    required this.settings,
+  });
+
+  final Audiobook book;
+  final String? chapterTitle;
+  final Duration chapterStart;
+  final Duration chapterDuration;
+  final Duration initialEnd;
+  final TranscriptionRepository transcription;
+  final SettingsDao settings;
+
+  @override
+  State<_TranscriptionSheet> createState() => _TranscriptionSheetState();
+}
+
+class _TranscriptionSheetState extends State<_TranscriptionSheet> {
+  late QuoteTimeRange _range;
+  var _working = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _range = QuoteTimeRange.initial(
+      chapterDuration: widget.chapterDuration,
+      anchor: widget.initialEnd,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          24,
+          4,
+          24,
+          20 + MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Transcribe a quote',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Choose the exact part of the audiobook. Recognition happens locally on this device.',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.menu_book_rounded),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.chapterTitle ?? 'Audiobook',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${_formatDuration(_range.start)} – ${_formatDuration(_range.end)} in chapter',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('From ${_formatDuration(_range.start)}'),
+                  Text('To ${_formatDuration(_range.end)}'),
+                ],
+              ),
+              QuoteRangeSlider(
+                start: _range.start,
+                end: _range.end,
+                chapterDuration: widget.chapterDuration,
+                enabled: !_working,
+                onStartChanged: (value) => setState(() {
+                  _range = _range.withStart(value);
+                }),
+                onEndChanged: (value) => setState(() {
+                  _range = _range.withEnd(value);
+                }),
+              ),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [15, 30, 60, 120]
+                    .map(
+                      (seconds) => ActionChip(
+                        label: Text(
+                          seconds == 120 ? 'Last 2 min' : 'Last $seconds sec',
+                        ),
+                        onPressed: _working
+                            ? null
+                            : () => setState(() {
+                                _range = _range.withPreset(
+                                  Duration(seconds: seconds),
+                                );
+                              }),
+                      ),
+                    )
+                    .toList(),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _working
+                          ? null
+                          : () => setState(() {
+                              _range = _range.shift(
+                                const Duration(seconds: -15),
+                              );
+                            }),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                      label: const Text('15 sec earlier'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _working
+                          ? null
+                          : () => setState(() {
+                              _range = _range.shift(
+                                const Duration(seconds: 15),
+                              );
+                            }),
+                      icon: const Icon(Icons.arrow_forward_rounded),
+                      label: const Text('15 sec later'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: _working ? null : _transcribe,
+                  icon: _working
+                      ? const SizedBox.square(
+                          dimension: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.graphic_eq_rounded),
+                  label: Text(_working ? 'Transcribing…' : 'Transcribe range'),
+                ),
+              ),
+              if (_error case final error?) ...[
+                const SizedBox(height: 10),
+                Text(
+                  error,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _transcribe() async {
+    setState(() {
+      _working = true;
+      _error = null;
+    });
+    try {
+      final model = await widget.settings.getSpeechModel() ?? 'whisper-tiny';
+      final text = await widget.transcription.transcribeRange(
+        book: widget.book,
+        start: _globalStart,
+        end: _globalEnd,
+        model: model,
+      );
+      if (!mounted) {
+        return;
+      }
+      if (text.trim().isEmpty) {
+        setState(() => _error = 'No speech was detected in this range.');
+        return;
+      }
+      Navigator.pop(
+        context,
+        TranscriptionDraft(
+          book: widget.book,
+          text: text,
+          start: _globalStart,
+          end: _globalEnd,
+          chapterStart: _range.start,
+          chapterEnd: _range.end,
+          chapterTitle: widget.chapterTitle,
+        ),
+      );
+    } catch (error) {
+      if (mounted) {
+        setState(() => _error = error.toString());
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _working = false);
+      }
+    }
+  }
+
+  Duration get _globalStart => widget.chapterStart + _range.start;
+
+  Duration get _globalEnd => widget.chapterStart + _range.end;
+
+  String _formatDuration(Duration duration) => formatDuration(duration);
+}
+
 class _NoteTile extends StatelessWidget {
   const _NoteTile({required this.note});
 
@@ -804,6 +1126,26 @@ class _NoteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<PlayerCubit>();
+    final globalStart = Duration(milliseconds: note.positionMs);
+    final globalEnd = note.endPositionMs == null
+        ? null
+        : Duration(milliseconds: note.endPositionMs!);
+    PlayerChapter? noteChapter;
+    for (final chapter in cubit.state.chapterTimeline) {
+      final chapterEnd = chapter.start + chapter.duration;
+      if (globalStart >= chapter.start && globalStart < chapterEnd) {
+        noteChapter = chapter;
+        break;
+      }
+    }
+    final relativeStart = noteChapter == null
+        ? globalStart
+        : globalStart - noteChapter.start;
+    final relativeEnd = globalEnd == null
+        ? null
+        : noteChapter == null
+        ? globalEnd
+        : globalEnd - noteChapter.start;
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: IconButton.filledTonal(
@@ -817,7 +1159,14 @@ class _NoteTile extends StatelessWidget {
       title: Text(note.text),
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 6),
-        child: Text(formatDuration(Duration(milliseconds: note.positionMs))),
+        child: Text(
+          [
+            ?(note.chapterTitle ?? noteChapter?.title),
+            relativeEnd == null
+                ? formatDuration(relativeStart)
+                : '${formatDuration(relativeStart)}–${formatDuration(relativeEnd)}',
+          ].join(' · '),
+        ),
       ),
       trailing: IconButton(
         tooltip: 'Delete note',

@@ -61,6 +61,12 @@ import 'package:bookish_player/features/settings/domain/settings_repository.dart
     as _i856;
 import 'package:bookish_player/features/settings/presentation/settings_cubit.dart'
     as _i700;
+import 'package:bookish_player/features/settings/presentation/speech_models_cubit.dart'
+    as _i807;
+import 'package:bookish_player/features/transcription/data/cactus_transcription_repository.dart'
+    as _i687;
+import 'package:bookish_player/features/transcription/domain/transcription_repository.dart'
+    as _i1058;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:go_router/go_router.dart' as _i583;
 import 'package:injectable/injectable.dart' as _i526;
@@ -80,6 +86,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i501.AudioPlayer>(() => appModule.audioPlayer);
     gh.lazySingleton<_i583.GoRouter>(() => appModule.router);
+    gh.lazySingleton<_i1058.TranscriptionRepository>(
+      () => _i687.CactusTranscriptionRepository(),
+    );
     gh.lazySingleton<_i619.AudiobookDao>(
       () => _i619.AudiobookDao(gh<_i987.BookishDatabase>()),
     );
@@ -121,6 +130,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i972.AudiobookRepository>(),
         gh<_i856.SettingsRepository>(),
         gh<_i23.LocalExportRepository>(),
+      ),
+    );
+    gh.factory<_i807.SpeechModelsCubit>(
+      () => _i807.SpeechModelsCubit(
+        gh<_i1058.TranscriptionRepository>(),
+        gh<_i443.SettingsDao>(),
       ),
     );
     await gh.factoryAsync<_i712.AudioPlayerRepository>(

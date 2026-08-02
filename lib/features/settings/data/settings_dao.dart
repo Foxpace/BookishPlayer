@@ -18,4 +18,22 @@ class SettingsDao {
   Future<void> setThemePreference(String preference) {
     return _settings.record('appearance').put(_database, {'theme': preference});
   }
+
+  Future<String?> getLibraryLayout() async {
+    final value = await _settings.record('library').get(_database);
+    return value?['layout'] as String?;
+  }
+
+  Future<void> setLibraryLayout(String layout) {
+    return _settings.record('library').put(_database, {'layout': layout});
+  }
+
+  Future<String?> getSpeechModel() async {
+    final value = await _settings.record('transcription').get(_database);
+    return value?['model'] as String?;
+  }
+
+  Future<void> setSpeechModel(String model) {
+    return _settings.record('transcription').put(_database, {'model': model});
+  }
 }

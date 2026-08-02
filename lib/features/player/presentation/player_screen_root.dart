@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/di/injection.dart';
+import '../../settings/data/settings_dao.dart';
+import '../../transcription/domain/transcription_repository.dart';
 import 'player_cubit.dart';
 import 'player_screen.dart';
 
@@ -26,6 +28,12 @@ class _PlayerScreenRootState extends State<PlayerScreenRoot> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(value: _cubit, child: const PlayerScreen());
+    return BlocProvider.value(
+      value: _cubit,
+      child: PlayerScreen(
+        transcription: getIt<TranscriptionRepository>(),
+        settings: getIt<SettingsDao>(),
+      ),
+    );
   }
 }

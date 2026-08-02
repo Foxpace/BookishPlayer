@@ -5,6 +5,7 @@ import '../../../core/di/injection.dart';
 import '../../portability/presentation/portability_cubit.dart';
 import 'settings_cubit.dart';
 import 'settings_screen.dart';
+import 'speech_models_cubit.dart';
 
 /// Independent composition boundary for the settings feature.
 class SettingsScreenRoot extends StatelessWidget {
@@ -16,6 +17,7 @@ class SettingsScreenRoot extends StatelessWidget {
       providers: [
         BlocProvider.value(value: getIt<SettingsCubit>()),
         BlocProvider(create: (_) => getIt<PortabilityCubit>()),
+        BlocProvider(create: (_) => getIt<SpeechModelsCubit>()..load()),
       ],
       child: const SettingsScreen(),
     );
