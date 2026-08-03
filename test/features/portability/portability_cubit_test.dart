@@ -116,4 +116,16 @@ class _Settings implements SettingsRepository {
   Future<void> setThemePreference(ThemePreference preference) async {
     this.preference = preference;
   }
+
+  @override
+  Future<String?> getLibraryLayout() async => null;
+
+  @override
+  Future<void> setLibraryLayout(String layout) async {}
+
+  @override
+  Future<String?> getSpeechModel() async => null;
+
+  @override
+  Future<void> setSpeechModel(String model) async {}
 }

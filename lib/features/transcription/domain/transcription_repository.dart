@@ -1,21 +1,24 @@
 // Provider progress callbacks conventionally expose the error flag positionally.
 // ignore_for_file: avoid_positional_boolean_parameters
 
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../library/domain/audiobook.dart';
+
+part 'transcription_repository.freezed.dart';
 
 typedef TranscriptionDownloadProgress =
     void Function(double? progress, String status, bool isError);
 
-class SpeechModel {
-  const SpeechModel({
-    required this.slug,
-    required this.isDownloaded,
-    this.sizeMb,
-  });
+@freezed
+abstract class SpeechModel with _$SpeechModel {
+  const SpeechModel._();
 
-  final String slug;
-  final int? sizeMb;
-  final bool isDownloaded;
+  const factory SpeechModel({
+    required String slug,
+    required bool isDownloaded,
+    int? sizeMb,
+  }) = _SpeechModel;
 
   String get displayName => slug
       .split('-')
@@ -25,12 +28,6 @@ class SpeechModel {
             : '${part[0].toUpperCase()}${part.substring(1)}',
       )
       .join(' ');
-
-  SpeechModel copyWith({bool? isDownloaded}) => SpeechModel(
-    slug: slug,
-    sizeMb: sizeMb,
-    isDownloaded: isDownloaded ?? this.isDownloaded,
-  );
 }
 
 class TranscriptionException implements Exception {

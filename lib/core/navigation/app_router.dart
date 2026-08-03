@@ -5,7 +5,7 @@ import '../../features/importing/presentation/import_screen_root.dart';
 import '../../features/library/presentation/library_screen_root.dart';
 import '../../features/player/presentation/player_screen_root.dart';
 import '../../features/settings/presentation/settings_screen_root.dart';
-import '../presentation/now_playing_shell.dart';
+import '../../features/player/presentation/now_playing_shell.dart';
 
 abstract final class AppRoutes {
   static const library = 'library';

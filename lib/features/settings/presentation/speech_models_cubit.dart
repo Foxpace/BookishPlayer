@@ -2,53 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../transcription/domain/transcription_repository.dart';
-import '../data/settings_dao.dart';
-
-enum SpeechModelsStatus { initial, loading, ready, downloading, failure }
-
-class SpeechModelsState {
-  const SpeechModelsState({
-    this.status = SpeechModelsStatus.initial,
-    this.models = const [],
-    this.selectedModel = 'whisper-tiny',
-    this.downloadProgress,
-    this.statusMessage,
-    this.message,
-  });
-
-  final SpeechModelsStatus status;
-  final List<SpeechModel> models;
-  final String selectedModel;
-  final double? downloadProgress;
-  final String? statusMessage;
-  final String? message;
-
-  bool get selectedModelIsDownloaded =>
-      models.any((model) => model.slug == selectedModel && model.isDownloaded);
-
-  SpeechModelsState copyWith({
-    SpeechModelsStatus? status,
-    List<SpeechModel>? models,
-    String? selectedModel,
-    double? downloadProgress,
-    bool clearDownloadProgress = false,
-    String? statusMessage,
-    bool clearStatusMessage = false,
-    String? message,
-    bool clearMessage = false,
-  }) => SpeechModelsState(
-    status: status ?? this.status,
-    models: models ?? this.models,
-    selectedModel: selectedModel ?? this.selectedModel,
-    downloadProgress: clearDownloadProgress
-        ? null
-        : downloadProgress ?? this.downloadProgress,
-    statusMessage: clearStatusMessage
-        ? null
-        : statusMessage ?? this.statusMessage,
-    message: clearMessage ? null : message ?? this.message,
-  );
-}
+import '../domain/settings_repository.dart';
+import 'speech_models_state.dart';
 
 @injectable
 class SpeechModelsCubit extends Cubit<SpeechModelsState> {
@@ -56,12 +11,10 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
     : super(const SpeechModelsState());
 
   final TranscriptionRepository _transcription;
-  final SettingsDao _settings;
+  final SettingsRepository _settings;
 
   Future<void> load() async {
-    emit(
-      state.copyWith(status: SpeechModelsStatus.loading, clearMessage: true),
-    );
+    emit(state.copyWith(status: SpeechModelsStatus.loading, message: null));
     try {
       final selected = await _settings.getSpeechModel() ?? 'whisper-tiny';
       final cachedModels = await _transcription.getModels(refresh: false);
@@ -122,7 +75,7 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
 
   Future<void> selectModel(String slug) async {
     await _settings.setSpeechModel(slug);
-    emit(state.copyWith(selectedModel: slug, clearMessage: true));
+    emit(state.copyWith(selectedModel: slug, message: null));
   }
 
   Future<void> downloadSelectedModel() async {
@@ -131,7 +84,7 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
         status: SpeechModelsStatus.downloading,
         downloadProgress: 0,
         statusMessage: 'Starting download…',
-        clearMessage: true,
+        message: null,
       ),
     );
     try {
@@ -164,8 +117,8 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
         state.copyWith(
           status: SpeechModelsStatus.ready,
           models: models,
-          clearDownloadProgress: true,
-          clearStatusMessage: true,
+          downloadProgress: null,
+          statusMessage: null,
           message: 'Speech model downloaded and ready.',
         ),
       );
@@ -173,8 +126,8 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
       emit(
         state.copyWith(
           status: SpeechModelsStatus.failure,
-          clearDownloadProgress: true,
-          clearStatusMessage: true,
+          downloadProgress: null,
+          statusMessage: null,
           message: 'Could not download the speech model.',
         ),
       );

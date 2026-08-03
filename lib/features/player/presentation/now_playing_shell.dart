@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/player/presentation/player_cubit.dart';
-import '../../features/player/presentation/player_state.dart';
-import '../navigation/app_router.dart';
-import 'book_cover.dart';
+import '../../../core/navigation/app_router.dart';
+import '../../../core/presentation/book_cover.dart';
+import 'player_cubit.dart';
+import 'player_state.dart';
 
 class NowPlayingShell extends StatelessWidget {
   const NowPlayingShell({
@@ -59,9 +59,6 @@ class _NowPlayingBar extends StatelessWidget {
             1.0,
           )
         : 0.0;
-    final chapterTitle = state.currentChapter?.title;
-    final status = state.isPlaying ? 'Playing' : 'Paused';
-
     return Material(
       color: Theme.of(context).colorScheme.surfaceContainer,
       elevation: 12,
@@ -88,34 +85,7 @@ class _NowPlayingBar extends StatelessWidget {
                       imageFit: BoxFit.cover,
                     ),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            book.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.titleSmall
-                                ?.copyWith(fontWeight: FontWeight.w700),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            chapterTitle == null
-                                ? status
-                                : '$status · $chapterTitle',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    Expanded(child: _NowPlayingDetails(state: state)),
                     if (state.status == PlayerStatus.loading)
                       const Padding(
                         padding: EdgeInsets.all(12),
@@ -143,6 +113,40 @@ class _NowPlayingBar extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _NowPlayingDetails extends StatelessWidget {
+  const _NowPlayingDetails({required this.state});
+
+  final PlayerState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final chapterTitle = state.currentChapter?.title;
+    final status = state.isPlaying ? 'Playing' : 'Paused';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          state.book!.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          chapterTitle == null ? status : '$status · $chapterTitle',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
     );
   }
 }

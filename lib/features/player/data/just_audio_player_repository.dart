@@ -1,10 +1,13 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as p;
 
 import '../../library/domain/audiobook.dart';
 import '../domain/audio_player_repository.dart';
+
+part 'just_audio_player_repository.freezed.dart';
 
 class JustAudioPlayerRepository implements AudioPlayerRepository {
   JustAudioPlayerRepository(this._player);
@@ -164,22 +167,16 @@ class JustAudioPlayerRepository implements AudioPlayerRepository {
   }
 }
 
-class PlaybackSegment {
-  const PlaybackSegment({
-    required this.id,
-    required this.track,
-    required this.title,
-    required this.globalStartMs,
-    required this.sourceStartMs,
-    required this.durationMs,
-  });
-
-  final String id;
-  final AudioTrack track;
-  final String title;
-  final int globalStartMs;
-  final int sourceStartMs;
-  final int durationMs;
+@freezed
+abstract class PlaybackSegment with _$PlaybackSegment {
+  const factory PlaybackSegment({
+    required String id,
+    required AudioTrack track,
+    required String title,
+    required int globalStartMs,
+    required int sourceStartMs,
+    required int durationMs,
+  }) = _PlaybackSegment;
 }
 
 /// Builds the same chapter-relative timeline used by the player UI, while

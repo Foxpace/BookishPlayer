@@ -33,7 +33,7 @@ The source uses feature-first (screaming) architecture under `lib/features/`:
 - `core` contains cross-feature DI, database setup, and presentation primitives.
 - Navigation uses named `go_router` routes, including deep-linkable player IDs.
 
-Every route has a `ScreenRoot` composition boundary. Roots resolve Cubits through GetIt/Injectable; screen widgets only bind state and user intent. Models and every Cubit state use Freezed, with JSON conversion for persisted models.
+Every route has a `ScreenRoot` composition boundary. Roots resolve Cubits through GetIt/Injectable; screen widgets only bind immutable state and dispatch user intent. Multi-step work lives in pure-Dart application workflows, domain ports isolate data adapters, and all Cubit state uses Freezed. The enforced dependency rules and MVI loop are documented in [`docs/architecture.md`](docs/architecture.md).
 
 ## Development
 

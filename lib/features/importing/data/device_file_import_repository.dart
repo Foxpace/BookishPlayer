@@ -10,6 +10,8 @@ import 'package:injectable/injectable.dart';
 
 import '../domain/file_import_repository.dart';
 
+part 'device_file_copy_worker.dart';
+
 @LazySingleton(as: FileImportRepository)
 class DeviceFileImportRepository implements FileImportRepository {
   DeviceFileImportRepository();
@@ -171,7 +173,7 @@ Future<void> copyFileInBackground(
   final messages = ReceivePort();
   final isolate = await Isolate.spawn(
     _copyFileWorker,
-    _CopyRequest(
+    (
       sourcePath: sourcePath,
       destinationPath: destinationPath,
       partialPath: partialPath,
@@ -183,12 +185,15 @@ Future<void> copyFileInBackground(
   );
   try {
     await for (final message in messages) {
-      if (message is _CopyProgress) {
-        onProgress?.call(message.copiedBytes, message.totalBytes);
-      } else if (message is _CopyComplete) {
+      if (message case (
+        copiedBytes: final int copiedBytes,
+        totalBytes: final int totalBytes,
+      )) {
+        onProgress?.call(copiedBytes, totalBytes);
+      } else if (message == _CopySignal.complete) {
         return;
-      } else if (message is _CopyFailure) {
-        throw FileSystemException(message.message, sourcePath);
+      } else if (message case (message: final String errorMessage)) {
+        throw FileSystemException(errorMessage, sourcePath);
       } else if (message is List && message.isNotEmpty) {
         throw FileSystemException(
           'The background copy isolate failed: ${message.first}',
@@ -213,93 +218,4 @@ Future<void> copyFileInBackground(
       partial.deleteSync();
     }
   }
-}
-
-void _copyFileWorker(_CopyRequest request) {
-  RandomAccessFile? source;
-  RandomAccessFile? destination;
-  try {
-    final partial = File(request.partialPath);
-    if (partial.existsSync()) {
-      partial.deleteSync();
-    }
-    source = File(request.sourcePath).openSync(mode: FileMode.read);
-    destination = partial.openSync(mode: FileMode.write);
-    final totalBytes = source.lengthSync();
-    final buffer = Uint8List(4 * 1024 * 1024);
-    var copiedBytes = 0;
-    var lastReportedBytes = 0;
-    var lastReportedAt = DateTime.now();
-    request.sendPort.send(_CopyProgress(0, totalBytes));
-    while (true) {
-      final count = source.readIntoSync(buffer);
-      if (count == 0) {
-        break;
-      }
-      destination.writeFromSync(buffer, 0, count);
-      copiedBytes += count;
-      final now = DateTime.now();
-      if (copiedBytes - lastReportedBytes >= 16 * 1024 * 1024 ||
-          now.difference(lastReportedAt) >= const Duration(milliseconds: 250)) {
-        request.sendPort.send(_CopyProgress(copiedBytes, totalBytes));
-        lastReportedBytes = copiedBytes;
-        lastReportedAt = now;
-      }
-    }
-    destination.flushSync();
-    destination.closeSync();
-    destination = null;
-    source.closeSync();
-    source = null;
-    if (copiedBytes != totalBytes) {
-      throw FileSystemException(
-        'Copied $copiedBytes of $totalBytes bytes.',
-        request.sourcePath,
-      );
-    }
-    partial.renameSync(request.destinationPath);
-    request.sendPort.send(_CopyProgress(copiedBytes, totalBytes));
-    request.sendPort.send(const _CopyComplete());
-  } catch (error, stackTrace) {
-    try {
-      destination?.closeSync();
-      source?.closeSync();
-      final partial = File(request.partialPath);
-      if (partial.existsSync()) {
-        partial.deleteSync();
-      }
-    } catch (_) {}
-    request.sendPort.send(_CopyFailure('$error\n$stackTrace'));
-  }
-}
-
-class _CopyRequest {
-  const _CopyRequest({
-    required this.sourcePath,
-    required this.destinationPath,
-    required this.partialPath,
-    required this.sendPort,
-  });
-
-  final String sourcePath;
-  final String destinationPath;
-  final String partialPath;
-  final SendPort sendPort;
-}
-
-class _CopyProgress {
-  const _CopyProgress(this.copiedBytes, this.totalBytes);
-
-  final int copiedBytes;
-  final int totalBytes;
-}
-
-class _CopyComplete {
-  const _CopyComplete();
-}
-
-class _CopyFailure {
-  const _CopyFailure(this.message);
-
-  final String message;
 }

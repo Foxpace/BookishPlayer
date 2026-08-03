@@ -280,7 +280,7 @@ as List<Audiobook>,
 /// @nodoc
 mixin _$LibraryState {
 
- LibraryStatus get status; List<Audiobook> get books; LibraryGrouping get grouping; List<LibrarySection> get sections; String? get message;
+ LibraryStatus get status; List<Audiobook> get books; LibraryGrouping get grouping; LibraryLayout get layout; List<LibrarySection> get sections; String? get message;
 /// Create a copy of LibraryState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -291,16 +291,16 @@ $LibraryStateCopyWith<LibraryState> get copyWith => _$LibraryStateCopyWithImpl<L
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibraryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.books, books)&&(identical(other.grouping, grouping) || other.grouping == grouping)&&const DeepCollectionEquality().equals(other.sections, sections)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibraryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.books, books)&&(identical(other.grouping, grouping) || other.grouping == grouping)&&(identical(other.layout, layout) || other.layout == layout)&&const DeepCollectionEquality().equals(other.sections, sections)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(books),grouping,const DeepCollectionEquality().hash(sections),message);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(books),grouping,layout,const DeepCollectionEquality().hash(sections),message);
 
 @override
 String toString() {
-  return 'LibraryState(status: $status, books: $books, grouping: $grouping, sections: $sections, message: $message)';
+  return 'LibraryState(status: $status, books: $books, grouping: $grouping, layout: $layout, sections: $sections, message: $message)';
 }
 
 
@@ -311,7 +311,7 @@ abstract mixin class $LibraryStateCopyWith<$Res>  {
   factory $LibraryStateCopyWith(LibraryState value, $Res Function(LibraryState) _then) = _$LibraryStateCopyWithImpl;
 @useResult
 $Res call({
- LibraryStatus status, List<Audiobook> books, LibraryGrouping grouping, List<LibrarySection> sections, String? message
+ LibraryStatus status, List<Audiobook> books, LibraryGrouping grouping, LibraryLayout layout, List<LibrarySection> sections, String? message
 });
 
 
@@ -328,12 +328,13 @@ class _$LibraryStateCopyWithImpl<$Res>
 
 /// Create a copy of LibraryState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? books = null,Object? grouping = null,Object? sections = null,Object? message = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? books = null,Object? grouping = null,Object? layout = null,Object? sections = null,Object? message = freezed,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as LibraryStatus,books: null == books ? _self.books : books // ignore: cast_nullable_to_non_nullable
 as List<Audiobook>,grouping: null == grouping ? _self.grouping : grouping // ignore: cast_nullable_to_non_nullable
-as LibraryGrouping,sections: null == sections ? _self.sections : sections // ignore: cast_nullable_to_non_nullable
+as LibraryGrouping,layout: null == layout ? _self.layout : layout // ignore: cast_nullable_to_non_nullable
+as LibraryLayout,sections: null == sections ? _self.sections : sections // ignore: cast_nullable_to_non_nullable
 as List<LibrarySection>,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -420,10 +421,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( LibraryStatus status,  List<Audiobook> books,  LibraryGrouping grouping,  List<LibrarySection> sections,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( LibraryStatus status,  List<Audiobook> books,  LibraryGrouping grouping,  LibraryLayout layout,  List<LibrarySection> sections,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LibraryState() when $default != null:
-return $default(_that.status,_that.books,_that.grouping,_that.sections,_that.message);case _:
+return $default(_that.status,_that.books,_that.grouping,_that.layout,_that.sections,_that.message);case _:
   return orElse();
 
 }
@@ -441,10 +442,10 @@ return $default(_that.status,_that.books,_that.grouping,_that.sections,_that.mes
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LibraryStatus status,  List<Audiobook> books,  LibraryGrouping grouping,  List<LibrarySection> sections,  String? message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LibraryStatus status,  List<Audiobook> books,  LibraryGrouping grouping,  LibraryLayout layout,  List<LibrarySection> sections,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _LibraryState():
-return $default(_that.status,_that.books,_that.grouping,_that.sections,_that.message);case _:
+return $default(_that.status,_that.books,_that.grouping,_that.layout,_that.sections,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -461,10 +462,10 @@ return $default(_that.status,_that.books,_that.grouping,_that.sections,_that.mes
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( LibraryStatus status,  List<Audiobook> books,  LibraryGrouping grouping,  List<LibrarySection> sections,  String? message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( LibraryStatus status,  List<Audiobook> books,  LibraryGrouping grouping,  LibraryLayout layout,  List<LibrarySection> sections,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _LibraryState() when $default != null:
-return $default(_that.status,_that.books,_that.grouping,_that.sections,_that.message);case _:
+return $default(_that.status,_that.books,_that.grouping,_that.layout,_that.sections,_that.message);case _:
   return null;
 
 }
@@ -476,7 +477,7 @@ return $default(_that.status,_that.books,_that.grouping,_that.sections,_that.mes
 
 
 class _LibraryState implements LibraryState {
-  const _LibraryState({this.status = LibraryStatus.initial, final  List<Audiobook> books = const <Audiobook>[], this.grouping = LibraryGrouping.none, final  List<LibrarySection> sections = const <LibrarySection>[], this.message}): _books = books,_sections = sections;
+  const _LibraryState({this.status = LibraryStatus.initial, final  List<Audiobook> books = const <Audiobook>[], this.grouping = LibraryGrouping.none, this.layout = LibraryLayout.list, final  List<LibrarySection> sections = const <LibrarySection>[], this.message}): _books = books,_sections = sections;
   
 
 @override@JsonKey() final  LibraryStatus status;
@@ -488,6 +489,7 @@ class _LibraryState implements LibraryState {
 }
 
 @override@JsonKey() final  LibraryGrouping grouping;
+@override@JsonKey() final  LibraryLayout layout;
  final  List<LibrarySection> _sections;
 @override@JsonKey() List<LibrarySection> get sections {
   if (_sections is EqualUnmodifiableListView) return _sections;
@@ -507,16 +509,16 @@ _$LibraryStateCopyWith<_LibraryState> get copyWith => __$LibraryStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibraryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._books, _books)&&(identical(other.grouping, grouping) || other.grouping == grouping)&&const DeepCollectionEquality().equals(other._sections, _sections)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibraryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._books, _books)&&(identical(other.grouping, grouping) || other.grouping == grouping)&&(identical(other.layout, layout) || other.layout == layout)&&const DeepCollectionEquality().equals(other._sections, _sections)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_books),grouping,const DeepCollectionEquality().hash(_sections),message);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_books),grouping,layout,const DeepCollectionEquality().hash(_sections),message);
 
 @override
 String toString() {
-  return 'LibraryState(status: $status, books: $books, grouping: $grouping, sections: $sections, message: $message)';
+  return 'LibraryState(status: $status, books: $books, grouping: $grouping, layout: $layout, sections: $sections, message: $message)';
 }
 
 
@@ -527,7 +529,7 @@ abstract mixin class _$LibraryStateCopyWith<$Res> implements $LibraryStateCopyWi
   factory _$LibraryStateCopyWith(_LibraryState value, $Res Function(_LibraryState) _then) = __$LibraryStateCopyWithImpl;
 @override @useResult
 $Res call({
- LibraryStatus status, List<Audiobook> books, LibraryGrouping grouping, List<LibrarySection> sections, String? message
+ LibraryStatus status, List<Audiobook> books, LibraryGrouping grouping, LibraryLayout layout, List<LibrarySection> sections, String? message
 });
 
 
@@ -544,12 +546,13 @@ class __$LibraryStateCopyWithImpl<$Res>
 
 /// Create a copy of LibraryState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? books = null,Object? grouping = null,Object? sections = null,Object? message = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? books = null,Object? grouping = null,Object? layout = null,Object? sections = null,Object? message = freezed,}) {
   return _then(_LibraryState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as LibraryStatus,books: null == books ? _self._books : books // ignore: cast_nullable_to_non_nullable
 as List<Audiobook>,grouping: null == grouping ? _self.grouping : grouping // ignore: cast_nullable_to_non_nullable
-as LibraryGrouping,sections: null == sections ? _self._sections : sections // ignore: cast_nullable_to_non_nullable
+as LibraryGrouping,layout: null == layout ? _self.layout : layout // ignore: cast_nullable_to_non_nullable
+as LibraryLayout,sections: null == sections ? _self._sections : sections // ignore: cast_nullable_to_non_nullable
 as List<LibrarySection>,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

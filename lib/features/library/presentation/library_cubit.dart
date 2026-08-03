@@ -3,22 +3,28 @@ import 'package:injectable/injectable.dart';
 
 import '../../importing/domain/file_import_repository.dart';
 import '../../importing/domain/audiobook_artwork_extractor.dart';
+import '../../settings/domain/settings_repository.dart';
 import '../domain/audiobook.dart';
 import '../domain/audiobook_repository.dart';
 import 'library_state.dart';
 
 @injectable
 class LibraryCubit extends Cubit<LibraryState> {
-  LibraryCubit(this._books, this._files, this._artwork)
+  LibraryCubit(this._books, this._files, this._artwork, this._settings)
     : super(const LibraryState());
 
   final AudiobookRepository _books;
   final FileImportRepository _files;
   final AudiobookArtworkExtractor _artwork;
+  final SettingsRepository _settings;
 
   Future<void> load() async {
     emit(state.copyWith(status: LibraryStatus.loading, message: null));
     try {
+      final savedLayout = await _settings.getLibraryLayout();
+      final layout = savedLayout == LibraryLayout.grid.name
+          ? LibraryLayout.grid
+          : LibraryLayout.list;
       final savedBooks = await _books.getBooks();
       final books = <Audiobook>[];
       for (final book in savedBooks) {
@@ -38,6 +44,7 @@ class LibraryCubit extends Cubit<LibraryState> {
         state.copyWith(
           status: LibraryStatus.ready,
           books: books,
+          layout: layout,
           sections: _buildSections(books, state.grouping),
         ),
       );
@@ -92,6 +99,15 @@ class LibraryCubit extends Cubit<LibraryState> {
         sections: _buildSections(state.books, grouping),
       ),
     );
+  }
+
+  Future<void> setLayout(LibraryLayout layout) async {
+    emit(state.copyWith(layout: layout));
+    try {
+      await _settings.setLibraryLayout(layout.name);
+    } catch (_) {
+      emit(state.copyWith(message: 'The library layout could not be saved.'));
+    }
   }
 
   List<LibrarySection> _buildSections(

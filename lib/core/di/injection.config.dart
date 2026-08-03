@@ -43,10 +43,16 @@ import 'package:bookish_player/features/library/domain/audiobook_repository.dart
     as _i972;
 import 'package:bookish_player/features/library/presentation/library_cubit.dart'
     as _i1055;
+import 'package:bookish_player/features/player/data/share_plus_quote_share_repository.dart'
+    as _i454;
 import 'package:bookish_player/features/player/domain/audio_player_repository.dart'
     as _i712;
+import 'package:bookish_player/features/player/domain/quote_share_repository.dart'
+    as _i536;
 import 'package:bookish_player/features/player/presentation/player_cubit.dart'
     as _i781;
+import 'package:bookish_player/features/player/presentation/quote_transcription_cubit.dart'
+    as _i540;
 import 'package:bookish_player/features/portability/data/file_picker_local_export_repository.dart'
     as _i40;
 import 'package:bookish_player/features/portability/domain/local_export_repository.dart'
@@ -104,6 +110,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i556.AudiobookArtworkExtractor>(
       () => _i913.MetadataAudiobookArtworkExtractor(),
     );
+    gh.lazySingleton<_i536.QuoteShareRepository>(
+      () => _i454.SharePlusQuoteShareRepository(),
+    );
     gh.lazySingleton<_i550.FileImportRepository>(
       () => _i979.DeviceFileImportRepository(),
     );
@@ -132,21 +141,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i23.LocalExportRepository>(),
       ),
     );
-    gh.factory<_i807.SpeechModelsCubit>(
-      () => _i807.SpeechModelsCubit(
-        gh<_i1058.TranscriptionRepository>(),
-        gh<_i443.SettingsDao>(),
-      ),
-    );
     await gh.factoryAsync<_i712.AudioPlayerRepository>(
       () => appModule.playerRepository(gh<_i501.AudioPlayer>()),
       preResolve: true,
     );
-    gh.factory<_i1055.LibraryCubit>(
-      () => _i1055.LibraryCubit(
-        gh<_i972.AudiobookRepository>(),
-        gh<_i550.FileImportRepository>(),
-        gh<_i556.AudiobookArtworkExtractor>(),
+    gh.factory<_i807.SpeechModelsCubit>(
+      () => _i807.SpeechModelsCubit(
+        gh<_i1058.TranscriptionRepository>(),
+        gh<_i856.SettingsRepository>(),
       ),
     );
     gh.lazySingleton<_i781.PlayerCubit>(
@@ -155,6 +157,24 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i972.AudiobookRepository>(),
         gh<_i23.LocalExportRepository>(),
       ),
+    );
+    gh.factory<_i1055.LibraryCubit>(
+      () => _i1055.LibraryCubit(
+        gh<_i972.AudiobookRepository>(),
+        gh<_i550.FileImportRepository>(),
+        gh<_i556.AudiobookArtworkExtractor>(),
+        gh<_i856.SettingsRepository>(),
+      ),
+    );
+    gh.factory<_i540.QuoteTranscriptionCubit>(
+      () => _i540.QuoteTranscriptionCubit(
+        gh<_i1058.TranscriptionRepository>(),
+        gh<_i856.SettingsRepository>(),
+        gh<_i536.QuoteShareRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i700.SettingsCubit>(
+      () => _i700.SettingsCubit(gh<_i856.SettingsRepository>()),
     );
     gh.factory<_i785.ImportCubit>(
       () => _i785.ImportCubit(
@@ -166,9 +186,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i25.AudiobookMetadataExtractor>(),
         gh<_i955.ImportDiagnosticsRepository>(),
       ),
-    );
-    gh.lazySingleton<_i700.SettingsCubit>(
-      () => _i700.SettingsCubit(gh<_i856.SettingsRepository>()),
     );
     return this;
   }

@@ -1,18 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../application/import_progress.dart';
+
 part 'import_state.freezed.dart';
 
 enum ImportStatus { picking, importing, complete, cancelled, failure }
-
-enum ImportStage {
-  selectingFiles,
-  copyingFile,
-  readingDuration,
-  analyzingChapters,
-  extractingArtwork,
-  savingBook,
-  removingOriginals,
-}
 
 @freezed
 abstract class ImportState with _$ImportState {
