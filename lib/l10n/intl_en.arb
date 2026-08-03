@@ -1,0 +1,49 @@
+{
+  "@@locale": "en",
+  "appTitle": "Bookish",
+  "appDescription": "A quiet, offline-first audiobook player.",
+  "settingsTitle": "Settings",
+  "appearanceTitle": "Appearance",
+  "appearanceDescription": "Choose how Bookish looks on this device.",
+  "themeFollowSystem": "Follow system",
+  "themeFollowSystemDescription": "Match your device appearance automatically",
+  "themeLight": "Light",
+  "themeLightDescription": "Warm paper and dark ink",
+  "themeDark": "Dark",
+  "themeDarkDescription": "Comfortable listening after lights out",
+  "localTranscriptionTitle": "Local transcription",
+  "localTranscriptionDescription": "Choose and download the on-device speech model used to turn audiobook ranges into quotes.",
+  "speechToTextModel": "Speech-to-text model",
+  "noSpeechModelsAvailable": "No speech models available",
+  "speechModelDescription": "Choose a model to use it. If needed, it downloads automatically. Audio and generated text stay on this device.",
+  "chooseSpeechModel": "Choose speech model",
+  "chooseSpeechModelDescription": "Tap a model to select it. Models that are not on this device download automatically.",
+  "modelDownloaded": "Downloaded",
+  "modelAvailableToDownload": "Available to download",
+  "modelNotDownloaded": "Not downloaded",
+  "modelSelected": "Selected",
+  "modelSize": "{size} MB",
+  "@modelSize": {
+    "placeholders": {
+      "size": {"type": "num"}
+    }
+  },
+  "localDataTitle": "Local data",
+  "localDataDescription": "Back up progress, notes, metadata, and settings without a cloud account.",
+  "exportBackup": "Export backup",
+  "exportBackupDescription": "Save a portable Bookish JSON file",
+  "restoreBackup": "Restore backup",
+  "restoreBackupDescription": "Replace local library data from a backup",
+  "aboutTitle": "About",
+  "aboutDescription": "App information, version, and open-source notices.",
+  "aboutBookish": "About Bookish",
+  "appVersion": "Version {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "openSourceLicenses": "Open-source licenses",
+  "openSourceLicensesDescription": "Licenses for Flutter and every package used by Bookish",
+  "applicationLegalese": "Copyright © 2026 Bookish contributors"
+}

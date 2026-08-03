@@ -5,6 +5,7 @@ class _SpeechModelsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
     return BlocConsumer<SpeechModelsCubit, SpeechModelsState>(
       listenWhen: (previous, current) =>
           current.message != null && previous.message != current.message,
@@ -27,7 +28,7 @@ class _SpeechModelsCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Speech-to-text model',
+                  l10n.speechToTextModel,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -51,7 +52,7 @@ class _SpeechModelsCard extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: selectedModel == null
-                                ? const Text('No speech models available')
+                                ? Text(l10n.noSpeechModelsAvailable)
                                 : _SpeechModelLabel(model: selectedModel),
                           ),
                           const SizedBox(width: 8),
@@ -75,7 +76,7 @@ class _SpeechModelsCard extends StatelessWidget {
                 ],
                 const SizedBox(height: 16),
                 Text(
-                  'Choose a model to use it. If needed, it downloads automatically. Audio and generated text stay on this device.',
+                  l10n.speechModelDescription,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -107,6 +108,7 @@ class _SpeechModelPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
     return SafeArea(
       top: false,
       child: BlocBuilder<SpeechModelsCubit, SpeechModelsState>(
@@ -126,13 +128,13 @@ class _SpeechModelPickerSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Choose speech model',
+                        l10n.chooseSpeechModel,
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Tap a model to select it. Models that are not on this device download automatically.',
+                        l10n.chooseSpeechModelDescription,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -168,12 +170,12 @@ class _SpeechModelPickerSheet extends StatelessWidget {
                       final model = state.models[index];
                       final selected = model.slug == state.selectedModel;
                       final availability = model.isDownloaded
-                          ? 'Downloaded'
-                          : 'Available to download';
+                          ? l10n.modelDownloaded
+                          : l10n.modelAvailableToDownload;
                       final details = [
-                        if (model.sizeMb case final size?) '$size MB',
+                        if (model.sizeMb case final size?) l10n.modelSize(size),
                         availability,
-                        if (selected) 'Selected',
+                        if (selected) l10n.modelSelected,
                       ].join(' · ');
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(
@@ -240,9 +242,10 @@ class _SpeechModelLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
     final details = [
-      if (model.sizeMb case final size?) '$size MB',
-      model.isDownloaded ? 'Downloaded' : 'Not downloaded',
+      if (model.sizeMb case final size?) l10n.modelSize(size),
+      model.isDownloaded ? l10n.modelDownloaded : l10n.modelNotDownloaded,
     ].join(' · ');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

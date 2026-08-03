@@ -71,7 +71,8 @@ Iterable<File> _dartFiles({List<String> rootNames = const ['lib', 'test']}) {
 bool _isGenerated(String path) =>
     path.endsWith('.freezed.dart') ||
     path.endsWith('.g.dart') ||
-    path.endsWith('injection.config.dart');
+    path.endsWith('injection.config.dart') ||
+    path.contains('/core/localization/generated/');
 
 void _checkImport(String source, String uri, List<String> violations) {
   final target = uri.startsWith('package:bookish_player/')

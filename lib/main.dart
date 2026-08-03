@@ -1,10 +1,12 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:just_audio/just_audio.dart';
 
 import 'core/di/injection.dart';
+import 'core/localization/generated/l10n.dart';
 import 'core/theme/bookish_theme.dart';
 import 'features/player/data/bookish_audio_handler.dart';
 import 'features/player/data/just_audio_player_repository.dart';
@@ -80,7 +82,14 @@ class BookishApp extends StatelessWidget {
           previous.themePreference != current.themePreference,
       builder: (context, state) => MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: 'Bookish',
+        onGenerateTitle: (context) => S.of(context).appTitle,
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
         theme: BookishTheme.light,
         darkTheme: BookishTheme.dark,
         themeMode: _themeMode(state.themePreference),

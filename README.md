@@ -39,11 +39,16 @@ Every route has a `ScreenRoot` composition boundary. Roots resolve Cubits throug
 
 ```sh
 flutter pub get
+flutter pub run intl_utils:generate
 dart run build_runner build
 flutter test
 flutter analyze
 flutter run
 ```
+
+Localization source files live in `lib/l10n`. After changing an ARB file, run
+`flutter pub run intl_utils:generate` to refresh Flutter Intl's generated `S`
+class. The app follows the device locale and supports English and Slovak.
 
 ## Testing
 
