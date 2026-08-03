@@ -19,4 +19,16 @@ class SembastSettingsRepository implements SettingsRepository {
   Future<void> setThemePreference(ThemePreference preference) {
     return _dao.setThemePreference(preference.name);
   }
+
+  @override
+  Future<String?> getLibraryLayout() => _dao.getLibraryLayout();
+
+  @override
+  Future<void> setLibraryLayout(String layout) => _dao.setLibraryLayout(layout);
+
+  @override
+  Future<String?> getSpeechModel() => _dao.getSpeechModel();
+
+  @override
+  Future<void> setSpeechModel(String model) => _dao.setSpeechModel(model);
 }

@@ -1,4 +1,5 @@
 import 'package:bookish_player/features/library/domain/audiobook.dart';
+import 'package:bookish_player/features/player/domain/transcription_draft.dart';
 import 'package:bookish_player/features/player/presentation/transcription_preview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,7 +27,6 @@ void main() {
               chapterEnd: const Duration(seconds: 50),
               chapterTitle: 'Chapter two',
             ),
-            onSave: (_) async {},
           ),
         ),
       );

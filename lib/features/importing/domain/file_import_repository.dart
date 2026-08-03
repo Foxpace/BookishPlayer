@@ -1,20 +1,22 @@
-class ImportedAudioFile {
-  const ImportedAudioFile({required this.path, required this.displayName});
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  final String path;
-  final String displayName;
+part 'file_import_repository.freezed.dart';
+
+@freezed
+abstract class ImportedAudioFile with _$ImportedAudioFile {
+  const factory ImportedAudioFile({
+    required String path,
+    required String displayName,
+  }) = _ImportedAudioFile;
 }
 
-class SelectedAudioFile {
-  const SelectedAudioFile({
-    required this.sourcePath,
-    required this.displayName,
-    this.sizeBytes,
-  });
-
-  final String sourcePath;
-  final String displayName;
-  final int? sizeBytes;
+@freezed
+abstract class SelectedAudioFile with _$SelectedAudioFile {
+  const factory SelectedAudioFile({
+    required String sourcePath,
+    required String displayName,
+    int? sizeBytes,
+  }) = _SelectedAudioFile;
 }
 
 typedef FileCopyProgress = void Function(int copiedBytes, int totalBytes);

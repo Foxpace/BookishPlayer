@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:path/path.dart' as p;
-import 'package:uuid/uuid.dart';
 
-import '../../library/domain/audiobook.dart';
 import '../../library/domain/audiobook_repository.dart';
 import '../../player/domain/audio_player_repository.dart';
+import '../application/audiobook_import_workflow.dart';
+import '../application/import_progress.dart';
 import '../domain/audiobook_artwork_extractor.dart';
 import '../domain/audiobook_metadata_extractor.dart';
 import '../domain/file_import_repository.dart';
@@ -18,248 +17,99 @@ import 'import_state.dart';
 @injectable
 class ImportCubit extends Cubit<ImportState> {
   ImportCubit(
-    this._files,
-    this._audio,
-    this._books,
-    this._chapters,
-    this._artwork,
-    this._metadata,
+    FileImportRepository files,
+    AudioPlayerRepository audio,
+    AudiobookRepository books,
+    M4bChapterParser chapters,
+    AudiobookArtworkExtractor artwork,
+    AudiobookMetadataExtractor metadata,
     this._diagnostics,
-  ) : super(const ImportState());
+  ) : _workflow = AudiobookImportWorkflow(
+        files,
+        audio,
+        books,
+        chapters,
+        artwork,
+        metadata,
+      ),
+      super(const ImportState());
 
-  final FileImportRepository _files;
-  final AudioPlayerRepository _audio;
-  final AudiobookRepository _books;
-  final M4bChapterParser _chapters;
-  final AudiobookArtworkExtractor _artwork;
-  final AudiobookMetadataExtractor _metadata;
+  final AudiobookImportWorkflow _workflow;
   final ImportDiagnosticsRepository _diagnostics;
-  ImportStage _activeStage = ImportStage.selectingFiles;
-  String? _activeFile;
-  List<String> _parserDiagnostics = const [];
-  DateTime? _stageStartedAt;
-  final _stageHistory = <String>[];
-  final _pendingImportedPaths = <String>{};
-  Future<void> Function()? _retryAction;
+  var _finderTransfer = false;
+  List<SelectedAudioFile> _selectedFiles = const [];
+  ImportWorkflowFailure? _failure;
 
-  Future<void> start() async {
-    await _start(_files.pickAudioFiles, clearTemporaryFilesAfterImport: true);
-  }
+  Future<void> start() => _run(finderTransfer: false);
 
-  Future<void> startFinderTransfer() async {
-    await _start(
-      _files.findTransferredAudioFiles,
-      emptyHeading: 'No transferred audiobooks found',
-      emptyDetail:
-          'In Finder, select your iPhone, open Files > Bookish, then drag audiobooks directly into the Bookish file area.',
-      removeAfterImport: true,
-    );
-  }
+  Future<void> startFinderTransfer() => _run(finderTransfer: true);
 
-  Future<void> _start(
-    Future<List<SelectedAudioFile>> Function() selectFiles, {
-    String? emptyHeading,
-    String? emptyDetail,
-    bool removeAfterImport = false,
-    bool clearTemporaryFilesAfterImport = false,
-  }) async {
-    _retryAction = () => _start(
-      selectFiles,
-      emptyHeading: emptyHeading,
-      emptyDetail: emptyDetail,
-      removeAfterImport: removeAfterImport,
-      clearTemporaryFilesAfterImport: clearTemporaryFilesAfterImport,
-    );
+  Future<void> _run({required bool finderTransfer}) async {
+    _finderTransfer = finderTransfer;
+    _failure = null;
+    _emitProgress(const ImportProgress(stage: ImportStage.selectingFiles));
     try {
-      _activeFile = null;
-      _parserDiagnostics = const [];
-      _pendingImportedPaths.clear();
-      _stageStartedAt = null;
-      _stageHistory.clear();
-      _emitStage(
-        ImportStage.selectingFiles,
-        heading: 'Preparing file selection',
-        detail: 'Waiting for your device’s document provider…',
+      final result = await _workflow.run(
+        finderTransfer: finderTransfer,
+        onProgress: _emitProgress,
       );
-      final selectedFiles = await selectFiles();
-      if (selectedFiles.isEmpty) {
-        if (emptyHeading == null) {
-          emit(
-            state.copyWith(
-              status: ImportStatus.cancelled,
-              heading: 'No files were selected',
-              detail:
-                  'Android did not return any files to Bookish. You can open '
-                  'the file browser again or return to your library.',
-              progress: null,
-            ),
-          );
-        } else {
-          emit(
-            state.copyWith(
-              status: ImportStatus.failure,
-              heading: emptyHeading,
-              detail: emptyDetail ?? '',
-              diagnostics: null,
-              progress: null,
-            ),
-          );
-        }
+      _selectedFiles = result.selectedFiles;
+      if (result.selectedFiles.isEmpty) {
+        _emitEmptySelection(finderTransfer);
         return;
-      }
-      for (var index = 0; index < selectedFiles.length; index++) {
-        final selected = selectedFiles[index];
-        var title = _titleFromFilename(selected.displayName);
-        _emitStage(
-          ImportStage.copyingFile,
-          selected: selected,
-          index: index,
-          total: selectedFiles.length,
-          title: title,
-        );
-        final copied = await _copySelectedFile(
-          selected,
-          fileIndex: index,
-          fileCount: selectedFiles.length,
-          completedBytes: 0,
-          batchBytes: selected.sizeBytes ?? 0,
-        );
-        final file = copied.file;
-        _pendingImportedPaths.add(file.path);
-        _emitStage(
-          ImportStage.readingDuration,
-          selected: selected,
-          index: index,
-          total: selectedFiles.length,
-          title: title,
-        );
-        final duration = await _audio.probeDuration(file.path);
-        _emitStage(
-          ImportStage.analyzingChapters,
-          selected: selected,
-          index: index,
-          total: selectedFiles.length,
-          title: title,
-        );
-        final chapterReport = await _chapters.analyze(file.path);
-        _parserDiagnostics = [
-          ...chapterReport.diagnostics,
-          ...chapterReport.warnings,
-        ];
-        final metadata = await _metadata.extract(file.path);
-        title = metadata.title?.trim().isNotEmpty == true
-            ? metadata.title!.trim()
-            : title;
-        _emitStage(
-          ImportStage.extractingArtwork,
-          selected: selected,
-          index: index,
-          total: selectedFiles.length,
-          title: title,
-        );
-        final artworkPath = await _artwork.extract(file.path);
-        if (artworkPath != null) {
-          _pendingImportedPaths.add(artworkPath);
-        }
-        _emitStage(
-          ImportStage.savingBook,
-          selected: selected,
-          index: index,
-          total: selectedFiles.length,
-          title: title,
-        );
-        await _books.saveBook(
-          Audiobook(
-            id: const Uuid().v4(),
-            title: title,
-            author: metadata.author ?? '',
-            series: metadata.series ?? '',
-            narrator: metadata.narrator ?? '',
-            year: metadata.year,
-            filePath: file.path,
-            durationMs: duration.inMilliseconds,
-            addedAt: DateTime.now(),
-            chapters: chapterReport.chapters,
-            artworkPath: artworkPath,
-            artworkScanned: true,
-          ),
-        );
-        _pendingImportedPaths.remove(file.path);
-        if (artworkPath != null) {
-          _pendingImportedPaths.remove(artworkPath);
-        }
-      }
-      if (removeAfterImport) {
-        await _removeOriginals(selectedFiles);
       }
       emit(
         state.copyWith(
           status: ImportStatus.complete,
-          importedCount: selectedFiles.length,
-        ),
-      );
-    } catch (error, stackTrace) {
-      await _cleanupPendingImports();
-      emit(
-        state.copyWith(
-          status: ImportStatus.failure,
-          heading: _failureHeading(error),
-          detail: _failureDetail(error),
-          diagnostics: _buildDiagnostics(error, stackTrace),
+          importedCount: result.importedCount,
           progress: null,
         ),
       );
-    } finally {
-      if (clearTemporaryFilesAfterImport) {
-        await _files.clearTemporaryFiles();
-      }
+    } on ImportWorkflowFailure catch (failure) {
+      _failure = failure;
+      emit(
+        state.copyWith(
+          status: ImportStatus.failure,
+          heading: _failureHeading(failure),
+          detail: _failureDetail(failure),
+          diagnostics: _buildDiagnostics(failure),
+          progress: null,
+        ),
+      );
     }
   }
 
-  Future<void> _cleanupPendingImports() async {
-    for (final path in _pendingImportedPaths.toList()) {
-      try {
-        await _files.deleteImportedFile(path);
-      } catch (_) {
-        // Preserve the original import failure in diagnostics.
-      }
+  Future<void> retry() async {
+    final failure = _failure;
+    if (failure?.originalRemovalOnly == true && _selectedFiles.isNotEmpty) {
+      await _retryOriginalRemoval();
+      return;
     }
-    _pendingImportedPaths.clear();
+    await _run(finderTransfer: _finderTransfer);
   }
 
-  Future<({ImportedAudioFile file, int totalBytes})> _copySelectedFile(
-    SelectedAudioFile selected, {
-    required int fileIndex,
-    required int fileCount,
-    required int completedBytes,
-    required int batchBytes,
-  }) async {
-    var actualTotalBytes = selected.sizeBytes ?? 0;
-    final file = await _files.importFile(
-      selected,
-      onProgress: (copiedBytes, totalBytes) {
-        actualTotalBytes = totalBytes;
-        final progress = batchBytes > 0
-            ? (completedBytes + copiedBytes) / batchBytes
-            : totalBytes > 0
-            ? (fileIndex + copiedBytes / totalBytes) / fileCount
-            : null;
-        emit(
-          state.copyWith(
-            status: ImportStatus.importing,
-            stage: ImportStage.copyingFile,
-            importedCount: fileIndex,
-            totalFiles: fileCount,
-            heading: 'Copying audiobook',
-            detail:
-                '${selected.displayName}\n'
-                '${_formatBytes(copiedBytes)} of ${_formatBytes(totalBytes)} copied',
-            progress: progress?.clamp(0.0, 1.0),
-          ),
-        );
-      },
-    );
-    return (file: file, totalBytes: actualTotalBytes);
+  Future<void> _retryOriginalRemoval() async {
+    try {
+      await _workflow.retryOriginalRemoval(_selectedFiles);
+      emit(state.copyWith(status: ImportStatus.complete));
+    } catch (error, stackTrace) {
+      final failure = ImportWorkflowFailure(
+        error: error,
+        stackTrace: stackTrace,
+        stage: ImportStage.removingOriginals,
+        stageHistory: const [],
+        originalRemovalOnly: true,
+      );
+      _failure = failure;
+      emit(
+        state.copyWith(
+          status: ImportStatus.failure,
+          heading: _failureHeading(failure),
+          detail: _failureDetail(failure),
+          diagnostics: _buildDiagnostics(failure),
+        ),
+      );
+    }
   }
 
   Future<void> copyDiagnostics() async {
@@ -269,61 +119,24 @@ class ImportCubit extends Cubit<ImportState> {
     }
   }
 
-  Future<void> retry() => _retryAction?.call() ?? start();
-
-  Future<void> _removeOriginals(List<SelectedAudioFile> files) async {
-    try {
-      _emitStage(
-        ImportStage.removingOriginals,
-        total: files.length,
-        heading: 'Removing originals',
-        detail:
-            'The audiobook is safely copied. Bookish is now removing the '
-            'selected original ${files.length == 1 ? 'file' : 'files'}.',
-      );
-      await _files.removeTransferredAudioFiles(files);
-    } catch (error) {
-      _retryAction = () => _retryOriginalRemoval(files);
-      throw _SourceRemovalException(error);
-    }
+  void _emitEmptySelection(bool finderTransfer) {
+    emit(
+      state.copyWith(
+        status: finderTransfer ? ImportStatus.failure : ImportStatus.cancelled,
+        heading: finderTransfer
+            ? 'No transferred audiobooks found'
+            : 'No files were selected',
+        detail: finderTransfer
+            ? 'In Finder, select your iPhone, open Files > Bookish, then drag audiobooks directly into the Bookish file area.'
+            : 'Android did not return any files to Bookish. You can open the file browser again or return to your library.',
+        diagnostics: null,
+        progress: null,
+      ),
+    );
   }
 
-  Future<void> _retryOriginalRemoval(List<SelectedAudioFile> files) async {
-    try {
-      await _files.removeTransferredAudioFiles(files);
-      emit(state.copyWith(status: ImportStatus.complete));
-    } catch (error, stackTrace) {
-      final wrapped = _SourceRemovalException(error);
-      emit(
-        state.copyWith(
-          status: ImportStatus.failure,
-          heading: _failureHeading(wrapped),
-          detail: _failureDetail(wrapped),
-          diagnostics: _buildDiagnostics(wrapped, stackTrace),
-        ),
-      );
-    }
-  }
-
-  void _emitStage(
-    ImportStage stage, {
-    SelectedAudioFile? selected,
-    int index = 0,
-    int total = 0,
-    String? title,
-    String? heading,
-    String? detail,
-  }) {
-    final now = DateTime.now();
-    if (_stageStartedAt case final started?) {
-      _stageHistory.add(
-        '${_activeStage.name}: ${now.difference(started).inMilliseconds} ms',
-      );
-    }
-    _stageStartedAt = now;
-    _activeStage = stage;
-    _activeFile = selected?.displayName;
-    final stageText = switch (stage) {
+  void _emitProgress(ImportProgress progress) {
+    final stageText = switch (progress.stage) {
       ImportStage.selectingFiles => 'Preparing file selection',
       ImportStage.copyingFile => 'Copying audiobook',
       ImportStage.readingDuration => 'Reading audio information',
@@ -332,46 +145,62 @@ class ImportCubit extends Cubit<ImportState> {
       ImportStage.savingBook => 'Saving to your library',
       ImportStage.removingOriginals => 'Removing originals',
     };
-    final fileText = selected?.displayName ?? title;
+    final fileText = progress.selected?.displayName ?? progress.title;
     emit(
       state.copyWith(
         status: ImportStatus.importing,
-        stage: stage,
-        importedCount: index,
-        totalFiles: total,
-        currentTitle: title ?? fileText,
-        heading: heading ?? stageText,
-        detail:
-            detail ??
-            (fileText == null
-                ? 'Please keep Bookish open for a moment.'
-                : '$fileText\nPlease keep Bookish open for a moment.'),
-        progress: total > 1 ? index / total : null,
+        stage: progress.stage,
+        importedCount: progress.index,
+        totalFiles: progress.total,
+        currentTitle: progress.title ?? fileText,
+        heading: stageText,
+        detail: _progressDetail(progress, fileText),
+        progress: _progressValue(progress),
         diagnostics: null,
       ),
     );
   }
 
-  String _failureHeading(Object error) {
-    if (error is _SourceRemovalException) {
+  String _progressDetail(ImportProgress progress, String? fileText) {
+    if (progress.copiedBytes case final copied?) {
+      return '${progress.selected?.displayName}\n'
+          '${_formatBytes(copied)} of ${_formatBytes(progress.totalBytes ?? 0)} copied';
+    }
+    if (progress.stage == ImportStage.removingOriginals) {
+      return 'The audiobook is safely copied. Bookish is now removing the selected original files.';
+    }
+    return fileText == null
+        ? 'Please keep Bookish open for a moment.'
+        : '$fileText\nPlease keep Bookish open for a moment.';
+  }
+
+  double? _progressValue(ImportProgress progress) {
+    final copied = progress.copiedBytes;
+    final bytes = progress.totalBytes;
+    if (copied != null && bytes != null && bytes > 0) {
+      return ((progress.index + copied / bytes) / progress.total).clamp(0, 1);
+    }
+    return progress.total > 1 ? progress.index / progress.total : null;
+  }
+
+  String _failureHeading(ImportWorkflowFailure failure) {
+    if (failure.originalRemovalOnly) {
       return 'The book was copied, but the originals remain';
     }
-    if (error is FileSystemException) {
+    if (failure.error is FileSystemException) {
       return 'Bookish could not access that file';
     }
-    if (error is FormatException) {
+    if (failure.error is FormatException) {
       return 'The audiobook metadata is malformed';
     }
     return 'The audiobook could not be imported';
   }
 
-  String _failureDetail(Object error) {
-    if (error is _SourceRemovalException) {
-      return 'The document provider did not allow Bookish to delete one or '
-          'more originals. Your imported copy is safe. You can retry deletion '
-          'or remove the originals in the Files app.';
+  String _failureDetail(ImportWorkflowFailure failure) {
+    if (failure.originalRemovalOnly) {
+      return 'The document provider did not allow Bookish to delete one or more originals. Your imported copy is safe. You can retry deletion or remove the originals in the Files app.';
     }
-    final stage = switch (_activeStage) {
+    final stage = switch (failure.stage) {
       ImportStage.selectingFiles =>
         'receiving the file from the document provider',
       ImportStage.copyingFile => 'copying the file into Bookish',
@@ -381,58 +210,29 @@ class ImportCubit extends Cubit<ImportState> {
       ImportStage.savingBook => 'saving the library entry',
       ImportStage.removingOriginals => 'removing the selected original files',
     };
-    final advice = error is FileSystemException
-        ? 'Check that the file is still available, fully downloaded, and that the device has enough free storage.'
-        : 'The detailed diagnostic below can be copied when reporting the problem.';
-    return 'The failure happened while $stage. $advice';
+    return 'The failure happened while $stage. The detailed diagnostic below can be copied when reporting the problem.';
   }
 
-  String _buildDiagnostics(Object error, StackTrace stackTrace) {
-    final lines = <String>[
-      'Bookish import diagnostic',
-      'Time: ${DateTime.now().toIso8601String()}',
-      'Stage: ${_activeStage.name}',
-      if (_activeFile != null) 'File: $_activeFile',
-      'Platform: ${Platform.operatingSystem} ${Platform.operatingSystemVersion}',
-      'Error type: ${error.runtimeType}',
-      'Error: $error',
+  String _buildDiagnostics(ImportWorkflowFailure failure) => [
+    'Bookish import diagnostic',
+    'Time: ${DateTime.now().toIso8601String()}',
+    'Stage: ${failure.stage.name}',
+    if (failure.activeFile != null) 'File: ${failure.activeFile}',
+    'Platform: ${Platform.operatingSystem} ${Platform.operatingSystemVersion}',
+    'Error type: ${failure.error.runtimeType}',
+    'Error: ${failure.error}',
+    '',
+    'Completed stage timings:',
+    if (failure.stageHistory.isEmpty) 'None' else ...failure.stageHistory,
+    if (failure.parserDiagnostics.isNotEmpty) ...[
       '',
-      'Completed stage timings:',
-      if (_stageHistory.isEmpty) 'None' else ..._stageHistory,
-      if (_stageStartedAt case final started?)
-        '${_activeStage.name} before failure: '
-            '${DateTime.now().difference(started).inMilliseconds} ms',
-      '',
-      'Stack trace:',
-      '$stackTrace',
-    ];
-    if (_parserDiagnostics.isNotEmpty) {
-      lines.addAll([
-        '',
-        'Latest chapter-parser analysis:',
-        ..._parserDiagnostics,
-      ]);
-    }
-    return lines.join('\n');
-  }
-
-  String _titleFromFilename(String filename) {
-    final raw = p
-        .basenameWithoutExtension(filename)
-        .replaceAll(RegExp('[_-]+'), ' ')
-        .trim();
-    if (raw.isEmpty) {
-      return 'Untitled audiobook';
-    }
-    return raw
-        .split(RegExp(r'\s+'))
-        .map(
-          (word) => word.isEmpty
-              ? word
-              : '${word[0].toUpperCase()}${word.substring(1)}',
-        )
-        .join(' ');
-  }
+      'Latest chapter-parser analysis:',
+      ...failure.parserDiagnostics,
+    ],
+    '',
+    'Stack trace:',
+    '${failure.stackTrace}',
+  ].join('\n');
 
   String _formatBytes(int bytes) {
     if (bytes >= 1024 * 1024 * 1024) {
@@ -446,13 +246,4 @@ class ImportCubit extends Cubit<ImportState> {
     }
     return '$bytes B';
   }
-}
-
-class _SourceRemovalException implements Exception {
-  const _SourceRemovalException(this.cause);
-
-  final Object cause;
-
-  @override
-  String toString() => 'Could not remove original files: $cause';
 }

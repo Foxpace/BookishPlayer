@@ -36,4 +36,16 @@ class _FakeSettingsRepository implements SettingsRepository {
     this.preference = preference;
     savedPreference = preference;
   }
+
+  @override
+  Future<String?> getLibraryLayout() async => null;
+
+  @override
+  Future<void> setLibraryLayout(String layout) async {}
+
+  @override
+  Future<String?> getSpeechModel() async => null;
+
+  @override
+  Future<void> setSpeechModel(String model) async {}
 }

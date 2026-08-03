@@ -1,38 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/presentation/formatters.dart';
-import '../../library/domain/audiobook.dart';
-
-class TranscriptionDraft {
-  const TranscriptionDraft({
-    required this.book,
-    required this.text,
-    required this.start,
-    required this.end,
-    required this.chapterStart,
-    required this.chapterEnd,
-    required this.chapterTitle,
-  });
-
-  final Audiobook book;
-  final String text;
-  final Duration start;
-  final Duration end;
-  final Duration chapterStart;
-  final Duration chapterEnd;
-  final String? chapterTitle;
-}
+import '../domain/quote_share_repository.dart';
+import '../domain/transcription_draft.dart';
+import 'player_cubit.dart';
+import 'quote_transcription_cubit.dart';
 
 class TranscriptionPreviewScreen extends StatefulWidget {
-  const TranscriptionPreviewScreen({
-    required this.draft,
-    required this.onSave,
-    super.key,
-  });
+  const TranscriptionPreviewScreen({required this.draft, super.key});
 
   final TranscriptionDraft draft;
-  final Future<void> Function(String text) onSave;
 
   @override
   State<TranscriptionPreviewScreen> createState() =>
@@ -162,7 +140,13 @@ class _TranscriptionPreviewScreenState
 
   Future<void> _saveToNotes() async {
     setState(() => _saving = true);
-    await widget.onSave(_controller.text.trim());
+    final draft = widget.draft;
+    await context.read<PlayerCubit>().addNoteAt(
+      _controller.text.trim(),
+      draft.start,
+      chapterTitle: draft.chapterTitle,
+      endPosition: draft.end,
+    );
     if (!mounted) {
       return;
     }
@@ -175,23 +159,17 @@ class _TranscriptionPreviewScreenState
 
   Future<void> _share(BuildContext buttonContext) async {
     final box = buttonContext.findRenderObject() as RenderBox?;
-    final draft = widget.draft;
-    final author = draft.book.author.trim();
-    final attribution = author.isEmpty
-        ? draft.book.title
-        : '${draft.book.title} — $author';
-    final location = [
-      ?draft.chapterTitle,
-      '${formatDuration(draft.chapterStart)}–${formatDuration(draft.chapterEnd)}',
-    ].join(' · ');
-    await SharePlus.instance.share(
-      ShareParams(
-        text: '${_controller.text.trim()}\n\n$location\n— $attribution',
-        subject: 'Quote from ${draft.book.title}',
-        sharePositionOrigin: box == null
-            ? null
-            : box.localToGlobal(Offset.zero) & box.size,
-      ),
+    final rect = box == null ? null : box.localToGlobal(Offset.zero) & box.size;
+    await context.read<QuoteTranscriptionCubit>().shareDraft(
+      _controller.text,
+      origin: rect == null
+          ? null
+          : ShareOrigin(
+              x: rect.left,
+              y: rect.top,
+              width: rect.width,
+              height: rect.height,
+            ),
     );
   }
 }
