@@ -401,10 +401,17 @@ class _SleepTimerSheet extends StatelessWidget {
   }
 }
 
-class _ChaptersSheet extends StatelessWidget {
+class _ChaptersSheet extends StatefulWidget {
   const _ChaptersSheet({required this.chapters});
 
   final List<PlayerChapter> chapters;
+
+  @override
+  State<_ChaptersSheet> createState() => _ChaptersSheetState();
+}
+
+class _ChaptersSheetState extends State<_ChaptersSheet> {
+  int? _seekingIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -425,21 +432,25 @@ class _ChaptersSheet extends StatelessWidget {
               const SizedBox(height: 12),
               Expanded(
                 child: ListView.separated(
-                  itemCount: chapters.length,
+                  itemCount: widget.chapters.length,
                   separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (context, index) {
-                    final chapter = chapters[index];
+                    final chapter = widget.chapters[index];
                     return ListTile(
+                      enabled: _seekingIndex == null,
                       contentPadding: EdgeInsets.zero,
                       leading: CircleAvatar(child: Text('${index + 1}')),
                       title: Text(chapter.title),
                       subtitle: Text(
                         'Length ${formatDuration(chapter.duration)}',
                       ),
-                      onTap: () {
-                        context.read<PlayerCubit>().seek(chapter.start);
-                        Navigator.pop(context);
-                      },
+                      trailing: _seekingIndex == index
+                          ? const SizedBox.square(
+                              dimension: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : null,
+                      onTap: () => _selectChapter(index, chapter),
                     );
                   },
                 ),
@@ -450,23 +461,59 @@ class _ChaptersSheet extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _selectChapter(int index, PlayerChapter chapter) async {
+    if (_seekingIndex != null) {
+      return;
+    }
+    setState(() => _seekingIndex = index);
+    try {
+      await context.read<PlayerCubit>().seek(chapter.start);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _seekingIndex = null);
+      }
+    }
+  }
 }
 
-class _Timeline extends StatelessWidget {
+class _Timeline extends StatefulWidget {
   const _Timeline({required this.state});
 
   final PlayerState state;
 
   @override
+  State<_Timeline> createState() => _TimelineState();
+}
+
+class _TimelineState extends State<_Timeline> {
+  double? _dragValue;
+
+  @override
+  void didUpdateWidget(covariant _Timeline oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.state.currentChapterIndex !=
+            widget.state.currentChapterIndex ||
+        oldWidget.state.chapterDuration != widget.state.chapterDuration) {
+      _dragValue = null;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = widget.state;
     final max = state.chapterDuration.inMilliseconds.toDouble().clamp(
       1.0,
       double.infinity,
     );
-    final value = state.chapterPosition.inMilliseconds.toDouble().clamp(
-      0.0,
-      max,
-    );
+    final value =
+        (_dragValue ?? state.chapterPosition.inMilliseconds.toDouble()).clamp(
+          0.0,
+          max,
+        );
     return Column(
       children: [
         if (state.currentChapter case final chapter?) ...[
@@ -499,9 +546,14 @@ class _Timeline extends StatelessWidget {
           secondaryTrackValue: state.chapterBufferedPosition.inMilliseconds
               .toDouble()
               .clamp(0.0, max),
-          onChanged: (next) => context.read<PlayerCubit>().seekWithinChapter(
-            Duration(milliseconds: next.round()),
-          ),
+          onChangeStart: (next) => setState(() => _dragValue = next),
+          onChanged: (next) => setState(() => _dragValue = next),
+          onChangeEnd: (next) {
+            setState(() => _dragValue = null);
+            context.read<PlayerCubit>().seekWithinChapter(
+              Duration(milliseconds: next.round()),
+            );
+          },
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),

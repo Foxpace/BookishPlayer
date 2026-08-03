@@ -114,6 +114,35 @@ void main() {
     expect(books.savedNote?.chapterTitle, 'Chapter two');
   });
 
+  test('chapter-relative seeks cannot cascade into later chapters', () async {
+    final book = Audiobook(
+      id: 'book',
+      title: 'Book',
+      filePath: '/book.mp3',
+      durationMs: 90000,
+      addedAt: DateTime(2026),
+      chapters: const [
+        AudioChapter(title: 'One', startMs: 0),
+        AudioChapter(title: 'Two', startMs: 30000),
+        AudioChapter(title: 'Three', startMs: 60000),
+      ],
+    );
+    final audio = _FakeAudioPlayer();
+    final cubit = PlayerCubit(audio, _FakeBooks(book), _FakeExports());
+    addTearDown(() async {
+      await cubit.close();
+      await audio.close();
+    });
+    await cubit.open(book);
+
+    await cubit.seekWithinChapter(const Duration(seconds: 30));
+    await cubit.seekWithinChapter(const Duration(seconds: 30));
+
+    expect(audio.currentPosition, const Duration(milliseconds: 29999));
+    expect(cubit.state.currentChapterIndex, 0);
+    expect(cubit.state.currentChapter?.title, 'One');
+  });
+
   test('stops a paused current book before switching queues', () async {
     final first = Audiobook(
       id: 'first',
