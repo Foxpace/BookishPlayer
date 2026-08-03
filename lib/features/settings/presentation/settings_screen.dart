@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/app_metadata.dart';
+import '../../../core/localization/generated/l10n.dart';
 import '../../portability/presentation/portability_cubit.dart';
 import '../../portability/presentation/portability_state.dart';
 import '../../transcription/domain/transcription_repository.dart';
@@ -13,12 +15,14 @@ import 'speech_models_cubit.dart';
 import 'speech_models_state.dart';
 
 part 'widgets/speech_models_section.dart';
+part 'widgets/about_section.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
     return MultiBlocListener(
       listeners: [
         BlocListener<SettingsCubit, SettingsState>(
@@ -43,20 +47,20 @@ class SettingsScreen extends StatelessWidget {
         ),
       ],
       child: Scaffold(
-        appBar: AppBar(title: const Text('Settings')),
+        appBar: AppBar(title: Text(l10n.settingsTitle)),
         body: SafeArea(
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
             children: [
               Text(
-                'Appearance',
+                l10n.appearanceTitle,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Choose how Bookish looks on this device.',
+                l10n.appearanceDescription,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -78,28 +82,27 @@ class SettingsScreen extends StatelessWidget {
                         );
                       }
                     },
-                    child: const Column(
+                    child: Column(
                       children: [
                         _ThemeOption(
                           preference: ThemePreference.system,
                           icon: Icons.brightness_auto_rounded,
-                          title: 'Follow system',
-                          subtitle:
-                              'Match your device appearance automatically',
+                          title: l10n.themeFollowSystem,
+                          subtitle: l10n.themeFollowSystemDescription,
                         ),
-                        Divider(height: 1),
+                        const Divider(height: 1),
                         _ThemeOption(
                           preference: ThemePreference.light,
                           icon: Icons.light_mode_rounded,
-                          title: 'Light',
-                          subtitle: 'Warm paper and dark ink',
+                          title: l10n.themeLight,
+                          subtitle: l10n.themeLightDescription,
                         ),
-                        Divider(height: 1),
+                        const Divider(height: 1),
                         _ThemeOption(
                           preference: ThemePreference.dark,
                           icon: Icons.dark_mode_rounded,
-                          title: 'Dark',
-                          subtitle: 'Comfortable listening after lights out',
+                          title: l10n.themeDark,
+                          subtitle: l10n.themeDarkDescription,
                         ),
                       ],
                     ),
@@ -108,14 +111,14 @@ class SettingsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               Text(
-                'Local transcription',
+                l10n.localTranscriptionTitle,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Choose and download the on-device speech model used to turn audiobook ranges into quotes.',
+                l10n.localTranscriptionDescription,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -124,14 +127,14 @@ class SettingsScreen extends StatelessWidget {
               const _SpeechModelsCard(),
               const SizedBox(height: 32),
               Text(
-                'Local data',
+                l10n.localDataTitle,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Back up progress, notes, metadata, and settings without a cloud account.',
+                l10n.localDataDescription,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -145,10 +148,8 @@ class SettingsScreen extends StatelessWidget {
                       ListTile(
                         enabled: state.status != PortabilityStatus.working,
                         leading: const Icon(Icons.file_upload_outlined),
-                        title: const Text('Export backup'),
-                        subtitle: const Text(
-                          'Save a portable Bookish JSON file',
-                        ),
+                        title: Text(l10n.exportBackup),
+                        subtitle: Text(l10n.exportBackupDescription),
                         onTap: context.read<PortabilityCubit>().backup,
                       ),
                       const Divider(height: 1),
@@ -157,10 +158,8 @@ class SettingsScreen extends StatelessWidget {
                         leading: const Icon(
                           Icons.settings_backup_restore_rounded,
                         ),
-                        title: const Text('Restore backup'),
-                        subtitle: const Text(
-                          'Replace local library data from a backup',
-                        ),
+                        title: Text(l10n.restoreBackup),
+                        subtitle: Text(l10n.restoreBackupDescription),
                         onTap: context.read<PortabilityCubit>().restore,
                       ),
                       if (state.status == PortabilityStatus.working)
@@ -169,6 +168,8 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 32),
+              const AboutSection(),
             ],
           ),
         ),
