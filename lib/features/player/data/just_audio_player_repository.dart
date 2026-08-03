@@ -117,8 +117,10 @@ class JustAudioPlayerRepository implements AudioPlayerRepository {
   @override
   Future<void> seek(Duration position) async {
     final location = _locationFor(position);
-    await _handler.skipToQueueItem(location.index);
-    await _handler.seek(location.position);
+    // Changing the queue item and seeking in two separate operations briefly
+    // publishes position zero for the selected item. Use just_audio's atomic
+    // indexed seek so the UI only observes the final position.
+    await _player.seek(location.position, index: location.index);
   }
 
   @override

@@ -24,4 +24,10 @@ void main() {
       '/player/book-42',
     );
   });
+
+  test('hides the mini player on the full player route', () {
+    expect(shouldShowMiniPlayer(Uri.parse('/player/book-42')), isFalse);
+    expect(shouldShowMiniPlayer(Uri.parse('/')), isTrue);
+    expect(shouldShowMiniPlayer(Uri.parse('/settings')), isTrue);
+  });
 }

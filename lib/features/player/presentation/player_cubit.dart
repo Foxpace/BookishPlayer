@@ -130,7 +130,11 @@ class PlayerCubit extends Cubit<PlayerState> with WidgetsBindingObserver {
   }
 
   Future<void> seekWithinChapter(Duration value) {
-    final relative = _bounded(value, state.chapterDuration);
+    final duration = state.chapterDuration;
+    final maximum = duration > Duration.zero
+        ? duration - const Duration(milliseconds: 1)
+        : Duration.zero;
+    final relative = _bounded(value, maximum);
     return seek(state.chapterStart + relative);
   }
 

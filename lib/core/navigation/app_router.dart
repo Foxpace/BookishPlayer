@@ -21,7 +21,7 @@ GoRouter createAppRouter() {
     routes: [
       ShellRoute(
         builder: (_, state, child) => NowPlayingShell(
-          showMiniPlayer: !state.matchedLocation.startsWith('/player/'),
+          showMiniPlayer: shouldShowMiniPlayer(state.uri),
           child: child,
         ),
         routes: [
@@ -63,5 +63,8 @@ GoRouter createAppRouter() {
     ],
   );
 }
+
+bool shouldShowMiniPlayer(Uri location) =>
+    !location.path.startsWith('/player/');
 
 enum ImportSource { files, finderTransfer }
