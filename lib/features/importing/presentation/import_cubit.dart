@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../library/domain/audiobook_repository.dart';
+import '../../library/domain/audiobook_catalog_repository.dart';
 import '../../player/domain/audio_player_repository.dart';
 import '../application/audiobook_import_workflow.dart';
 import '../application/import_progress.dart';
@@ -19,7 +19,7 @@ class ImportCubit extends Cubit<ImportState> {
   ImportCubit(
     FileImportRepository files,
     AudioPlayerRepository audio,
-    AudiobookRepository books,
+    AudiobookCatalogRepository books,
     M4bChapterParser chapters,
     AudiobookArtworkExtractor artwork,
     AudiobookMetadataExtractor metadata,

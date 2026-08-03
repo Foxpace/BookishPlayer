@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../library/domain/audiobook.dart';
 import '../../player/domain/book_note.dart';
+import '../domain/bookish_backup.dart';
 import '../domain/local_export_repository.dart';
 
 @LazySingleton(as: LocalExportRepository)
@@ -30,16 +31,16 @@ class FilePickerLocalExportRepository implements LocalExportRepository {
   }
 
   @override
-  Future<bool> exportBackup(Map<String, dynamic> backup) {
+  Future<bool> exportBackup(BookishBackup backup) {
     return _save(
       filename: 'bookish-backup.json',
-      contents: const JsonEncoder.withIndent('  ').convert(backup),
+      contents: const JsonEncoder.withIndent('  ').convert(backup.toJson()),
       extensions: const ['json'],
     );
   }
 
   @override
-  Future<Map<String, dynamic>?> pickBackup() async {
+  Future<BookishBackup?> pickBackup() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['json'],
@@ -50,7 +51,9 @@ class FilePickerLocalExportRepository implements LocalExportRepository {
     if (bytes == null) {
       return null;
     }
-    return Map<String, dynamic>.from(jsonDecode(utf8.decode(bytes)) as Map);
+    return BookishBackup.fromJson(
+      Map<String, dynamic>.from(jsonDecode(utf8.decode(bytes)) as Map),
+    );
   }
 
   Future<bool> _save({

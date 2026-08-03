@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../domain/theme_preference.dart';
+import '../domain/playback_preferences.dart';
 
 part 'settings_state.freezed.dart';
 
@@ -11,6 +12,7 @@ abstract class SettingsState with _$SettingsState {
   const factory SettingsState({
     @Default(SettingsStatus.initial) SettingsStatus status,
     @Default(ThemePreference.system) ThemePreference themePreference,
+    @Default(PlaybackPreferences()) PlaybackPreferences playback,
     String? message,
   }) = _SettingsState;
 }

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SettingsState {
 
- SettingsStatus get status; ThemePreference get themePreference; String? get message;
+ SettingsStatus get status; ThemePreference get themePreference; PlaybackPreferences get playback; String? get message;
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $SettingsStateCopyWith<SettingsState> get copyWith => _$SettingsStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsState&&(identical(other.status, status) || other.status == status)&&(identical(other.themePreference, themePreference) || other.themePreference == themePreference)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsState&&(identical(other.status, status) || other.status == status)&&(identical(other.themePreference, themePreference) || other.themePreference == themePreference)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,themePreference,message);
+int get hashCode => Object.hash(runtimeType,status,themePreference,playback,message);
 
 @override
 String toString() {
-  return 'SettingsState(status: $status, themePreference: $themePreference, message: $message)';
+  return 'SettingsState(status: $status, themePreference: $themePreference, playback: $playback, message: $message)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $SettingsStateCopyWith<$Res>  {
   factory $SettingsStateCopyWith(SettingsState value, $Res Function(SettingsState) _then) = _$SettingsStateCopyWithImpl;
 @useResult
 $Res call({
- SettingsStatus status, ThemePreference themePreference, String? message
+ SettingsStatus status, ThemePreference themePreference, PlaybackPreferences playback, String? message
 });
 
 
-
+$PlaybackPreferencesCopyWith<$Res> get playback;
 
 }
 /// @nodoc
@@ -62,15 +62,25 @@ class _$SettingsStateCopyWithImpl<$Res>
 
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? themePreference = null,Object? message = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? themePreference = null,Object? playback = null,Object? message = freezed,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as SettingsStatus,themePreference: null == themePreference ? _self.themePreference : themePreference // ignore: cast_nullable_to_non_nullable
-as ThemePreference,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as ThemePreference,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
+as PlaybackPreferences,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
-
+/// Create a copy of SettingsState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PlaybackPreferencesCopyWith<$Res> get playback {
+  
+  return $PlaybackPreferencesCopyWith<$Res>(_self.playback, (value) {
+    return _then(_self.copyWith(playback: value));
+  });
+}
 }
 
 
@@ -152,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SettingsStatus status,  ThemePreference themePreference,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SettingsStatus status,  ThemePreference themePreference,  PlaybackPreferences playback,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SettingsState() when $default != null:
-return $default(_that.status,_that.themePreference,_that.message);case _:
+return $default(_that.status,_that.themePreference,_that.playback,_that.message);case _:
   return orElse();
 
 }
@@ -173,10 +183,10 @@ return $default(_that.status,_that.themePreference,_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SettingsStatus status,  ThemePreference themePreference,  String? message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SettingsStatus status,  ThemePreference themePreference,  PlaybackPreferences playback,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _SettingsState():
-return $default(_that.status,_that.themePreference,_that.message);case _:
+return $default(_that.status,_that.themePreference,_that.playback,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +203,10 @@ return $default(_that.status,_that.themePreference,_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SettingsStatus status,  ThemePreference themePreference,  String? message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SettingsStatus status,  ThemePreference themePreference,  PlaybackPreferences playback,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _SettingsState() when $default != null:
-return $default(_that.status,_that.themePreference,_that.message);case _:
+return $default(_that.status,_that.themePreference,_that.playback,_that.message);case _:
   return null;
 
 }
@@ -208,11 +218,12 @@ return $default(_that.status,_that.themePreference,_that.message);case _:
 
 
 class _SettingsState implements SettingsState {
-  const _SettingsState({this.status = SettingsStatus.initial, this.themePreference = ThemePreference.system, this.message});
+  const _SettingsState({this.status = SettingsStatus.initial, this.themePreference = ThemePreference.system, this.playback = const PlaybackPreferences(), this.message});
   
 
 @override@JsonKey() final  SettingsStatus status;
 @override@JsonKey() final  ThemePreference themePreference;
+@override@JsonKey() final  PlaybackPreferences playback;
 @override final  String? message;
 
 /// Create a copy of SettingsState
@@ -225,16 +236,16 @@ _$SettingsStateCopyWith<_SettingsState> get copyWith => __$SettingsStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SettingsState&&(identical(other.status, status) || other.status == status)&&(identical(other.themePreference, themePreference) || other.themePreference == themePreference)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SettingsState&&(identical(other.status, status) || other.status == status)&&(identical(other.themePreference, themePreference) || other.themePreference == themePreference)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,themePreference,message);
+int get hashCode => Object.hash(runtimeType,status,themePreference,playback,message);
 
 @override
 String toString() {
-  return 'SettingsState(status: $status, themePreference: $themePreference, message: $message)';
+  return 'SettingsState(status: $status, themePreference: $themePreference, playback: $playback, message: $message)';
 }
 
 
@@ -245,11 +256,11 @@ abstract mixin class _$SettingsStateCopyWith<$Res> implements $SettingsStateCopy
   factory _$SettingsStateCopyWith(_SettingsState value, $Res Function(_SettingsState) _then) = __$SettingsStateCopyWithImpl;
 @override @useResult
 $Res call({
- SettingsStatus status, ThemePreference themePreference, String? message
+ SettingsStatus status, ThemePreference themePreference, PlaybackPreferences playback, String? message
 });
 
 
-
+@override $PlaybackPreferencesCopyWith<$Res> get playback;
 
 }
 /// @nodoc
@@ -262,16 +273,26 @@ class __$SettingsStateCopyWithImpl<$Res>
 
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? themePreference = null,Object? message = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? themePreference = null,Object? playback = null,Object? message = freezed,}) {
   return _then(_SettingsState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as SettingsStatus,themePreference: null == themePreference ? _self.themePreference : themePreference // ignore: cast_nullable_to_non_nullable
-as ThemePreference,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as ThemePreference,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
+as PlaybackPreferences,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
 
-
+/// Create a copy of SettingsState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PlaybackPreferencesCopyWith<$Res> get playback {
+  
+  return $PlaybackPreferencesCopyWith<$Res>(_self.playback, (value) {
+    return _then(_self.copyWith(playback: value));
+  });
+}
 }
 
 // dart format on

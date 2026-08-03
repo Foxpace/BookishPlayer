@@ -3,6 +3,7 @@ import 'package:bookish_player/features/player/domain/quote_share_repository.dar
 import 'package:bookish_player/features/player/presentation/quote_transcription_cubit.dart';
 import 'package:bookish_player/features/player/presentation/quote_transcription_state.dart';
 import 'package:bookish_player/features/settings/domain/settings_repository.dart';
+import 'package:bookish_player/features/settings/domain/playback_preferences.dart';
 import 'package:bookish_player/features/settings/domain/theme_preference.dart';
 import 'package:bookish_player/features/transcription/domain/transcription_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -91,4 +92,11 @@ class _Settings implements SettingsRepository {
 
   @override
   Future<void> setThemePreference(ThemePreference preference) async {}
+
+  @override
+  Future<PlaybackPreferences> getPlaybackPreferences() async =>
+      const PlaybackPreferences();
+
+  @override
+  Future<void> setPlaybackPreferences(PlaybackPreferences preferences) async {}
 }

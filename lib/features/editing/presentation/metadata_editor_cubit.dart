@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../importing/domain/file_import_repository.dart';
 import '../../library/domain/audiobook.dart';
-import '../../library/domain/audiobook_repository.dart';
+import '../../library/domain/audiobook_catalog_repository.dart';
 import 'metadata_editor_state.dart';
 
 @injectable
@@ -11,7 +11,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
   MetadataEditorCubit(this._books, this._files)
     : super(const MetadataEditorState());
 
-  final AudiobookRepository _books;
+  final AudiobookCatalogRepository _books;
   final FileImportRepository _files;
 
   Future<void> load(String bookId) async {
@@ -30,6 +30,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     required String title,
     required String author,
     required String series,
+    required String seriesPosition,
     required String narrator,
     required String year,
     required String folder,
@@ -43,6 +44,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
         title: title.trim(),
         author: author.trim(),
         series: series.trim(),
+        seriesPosition: double.tryParse(seriesPosition.trim()),
         narrator: narrator.trim(),
         year: _parseYear(year),
         folder: folder.trim().isEmpty ? 'Imported' : folder.trim(),

@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../library/domain/audiobook.dart';
 import '../domain/book_note.dart';
+import '../../settings/domain/playback_preferences.dart';
 
 part 'player_state.freezed.dart';
 
@@ -27,6 +28,7 @@ abstract class PlayerState with _$PlayerState {
     @Default(<PlayerChapter>[]) List<PlayerChapter> chapterTimeline,
     @Default(false) bool isPlaying,
     @Default(1.0) double speed,
+    @Default(PlaybackPreferences()) PlaybackPreferences playback,
     SleepTimerType? sleepTimerType,
     DateTime? sleepEndsAt,
     int? sleepChapterEndMs,

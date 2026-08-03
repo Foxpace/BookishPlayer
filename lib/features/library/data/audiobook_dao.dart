@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../../core/database/bookish_database.dart';
 import '../../player/domain/book_note.dart';
 import '../domain/audiobook.dart';
+import '../domain/listening_session.dart';
 
 @lazySingleton
 class AudiobookDao {
@@ -12,6 +13,7 @@ class AudiobookDao {
   final Database _database;
   final _books = stringMapStoreFactory.store('books');
   final _notes = stringMapStoreFactory.store('notes');
+  final _sessions = stringMapStoreFactory.store('listening_sessions');
 
   Future<List<Audiobook>> getBooks() async {
     final records = await _books.find(
@@ -30,6 +32,23 @@ class AudiobookDao {
         )
         .toList();
   }
+
+  Stream<List<Audiobook>> watchBooks() => _books
+      .query(
+        finder: Finder(
+          sortOrders: [
+            SortOrder('lastPlayedAt', false),
+            SortOrder('addedAt', false),
+          ],
+        ),
+      )
+      .onSnapshots(_database)
+      .map(
+        (records) => [
+          for (final record in records)
+            Audiobook.fromJson(Map<String, dynamic>.from(record.value)),
+        ],
+      );
 
   Future<Audiobook?> getBook(String id) async {
     final value = await _books.record(id).get(_database);
@@ -56,6 +75,10 @@ class AudiobookDao {
     await _database.transaction((transaction) async {
       await _books.record(id).delete(transaction);
       await _notes.delete(
+        transaction,
+        finder: Finder(filter: Filter.equals('bookId', id)),
+      );
+      await _sessions.delete(
         transaction,
         finder: Finder(filter: Filter.equals('bookId', id)),
       );
@@ -91,6 +114,32 @@ class AudiobookDao {
               BookNote.fromJson(Map<String, dynamic>.from(record.value)),
         )
         .toList();
+  }
+
+  Future<List<ListeningSession>> getListeningSessions() async {
+    final records = await _sessions.find(
+      _database,
+      finder: Finder(sortOrders: [SortOrder('startedAt', false)]),
+    );
+    return records
+        .map(
+          (record) => ListeningSession.fromJson(
+            Map<String, dynamic>.from(record.value),
+          ),
+        )
+        .toList();
+  }
+
+  Future<void> putListeningSession(ListeningSession session) =>
+      _sessions.record(session.id).put(_database, session.toJson());
+
+  Future<void> replaceListeningSessions(List<ListeningSession> sessions) async {
+    await _database.transaction((transaction) async {
+      await _sessions.delete(transaction);
+      for (final session in sessions) {
+        await _sessions.record(session.id).put(transaction, session.toJson());
+      }
+    });
   }
 
   Future<void> replaceLibrary(

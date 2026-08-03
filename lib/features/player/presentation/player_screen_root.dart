@@ -7,6 +7,7 @@ import '../../../core/di/injection.dart';
 import 'player_cubit.dart';
 import 'player_screen.dart';
 import 'quote_transcription_cubit.dart';
+import 'voice_note_cubit.dart';
 
 /// Composition boundary for one player route and its Cubit lifetime.
 class PlayerScreenRoot extends StatefulWidget {
@@ -51,6 +52,7 @@ class _PlayerScreenRootState extends State<PlayerScreenRoot>
       providers: [
         BlocProvider.value(value: _cubit),
         BlocProvider(create: (_) => getIt<QuoteTranscriptionCubit>()),
+        BlocProvider(create: (_) => getIt<VoiceNoteCubit>()),
       ],
       child: const PlayerScreen(),
     );

@@ -22,9 +22,10 @@ class _Transport extends StatelessWidget {
         ),
         Expanded(
           child: _SkipButton(
-            label: '15',
+            label: '${state.playback.rewindSeconds}',
             icon: Icons.replay_rounded,
-            onPressed: () => cubit.skipBy(const Duration(seconds: -15)),
+            onPressed: () =>
+                cubit.skipBy(Duration(seconds: -state.playback.rewindSeconds)),
           ),
         ),
         SizedBox.square(
@@ -55,10 +56,11 @@ class _Transport extends StatelessWidget {
         ),
         Expanded(
           child: _SkipButton(
-            label: '15',
+            label: '${state.playback.forwardSeconds}',
             icon: Icons.replay_rounded,
             flipIcon: true,
-            onPressed: () => cubit.skipBy(const Duration(seconds: 15)),
+            onPressed: () =>
+                cubit.skipBy(Duration(seconds: state.playback.forwardSeconds)),
           ),
         ),
         Expanded(
@@ -130,7 +132,12 @@ class _SpeedButton extends StatelessWidget {
       initialValue: speed,
       onSelected: context.read<PlayerCubit>().changeSpeed,
       itemBuilder: (_) => speeds
-          .map((value) => PopupMenuItem(value: value, child: Text('$value×')))
+          .map(
+            (value) => PopupMenuItem(
+              value: value,
+              child: Text('${_presetName(value)} · $value×'),
+            ),
+          )
           .toList(),
       child: _ToolVisual(
         icon: Icons.speed_rounded,
@@ -138,6 +145,15 @@ class _SpeedButton extends StatelessWidget {
       ),
     );
   }
+
+  String _presetName(double value) => switch (value) {
+    .75 => 'Relaxed',
+    1.0 => 'Natural',
+    1.25 => 'Focused',
+    1.5 => 'Brisk',
+    1.75 => 'Fast',
+    _ => 'Very fast',
+  };
 }
 
 class _PlayerTools extends StatelessWidget {
@@ -196,7 +212,7 @@ class _PlayerTools extends StatelessWidget {
             tooltip: 'Notes and bookmarks',
             onPressed: onNotes,
             child: _ToolVisual(
-              icon: Icons.bookmark_add_outlined,
+              icon: Icons.note_alt_outlined,
               label: 'Notes',
               badgeLabel: state.notes.isEmpty ? null : '${state.notes.length}',
             ),

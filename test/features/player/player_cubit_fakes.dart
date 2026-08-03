@@ -16,6 +16,8 @@ class _FakeAudioPlayer implements AudioPlayerRepository {
     _positions.add(value);
   }
 
+  void emitCompleted() => _completed.add(true);
+
   Future<void> close() async {
     await _positions.close();
     await _buffers.close();
@@ -69,6 +71,18 @@ class _FakeAudioPlayer implements AudioPlayerRepository {
   }
 
   @override
+  Future<void> setSkipIntervals(Duration rewind, Duration forward) async {}
+
+  @override
+  Future<void> setShortenSilence({required bool enabled}) async {}
+
+  @override
+  Future<void> setVoiceBoost({required bool enabled}) async {}
+
+  @override
+  Future<void> setVolume(double volume) async {}
+
+  @override
   Future<void> dispose() async {}
 }
 
@@ -116,6 +130,14 @@ class _FakeBooks implements AudiobookRepository {
   @override
   Future<List<BookNote>> getAllNotes() async => [];
   @override
+  Future<List<ListeningSession>> getListeningSessions() async => [];
+  @override
+  Future<void> saveListeningSession(ListeningSession session) async {}
+  @override
+  Future<void> replaceListeningSessions(
+    List<ListeningSession> sessions,
+  ) async {}
+  @override
   Future<void> saveNote(BookNote note) async => savedNote = note;
   @override
   Future<void> deleteNote(String id) async {}
@@ -130,9 +152,29 @@ class _FakeBooks implements AudiobookRepository {
 
 class _FakeExports implements LocalExportRepository {
   @override
-  Future<bool> exportBackup(Map<String, dynamic> backup) async => true;
+  Future<bool> exportBackup(BookishBackup backup) async => true;
   @override
   Future<bool> exportNotes(Audiobook book, List<BookNote> notes) async => true;
   @override
-  Future<Map<String, dynamic>?> pickBackup() async => null;
+  Future<BookishBackup?> pickBackup() async => null;
+}
+
+class _FakeSettings implements SettingsRepository {
+  @override
+  Future<PlaybackPreferences> getPlaybackPreferences() async =>
+      const PlaybackPreferences();
+  @override
+  Future<void> setPlaybackPreferences(PlaybackPreferences preferences) async {}
+  @override
+  Future<String?> getLibraryLayout() async => null;
+  @override
+  Future<void> setLibraryLayout(String layout) async {}
+  @override
+  Future<String?> getSpeechModel() async => null;
+  @override
+  Future<void> setSpeechModel(String model) async {}
+  @override
+  Future<ThemePreference> getThemePreference() async => ThemePreference.system;
+  @override
+  Future<void> setThemePreference(ThemePreference preference) async {}
 }

@@ -36,4 +36,12 @@ class SettingsDao {
   Future<void> setSpeechModel(String model) {
     return _settings.record('transcription').put(_database, {'model': model});
   }
+
+  Future<Map<String, dynamic>?> getPlaybackPreferences() async {
+    final value = await _settings.record('playback').get(_database);
+    return value == null ? null : Map<String, dynamic>.from(value);
+  }
+
+  Future<void> setPlaybackPreferences(Map<String, dynamic> preferences) =>
+      _settings.record('playback').put(_database, preferences);
 }

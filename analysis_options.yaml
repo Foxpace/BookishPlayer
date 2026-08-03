@@ -3,6 +3,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - lib/core/localization/generated/**
+    - lib/features/player/data/car_play_api.g.dart
 
 linter:
   rules:

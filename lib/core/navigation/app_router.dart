@@ -2,9 +2,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/editing/presentation/metadata_editor_screen_root.dart';
 import '../../features/importing/presentation/import_screen_root.dart';
+import '../../features/insights/presentation/listening_insights_screen_root.dart';
 import '../../features/library/presentation/library_screen_root.dart';
 import '../../features/player/presentation/player_screen_root.dart';
 import '../../features/settings/presentation/settings_screen_root.dart';
+import '../../features/storage/presentation/storage_assistant_screen_root.dart';
 import '../../features/player/presentation/now_playing_shell.dart';
 
 abstract final class AppRoutes {
@@ -13,6 +15,8 @@ abstract final class AppRoutes {
   static const player = 'player';
   static const settings = 'settings';
   static const editBook = 'editBook';
+  static const insights = 'insights';
+  static const storage = 'storage';
 }
 
 GoRouter createAppRouter() {
@@ -48,6 +52,16 @@ GoRouter createAppRouter() {
                 path: 'settings',
                 name: AppRoutes.settings,
                 builder: (_, _) => const SettingsScreenRoot(),
+              ),
+              GoRoute(
+                path: 'insights',
+                name: AppRoutes.insights,
+                builder: (_, _) => const ListeningInsightsScreenRoot(),
+              ),
+              GoRoute(
+                path: 'storage',
+                name: AppRoutes.storage,
+                builder: (_, _) => const StorageAssistantScreenRoot(),
               ),
               GoRoute(
                 path: 'book/:bookId/edit',

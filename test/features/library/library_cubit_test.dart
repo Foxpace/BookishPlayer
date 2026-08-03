@@ -1,9 +1,11 @@
 import 'package:bookish_player/features/importing/domain/audiobook_artwork_extractor.dart';
 import 'package:bookish_player/features/importing/domain/file_import_repository.dart';
 import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
+import 'package:bookish_player/features/library/domain/audiobook.dart';
 import 'package:bookish_player/features/library/presentation/library_cubit.dart';
 import 'package:bookish_player/features/library/presentation/library_state.dart';
 import 'package:bookish_player/features/settings/domain/settings_repository.dart';
+import 'package:bookish_player/features/settings/domain/playback_preferences.dart';
 import 'package:bookish_player/features/settings/domain/theme_preference.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -18,6 +20,51 @@ void main() {
     expect(cubit.state.layout, LibraryLayout.grid);
     expect(settings.layout, 'grid');
   });
+
+  test(
+    'search, filters, sorting, favorites, and shelf status compose',
+    () async {
+      final alpha = Audiobook(
+        id: 'a',
+        title: 'Alpha',
+        author: 'Writer',
+        filePath: '/alpha.mp3',
+        durationMs: 100,
+        positionMs: 50,
+        artworkScanned: true,
+        addedAt: DateTime(2026),
+      );
+      final beta = Audiobook(
+        id: 'b',
+        title: 'Beta',
+        author: 'Other',
+        filePath: '/beta.mp3',
+        durationMs: 200,
+        artworkScanned: true,
+        addedAt: DateTime(2025),
+      );
+      final books = _Books([alpha, beta]);
+      final cubit = LibraryCubit(books, _Files(), _Artwork(), _Settings());
+      addTearDown(cubit.close);
+      await cubit.load();
+
+      cubit.setQuery('writer');
+      expect(cubit.state.sections.single.books.single.id, 'a');
+      cubit.setQuery('');
+      await cubit.toggleFavorite(beta);
+      cubit.setFilter(LibraryFilter.favorites);
+      expect(cubit.state.sections.single.books.single.id, 'b');
+      await cubit.setListeningStatus(beta, ListeningStatus.wantToListen);
+      cubit.setFilter(LibraryFilter.wantToListen);
+      expect(cubit.state.sections.single.books.single.id, 'b');
+      cubit.setFilter(LibraryFilter.all);
+      cubit.setSort(LibrarySort.title);
+      expect(cubit.state.sections.single.books.map((book) => book.id), [
+        'a',
+        'b',
+      ]);
+    },
+  );
 }
 
 class _Settings implements SettingsRepository {
@@ -42,9 +89,31 @@ class _Settings implements SettingsRepository {
 
   @override
   Future<void> setSpeechModel(String model) async {}
+
+  @override
+  Future<PlaybackPreferences> getPlaybackPreferences() async =>
+      const PlaybackPreferences();
+
+  @override
+  Future<void> setPlaybackPreferences(PlaybackPreferences preferences) async {}
 }
 
 class _Books implements AudiobookRepository {
+  _Books([this.books = const []]);
+
+  List<Audiobook> books;
+
+  @override
+  Future<List<Audiobook>> getBooks() async => books;
+
+  @override
+  Future<void> saveBook(Audiobook updated) async {
+    books = [
+      for (final book in books)
+        if (book.id == updated.id) updated else book,
+    ];
+  }
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

@@ -1,4 +1,5 @@
 import 'theme_preference.dart';
+import 'playback_preferences.dart';
 
 abstract interface class SettingsRepository {
   Future<ThemePreference> getThemePreference();
@@ -9,4 +10,7 @@ abstract interface class SettingsRepository {
 
   Future<String?> getSpeechModel();
   Future<void> setSpeechModel(String model);
+
+  Future<PlaybackPreferences> getPlaybackPreferences();
+  Future<void> setPlaybackPreferences(PlaybackPreferences preferences);
 }

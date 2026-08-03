@@ -1,14 +1,14 @@
 import 'package:uuid/uuid.dart';
 
 import '../../library/domain/audiobook.dart';
-import '../../library/domain/audiobook_repository.dart';
+import '../../library/domain/book_note_repository.dart';
 import '../../portability/domain/local_export_repository.dart';
 import '../domain/book_note.dart';
 
 class PlayerNotesService {
   PlayerNotesService(this._books, this._exports);
 
-  final AudiobookRepository _books;
+  final BookNoteRepository _books;
   final LocalExportRepository _exports;
   final _uuid = const Uuid();
 
@@ -21,6 +21,7 @@ class PlayerNotesService {
     required Duration position,
     required Duration? endPosition,
     required String? chapterTitle,
+    BookNoteKind kind = BookNoteKind.note,
   }) async {
     final note = BookNote(
       id: _uuid.v4(),
@@ -30,6 +31,7 @@ class PlayerNotesService {
       createdAt: DateTime.now(),
       chapterTitle: chapterTitle,
       endPositionMs: endPosition?.inMilliseconds,
+      kind: kind,
     );
     await _books.saveNote(note);
     return [...notes, note]

@@ -2,7 +2,7 @@ import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 
 import '../../library/domain/audiobook.dart';
-import '../../library/domain/audiobook_repository.dart';
+import '../../library/domain/audiobook_catalog_repository.dart';
 import '../../player/domain/audio_player_repository.dart';
 import '../domain/audiobook_artwork_extractor.dart';
 import '../domain/audiobook_metadata_extractor.dart';
@@ -24,7 +24,7 @@ class AudiobookImportWorkflow {
 
   final FileImportRepository _files;
   final AudioPlayerRepository _audio;
-  final AudiobookRepository _books;
+  final AudiobookCatalogRepository _books;
   final M4bChapterParser _chapters;
   final AudiobookArtworkExtractor _artwork;
   final AudiobookMetadataExtractor _metadata;

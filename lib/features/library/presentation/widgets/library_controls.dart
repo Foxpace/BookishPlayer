@@ -1,5 +1,42 @@
 part of '../library_screen.dart';
 
+class _LibrarySearchControls extends StatelessWidget {
+  const _LibrarySearchControls({required this.state});
+
+  final LibraryState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SearchBar(
+          hintText: 'Search title, author, narrator, or series',
+          leading: const Icon(Icons.search_rounded),
+          trailing: [_LibraryViewButton(state: state)],
+          onChanged: context.read<LibraryCubit>().setQuery,
+        ),
+      ],
+    );
+  }
+}
+
+String _filterLabel(LibraryFilter filter) => switch (filter) {
+  LibraryFilter.all => 'All',
+  LibraryFilter.wantToListen => 'Want to listen',
+  LibraryFilter.notStarted => 'Not started',
+  LibraryFilter.inProgress => 'Listening',
+  LibraryFilter.finished => 'Finished',
+  LibraryFilter.favorites => 'Favorites',
+};
+
+String _sortLabel(LibrarySort sort) => switch (sort) {
+  LibrarySort.recent => 'Recently played',
+  LibrarySort.title => 'Title',
+  LibrarySort.author => 'Author',
+  LibrarySort.remaining => 'Time remaining',
+  LibrarySort.added => 'Recently added',
+};
+
 class _Header extends StatelessWidget {
   const _Header();
 
@@ -36,43 +73,6 @@ class _Header extends StatelessWidget {
       ],
     );
   }
-}
-
-class _LibraryGroupingControl extends StatelessWidget {
-  const _LibraryGroupingControl({required this.grouping});
-
-  final LibraryGrouping grouping;
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<LibraryGrouping>(
-      tooltip: 'Organize library',
-      initialValue: grouping,
-      onSelected: context.read<LibraryCubit>().setGrouping,
-      itemBuilder: (_) => const [
-        PopupMenuItem(value: LibraryGrouping.none, child: Text('Recent')),
-        PopupMenuItem(
-          value: LibraryGrouping.listeningStatus,
-          child: Text('Listening status'),
-        ),
-        PopupMenuItem(value: LibraryGrouping.author, child: Text('Author')),
-        PopupMenuItem(value: LibraryGrouping.series, child: Text('Series')),
-        PopupMenuItem(value: LibraryGrouping.folder, child: Text('Folder')),
-      ],
-      child: Chip(
-        avatar: const Icon(Icons.tune_rounded, size: 18),
-        label: Text(_label),
-      ),
-    );
-  }
-
-  String get _label => switch (grouping) {
-    LibraryGrouping.none => 'Recent',
-    LibraryGrouping.listeningStatus => 'Listening status',
-    LibraryGrouping.author => 'Author',
-    LibraryGrouping.series => 'Series',
-    LibraryGrouping.folder => 'Folder',
-  };
 }
 
 Future<void> _importAudiobooks(BuildContext context) async {
