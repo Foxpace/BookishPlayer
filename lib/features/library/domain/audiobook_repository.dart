@@ -1,16 +1,15 @@
 import '../../player/domain/book_note.dart';
 import 'audiobook.dart';
+import 'audiobook_catalog_repository.dart';
+import 'book_note_repository.dart';
+import 'listening_history_repository.dart';
+import 'listening_session.dart';
 
-abstract interface class AudiobookRepository {
-  Future<List<Audiobook>> getBooks();
-  Future<Audiobook?> getBook(String id);
-  Future<void> saveBook(Audiobook book);
-  Future<void> updateProgress(String id, Duration position);
-  Future<void> updatePlaybackSpeed(String id, double speed);
-  Future<void> deleteBook(String id);
-  Future<List<BookNote>> getNotes(String bookId);
-  Future<void> saveNote(BookNote note);
-  Future<void> deleteNote(String id);
-  Future<List<BookNote>> getAllNotes();
+abstract interface class AudiobookRepository
+    implements
+        AudiobookCatalogRepository,
+        BookNoteRepository,
+        ListeningHistoryRepository {
+  Future<void> replaceListeningSessions(List<ListeningSession> sessions);
   Future<void> replaceLibrary(List<Audiobook> books, List<BookNote> notes);
 }

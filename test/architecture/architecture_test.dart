@@ -31,10 +31,8 @@ void main() {
     final violations = <String>[];
     for (final file in _dartFiles(rootNames: const ['lib'])) {
       final source = p.normalize(file.path);
-      final parsed = parseString(
-        content: file.readAsStringSync(),
-        path: source,
-      );
+      final content = file.readAsStringSync();
+      final parsed = parseString(content: content, path: source);
       for (final directive
           in parsed.unit.directives.whereType<ImportDirective>()) {
         final uri = directive.uri.stringValue;
@@ -42,6 +40,13 @@ void main() {
           continue;
         }
         _checkImport(source, uri, violations);
+      }
+      if ((content.contains('MethodChannel(') ||
+              content.contains('BasicMessageChannel(')) &&
+          !source.endsWith('.g.dart')) {
+        violations.add(
+          '$source uses a handwritten platform channel; use Pigeon instead',
+        );
       }
     }
     expect(violations, isEmpty, reason: violations.join('\n'));
@@ -92,11 +97,41 @@ void _checkImport(String source, String uri, List<String> violations) {
     rule: 'presentation must not import data',
   );
   reject(
+    condition: source.contains('/data/') && target.contains('/presentation/'),
+    rule: 'data adapters must not depend on presentation',
+  );
+  const platformPackages = <String>{
+    'audio_service',
+    'file_picker',
+    'just_audio',
+    'path_provider',
+    'sembast',
+    'share_plus',
+    'speech_to_text',
+  };
+  final packageName = uri.startsWith('package:')
+      ? uri.substring('package:'.length).split('/').first
+      : null;
+  reject(
+    condition:
+        source.contains('/presentation/') &&
+        platformPackages.contains(packageName),
+    rule: 'presentation must access platform packages through domain ports',
+  );
+  reject(
     condition:
         source.contains('/presentation/') &&
         target.endsWith('core/di/injection.dart') &&
         !screenRoot,
     rule: 'only ScreenRoot may use DI',
+  );
+  reject(
+    condition:
+        source.startsWith('lib/core/di/') &&
+        target.contains('lib/features/') &&
+        !source.endsWith('app_module.dart') &&
+        !source.endsWith('injection.config.dart'),
+    rule: 'core DI may compose features only in the app module',
   );
   reject(
     condition:

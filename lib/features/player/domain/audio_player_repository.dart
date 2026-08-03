@@ -15,5 +15,9 @@ abstract interface class AudioPlayerRepository {
   Future<void> pause();
   Future<void> seek(Duration position);
   Future<void> setSpeed(double speed);
+  Future<void> setSkipIntervals(Duration rewind, Duration forward);
+  Future<void> setShortenSilence({required bool enabled});
+  Future<void> setVoiceBoost({required bool enabled});
+  Future<void> setVolume(double volume);
   Future<void> dispose();
 }

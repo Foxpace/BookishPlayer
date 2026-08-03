@@ -4,23 +4,43 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../library/domain/audiobook.dart';
-import '../../library/domain/audiobook_repository.dart';
+import '../../library/domain/audiobook_catalog_repository.dart';
+import '../../library/domain/book_note_repository.dart';
+import '../../library/domain/listening_history_repository.dart';
 import '../../portability/domain/local_export_repository.dart';
+import '../application/playback_command_service.dart';
+import '../application/playback_open_result.dart';
 import '../application/player_notes_service.dart';
+import '../application/player_progress_saver.dart';
+import '../application/listening_session_tracker.dart';
+import '../application/chapter_navigation_policy.dart';
+import '../application/series_continuation_policy.dart';
+import '../application/sleep_timer_coordinator.dart';
 import '../domain/audio_player_repository.dart';
 import '../domain/book_note.dart';
 import 'player_state.dart';
-import 'player_progress_saver.dart';
-import 'player_sleep_controller.dart';
+import 'player_state_factory.dart';
 import 'player_timeline_projector.dart';
 import 'playback_resume_policy.dart';
 
+part 'player_cubit_notes.dart';
+part 'player_cubit_lifecycle.dart';
+
 @lazySingleton
 class PlayerCubit extends Cubit<PlayerState> {
-  PlayerCubit(this._audio, this._books, LocalExportRepository exports)
-    : super(const PlayerState()) {
+  PlayerCubit(
+    this._audio,
+    this._books,
+    this._history,
+    BookNoteRepository noteRepository,
+    LocalExportRepository exports,
+    this._commands,
+  ) : super(const PlayerState()) {
     _progress = PlayerProgressSaver(_audio, _books);
-    _notes = PlayerNotesService(_books, exports);
+    _notes = PlayerNotesService(noteRepository, exports);
+    _sessions = ListeningSessionTracker(_history);
+    _sleep = SleepTimerCoordinator(_audio);
+    _subscriptions.add(_commands.opened.listen(_onExternallyOpened));
     _subscriptions.add(_audio.positionStream.listen(_onPosition));
     _subscriptions.add(
       _audio.bufferedPositionStream.listen(
@@ -35,50 +55,47 @@ class PlayerCubit extends Cubit<PlayerState> {
         }
       }),
     );
-    _subscriptions.add(_audio.playingStream.listen(_handlePlaying));
+    _subscriptions.add(
+      _audio.playingStream.listen((playing) => _handlePlaying(playing)),
+    );
     _subscriptions.add(
       _audio.completedStream.listen((completed) {
         if (completed) {
-          unawaited(saveProgress());
+          unawaited(_handleCompleted());
         }
       }),
     );
   }
 
   final AudioPlayerRepository _audio;
-  final AudiobookRepository _books;
+  final AudiobookCatalogRepository _books;
+  final ListeningHistoryRepository _history;
+  final PlaybackCommandService _commands;
   final _timeline = const PlayerTimelineProjector();
+  late final _states = PlayerStateFactory(_timeline);
   late final PlayerProgressSaver _progress;
   late final PlayerNotesService _notes;
+  late final ListeningSessionTracker _sessions;
   final List<StreamSubscription<Object?>> _subscriptions = [];
-  final _sleep = PlayerSleepController();
+  late final SleepTimerCoordinator _sleep;
   final _resumePolicy = PlaybackResumePolicy();
+  final _series = const SeriesContinuationPolicy();
+  final _chapters = const ChapterNavigationPolicy();
+  var _openingLocally = false;
+
+  void _emit(PlayerState value) => emit(value);
 
   Future<void> open(Audiobook book) async {
     final currentBook = state.book;
     if (currentBook != null && currentBook.id != book.id) {
-      await _audio.pause();
-      await saveProgress();
-      _sleep.cancel(state);
-    } else {
-      await saveProgress();
+      await _finishListeningSession();
+      _sleep.cancel();
     }
-    emit(
-      _timeline.project(
-        PlayerState(
-          status: PlayerStatus.loading,
-          book: book,
-          position: Duration(milliseconds: book.positionMs),
-          duration: Duration(milliseconds: book.durationMs),
-          speed: book.playbackSpeed,
-        ),
-      ),
-    );
+    emit(_states.opening(book));
     try {
-      await _audio.load(book);
-      await _audio.setSpeed(book.playbackSpeed);
-      final notes = await _notes.load(book.id);
-      emit(state.copyWith(status: PlayerStatus.ready, notes: notes));
+      _openingLocally = true;
+      final result = await _commands.open(book);
+      await _applyOpened(result);
     } catch (_) {
       emit(
         state.copyWith(
@@ -86,6 +103,8 @@ class PlayerCubit extends Cubit<PlayerState> {
           message: 'This audiobook could not be played.',
         ),
       );
+    } finally {
+      _openingLocally = false;
     }
   }
 
@@ -94,17 +113,20 @@ class PlayerCubit extends Cubit<PlayerState> {
       return;
     }
     emit(state.copyWith(status: PlayerStatus.loading));
-    final book = await _books.getBook(bookId);
-    if (book == null) {
+    try {
+      final book = await _books.getBook(bookId);
+      if (book == null) {
+        throw StateError('missing book');
+      }
+      await open(book);
+    } catch (_) {
       emit(
         state.copyWith(
           status: PlayerStatus.failure,
           message: 'This audiobook is no longer in your library.',
         ),
       );
-      return;
     }
-    await open(book);
   }
 
   Future<void> togglePlayback() async {
@@ -112,14 +134,29 @@ class PlayerCubit extends Cubit<PlayerState> {
       return;
     }
     if (_audio.isPlaying) {
-      await _audio.pause();
+      await _commands.toggle();
       await saveProgress();
     } else {
       if (state.position >= state.duration && state.duration > Duration.zero) {
         await _audio.seek(Duration.zero);
       }
-      await _audio.play();
+      await _commands.toggle();
     }
+  }
+
+  void _onExternallyOpened(PlaybackOpenResult result) {
+    if (!_openingLocally) {
+      unawaited(_applyOpened(result));
+    }
+  }
+
+  Future<void> _applyOpened(PlaybackOpenResult result) async {
+    final previous = state.book;
+    if (previous != null && previous.id != result.book.id) {
+      await _finishListeningSession();
+      _sleep.cancel();
+    }
+    emit(_states.ready(result, await _notes.load(result.book.id)));
   }
 
   Future<void> seek(Duration value) async {
@@ -145,15 +182,14 @@ class PlayerCubit extends Cubit<PlayerState> {
     if (book == null || book.chapters.isEmpty) {
       return;
     }
-    if (state.chapterPosition > const Duration(seconds: 3)) {
-      await seek(state.chapterStart);
-      return;
-    }
-    final chapters = _orderedChapters(book);
-    final previousIndex = (state.currentChapterIndex - 1)
-        .clamp(0, chapters.length - 1)
-        .toInt();
-    await seek(Duration(milliseconds: chapters[previousIndex].startMs));
+    await seek(
+      _chapters.previous(
+        book: book,
+        index: state.currentChapterIndex,
+        chapterPosition: state.chapterPosition,
+        chapterStart: state.chapterStart,
+      ),
+    );
   }
 
   Future<void> nextChapter() async {
@@ -161,13 +197,7 @@ class PlayerCubit extends Cubit<PlayerState> {
     if (book == null || book.chapters.isEmpty) {
       return;
     }
-    final chapters = _orderedChapters(book);
-    final nextIndex = state.currentChapterIndex + 1;
-    if (nextIndex >= chapters.length) {
-      await seek(state.duration);
-      return;
-    }
-    await seek(Duration(milliseconds: chapters[nextIndex].startMs));
+    await seek(_chapters.next(book, state.currentChapterIndex));
   }
 
   Future<void> changeSpeed(double speed) async {
@@ -187,61 +217,48 @@ class PlayerCubit extends Cubit<PlayerState> {
   }
 
   void setSleepTimer(Duration duration) {
+    final fade = Duration(seconds: state.playback.sleepFadeSeconds);
+    _sleep.scheduleFixed(duration, fade, _finishSleep);
     emit(
-      _sleep.setFixed(state, duration, () async {
-        await _audio.pause();
-        await saveProgress();
-        cancelSleepTimer();
-      }),
+      state.copyWith(
+        sleepTimerType: SleepTimerType.fixed,
+        sleepEndsAt: DateTime.now().add(duration),
+        sleepChapterEndMs: null,
+      ),
     );
   }
 
-  void sleepAtEndOfChapter() => emit(_sleep.setChapterEnd(state));
-
-  void cancelSleepTimer() => emit(_sleep.cancel(state));
-
-  Future<void> addNote(String text) async {
-    return addNoteAt(
-      text,
-      state.position,
-      chapterTitle: state.currentChapter?.title,
-    );
+  Future<void> _finishSleep() async {
+    await saveProgress();
+    cancelSleepTimer();
   }
 
-  Future<void> addNoteAt(
-    String text,
-    Duration position, {
-    String? chapterTitle,
-    Duration? endPosition,
-  }) async {
-    final book = state.book;
-    final clean = text.trim();
-    if (book == null || clean.isEmpty) {
-      return;
-    }
-    final notes = await _notes.add(
-      book: book,
-      notes: state.notes,
-      text: clean,
-      position: _timeline.bounded(position, state.duration),
-      endPosition: endPosition == null
-          ? null
-          : _timeline.bounded(endPosition, state.duration),
-      chapterTitle: chapterTitle,
-    );
-    emit(state.copyWith(notes: notes));
-  }
-
-  Future<void> deleteNote(BookNote note) async {
-    emit(state.copyWith(notes: await _notes.delete(state.notes, note)));
-  }
-
-  Future<bool> exportNotes() async {
+  void sleepAtEndOfChapter() {
+    final minutes = state.playback.chapterFallbackMinutes;
     final book = state.book;
     if (book == null) {
-      return false;
+      return;
     }
-    return _notes.export(book, state.notes);
+    _sleep.cancel();
+    if (minutes > 0) {
+      _sleep.scheduleChapterFallback(
+        Duration(minutes: minutes),
+        Duration(seconds: state.playback.sleepFadeSeconds),
+        _finishSleep,
+      );
+    }
+    emit(
+      state.copyWith(
+        sleepTimerType: SleepTimerType.endOfChapter,
+        sleepEndsAt: null,
+        sleepChapterEndMs: _sleep.chapterEnd(book, state.position),
+      ),
+    );
+  }
+
+  void cancelSleepTimer() {
+    _sleep.cancel();
+    emit(_states.clearSleep(state));
   }
 
   Future<void> saveProgress() => _progress.save(state.book);
@@ -266,23 +283,10 @@ class PlayerCubit extends Cubit<PlayerState> {
     cancelSleepTimer();
   }
 
-  void _handlePlaying(bool playing) {
-    emit(state.copyWith(isPlaying: playing));
-    final action = _resumePolicy.update(playing: playing);
-    if (action.shouldSave) {
-      unawaited(saveProgress());
-    }
-    if (action.rewind > Duration.zero) {
-      unawaited(seek(state.position - action.rewind));
-    }
-  }
-
-  List<AudioChapter> _orderedChapters(Audiobook book) =>
-      [...book.chapters]..sort((a, b) => a.startMs.compareTo(b.startMs));
-
   @override
   Future<void> close() async {
     _sleep.dispose();
+    await _finishListeningSession();
     await saveProgress();
     for (final subscription in _subscriptions) {
       await subscription.cancel();

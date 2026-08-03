@@ -10,6 +10,7 @@ import 'library_cubit.dart';
 import 'library_state.dart';
 
 part 'widgets/library_controls.dart';
+part 'widgets/library_view_sheet.dart';
 part 'widgets/library_sections.dart';
 part 'widgets/book_tiles.dart';
 
@@ -50,37 +51,20 @@ class LibraryScreen extends StatelessWidget {
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                       sliver: SliverToBoxAdapter(
-                        child: Row(
-                          children: [
-                            _LibraryGroupingControl(grouping: state.grouping),
-                            const Spacer(),
-                            SegmentedButton<LibraryLayout>(
-                              segments: const [
-                                ButtonSegment(
-                                  value: LibraryLayout.list,
-                                  icon: Icon(Icons.view_list_rounded),
-                                  tooltip: 'List view',
-                                ),
-                                ButtonSegment(
-                                  value: LibraryLayout.grid,
-                                  icon: Icon(Icons.grid_view_rounded),
-                                  tooltip: 'Grid view',
-                                ),
-                              ],
-                              selected: {state.layout},
-                              showSelectedIcon: false,
-                              onSelectionChanged: (selection) => context
-                                  .read<LibraryCubit>()
-                                  .setLayout(selection.first),
-                            ),
-                          ],
-                        ),
+                        child: _LibrarySearchControls(state: state),
                       ),
                     ),
                   if (state.books.isEmpty)
                     const SliverFillRemaining(
                       hasScrollBody: false,
                       child: _EmptyLibrary(),
+                    )
+                  else if (state.sections.isEmpty)
+                    const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Text('No books match these filters.'),
+                      ),
                     )
                   else
                     SliverPadding(

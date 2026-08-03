@@ -1,12 +1,12 @@
 import '../../library/domain/audiobook.dart';
-import '../../library/domain/audiobook_repository.dart';
+import '../../library/domain/audiobook_catalog_repository.dart';
 import '../domain/audio_player_repository.dart';
 
 class PlayerProgressSaver {
   PlayerProgressSaver(this._audio, this._books);
 
   final AudioPlayerRepository _audio;
-  final AudiobookRepository _books;
+  final AudiobookCatalogRepository _books;
   var _lastSavedAt = DateTime.fromMillisecondsSinceEpoch(0);
   var _writeInFlight = false;
   ({String bookId, Duration position})? _pending;

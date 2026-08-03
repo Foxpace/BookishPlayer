@@ -68,11 +68,9 @@ class _TimelineState extends State<_Timeline> {
               .clamp(0.0, max),
           onChangeStart: (next) => setState(() => _dragValue = next),
           onChanged: (next) => setState(() => _dragValue = next),
-          onChangeEnd: (next) {
+          onChangeEnd: (next) async {
             setState(() => _dragValue = null);
-            context.read<PlayerCubit>().seekWithinChapter(
-              Duration(milliseconds: next.round()),
-            );
+            await _commitSeek(context, Duration(milliseconds: next.round()));
           },
         ),
         Padding(
@@ -85,7 +83,7 @@ class _TimelineState extends State<_Timeline> {
                 style: Theme.of(context).textTheme.labelMedium,
               ),
               Text(
-                formatRemaining(state.chapterPosition, state.chapterDuration),
+                '-${formatDuration(Duration(milliseconds: ((state.chapterDuration - state.chapterPosition).inMilliseconds / state.speed).round()))}',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -94,6 +92,54 @@ class _TimelineState extends State<_Timeline> {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _commitSeek(BuildContext context, Duration relative) async {
+    final cubit = context.read<PlayerCubit>();
+    final previous = cubit.state.position;
+    final target = cubit.state.chapterStart + relative;
+    final threshold = Duration(minutes: cubit.state.playback.largeSeekMinutes);
+    final distance = target - previous;
+    if (distance.abs() >= threshold) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Jump to this position?'),
+          content: Text(
+            'This moves ${formatDuration(distance.abs())} '
+            '${distance.isNegative ? 'back' : 'forward'}.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Jump'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !context.mounted) {
+        return;
+      }
+    }
+    await cubit.seekWithinChapter(relative);
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Playback position changed.'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            cubit.seek(previous);
+          },
+        ),
+      ),
     );
   }
 }

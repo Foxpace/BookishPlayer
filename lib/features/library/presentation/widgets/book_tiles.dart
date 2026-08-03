@@ -8,7 +8,6 @@ class _BookGridTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final duration = Duration(milliseconds: book.durationMs);
-    final position = Duration(milliseconds: book.positionMs);
     final progress = book.durationMs == 0
         ? 0.0
         : (book.positionMs / book.durationMs).clamp(0.0, 1.0);
@@ -70,7 +69,7 @@ class _BookGridTile extends StatelessWidget {
                         const SizedBox(height: 7),
                         Text(
                           book.positionMs > 0
-                              ? '${(progress * 100).round()}% · ${formatRemaining(position, duration)} left'
+                              ? '${(progress * 100).round()}% · ${formatDuration(book.remainingDuration)} left'
                               : formatDuration(duration),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -102,7 +101,6 @@ class _BookTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final duration = Duration(milliseconds: book.durationMs);
-    final position = Duration(milliseconds: book.positionMs);
     final progress = book.durationMs == 0
         ? 0.0
         : (book.positionMs / book.durationMs).clamp(0.0, 1.0);
@@ -148,7 +146,7 @@ class _BookTile extends StatelessWidget {
                     const SizedBox(height: 7),
                     Text(
                       book.positionMs > 0
-                          ? '${(progress * 100).round()}% · ${formatRemaining(position, duration)} left'
+                          ? '${(progress * 100).round()}% · ${formatDuration(book.remainingDuration)} left'
                           : formatDuration(duration),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -180,7 +178,26 @@ class _BookActionsMenu extends StatelessWidget {
       padding: EdgeInsets.zero,
       iconSize: compact ? 20 : 24,
       onSelected: (action) async {
-        if (action == 'title') {
+        if (action == 'favorite') {
+          await context.read<LibraryCubit>().toggleFavorite(book);
+        } else if (action == 'want') {
+          await context.read<LibraryCubit>().setListeningStatus(
+            book,
+            ListeningStatus.wantToListen,
+          );
+        } else if (action == 'finished') {
+          await context.read<LibraryCubit>().setListeningStatus(
+            book,
+            ListeningStatus.finished,
+          );
+        } else if (action == 'unfinished') {
+          await context.read<LibraryCubit>().setListeningStatus(
+            book,
+            ListeningStatus.inProgress,
+          );
+        } else if (action == 'automatic') {
+          await context.read<LibraryCubit>().setListeningStatus(book, null);
+        } else if (action == 'title') {
           await _showFullTitle(context, book);
         } else if (action == 'edit') {
           await context.pushNamed<void>(
@@ -194,10 +211,26 @@ class _BookActionsMenu extends StatelessWidget {
           await _confirmDelete(context, book);
         }
       },
-      itemBuilder: (_) => const [
-        PopupMenuItem(value: 'title', child: Text('View full title')),
-        PopupMenuItem(value: 'edit', child: Text('Edit metadata')),
-        PopupMenuItem(value: 'delete', child: Text('Remove from device')),
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: 'favorite',
+          child: Text(book.isFavorite ? 'Remove favorite' : 'Add favorite'),
+        ),
+        const PopupMenuItem(value: 'want', child: Text('Want to listen')),
+        const PopupMenuItem(value: 'finished', child: Text('Mark finished')),
+        const PopupMenuItem(
+          value: 'unfinished',
+          child: Text('Mark unfinished'),
+        ),
+        if (book.statusOverride != null)
+          const PopupMenuItem(
+            value: 'automatic',
+            child: Text('Use progress status'),
+          ),
+        const PopupMenuDivider(),
+        const PopupMenuItem(value: 'title', child: Text('View full title')),
+        const PopupMenuItem(value: 'edit', child: Text('Edit metadata')),
+        const PopupMenuItem(value: 'delete', child: Text('Remove from device')),
       ],
     );
     return compact ? SizedBox.square(dimension: 40, child: button) : button;

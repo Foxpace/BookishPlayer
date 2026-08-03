@@ -24,6 +24,15 @@ _Audiobook _$AudiobookFromJson(Map<String, dynamic> json) => _Audiobook(
       ? null
       : DateTime.parse(json['lastPlayedAt'] as String),
   playbackSpeed: (json['playbackSpeed'] as num?)?.toDouble() ?? 1.0,
+  isFavorite: json['isFavorite'] as bool? ?? false,
+  statusOverride: $enumDecodeNullable(
+    _$ListeningStatusEnumMap,
+    json['statusOverride'],
+  ),
+  seriesPosition: (json['seriesPosition'] as num?)?.toDouble(),
+  completedAt: json['completedAt'] == null
+      ? null
+      : DateTime.parse(json['completedAt'] as String),
   tracks:
       (json['tracks'] as List<dynamic>?)
           ?.map((e) => AudioTrack.fromJson(e as Map<String, dynamic>))
@@ -53,9 +62,20 @@ Map<String, dynamic> _$AudiobookToJson(_Audiobook instance) =>
       'positionMs': instance.positionMs,
       'lastPlayedAt': instance.lastPlayedAt?.toIso8601String(),
       'playbackSpeed': instance.playbackSpeed,
+      'isFavorite': instance.isFavorite,
+      'statusOverride': _$ListeningStatusEnumMap[instance.statusOverride],
+      'seriesPosition': instance.seriesPosition,
+      'completedAt': instance.completedAt?.toIso8601String(),
       'tracks': instance.tracks.map((e) => e.toJson()).toList(),
       'chapters': instance.chapters.map((e) => e.toJson()).toList(),
     };
+
+const _$ListeningStatusEnumMap = {
+  ListeningStatus.wantToListen: 'wantToListen',
+  ListeningStatus.notStarted: 'notStarted',
+  ListeningStatus.inProgress: 'inProgress',
+  ListeningStatus.finished: 'finished',
+};
 
 _AudioTrack _$AudioTrackFromJson(Map<String, dynamic> json) => _AudioTrack(
   id: json['id'] as String,

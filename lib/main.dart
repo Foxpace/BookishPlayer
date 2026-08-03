@@ -9,9 +9,13 @@ import 'core/di/injection.dart';
 import 'core/localization/generated/l10n.dart';
 import 'core/theme/bookish_theme.dart';
 import 'features/player/data/bookish_audio_handler.dart';
+import 'features/player/application/playback_command_service.dart';
 import 'features/player/data/just_audio_player_repository.dart';
 import 'features/player/domain/audio_player_repository.dart';
 import 'features/player/presentation/player_cubit.dart';
+import 'features/library/domain/audiobook_catalog_repository.dart';
+import 'features/library/domain/observable_audiobook_catalog_repository.dart';
+import 'features/player/data/pigeon_car_play_bridge.dart';
 import 'features/settings/domain/theme_preference.dart';
 import 'features/settings/presentation/settings_cubit.dart';
 import 'features/settings/presentation/settings_state.dart';
@@ -20,7 +24,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
   final audioHandler = await AudioService.init(
-    builder: () => BookishAudioHandler(getIt<AudioPlayer>()),
+    builder: () => BookishAudioHandler(
+      getIt<AudioPlayer>(),
+      getIt<AudiobookCatalogRepository>(),
+      getIt<PlaybackCommandService>(),
+    ),
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'com.tomasrepcik.bookish.audio',
       androidNotificationChannelName: 'Bookish playback',
@@ -39,6 +47,10 @@ Future<void> main() async {
     throw StateError('The audio repository does not support audio_service.');
   }
   playerRepository.attachAudioHandler(audioHandler);
+  await PigeonCarPlayBridge(
+    getIt<ObservableAudiobookCatalogRepository>(),
+    getIt<PlaybackCommandService>(),
+  ).initialize();
   runApp(const BookishAppRoot());
 }
 

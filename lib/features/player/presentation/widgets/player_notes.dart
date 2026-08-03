@@ -1,9 +1,10 @@
 part of '../player_screen.dart';
 
 class _NotesSheet extends StatelessWidget {
-  const _NotesSheet({required this.onAddNote});
+  const _NotesSheet({required this.onAddNote, required this.onAddVoiceNote});
 
   final VoidCallback onAddNote;
+  final VoidCallback onAddVoiceNote;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,25 @@ class _NotesSheet extends StatelessWidget {
                             ?.copyWith(fontWeight: FontWeight.w700),
                       ),
                     ),
+                    IconButton.filledTonal(
+                      tooltip: 'Add bookmark at current position',
+                      onPressed: () async {
+                        await context.read<PlayerCubit>().addBookmark();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Bookmark saved.')),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.bookmark_add_rounded),
+                    ),
+                    const SizedBox(width: 6),
+                    IconButton.filledTonal(
+                      tooltip: 'Dictate voice note',
+                      onPressed: onAddVoiceNote,
+                      icon: const Icon(Icons.mic_rounded),
+                    ),
+                    const SizedBox(width: 6),
                     IconButton.filledTonal(
                       tooltip: 'Add note at current position',
                       onPressed: onAddNote,
@@ -110,9 +130,13 @@ class _NoteTile extends StatelessWidget {
           cubit.seek(Duration(milliseconds: note.positionMs));
           Navigator.pop(context);
         },
-        icon: const Icon(Icons.play_arrow_rounded),
+        icon: Icon(switch (note.kind) {
+          BookNoteKind.bookmark => Icons.bookmark_rounded,
+          BookNoteKind.voice => Icons.mic_rounded,
+          BookNoteKind.note => Icons.play_arrow_rounded,
+        }),
       ),
-      title: Text(note.text),
+      title: Text(note.kind == BookNoteKind.bookmark ? 'Bookmark' : note.text),
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 6),
         child: Text(

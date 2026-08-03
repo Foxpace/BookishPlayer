@@ -26,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Bookish uses the microphone when you dictate a voice note.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Bookish transcribes short voice notes that you choose to record.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>

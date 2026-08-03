@@ -1,18 +1,25 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:path/path.dart' as p;
 
 import '../../library/domain/audiobook.dart';
 import '../domain/audio_player_repository.dart';
+import 'playback_segments.dart';
 
-part 'just_audio_player_repository.freezed.dart';
+export 'playback_segments.dart';
 
 class JustAudioPlayerRepository implements AudioPlayerRepository {
-  JustAudioPlayerRepository(this._player);
+  JustAudioPlayerRepository(
+    this._player, [
+    this._loudnessEnhancer,
+    this._equalizer,
+  ]);
 
   final AudioPlayer _player;
+  final AndroidLoudnessEnhancer? _loudnessEnhancer;
+  final AndroidEqualizer? _equalizer;
   AudioHandler? _audioHandler;
   List<PlaybackSegment> _segments = const [];
   var _offsetsMs = const [0];
@@ -131,6 +138,49 @@ class JustAudioPlayerRepository implements AudioPlayerRepository {
       _handler.customAction('setSpeed', {'speed': speed});
 
   @override
+  Future<void> setSkipIntervals(Duration rewind, Duration forward) =>
+      _handler.customAction('setSkipIntervals', {
+        'rewindMs': rewind.inMilliseconds,
+        'forwardMs': forward.inMilliseconds,
+      });
+
+  @override
+  Future<void> setShortenSilence({required bool enabled}) => Platform.isAndroid
+      ? _player.setSkipSilenceEnabled(enabled)
+      : Future<void>.value();
+
+  @override
+  Future<void> setVoiceBoost({required bool enabled}) async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+    final loudness = _loudnessEnhancer;
+    if (loudness != null) {
+      await loudness.setTargetGain(4);
+      await loudness.setEnabled(enabled);
+    }
+    final equalizer = _equalizer;
+    if (equalizer != null) {
+      await equalizer.setEnabled(enabled);
+      if (enabled) {
+        final parameters = await equalizer.parameters;
+        for (final band in parameters.bands) {
+          final preferred =
+              band.centerFrequency >= 900 && band.centerFrequency <= 5000
+              ? 3.0
+              : -1.0;
+          await band.setGain(
+            preferred.clamp(parameters.minDecibels, parameters.maxDecibels),
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  Future<void> setVolume(double volume) => _player.setVolume(volume);
+
+  @override
   Future<void> dispose() async {
     await _handler.stop();
     await _player.dispose();
@@ -166,108 +216,3 @@ class JustAudioPlayerRepository implements AudioPlayerRepository {
     );
   }
 }
-
-@freezed
-abstract class PlaybackSegment with _$PlaybackSegment {
-  const factory PlaybackSegment({
-    required String id,
-    required AudioTrack track,
-    required String title,
-    required int globalStartMs,
-    required int sourceStartMs,
-    required int durationMs,
-  }) = _PlaybackSegment;
-}
-
-/// Builds the same chapter-relative timeline used by the player UI, while
-/// retaining enough information to clip chapters out of their physical files.
-List<PlaybackSegment> buildPlaybackSegments(Audiobook book) {
-  final tracks = book.playableTracks;
-  final totalDurationMs = tracks.fold(
-    0,
-    (total, track) => total + track.durationMs,
-  );
-  if (tracks.isEmpty) {
-    return const [];
-  }
-
-  // Keep unknown-duration files playable. They cannot be clipped reliably,
-  // but the decoder can still discover their duration after loading.
-  if (totalDurationMs <= 0) {
-    return [
-      for (var index = 0; index < tracks.length; index++)
-        PlaybackSegment(
-          id: 'track-${tracks[index].id}',
-          track: tracks[index],
-          title: tracks[index].title,
-          globalStartMs: 0,
-          sourceStartMs: 0,
-          durationMs: tracks[index].durationMs,
-        ),
-    ];
-  }
-
-  final chapters = [...book.chapters]
-    ..sort((a, b) => a.startMs.compareTo(b.startMs));
-  final chapterRanges = <({int index, String title, int start, int end})>[];
-  if (chapters.isEmpty) {
-    for (var index = 0, start = 0; index < tracks.length; index++) {
-      final track = tracks[index];
-      chapterRanges.add((
-        index: index,
-        title: track.title,
-        start: start,
-        end: start + track.durationMs,
-      ));
-      start += track.durationMs;
-    }
-  } else {
-    for (var index = 0; index < chapters.length; index++) {
-      final start = index == 0
-          ? 0
-          : chapters[index].startMs.clamp(0, totalDurationMs).toInt();
-      final end = index + 1 < chapters.length
-          ? chapters[index + 1].startMs.clamp(start, totalDurationMs).toInt()
-          : totalDurationMs;
-      if (end > start) {
-        chapterRanges.add((
-          index: index,
-          title: chapters[index].title,
-          start: start,
-          end: end,
-        ));
-      }
-    }
-  }
-
-  final segments = <PlaybackSegment>[];
-  var trackStart = 0;
-  for (final track in tracks) {
-    final trackEnd = trackStart + track.durationMs;
-    for (final chapter in chapterRanges) {
-      final start = chapter.start > trackStart ? chapter.start : trackStart;
-      final end = chapter.end < trackEnd ? chapter.end : trackEnd;
-      if (end <= start) {
-        continue;
-      }
-      segments.add(
-        PlaybackSegment(
-          id: 'chapter-${chapter.index}:${track.id}:$start',
-          track: track,
-          title: chapter.title,
-          globalStartMs: start,
-          sourceStartMs: start - trackStart,
-          durationMs: end - start,
-        ),
-      );
-    }
-    trackStart = trackEnd;
-  }
-  return segments;
-}
-
-/// Gives short-lived metadata probes a safe, lightweight source tag.
-MediaItem durationProbeMediaItem(String path) => MediaItem(
-  id: 'bookish-duration-probe:${Uri.file(path)}',
-  title: p.basenameWithoutExtension(path),
-);

@@ -44,6 +44,7 @@ class _EditorFormState extends State<_EditorForm> {
   late final TextEditingController _title;
   late final TextEditingController _author;
   late final TextEditingController _series;
+  late final TextEditingController _seriesPosition;
   late final TextEditingController _narrator;
   late final TextEditingController _year;
   late final TextEditingController _folder;
@@ -54,6 +55,9 @@ class _EditorFormState extends State<_EditorForm> {
     _title = TextEditingController(text: widget.book.title);
     _author = TextEditingController(text: widget.book.author);
     _series = TextEditingController(text: widget.book.series);
+    _seriesPosition = TextEditingController(
+      text: widget.book.seriesPosition?.toString() ?? '',
+    );
     _narrator = TextEditingController(text: widget.book.narrator);
     _year = TextEditingController(text: widget.book.year?.toString() ?? '');
     _folder = TextEditingController(text: widget.book.folder);
@@ -64,6 +68,7 @@ class _EditorFormState extends State<_EditorForm> {
     _title.dispose();
     _author.dispose();
     _series.dispose();
+    _seriesPosition.dispose();
     _narrator.dispose();
     _year.dispose();
     _folder.dispose();
@@ -109,6 +114,15 @@ class _EditorFormState extends State<_EditorForm> {
         ),
         const SizedBox(height: 12),
         TextField(
+          controller: _seriesPosition,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(
+            labelText: 'Volume number',
+            hintText: 'For example 2 or 2.5',
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
           controller: _narrator,
           decoration: const InputDecoration(labelText: 'Narrator'),
         ),
@@ -129,6 +143,7 @@ class _EditorFormState extends State<_EditorForm> {
             title: _title.text,
             author: _author.text,
             series: _series.text,
+            seriesPosition: _seriesPosition.text,
             narrator: _narrator.text,
             year: _year.text,
             folder: _folder.text,

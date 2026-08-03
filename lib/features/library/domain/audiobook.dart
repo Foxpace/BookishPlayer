@@ -21,6 +21,10 @@ abstract class Audiobook with _$Audiobook {
     @Default(0) int positionMs,
     DateTime? lastPlayedAt,
     @Default(1.0) double playbackSpeed,
+    @Default(false) bool isFavorite,
+    ListeningStatus? statusOverride,
+    double? seriesPosition,
+    DateTime? completedAt,
     @Default(<AudioTrack>[]) List<AudioTrack> tracks,
     @Default(<AudioChapter>[]) List<AudioChapter> chapters,
   }) = _Audiobook;
@@ -29,10 +33,13 @@ abstract class Audiobook with _$Audiobook {
       _$AudiobookFromJson(json);
 }
 
-enum ListeningStatus { notStarted, inProgress, finished }
+enum ListeningStatus { wantToListen, notStarted, inProgress, finished }
 
 extension AudiobookProgress on Audiobook {
   ListeningStatus get listeningStatus {
+    if (statusOverride case final override?) {
+      return override;
+    }
     if (positionMs <= 0) {
       return ListeningStatus.notStarted;
     }
@@ -40,6 +47,13 @@ extension AudiobookProgress on Audiobook {
       return ListeningStatus.finished;
     }
     return ListeningStatus.inProgress;
+  }
+
+  bool get isFinished => listeningStatus == ListeningStatus.finished;
+
+  Duration get remainingDuration {
+    final remainingMs = (durationMs - positionMs).clamp(0, durationMs);
+    return Duration(milliseconds: remainingMs);
   }
 
   List<AudioTrack> get playableTracks =>

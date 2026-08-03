@@ -35,26 +35,48 @@ import 'package:bookish_player/features/importing/domain/m4b_chapter_parser.dart
     as _i545;
 import 'package:bookish_player/features/importing/presentation/import_cubit.dart'
     as _i785;
+import 'package:bookish_player/features/insights/presentation/listening_insights_cubit.dart'
+    as _i1018;
 import 'package:bookish_player/features/library/data/audiobook_dao.dart'
     as _i619;
 import 'package:bookish_player/features/library/data/sembast_audiobook_repository.dart'
     as _i685;
+import 'package:bookish_player/features/library/domain/audiobook_catalog_repository.dart'
+    as _i643;
 import 'package:bookish_player/features/library/domain/audiobook_repository.dart'
     as _i972;
+import 'package:bookish_player/features/library/domain/book_note_repository.dart'
+    as _i463;
+import 'package:bookish_player/features/library/domain/listening_history_repository.dart'
+    as _i4;
+import 'package:bookish_player/features/library/domain/observable_audiobook_catalog_repository.dart'
+    as _i421;
 import 'package:bookish_player/features/library/presentation/library_cubit.dart'
     as _i1055;
+import 'package:bookish_player/features/player/application/playback_command_service.dart'
+    as _i234;
 import 'package:bookish_player/features/player/data/share_plus_quote_share_repository.dart'
     as _i454;
+import 'package:bookish_player/features/player/data/speech_to_text_voice_note_repository.dart'
+    as _i232;
 import 'package:bookish_player/features/player/domain/audio_player_repository.dart'
     as _i712;
 import 'package:bookish_player/features/player/domain/quote_share_repository.dart'
     as _i536;
+import 'package:bookish_player/features/player/domain/voice_note_transcription_repository.dart'
+    as _i453;
 import 'package:bookish_player/features/player/presentation/player_cubit.dart'
     as _i781;
 import 'package:bookish_player/features/player/presentation/quote_transcription_cubit.dart'
     as _i540;
+import 'package:bookish_player/features/player/presentation/voice_note_cubit.dart'
+    as _i608;
 import 'package:bookish_player/features/portability/data/file_picker_local_export_repository.dart'
     as _i40;
+import 'package:bookish_player/features/portability/data/sembast_backup_store_repository.dart'
+    as _i382;
+import 'package:bookish_player/features/portability/domain/backup_store_repository.dart'
+    as _i1021;
 import 'package:bookish_player/features/portability/domain/local_export_repository.dart'
     as _i23;
 import 'package:bookish_player/features/portability/presentation/portability_cubit.dart'
@@ -69,6 +91,12 @@ import 'package:bookish_player/features/settings/presentation/settings_cubit.dar
     as _i700;
 import 'package:bookish_player/features/settings/presentation/speech_models_cubit.dart'
     as _i807;
+import 'package:bookish_player/features/storage/data/device_library_storage_repository.dart'
+    as _i8;
+import 'package:bookish_player/features/storage/domain/library_storage_repository.dart'
+    as _i1040;
+import 'package:bookish_player/features/storage/presentation/storage_assistant_cubit.dart'
+    as _i0;
 import 'package:bookish_player/features/transcription/data/cactus_transcription_repository.dart'
     as _i687;
 import 'package:bookish_player/features/transcription/domain/transcription_repository.dart'
@@ -90,7 +118,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => appModule.database,
       preResolve: true,
     );
-    gh.lazySingleton<_i501.AudioPlayer>(() => appModule.audioPlayer);
+    gh.lazySingleton<_i501.AndroidLoudnessEnhancer>(
+      () => appModule.loudnessEnhancer,
+    );
+    gh.lazySingleton<_i501.AndroidEqualizer>(() => appModule.equalizer);
     gh.lazySingleton<_i583.GoRouter>(() => appModule.router);
     gh.lazySingleton<_i1058.TranscriptionRepository>(
       () => _i687.CactusTranscriptionRepository(),
@@ -113,37 +144,57 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i536.QuoteShareRepository>(
       () => _i454.SharePlusQuoteShareRepository(),
     );
+    gh.lazySingleton<_i1040.LibraryStorageRepository>(
+      () => _i8.DeviceLibraryStorageRepository(),
+    );
     gh.lazySingleton<_i550.FileImportRepository>(
       () => _i979.DeviceFileImportRepository(),
     );
     gh.lazySingleton<_i972.AudiobookRepository>(
       () => _i685.SembastAudiobookRepository(gh<_i619.AudiobookDao>()),
     );
+    gh.lazySingleton<_i453.VoiceNoteTranscriptionRepository>(
+      () => _i232.SpeechToTextVoiceNoteRepository(),
+    );
     gh.lazySingleton<_i545.M4bChapterParser>(
       () => _i138.IsoBmffM4bChapterParser(),
     );
-    gh.factory<_i778.MetadataEditorCubit>(
-      () => _i778.MetadataEditorCubit(
-        gh<_i972.AudiobookRepository>(),
-        gh<_i550.FileImportRepository>(),
-      ),
+    gh.lazySingleton<_i1021.BackupStoreRepository>(
+      () => _i382.SembastBackupStoreRepository(gh<_i987.BookishDatabase>()),
     );
     gh.lazySingleton<_i955.ImportDiagnosticsRepository>(
       () => _i814.SystemImportDiagnosticsRepository(),
     );
+    gh.factory<_i608.VoiceNoteCubit>(
+      () => _i608.VoiceNoteCubit(gh<_i453.VoiceNoteTranscriptionRepository>()),
+    );
     gh.lazySingleton<_i856.SettingsRepository>(
       () => _i681.SembastSettingsRepository(gh<_i443.SettingsDao>()),
     );
+    gh.lazySingleton<_i501.AudioPlayer>(
+      () => appModule.audioPlayer(
+        gh<_i501.AndroidLoudnessEnhancer>(),
+        gh<_i501.AndroidEqualizer>(),
+      ),
+    );
     gh.factory<_i1009.PortabilityCubit>(
       () => _i1009.PortabilityCubit(
-        gh<_i972.AudiobookRepository>(),
-        gh<_i856.SettingsRepository>(),
+        gh<_i1021.BackupStoreRepository>(),
         gh<_i23.LocalExportRepository>(),
       ),
     );
-    await gh.factoryAsync<_i712.AudioPlayerRepository>(
-      () => appModule.playerRepository(gh<_i501.AudioPlayer>()),
-      preResolve: true,
+    gh.lazySingleton<_i643.AudiobookCatalogRepository>(
+      () => appModule.audiobookCatalog(gh<_i972.AudiobookRepository>()),
+    );
+    gh.lazySingleton<_i463.BookNoteRepository>(
+      () => appModule.bookNotes(gh<_i972.AudiobookRepository>()),
+    );
+    gh.lazySingleton<_i4.ListeningHistoryRepository>(
+      () => appModule.listeningHistory(gh<_i972.AudiobookRepository>()),
+    );
+    gh.lazySingleton<_i421.ObservableAudiobookCatalogRepository>(
+      () =>
+          appModule.observableAudiobookCatalog(gh<_i972.AudiobookRepository>()),
     );
     gh.factory<_i807.SpeechModelsCubit>(
       () => _i807.SpeechModelsCubit(
@@ -151,19 +202,29 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i856.SettingsRepository>(),
       ),
     );
-    gh.lazySingleton<_i781.PlayerCubit>(
-      () => _i781.PlayerCubit(
+    await gh.factoryAsync<_i712.AudioPlayerRepository>(
+      () => appModule.playerRepository(
+        gh<_i501.AudioPlayer>(),
+        gh<_i501.AndroidLoudnessEnhancer>(),
+        gh<_i501.AndroidEqualizer>(),
+      ),
+      preResolve: true,
+    );
+    gh.factory<_i785.ImportCubit>(
+      () => _i785.ImportCubit(
+        gh<_i550.FileImportRepository>(),
         gh<_i712.AudioPlayerRepository>(),
-        gh<_i972.AudiobookRepository>(),
-        gh<_i23.LocalExportRepository>(),
+        gh<_i643.AudiobookCatalogRepository>(),
+        gh<_i545.M4bChapterParser>(),
+        gh<_i556.AudiobookArtworkExtractor>(),
+        gh<_i25.AudiobookMetadataExtractor>(),
+        gh<_i955.ImportDiagnosticsRepository>(),
       ),
     );
-    gh.factory<_i1055.LibraryCubit>(
-      () => _i1055.LibraryCubit(
-        gh<_i972.AudiobookRepository>(),
-        gh<_i550.FileImportRepository>(),
-        gh<_i556.AudiobookArtworkExtractor>(),
-        gh<_i856.SettingsRepository>(),
+    gh.factory<_i1018.ListeningInsightsCubit>(
+      () => _i1018.ListeningInsightsCubit(
+        gh<_i643.AudiobookCatalogRepository>(),
+        gh<_i4.ListeningHistoryRepository>(),
       ),
     );
     gh.factory<_i540.QuoteTranscriptionCubit>(
@@ -176,15 +237,41 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i700.SettingsCubit>(
       () => _i700.SettingsCubit(gh<_i856.SettingsRepository>()),
     );
-    gh.factory<_i785.ImportCubit>(
-      () => _i785.ImportCubit(
+    gh.factory<_i778.MetadataEditorCubit>(
+      () => _i778.MetadataEditorCubit(
+        gh<_i643.AudiobookCatalogRepository>(),
         gh<_i550.FileImportRepository>(),
-        gh<_i712.AudioPlayerRepository>(),
-        gh<_i972.AudiobookRepository>(),
-        gh<_i545.M4bChapterParser>(),
+      ),
+    );
+    gh.factory<_i1055.LibraryCubit>(
+      () => _i1055.LibraryCubit(
+        gh<_i643.AudiobookCatalogRepository>(),
+        gh<_i550.FileImportRepository>(),
         gh<_i556.AudiobookArtworkExtractor>(),
-        gh<_i25.AudiobookMetadataExtractor>(),
-        gh<_i955.ImportDiagnosticsRepository>(),
+        gh<_i856.SettingsRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i234.PlaybackCommandService>(
+      () => _i234.PlaybackCommandService(
+        gh<_i712.AudioPlayerRepository>(),
+        gh<_i643.AudiobookCatalogRepository>(),
+        gh<_i856.SettingsRepository>(),
+      ),
+    );
+    gh.factory<_i0.StorageAssistantCubit>(
+      () => _i0.StorageAssistantCubit(
+        gh<_i643.AudiobookCatalogRepository>(),
+        gh<_i1040.LibraryStorageRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i781.PlayerCubit>(
+      () => _i781.PlayerCubit(
+        gh<_i712.AudioPlayerRepository>(),
+        gh<_i643.AudiobookCatalogRepository>(),
+        gh<_i4.ListeningHistoryRepository>(),
+        gh<_i463.BookNoteRepository>(),
+        gh<_i23.LocalExportRepository>(),
+        gh<_i234.PlaybackCommandService>(),
       ),
     );
     return this;

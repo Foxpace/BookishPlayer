@@ -13,10 +13,32 @@ void main() {
     });
 
     expect(book.playbackSpeed, 1.0);
+    expect(book.isFavorite, isFalse);
+    expect(book.statusOverride, isNull);
+    expect(book.seriesPosition, isNull);
     expect(book.author, isEmpty);
     expect(book.tracks, isEmpty);
     expect(book.playableTracks, hasLength(1));
     expect(book.listeningStatus, ListeningStatus.inProgress);
+  });
+
+  test('explicit shelf status and remaining time are honored', () {
+    final book = Audiobook(
+      id: 'planned',
+      title: 'Planned Book',
+      filePath: '/book.mp3',
+      durationMs: 120000,
+      positionMs: 60000,
+      playbackSpeed: 2,
+      addedAt: DateTime(2026),
+      statusOverride: ListeningStatus.wantToListen,
+      isFavorite: true,
+      seriesPosition: 2.5,
+    );
+
+    expect(book.listeningStatus, ListeningStatus.wantToListen);
+    expect(book.remainingDuration, const Duration(minutes: 1));
+    expect(Audiobook.fromJson(book.toJson()), book);
   });
 
   test('orders multi-file tracks by persisted order', () {

@@ -1,4 +1,5 @@
 import 'package:bookish_player/features/settings/domain/settings_repository.dart';
+import 'package:bookish_player/features/settings/domain/playback_preferences.dart';
 import 'package:bookish_player/features/settings/domain/theme_preference.dart';
 import 'package:bookish_player/features/settings/presentation/settings_cubit.dart';
 import 'package:bookish_player/features/settings/presentation/settings_state.dart';
@@ -48,4 +49,11 @@ class _FakeSettingsRepository implements SettingsRepository {
 
   @override
   Future<void> setSpeechModel(String model) async {}
+
+  @override
+  Future<PlaybackPreferences> getPlaybackPreferences() async =>
+      const PlaybackPreferences();
+
+  @override
+  Future<void> setPlaybackPreferences(PlaybackPreferences preferences) async {}
 }

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PlayerState {
 
- PlayerStatus get status; Audiobook? get book; Duration get position; Duration get bufferedPosition; Duration get duration; AudioChapter? get currentChapter; int get currentChapterIndex; int get chapterCount; Duration get chapterStart; Duration get chapterPosition; Duration get chapterBufferedPosition; Duration get chapterDuration; List<PlayerChapter> get chapterTimeline; bool get isPlaying; double get speed; SleepTimerType? get sleepTimerType; DateTime? get sleepEndsAt; int? get sleepChapterEndMs; List<BookNote> get notes; String? get message;
+ PlayerStatus get status; Audiobook? get book; Duration get position; Duration get bufferedPosition; Duration get duration; AudioChapter? get currentChapter; int get currentChapterIndex; int get chapterCount; Duration get chapterStart; Duration get chapterPosition; Duration get chapterBufferedPosition; Duration get chapterDuration; List<PlayerChapter> get chapterTimeline; bool get isPlaying; double get speed; PlaybackPreferences get playback; SleepTimerType? get sleepTimerType; DateTime? get sleepEndsAt; int? get sleepChapterEndMs; List<BookNote> get notes; String? get message;
 /// Create a copy of PlayerState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $PlayerStateCopyWith<PlayerState> get copyWith => _$PlayerStateCopyWithImpl<Play
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayerState&&(identical(other.status, status) || other.status == status)&&(identical(other.book, book) || other.book == book)&&(identical(other.position, position) || other.position == position)&&(identical(other.bufferedPosition, bufferedPosition) || other.bufferedPosition == bufferedPosition)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.currentChapter, currentChapter) || other.currentChapter == currentChapter)&&(identical(other.currentChapterIndex, currentChapterIndex) || other.currentChapterIndex == currentChapterIndex)&&(identical(other.chapterCount, chapterCount) || other.chapterCount == chapterCount)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart)&&(identical(other.chapterPosition, chapterPosition) || other.chapterPosition == chapterPosition)&&(identical(other.chapterBufferedPosition, chapterBufferedPosition) || other.chapterBufferedPosition == chapterBufferedPosition)&&(identical(other.chapterDuration, chapterDuration) || other.chapterDuration == chapterDuration)&&const DeepCollectionEquality().equals(other.chapterTimeline, chapterTimeline)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.sleepTimerType, sleepTimerType) || other.sleepTimerType == sleepTimerType)&&(identical(other.sleepEndsAt, sleepEndsAt) || other.sleepEndsAt == sleepEndsAt)&&(identical(other.sleepChapterEndMs, sleepChapterEndMs) || other.sleepChapterEndMs == sleepChapterEndMs)&&const DeepCollectionEquality().equals(other.notes, notes)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayerState&&(identical(other.status, status) || other.status == status)&&(identical(other.book, book) || other.book == book)&&(identical(other.position, position) || other.position == position)&&(identical(other.bufferedPosition, bufferedPosition) || other.bufferedPosition == bufferedPosition)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.currentChapter, currentChapter) || other.currentChapter == currentChapter)&&(identical(other.currentChapterIndex, currentChapterIndex) || other.currentChapterIndex == currentChapterIndex)&&(identical(other.chapterCount, chapterCount) || other.chapterCount == chapterCount)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart)&&(identical(other.chapterPosition, chapterPosition) || other.chapterPosition == chapterPosition)&&(identical(other.chapterBufferedPosition, chapterBufferedPosition) || other.chapterBufferedPosition == chapterBufferedPosition)&&(identical(other.chapterDuration, chapterDuration) || other.chapterDuration == chapterDuration)&&const DeepCollectionEquality().equals(other.chapterTimeline, chapterTimeline)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.sleepTimerType, sleepTimerType) || other.sleepTimerType == sleepTimerType)&&(identical(other.sleepEndsAt, sleepEndsAt) || other.sleepEndsAt == sleepEndsAt)&&(identical(other.sleepChapterEndMs, sleepChapterEndMs) || other.sleepChapterEndMs == sleepChapterEndMs)&&const DeepCollectionEquality().equals(other.notes, notes)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,status,book,position,bufferedPosition,duration,currentChapter,currentChapterIndex,chapterCount,chapterStart,chapterPosition,chapterBufferedPosition,chapterDuration,const DeepCollectionEquality().hash(chapterTimeline),isPlaying,speed,sleepTimerType,sleepEndsAt,sleepChapterEndMs,const DeepCollectionEquality().hash(notes),message]);
+int get hashCode => Object.hashAll([runtimeType,status,book,position,bufferedPosition,duration,currentChapter,currentChapterIndex,chapterCount,chapterStart,chapterPosition,chapterBufferedPosition,chapterDuration,const DeepCollectionEquality().hash(chapterTimeline),isPlaying,speed,playback,sleepTimerType,sleepEndsAt,sleepChapterEndMs,const DeepCollectionEquality().hash(notes),message]);
 
 @override
 String toString() {
-  return 'PlayerState(status: $status, book: $book, position: $position, bufferedPosition: $bufferedPosition, duration: $duration, currentChapter: $currentChapter, currentChapterIndex: $currentChapterIndex, chapterCount: $chapterCount, chapterStart: $chapterStart, chapterPosition: $chapterPosition, chapterBufferedPosition: $chapterBufferedPosition, chapterDuration: $chapterDuration, chapterTimeline: $chapterTimeline, isPlaying: $isPlaying, speed: $speed, sleepTimerType: $sleepTimerType, sleepEndsAt: $sleepEndsAt, sleepChapterEndMs: $sleepChapterEndMs, notes: $notes, message: $message)';
+  return 'PlayerState(status: $status, book: $book, position: $position, bufferedPosition: $bufferedPosition, duration: $duration, currentChapter: $currentChapter, currentChapterIndex: $currentChapterIndex, chapterCount: $chapterCount, chapterStart: $chapterStart, chapterPosition: $chapterPosition, chapterBufferedPosition: $chapterBufferedPosition, chapterDuration: $chapterDuration, chapterTimeline: $chapterTimeline, isPlaying: $isPlaying, speed: $speed, playback: $playback, sleepTimerType: $sleepTimerType, sleepEndsAt: $sleepEndsAt, sleepChapterEndMs: $sleepChapterEndMs, notes: $notes, message: $message)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $PlayerStateCopyWith<$Res>  {
   factory $PlayerStateCopyWith(PlayerState value, $Res Function(PlayerState) _then) = _$PlayerStateCopyWithImpl;
 @useResult
 $Res call({
- PlayerStatus status, Audiobook? book, Duration position, Duration bufferedPosition, Duration duration, AudioChapter? currentChapter, int currentChapterIndex, int chapterCount, Duration chapterStart, Duration chapterPosition, Duration chapterBufferedPosition, Duration chapterDuration, List<PlayerChapter> chapterTimeline, bool isPlaying, double speed, SleepTimerType? sleepTimerType, DateTime? sleepEndsAt, int? sleepChapterEndMs, List<BookNote> notes, String? message
+ PlayerStatus status, Audiobook? book, Duration position, Duration bufferedPosition, Duration duration, AudioChapter? currentChapter, int currentChapterIndex, int chapterCount, Duration chapterStart, Duration chapterPosition, Duration chapterBufferedPosition, Duration chapterDuration, List<PlayerChapter> chapterTimeline, bool isPlaying, double speed, PlaybackPreferences playback, SleepTimerType? sleepTimerType, DateTime? sleepEndsAt, int? sleepChapterEndMs, List<BookNote> notes, String? message
 });
 
 
-$AudiobookCopyWith<$Res>? get book;$AudioChapterCopyWith<$Res>? get currentChapter;
+$AudiobookCopyWith<$Res>? get book;$AudioChapterCopyWith<$Res>? get currentChapter;$PlaybackPreferencesCopyWith<$Res> get playback;
 
 }
 /// @nodoc
@@ -62,7 +62,7 @@ class _$PlayerStateCopyWithImpl<$Res>
 
 /// Create a copy of PlayerState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? book = freezed,Object? position = null,Object? bufferedPosition = null,Object? duration = null,Object? currentChapter = freezed,Object? currentChapterIndex = null,Object? chapterCount = null,Object? chapterStart = null,Object? chapterPosition = null,Object? chapterBufferedPosition = null,Object? chapterDuration = null,Object? chapterTimeline = null,Object? isPlaying = null,Object? speed = null,Object? sleepTimerType = freezed,Object? sleepEndsAt = freezed,Object? sleepChapterEndMs = freezed,Object? notes = null,Object? message = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? book = freezed,Object? position = null,Object? bufferedPosition = null,Object? duration = null,Object? currentChapter = freezed,Object? currentChapterIndex = null,Object? chapterCount = null,Object? chapterStart = null,Object? chapterPosition = null,Object? chapterBufferedPosition = null,Object? chapterDuration = null,Object? chapterTimeline = null,Object? isPlaying = null,Object? speed = null,Object? playback = null,Object? sleepTimerType = freezed,Object? sleepEndsAt = freezed,Object? sleepChapterEndMs = freezed,Object? notes = null,Object? message = freezed,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as PlayerStatus,book: freezed == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
@@ -79,7 +79,8 @@ as Duration,chapterDuration: null == chapterDuration ? _self.chapterDuration : c
 as Duration,chapterTimeline: null == chapterTimeline ? _self.chapterTimeline : chapterTimeline // ignore: cast_nullable_to_non_nullable
 as List<PlayerChapter>,isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
 as bool,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
-as double,sleepTimerType: freezed == sleepTimerType ? _self.sleepTimerType : sleepTimerType // ignore: cast_nullable_to_non_nullable
+as double,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
+as PlaybackPreferences,sleepTimerType: freezed == sleepTimerType ? _self.sleepTimerType : sleepTimerType // ignore: cast_nullable_to_non_nullable
 as SleepTimerType?,sleepEndsAt: freezed == sleepEndsAt ? _self.sleepEndsAt : sleepEndsAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,sleepChapterEndMs: freezed == sleepChapterEndMs ? _self.sleepChapterEndMs : sleepChapterEndMs // ignore: cast_nullable_to_non_nullable
 as int?,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
@@ -110,6 +111,15 @@ $AudioChapterCopyWith<$Res>? get currentChapter {
 
   return $AudioChapterCopyWith<$Res>(_self.currentChapter!, (value) {
     return _then(_self.copyWith(currentChapter: value));
+  });
+}/// Create a copy of PlayerState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PlaybackPreferencesCopyWith<$Res> get playback {
+  
+  return $PlaybackPreferencesCopyWith<$Res>(_self.playback, (value) {
+    return _then(_self.copyWith(playback: value));
   });
 }
 }
@@ -193,10 +203,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( PlayerStatus status,  Audiobook? book,  Duration position,  Duration bufferedPosition,  Duration duration,  AudioChapter? currentChapter,  int currentChapterIndex,  int chapterCount,  Duration chapterStart,  Duration chapterPosition,  Duration chapterBufferedPosition,  Duration chapterDuration,  List<PlayerChapter> chapterTimeline,  bool isPlaying,  double speed,  SleepTimerType? sleepTimerType,  DateTime? sleepEndsAt,  int? sleepChapterEndMs,  List<BookNote> notes,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( PlayerStatus status,  Audiobook? book,  Duration position,  Duration bufferedPosition,  Duration duration,  AudioChapter? currentChapter,  int currentChapterIndex,  int chapterCount,  Duration chapterStart,  Duration chapterPosition,  Duration chapterBufferedPosition,  Duration chapterDuration,  List<PlayerChapter> chapterTimeline,  bool isPlaying,  double speed,  PlaybackPreferences playback,  SleepTimerType? sleepTimerType,  DateTime? sleepEndsAt,  int? sleepChapterEndMs,  List<BookNote> notes,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PlayerState() when $default != null:
-return $default(_that.status,_that.book,_that.position,_that.bufferedPosition,_that.duration,_that.currentChapter,_that.currentChapterIndex,_that.chapterCount,_that.chapterStart,_that.chapterPosition,_that.chapterBufferedPosition,_that.chapterDuration,_that.chapterTimeline,_that.isPlaying,_that.speed,_that.sleepTimerType,_that.sleepEndsAt,_that.sleepChapterEndMs,_that.notes,_that.message);case _:
+return $default(_that.status,_that.book,_that.position,_that.bufferedPosition,_that.duration,_that.currentChapter,_that.currentChapterIndex,_that.chapterCount,_that.chapterStart,_that.chapterPosition,_that.chapterBufferedPosition,_that.chapterDuration,_that.chapterTimeline,_that.isPlaying,_that.speed,_that.playback,_that.sleepTimerType,_that.sleepEndsAt,_that.sleepChapterEndMs,_that.notes,_that.message);case _:
   return orElse();
 
 }
@@ -214,10 +224,10 @@ return $default(_that.status,_that.book,_that.position,_that.bufferedPosition,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( PlayerStatus status,  Audiobook? book,  Duration position,  Duration bufferedPosition,  Duration duration,  AudioChapter? currentChapter,  int currentChapterIndex,  int chapterCount,  Duration chapterStart,  Duration chapterPosition,  Duration chapterBufferedPosition,  Duration chapterDuration,  List<PlayerChapter> chapterTimeline,  bool isPlaying,  double speed,  SleepTimerType? sleepTimerType,  DateTime? sleepEndsAt,  int? sleepChapterEndMs,  List<BookNote> notes,  String? message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( PlayerStatus status,  Audiobook? book,  Duration position,  Duration bufferedPosition,  Duration duration,  AudioChapter? currentChapter,  int currentChapterIndex,  int chapterCount,  Duration chapterStart,  Duration chapterPosition,  Duration chapterBufferedPosition,  Duration chapterDuration,  List<PlayerChapter> chapterTimeline,  bool isPlaying,  double speed,  PlaybackPreferences playback,  SleepTimerType? sleepTimerType,  DateTime? sleepEndsAt,  int? sleepChapterEndMs,  List<BookNote> notes,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _PlayerState():
-return $default(_that.status,_that.book,_that.position,_that.bufferedPosition,_that.duration,_that.currentChapter,_that.currentChapterIndex,_that.chapterCount,_that.chapterStart,_that.chapterPosition,_that.chapterBufferedPosition,_that.chapterDuration,_that.chapterTimeline,_that.isPlaying,_that.speed,_that.sleepTimerType,_that.sleepEndsAt,_that.sleepChapterEndMs,_that.notes,_that.message);case _:
+return $default(_that.status,_that.book,_that.position,_that.bufferedPosition,_that.duration,_that.currentChapter,_that.currentChapterIndex,_that.chapterCount,_that.chapterStart,_that.chapterPosition,_that.chapterBufferedPosition,_that.chapterDuration,_that.chapterTimeline,_that.isPlaying,_that.speed,_that.playback,_that.sleepTimerType,_that.sleepEndsAt,_that.sleepChapterEndMs,_that.notes,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -234,10 +244,10 @@ return $default(_that.status,_that.book,_that.position,_that.bufferedPosition,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( PlayerStatus status,  Audiobook? book,  Duration position,  Duration bufferedPosition,  Duration duration,  AudioChapter? currentChapter,  int currentChapterIndex,  int chapterCount,  Duration chapterStart,  Duration chapterPosition,  Duration chapterBufferedPosition,  Duration chapterDuration,  List<PlayerChapter> chapterTimeline,  bool isPlaying,  double speed,  SleepTimerType? sleepTimerType,  DateTime? sleepEndsAt,  int? sleepChapterEndMs,  List<BookNote> notes,  String? message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( PlayerStatus status,  Audiobook? book,  Duration position,  Duration bufferedPosition,  Duration duration,  AudioChapter? currentChapter,  int currentChapterIndex,  int chapterCount,  Duration chapterStart,  Duration chapterPosition,  Duration chapterBufferedPosition,  Duration chapterDuration,  List<PlayerChapter> chapterTimeline,  bool isPlaying,  double speed,  PlaybackPreferences playback,  SleepTimerType? sleepTimerType,  DateTime? sleepEndsAt,  int? sleepChapterEndMs,  List<BookNote> notes,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _PlayerState() when $default != null:
-return $default(_that.status,_that.book,_that.position,_that.bufferedPosition,_that.duration,_that.currentChapter,_that.currentChapterIndex,_that.chapterCount,_that.chapterStart,_that.chapterPosition,_that.chapterBufferedPosition,_that.chapterDuration,_that.chapterTimeline,_that.isPlaying,_that.speed,_that.sleepTimerType,_that.sleepEndsAt,_that.sleepChapterEndMs,_that.notes,_that.message);case _:
+return $default(_that.status,_that.book,_that.position,_that.bufferedPosition,_that.duration,_that.currentChapter,_that.currentChapterIndex,_that.chapterCount,_that.chapterStart,_that.chapterPosition,_that.chapterBufferedPosition,_that.chapterDuration,_that.chapterTimeline,_that.isPlaying,_that.speed,_that.playback,_that.sleepTimerType,_that.sleepEndsAt,_that.sleepChapterEndMs,_that.notes,_that.message);case _:
   return null;
 
 }
@@ -249,7 +259,7 @@ return $default(_that.status,_that.book,_that.position,_that.bufferedPosition,_t
 
 
 class _PlayerState implements PlayerState {
-  const _PlayerState({this.status = PlayerStatus.idle, this.book, this.position = Duration.zero, this.bufferedPosition = Duration.zero, this.duration = Duration.zero, this.currentChapter, this.currentChapterIndex = 0, this.chapterCount = 0, this.chapterStart = Duration.zero, this.chapterPosition = Duration.zero, this.chapterBufferedPosition = Duration.zero, this.chapterDuration = Duration.zero, final  List<PlayerChapter> chapterTimeline = const <PlayerChapter>[], this.isPlaying = false, this.speed = 1.0, this.sleepTimerType, this.sleepEndsAt, this.sleepChapterEndMs, final  List<BookNote> notes = const <BookNote>[], this.message}): _chapterTimeline = chapterTimeline,_notes = notes;
+  const _PlayerState({this.status = PlayerStatus.idle, this.book, this.position = Duration.zero, this.bufferedPosition = Duration.zero, this.duration = Duration.zero, this.currentChapter, this.currentChapterIndex = 0, this.chapterCount = 0, this.chapterStart = Duration.zero, this.chapterPosition = Duration.zero, this.chapterBufferedPosition = Duration.zero, this.chapterDuration = Duration.zero, final  List<PlayerChapter> chapterTimeline = const <PlayerChapter>[], this.isPlaying = false, this.speed = 1.0, this.playback = const PlaybackPreferences(), this.sleepTimerType, this.sleepEndsAt, this.sleepChapterEndMs, final  List<BookNote> notes = const <BookNote>[], this.message}): _chapterTimeline = chapterTimeline,_notes = notes;
   
 
 @override@JsonKey() final  PlayerStatus status;
@@ -273,6 +283,7 @@ class _PlayerState implements PlayerState {
 
 @override@JsonKey() final  bool isPlaying;
 @override@JsonKey() final  double speed;
+@override@JsonKey() final  PlaybackPreferences playback;
 @override final  SleepTimerType? sleepTimerType;
 @override final  DateTime? sleepEndsAt;
 @override final  int? sleepChapterEndMs;
@@ -295,16 +306,16 @@ _$PlayerStateCopyWith<_PlayerState> get copyWith => __$PlayerStateCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayerState&&(identical(other.status, status) || other.status == status)&&(identical(other.book, book) || other.book == book)&&(identical(other.position, position) || other.position == position)&&(identical(other.bufferedPosition, bufferedPosition) || other.bufferedPosition == bufferedPosition)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.currentChapter, currentChapter) || other.currentChapter == currentChapter)&&(identical(other.currentChapterIndex, currentChapterIndex) || other.currentChapterIndex == currentChapterIndex)&&(identical(other.chapterCount, chapterCount) || other.chapterCount == chapterCount)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart)&&(identical(other.chapterPosition, chapterPosition) || other.chapterPosition == chapterPosition)&&(identical(other.chapterBufferedPosition, chapterBufferedPosition) || other.chapterBufferedPosition == chapterBufferedPosition)&&(identical(other.chapterDuration, chapterDuration) || other.chapterDuration == chapterDuration)&&const DeepCollectionEquality().equals(other._chapterTimeline, _chapterTimeline)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.sleepTimerType, sleepTimerType) || other.sleepTimerType == sleepTimerType)&&(identical(other.sleepEndsAt, sleepEndsAt) || other.sleepEndsAt == sleepEndsAt)&&(identical(other.sleepChapterEndMs, sleepChapterEndMs) || other.sleepChapterEndMs == sleepChapterEndMs)&&const DeepCollectionEquality().equals(other._notes, _notes)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayerState&&(identical(other.status, status) || other.status == status)&&(identical(other.book, book) || other.book == book)&&(identical(other.position, position) || other.position == position)&&(identical(other.bufferedPosition, bufferedPosition) || other.bufferedPosition == bufferedPosition)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.currentChapter, currentChapter) || other.currentChapter == currentChapter)&&(identical(other.currentChapterIndex, currentChapterIndex) || other.currentChapterIndex == currentChapterIndex)&&(identical(other.chapterCount, chapterCount) || other.chapterCount == chapterCount)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart)&&(identical(other.chapterPosition, chapterPosition) || other.chapterPosition == chapterPosition)&&(identical(other.chapterBufferedPosition, chapterBufferedPosition) || other.chapterBufferedPosition == chapterBufferedPosition)&&(identical(other.chapterDuration, chapterDuration) || other.chapterDuration == chapterDuration)&&const DeepCollectionEquality().equals(other._chapterTimeline, _chapterTimeline)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.sleepTimerType, sleepTimerType) || other.sleepTimerType == sleepTimerType)&&(identical(other.sleepEndsAt, sleepEndsAt) || other.sleepEndsAt == sleepEndsAt)&&(identical(other.sleepChapterEndMs, sleepChapterEndMs) || other.sleepChapterEndMs == sleepChapterEndMs)&&const DeepCollectionEquality().equals(other._notes, _notes)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,status,book,position,bufferedPosition,duration,currentChapter,currentChapterIndex,chapterCount,chapterStart,chapterPosition,chapterBufferedPosition,chapterDuration,const DeepCollectionEquality().hash(_chapterTimeline),isPlaying,speed,sleepTimerType,sleepEndsAt,sleepChapterEndMs,const DeepCollectionEquality().hash(_notes),message]);
+int get hashCode => Object.hashAll([runtimeType,status,book,position,bufferedPosition,duration,currentChapter,currentChapterIndex,chapterCount,chapterStart,chapterPosition,chapterBufferedPosition,chapterDuration,const DeepCollectionEquality().hash(_chapterTimeline),isPlaying,speed,playback,sleepTimerType,sleepEndsAt,sleepChapterEndMs,const DeepCollectionEquality().hash(_notes),message]);
 
 @override
 String toString() {
-  return 'PlayerState(status: $status, book: $book, position: $position, bufferedPosition: $bufferedPosition, duration: $duration, currentChapter: $currentChapter, currentChapterIndex: $currentChapterIndex, chapterCount: $chapterCount, chapterStart: $chapterStart, chapterPosition: $chapterPosition, chapterBufferedPosition: $chapterBufferedPosition, chapterDuration: $chapterDuration, chapterTimeline: $chapterTimeline, isPlaying: $isPlaying, speed: $speed, sleepTimerType: $sleepTimerType, sleepEndsAt: $sleepEndsAt, sleepChapterEndMs: $sleepChapterEndMs, notes: $notes, message: $message)';
+  return 'PlayerState(status: $status, book: $book, position: $position, bufferedPosition: $bufferedPosition, duration: $duration, currentChapter: $currentChapter, currentChapterIndex: $currentChapterIndex, chapterCount: $chapterCount, chapterStart: $chapterStart, chapterPosition: $chapterPosition, chapterBufferedPosition: $chapterBufferedPosition, chapterDuration: $chapterDuration, chapterTimeline: $chapterTimeline, isPlaying: $isPlaying, speed: $speed, playback: $playback, sleepTimerType: $sleepTimerType, sleepEndsAt: $sleepEndsAt, sleepChapterEndMs: $sleepChapterEndMs, notes: $notes, message: $message)';
 }
 
 
@@ -315,11 +326,11 @@ abstract mixin class _$PlayerStateCopyWith<$Res> implements $PlayerStateCopyWith
   factory _$PlayerStateCopyWith(_PlayerState value, $Res Function(_PlayerState) _then) = __$PlayerStateCopyWithImpl;
 @override @useResult
 $Res call({
- PlayerStatus status, Audiobook? book, Duration position, Duration bufferedPosition, Duration duration, AudioChapter? currentChapter, int currentChapterIndex, int chapterCount, Duration chapterStart, Duration chapterPosition, Duration chapterBufferedPosition, Duration chapterDuration, List<PlayerChapter> chapterTimeline, bool isPlaying, double speed, SleepTimerType? sleepTimerType, DateTime? sleepEndsAt, int? sleepChapterEndMs, List<BookNote> notes, String? message
+ PlayerStatus status, Audiobook? book, Duration position, Duration bufferedPosition, Duration duration, AudioChapter? currentChapter, int currentChapterIndex, int chapterCount, Duration chapterStart, Duration chapterPosition, Duration chapterBufferedPosition, Duration chapterDuration, List<PlayerChapter> chapterTimeline, bool isPlaying, double speed, PlaybackPreferences playback, SleepTimerType? sleepTimerType, DateTime? sleepEndsAt, int? sleepChapterEndMs, List<BookNote> notes, String? message
 });
 
 
-@override $AudiobookCopyWith<$Res>? get book;@override $AudioChapterCopyWith<$Res>? get currentChapter;
+@override $AudiobookCopyWith<$Res>? get book;@override $AudioChapterCopyWith<$Res>? get currentChapter;@override $PlaybackPreferencesCopyWith<$Res> get playback;
 
 }
 /// @nodoc
@@ -332,7 +343,7 @@ class __$PlayerStateCopyWithImpl<$Res>
 
 /// Create a copy of PlayerState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? book = freezed,Object? position = null,Object? bufferedPosition = null,Object? duration = null,Object? currentChapter = freezed,Object? currentChapterIndex = null,Object? chapterCount = null,Object? chapterStart = null,Object? chapterPosition = null,Object? chapterBufferedPosition = null,Object? chapterDuration = null,Object? chapterTimeline = null,Object? isPlaying = null,Object? speed = null,Object? sleepTimerType = freezed,Object? sleepEndsAt = freezed,Object? sleepChapterEndMs = freezed,Object? notes = null,Object? message = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? book = freezed,Object? position = null,Object? bufferedPosition = null,Object? duration = null,Object? currentChapter = freezed,Object? currentChapterIndex = null,Object? chapterCount = null,Object? chapterStart = null,Object? chapterPosition = null,Object? chapterBufferedPosition = null,Object? chapterDuration = null,Object? chapterTimeline = null,Object? isPlaying = null,Object? speed = null,Object? playback = null,Object? sleepTimerType = freezed,Object? sleepEndsAt = freezed,Object? sleepChapterEndMs = freezed,Object? notes = null,Object? message = freezed,}) {
   return _then(_PlayerState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as PlayerStatus,book: freezed == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
@@ -349,7 +360,8 @@ as Duration,chapterDuration: null == chapterDuration ? _self.chapterDuration : c
 as Duration,chapterTimeline: null == chapterTimeline ? _self._chapterTimeline : chapterTimeline // ignore: cast_nullable_to_non_nullable
 as List<PlayerChapter>,isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
 as bool,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
-as double,sleepTimerType: freezed == sleepTimerType ? _self.sleepTimerType : sleepTimerType // ignore: cast_nullable_to_non_nullable
+as double,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
+as PlaybackPreferences,sleepTimerType: freezed == sleepTimerType ? _self.sleepTimerType : sleepTimerType // ignore: cast_nullable_to_non_nullable
 as SleepTimerType?,sleepEndsAt: freezed == sleepEndsAt ? _self.sleepEndsAt : sleepEndsAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,sleepChapterEndMs: freezed == sleepChapterEndMs ? _self.sleepChapterEndMs : sleepChapterEndMs // ignore: cast_nullable_to_non_nullable
 as int?,notes: null == notes ? _self._notes : notes // ignore: cast_nullable_to_non_nullable
@@ -381,6 +393,15 @@ $AudioChapterCopyWith<$Res>? get currentChapter {
 
   return $AudioChapterCopyWith<$Res>(_self.currentChapter!, (value) {
     return _then(_self.copyWith(currentChapter: value));
+  });
+}/// Create a copy of PlayerState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PlaybackPreferencesCopyWith<$Res> get playback {
+  
+  return $PlaybackPreferencesCopyWith<$Res>(_self.playback, (value) {
+    return _then(_self.copyWith(playback: value));
   });
 }
 }

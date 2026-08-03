@@ -1,8 +1,12 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../../library/domain/audiobook.dart';
+import '../../library/domain/audiobook_catalog_repository.dart';
+import '../application/playback_command_service.dart';
+
 class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
-  BookishAudioHandler(this._player) {
+  BookishAudioHandler(this._player, this._books, this._commands) {
     _player.playbackEventStream.listen(_broadcastState);
     _player.playingStream.listen((_) => _broadcastState(_player.playbackEvent));
     _player.sequenceStream.listen((_) => _broadcastQueue());
@@ -10,18 +14,47 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
   }
 
   static const skipInterval = Duration(seconds: 15);
-  static const _rewindControl = MediaControl(
-    androidIcon: 'drawable/ic_replay_15',
-    label: 'Rewind 15 seconds',
-    action: MediaAction.rewind,
-  );
-  static const _fastForwardControl = MediaControl(
-    androidIcon: 'drawable/ic_forward_15',
-    label: 'Forward 15 seconds',
-    action: MediaAction.fastForward,
-  );
 
+  final AudiobookCatalogRepository _books;
+  final PlaybackCommandService _commands;
+  Duration _rewindInterval = skipInterval;
+  Duration _forwardInterval = skipInterval;
   final AudioPlayer _player;
+
+  @override
+  Future<List<MediaItem>> getChildren(
+    String parentMediaId, [
+    Map<String, dynamic>? options,
+  ]) async {
+    if (parentMediaId != AudioService.browsableRootId) {
+      return const [];
+    }
+    return (await _books.getBooks()).map(_bookMediaItem).toList();
+  }
+
+  @override
+  Future<MediaItem?> getMediaItem(String mediaId) async {
+    final book = await _books.getBook(mediaId);
+    return book == null ? null : _bookMediaItem(book);
+  }
+
+  @override
+  Future<void> playFromMediaId(
+    String mediaId, [
+    Map<String, dynamic>? extras,
+  ]) async {
+    await _commands.playBook(mediaId);
+  }
+
+  MediaItem _bookMediaItem(Audiobook book) => MediaItem(
+    id: book.id,
+    title: book.title,
+    album: book.series.isEmpty ? null : book.series,
+    artist: book.author.isEmpty ? null : book.author,
+    artUri: book.artworkPath == null ? null : Uri.file(book.artworkPath!),
+    duration: Duration(milliseconds: book.durationMs),
+    playable: true,
+  );
 
   @override
   Future<void> play() => _player.play();
@@ -33,10 +66,10 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
   Future<void> seek(Duration position) => _player.seek(position);
 
   @override
-  Future<void> rewind() => _seekBy(-skipInterval);
+  Future<void> rewind() => _seekBy(-_rewindInterval);
 
   @override
-  Future<void> fastForward() => _seekBy(skipInterval);
+  Future<void> fastForward() => _seekBy(_forwardInterval);
 
   @override
   Future<void> skipToNext() async {
@@ -67,6 +100,16 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
         throw ArgumentError.value(speed, 'speed', 'must be a number');
       }
       await _player.setSpeed(speed.toDouble());
+      return null;
+    }
+    if (name == 'setSkipIntervals') {
+      _rewindInterval = Duration(
+        milliseconds: extras?['rewindMs'] as int? ?? 15000,
+      );
+      _forwardInterval = Duration(
+        milliseconds: extras?['forwardMs'] as int? ?? 15000,
+      );
+      _broadcastState(_player.playbackEvent);
       return null;
     }
     return super.customAction(name, extras);
@@ -121,9 +164,17 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
       PlaybackState(
         controls: [
           MediaControl.skipToPrevious,
-          _rewindControl,
+          MediaControl(
+            androidIcon: 'drawable/ic_replay_15',
+            label: 'Rewind ${_rewindInterval.inSeconds} seconds',
+            action: MediaAction.rewind,
+          ),
           if (_player.playing) MediaControl.pause else MediaControl.play,
-          _fastForwardControl,
+          MediaControl(
+            androidIcon: 'drawable/ic_forward_15',
+            label: 'Forward ${_forwardInterval.inSeconds} seconds',
+            action: MediaAction.fastForward,
+          ),
           MediaControl.skipToNext,
         ],
         systemActions: const {

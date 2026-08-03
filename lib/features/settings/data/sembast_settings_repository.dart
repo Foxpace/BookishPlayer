@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import '../domain/settings_repository.dart';
+import '../domain/playback_preferences.dart';
 import '../domain/theme_preference.dart';
 import 'settings_dao.dart';
 
@@ -31,4 +32,16 @@ class SembastSettingsRepository implements SettingsRepository {
 
   @override
   Future<void> setSpeechModel(String model) => _dao.setSpeechModel(model);
+
+  @override
+  Future<PlaybackPreferences> getPlaybackPreferences() async {
+    final value = await _dao.getPlaybackPreferences();
+    return value == null
+        ? const PlaybackPreferences()
+        : PlaybackPreferences.fromJson(value);
+  }
+
+  @override
+  Future<void> setPlaybackPreferences(PlaybackPreferences preferences) =>
+      _dao.setPlaybackPreferences(preferences.toJson());
 }

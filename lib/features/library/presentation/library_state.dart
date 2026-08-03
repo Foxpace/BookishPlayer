@@ -10,6 +10,17 @@ enum LibraryGrouping { none, listeningStatus, author, series, folder }
 
 enum LibraryLayout { list, grid }
 
+enum LibraryFilter {
+  all,
+  wantToListen,
+  notStarted,
+  inProgress,
+  finished,
+  favorites,
+}
+
+enum LibrarySort { recent, title, author, remaining, added }
+
 @freezed
 abstract class LibrarySection with _$LibrarySection {
   const factory LibrarySection({
@@ -25,6 +36,9 @@ abstract class LibraryState with _$LibraryState {
     @Default(<Audiobook>[]) List<Audiobook> books,
     @Default(LibraryGrouping.none) LibraryGrouping grouping,
     @Default(LibraryLayout.list) LibraryLayout layout,
+    @Default('') String query,
+    @Default(LibraryFilter.all) LibraryFilter filter,
+    @Default(LibrarySort.recent) LibrarySort sort,
     @Default(<LibrarySection>[]) List<LibrarySection> sections,
     String? message,
   }) = _LibraryState;

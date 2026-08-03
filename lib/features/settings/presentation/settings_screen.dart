@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/app_metadata.dart';
 import '../../../core/localization/generated/l10n.dart';
+import '../../../core/navigation/app_router.dart';
 import '../../portability/presentation/portability_cubit.dart';
 import '../../portability/presentation/portability_state.dart';
 import '../../transcription/domain/transcription_repository.dart';
@@ -16,6 +18,8 @@ import 'speech_models_state.dart';
 
 part 'widgets/speech_models_section.dart';
 part 'widgets/about_section.dart';
+part 'widgets/playback_settings_section.dart';
+part 'widgets/library_settings_section.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -52,6 +56,8 @@ class SettingsScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
             children: [
+              const _LibrarySettingsSection(),
+              const SizedBox(height: 32),
               Text(
                 l10n.appearanceTitle,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -109,6 +115,8 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 32),
+              const _PlaybackSettingsSection(),
               const SizedBox(height: 32),
               Text(
                 l10n.localTranscriptionTitle,

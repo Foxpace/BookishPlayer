@@ -1,51 +1,44 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../application/load_library_workflow.dart';
+import '../application/remove_audiobook_workflow.dart';
 import '../../importing/domain/file_import_repository.dart';
 import '../../importing/domain/audiobook_artwork_extractor.dart';
 import '../../settings/domain/settings_repository.dart';
 import '../domain/audiobook.dart';
-import '../domain/audiobook_repository.dart';
+import '../domain/audiobook_catalog_repository.dart';
 import 'library_state.dart';
 
 @injectable
 class LibraryCubit extends Cubit<LibraryState> {
-  LibraryCubit(this._books, this._files, this._artwork, this._settings)
-    : super(const LibraryState());
+  LibraryCubit(
+    this._books,
+    FileImportRepository files,
+    AudiobookArtworkExtractor artwork,
+    this._settings,
+  ) : _loader = LoadLibraryWorkflow(_books, artwork, _settings),
+      _remover = RemoveAudiobookWorkflow(_books, files),
+      super(const LibraryState());
 
-  final AudiobookRepository _books;
-  final FileImportRepository _files;
-  final AudiobookArtworkExtractor _artwork;
+  final AudiobookCatalogRepository _books;
   final SettingsRepository _settings;
+  final LoadLibraryWorkflow _loader;
+  final RemoveAudiobookWorkflow _remover;
 
   Future<void> load() async {
     emit(state.copyWith(status: LibraryStatus.loading, message: null));
     try {
-      final savedLayout = await _settings.getLibraryLayout();
-      final layout = savedLayout == LibraryLayout.grid.name
+      final result = await _loader.run();
+      final layout = result.layout == LibraryLayout.grid.name
           ? LibraryLayout.grid
           : LibraryLayout.list;
-      final savedBooks = await _books.getBooks();
-      final books = <Audiobook>[];
-      for (final book in savedBooks) {
-        if (book.artworkScanned) {
-          books.add(book);
-          continue;
-        }
-        final artworkPath = await _artwork.extract(book.filePath);
-        final updated = book.copyWith(
-          artworkPath: artworkPath,
-          artworkScanned: true,
-        );
-        await _books.saveBook(updated);
-        books.add(updated);
-      }
       emit(
         state.copyWith(
           status: LibraryStatus.ready,
-          books: books,
+          books: result.books,
           layout: layout,
-          sections: _buildSections(books, state.grouping),
+          sections: _buildSections(_visibleBooks(result.books), state.grouping),
         ),
       );
     } catch (_) {
@@ -60,20 +53,14 @@ class LibraryCubit extends Cubit<LibraryState> {
 
   Future<void> deleteBook(Audiobook book) async {
     try {
-      await _books.deleteBook(book.id);
-      final paths = book.playableTracks.map((track) => track.filePath).toSet();
-      for (final path in paths) {
-        await _files.deleteImportedFile(path);
-      }
-      final artworkPath = book.artworkPath;
-      if (artworkPath != null) {
-        await _files.deleteImportedFile(artworkPath);
-      }
+      await _remover.run(book);
       emit(
         state.copyWith(
           books: state.books.where((item) => item.id != book.id).toList(),
           sections: _buildSections(
-            state.books.where((item) => item.id != book.id).toList(),
+            _visibleBooks(
+              state.books.where((item) => item.id != book.id).toList(),
+            ),
             state.grouping,
           ),
         ),
@@ -96,7 +83,7 @@ class LibraryCubit extends Cubit<LibraryState> {
     emit(
       state.copyWith(
         grouping: grouping,
-        sections: _buildSections(state.books, grouping),
+        sections: _buildSections(_visibleBooks(state.books), grouping),
       ),
     );
   }
@@ -108,6 +95,102 @@ class LibraryCubit extends Cubit<LibraryState> {
     } catch (_) {
       emit(state.copyWith(message: 'The library layout could not be saved.'));
     }
+  }
+
+  void setQuery(String query) => _refresh(state.copyWith(query: query));
+
+  void setFilter(LibraryFilter filter) =>
+      _refresh(state.copyWith(filter: filter));
+
+  void setSort(LibrarySort sort) => _refresh(state.copyWith(sort: sort));
+
+  Future<void> toggleFavorite(Audiobook book) async {
+    await _saveUpdated(book.copyWith(isFavorite: !book.isFavorite));
+  }
+
+  Future<void> setListeningStatus(
+    Audiobook book,
+    ListeningStatus? status,
+  ) async {
+    await _saveUpdated(
+      book.copyWith(
+        statusOverride: status,
+        completedAt: status == ListeningStatus.finished
+            ? (book.completedAt ?? DateTime.now())
+            : null,
+      ),
+    );
+  }
+
+  Future<void> _saveUpdated(Audiobook updated) async {
+    try {
+      await _books.saveBook(updated);
+      final books = [
+        for (final book in state.books)
+          if (book.id == updated.id) updated else book,
+      ];
+      _refresh(state.copyWith(books: books));
+    } catch (_) {
+      emit(state.copyWith(message: 'The book could not be updated.'));
+    }
+  }
+
+  void _refresh(LibraryState next) {
+    emit(
+      next.copyWith(
+        sections: _buildSections(
+          _visibleBooks(next.books, source: next),
+          next.grouping,
+        ),
+      ),
+    );
+  }
+
+  List<Audiobook> _visibleBooks(List<Audiobook> books, {LibraryState? source}) {
+    final current = source ?? state;
+    final query = current.query.trim().toLowerCase();
+    final visible = books.where((book) {
+      final matchesQuery =
+          query.isEmpty ||
+          [
+            book.title,
+            book.author,
+            book.narrator,
+            book.series,
+            book.folder,
+          ].any((value) => value.toLowerCase().contains(query));
+      final matchesFilter = switch (current.filter) {
+        LibraryFilter.all => true,
+        LibraryFilter.favorites => book.isFavorite,
+        LibraryFilter.wantToListen =>
+          book.listeningStatus == ListeningStatus.wantToListen,
+        LibraryFilter.notStarted =>
+          book.listeningStatus == ListeningStatus.notStarted,
+        LibraryFilter.inProgress =>
+          book.listeningStatus == ListeningStatus.inProgress,
+        LibraryFilter.finished =>
+          book.listeningStatus == ListeningStatus.finished,
+      };
+      return matchesQuery && matchesFilter;
+    }).toList();
+    visible.sort(
+      (left, right) => switch (current.sort) {
+        LibrarySort.recent => (right.lastPlayedAt ?? right.addedAt).compareTo(
+          left.lastPlayedAt ?? left.addedAt,
+        ),
+        LibrarySort.title => left.title.toLowerCase().compareTo(
+          right.title.toLowerCase(),
+        ),
+        LibrarySort.author => left.author.toLowerCase().compareTo(
+          right.author.toLowerCase(),
+        ),
+        LibrarySort.remaining => left.remainingDuration.compareTo(
+          right.remainingDuration,
+        ),
+        LibrarySort.added => right.addedAt.compareTo(left.addedAt),
+      },
+    );
+    return visible;
   }
 
   List<LibrarySection> _buildSections(
@@ -122,6 +205,7 @@ class LibraryCubit extends Cubit<LibraryState> {
       final key = switch (grouping) {
         LibraryGrouping.none => '',
         LibraryGrouping.listeningStatus => switch (book.listeningStatus) {
+          ListeningStatus.wantToListen => 'Want to listen',
           ListeningStatus.notStarted => 'Not started',
           ListeningStatus.inProgress => 'Listening',
           ListeningStatus.finished => 'Finished',
