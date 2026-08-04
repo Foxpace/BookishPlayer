@@ -1,13 +1,18 @@
+import 'package:bookish_player/core/localization/generated/l10n.dart';
 import 'package:bookish_player/features/importing/domain/audiobook_artwork_extractor.dart';
 import 'package:bookish_player/features/importing/domain/file_import_repository.dart';
 import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
 import 'package:bookish_player/features/library/domain/audiobook.dart';
 import 'package:bookish_player/features/library/presentation/library_cubit.dart';
+import 'package:bookish_player/features/library/presentation/library_screen.dart';
 import 'package:bookish_player/features/library/presentation/library_state.dart';
 import 'package:bookish_player/features/settings/domain/settings_repository.dart';
 import 'package:bookish_player/features/settings/domain/playback_preferences.dart';
 import 'package:bookish_player/features/settings/domain/theme_preference.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   test('library layout is an intent-backed persisted state value', () async {
@@ -65,6 +70,45 @@ void main() {
       ]);
     },
   );
+
+  testWidgets('finished books are labelled in the library', (tester) async {
+    final finished = Audiobook(
+      id: 'finished',
+      title: 'Done',
+      filePath: '/done.mp3',
+      durationMs: 60000,
+      positionMs: 60000,
+      artworkScanned: true,
+      addedAt: DateTime(2026),
+    );
+    final cubit = LibraryCubit(
+      _Books([finished]),
+      _Files(),
+      _Artwork(),
+      _Settings(),
+    );
+    addTearDown(cubit.close);
+    await cubit.load();
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: cubit,
+        child: MaterialApp(
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: const LibraryScreen(),
+        ),
+      ),
+    );
+
+    expect(find.text('Finished book'), findsOneWidget);
+    expect(find.textContaining('left'), findsNothing);
+  });
 }
 
 class _Settings implements SettingsRepository {

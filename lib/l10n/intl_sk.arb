@@ -35,5 +35,17 @@
   "appVersion": "Verzia {version}",
   "openSourceLicenses": "Licencie otvoreného softvéru",
   "openSourceLicensesDescription": "Licencie Fluttera a všetkých balíkov použitých v Bookish",
-  "applicationLegalese": "Autorské práva © 2026 prispievatelia Bookish"
+  "applicationLegalese": "Autorské práva © 2026 prispievatelia Bookish",
+  "listeningInsightsTitle": "Štatistiky počúvania",
+  "couldNotLoadInsights": "Štatistiky sa nepodarilo načítať.",
+  "allTimeListening": "Celkový čas počúvania",
+  "lastSevenDays": "Posledných 7 dní",
+  "booksCompleted": "Dopočúvané knihy",
+  "activeDays": "Aktívne dni",
+  "recentSessions": "Nedávne počúvanie",
+  "emptyListeningHistory": "História počúvania sa zobrazí tu.",
+  "removedBook": "Odstránená kniha",
+  "finishedBook": "Dopočúvaná kniha",
+  "listeningSessionDetails": "{date} · {duration}",
+  "playbackSpeed": "{speed}×"
 }

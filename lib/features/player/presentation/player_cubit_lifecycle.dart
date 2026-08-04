@@ -1,15 +1,39 @@
 part of 'player_cubit.dart';
 
-extension _PlayerCubitLifecycle on PlayerCubit {
-  Future<void> _handleCompleted() async {
-    await saveProgress();
-    final current = state.book;
-    if (current == null ||
-        !state.playback.continueSeries ||
-        current.series.trim().isEmpty) {
+extension PlayerCubitLifecycle on PlayerCubit {
+  Future<void> removeBook(String bookId) async {
+    if (state.book?.id != bookId) {
       return;
     }
-    final next = _series.next(current, await _books.getBooks());
+    _sleep.cancel();
+    await _commands.removeBook(bookId);
+    _emit(const PlayerState());
+  }
+
+  Future<void> _handleCompleted() async {
+    final current = state.book;
+    if (current == null) {
+      return;
+    }
+    final completedAt = DateTime.now();
+    final duration = state.duration > Duration.zero
+        ? state.duration
+        : Duration(milliseconds: current.durationMs);
+    final finished = current.copyWith(
+      positionMs: duration.inMilliseconds,
+      lastPlayedAt: completedAt,
+      statusOverride: null,
+      completedAt: completedAt,
+    );
+    await _books.saveBook(finished);
+    _commands.markCompleted(finished);
+    _emit(
+      _timeline.project(state.copyWith(book: finished, position: duration)),
+    );
+    if (!state.playback.continueSeries || finished.series.trim().isEmpty) {
+      return;
+    }
+    final next = _series.next(finished, await _books.getBooks());
     if (next == null) {
       return;
     }

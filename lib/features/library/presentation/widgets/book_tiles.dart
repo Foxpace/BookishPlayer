@@ -68,7 +68,9 @@ class _BookGridTile extends StatelessWidget {
                         ),
                         const SizedBox(height: 7),
                         Text(
-                          book.positionMs > 0
+                          book.isFinished
+                              ? S.of(context).finishedBook
+                              : book.positionMs > 0
                               ? '${(progress * 100).round()}% · ${formatDuration(book.remainingDuration)} left'
                               : formatDuration(duration),
                           maxLines: 1,
@@ -145,7 +147,9 @@ class _BookTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 7),
                     Text(
-                      book.positionMs > 0
+                      book.isFinished
+                          ? S.of(context).finishedBook
+                          : book.positionMs > 0
                           ? '${(progress * 100).round()}% · ${formatDuration(book.remainingDuration)} left'
                           : formatDuration(duration),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -285,6 +289,9 @@ Future<void> _confirmDelete(BuildContext context, Audiobook book) async {
     ),
   );
   if (shouldDelete == true && context.mounted) {
-    await context.read<LibraryCubit>().deleteBook(book);
+    final removed = await context.read<LibraryCubit>().deleteBook(book);
+    if (removed && context.mounted) {
+      await context.read<PlayerCubit>().removeBook(book.id);
+    }
   }
 }

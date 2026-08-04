@@ -45,5 +45,28 @@
   },
   "openSourceLicenses": "Open-source licenses",
   "openSourceLicensesDescription": "Licenses for Flutter and every package used by Bookish",
-  "applicationLegalese": "Copyright © 2026 Bookish contributors"
+  "applicationLegalese": "Copyright © 2026 Bookish contributors",
+  "listeningInsightsTitle": "Listening insights",
+  "couldNotLoadInsights": "Could not load insights.",
+  "allTimeListening": "All-time listening",
+  "lastSevenDays": "Last 7 days",
+  "booksCompleted": "Books completed",
+  "activeDays": "Active days",
+  "recentSessions": "Recent sessions",
+  "emptyListeningHistory": "Your listening history will appear here.",
+  "removedBook": "Removed book",
+  "finishedBook": "Finished book",
+  "listeningSessionDetails": "{date} · {duration}",
+  "@listeningSessionDetails": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "duration": {"type": "String"}
+    }
+  },
+  "playbackSpeed": "{speed}×",
+  "@playbackSpeed": {
+    "placeholders": {
+      "speed": {"type": "String"}
+    }
+  }
 }

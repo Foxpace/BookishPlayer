@@ -17,13 +17,13 @@ class _Transport extends StatelessWidget {
             onPressed: state.book?.chapters.isNotEmpty == true
                 ? cubit.previousChapter
                 : null,
+            color: Colors.white,
             icon: const Icon(Icons.skip_previous_rounded, size: 38),
           ),
         ),
         Expanded(
           child: _SkipButton(
             label: '${state.playback.rewindSeconds}',
-            icon: Icons.replay_rounded,
             onPressed: () =>
                 cubit.skipBy(Duration(seconds: -state.playback.rewindSeconds)),
           ),
@@ -57,7 +57,6 @@ class _Transport extends StatelessWidget {
         Expanded(
           child: _SkipButton(
             label: '${state.playback.forwardSeconds}',
-            icon: Icons.replay_rounded,
             flipIcon: true,
             onPressed: () =>
                 cubit.skipBy(Duration(seconds: state.playback.forwardSeconds)),
@@ -69,51 +68,11 @@ class _Transport extends StatelessWidget {
             onPressed: state.book?.chapters.isNotEmpty == true
                 ? cubit.nextChapter
                 : null,
+            color: Colors.white,
             icon: const Icon(Icons.skip_next_rounded, size: 38),
           ),
         ),
       ],
-    );
-  }
-}
-
-class _SkipButton extends StatelessWidget {
-  const _SkipButton({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-    this.flipIcon = false,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-  final bool flipIcon;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkResponse(
-      onTap: onPressed,
-      radius: 30,
-      child: SizedBox.square(
-        dimension: 56,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Transform.flip(flipX: flipIcon, child: Icon(icon, size: 44)),
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 String formatDuration(Duration duration) {
   final totalSeconds = duration.inSeconds.clamp(0, 359999);
   final hours = totalSeconds ~/ 3600;
@@ -8,6 +10,9 @@ String formatDuration(Duration duration) {
   }
   return '$minutes:${seconds.toString().padLeft(2, '0')}';
 }
+
+String formatDateTime(DateTime dateTime, String locale) =>
+    DateFormat.yMMMd(locale).add_jm().format(dateTime.toLocal());
 
 String formatRemaining(Duration position, Duration duration) {
   final remaining = duration - position;
