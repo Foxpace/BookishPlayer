@@ -1,6 +1,12 @@
 part of 'player_cubit_test.dart';
 
 void registerPlayerCubitWidgetTests() {
+  _registerNowPlayingWidgetTests();
+  _registerPlayerControlWidgetTests();
+  _registerChapterSheetWidgetTests();
+}
+
+void _registerNowPlayingWidgetTests() {
   testWidgets('shows and controls the current book outside the player', (
     tester,
   ) async {
@@ -41,6 +47,106 @@ void registerPlayerCubitWidgetTests() {
     expect(find.text('Playing'), findsOneWidget);
   });
 
+  testWidgets('removing the current book hides the bottom player', (
+    tester,
+  ) async {
+    final book = Audiobook(
+      id: 'finished',
+      title: 'Finished Book',
+      filePath: '/finished.mp3',
+      durationMs: 60000,
+      positionMs: 60000,
+      addedAt: DateTime(2026),
+    );
+    final audio = _FakeAudioPlayer();
+    final cubit = _createPlayerCubit(
+      audio,
+      _FakeBooks(book),
+      _FakeExports(),
+      _FakeSettings(),
+    );
+    addTearDown(() async {
+      await cubit.close();
+      await audio.close();
+    });
+    await cubit.open(book);
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: cubit,
+        child: const MaterialApp(
+          home: NowPlayingShell(showMiniPlayer: true, child: SizedBox.expand()),
+        ),
+      ),
+    );
+    expect(find.text('Finished Book'), findsOneWidget);
+
+    await cubit.removeBook(book.id);
+    await tester.pump();
+
+    expect(find.text('Finished Book'), findsNothing);
+    expect(cubit.state.book, isNull);
+    expect(audio.pauseCount, 1);
+  });
+}
+
+void _registerPlayerControlWidgetTests() {
+  testWidgets('skip labels stay centered and readable inside replay icons', (
+    tester,
+  ) async {
+    final book = Audiobook(
+      id: 'book',
+      title: 'Book',
+      filePath: '/book.mp3',
+      durationMs: 60000,
+      addedAt: DateTime(2026),
+    );
+    final audio = _FakeAudioPlayer();
+    final cubit = _createPlayerCubit(
+      audio,
+      _FakeBooks(book),
+      _FakeExports(),
+      _FakeSettings(),
+    );
+    addTearDown(() async {
+      await cubit.close();
+      await audio.close();
+    });
+    await cubit.open(book);
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: cubit,
+        child: const MaterialApp(home: PlayerScreen()),
+      ),
+    );
+
+    final labels = tester.widgetList<Text>(find.text('15'));
+    expect(labels, hasLength(2));
+    expect(
+      labels.map((label) => label.textScaler),
+      everyElement(TextScaler.noScaling),
+    );
+    expect(labels.map((label) => label.style?.fontSize), everyElement(10));
+    final replayIcons = tester.widgetList<Icon>(
+      find.byIcon(Icons.replay_rounded),
+    );
+    expect(replayIcons, hasLength(2));
+    expect(replayIcons.map((icon) => icon.size), everyElement(50));
+    final rewindLabel = tester.widget<Transform>(
+      find.byKey(const ValueKey('rewind-skip-label')),
+    );
+    final forwardLabel = tester.widget<Transform>(
+      find.byKey(const ValueKey('forward-skip-label')),
+    );
+    expect(rewindLabel.transform.getTranslation().x, 0.5);
+    expect(forwardLabel.transform.getTranslation().x, -0.5);
+    expect(rewindLabel.transform.getTranslation().y, 3.5);
+    expect(forwardLabel.transform.getTranslation().y, 3.5);
+  });
+}
+
+void _registerChapterSheetWidgetTests() {
   testWidgets('chapters open scrolled to the active chapter', (tester) async {
     final chapters = [
       for (var index = 0; index < 14; index++)

@@ -19,6 +19,7 @@ import 'widgets/voice_note_sheet.dart';
 part 'widgets/player_sheets.dart';
 part 'widgets/player_timeline.dart';
 part 'widgets/player_controls.dart';
+part 'widgets/skip_button.dart';
 part 'widgets/player_notes.dart';
 part 'widgets/book_map_sheet.dart';
 part 'widgets/quote_transcription_sheet.dart';

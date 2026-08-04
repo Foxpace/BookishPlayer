@@ -34,7 +34,9 @@ class PlaybackCommandService {
       if (previous.id != book.id) {
         await _audio.pause();
       }
-      await _books.updateProgress(previous.id, _audio.position);
+      if (!previous.isFinished) {
+        await _books.updateProgress(previous.id, _audio.position);
+      }
     }
     final preferences = await _settings.getPlaybackPreferences();
     await _audio.load(book);
@@ -57,6 +59,20 @@ class PlaybackCommandService {
     }
     if (!_audio.isPlaying) {
       await _audio.play();
+    }
+  }
+
+  Future<void> removeBook(String bookId) async {
+    if (_currentBook?.id != bookId) {
+      return;
+    }
+    await _audio.pause();
+    _currentBook = null;
+  }
+
+  void markCompleted(Audiobook book) {
+    if (_currentBook?.id == book.id) {
+      _currentBook = book;
     }
   }
 

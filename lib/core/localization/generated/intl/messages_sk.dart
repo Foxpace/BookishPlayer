@@ -22,7 +22,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(version) => "Verzia ${version}";
 
-  static String m1(size) => "${size} MB";
+  static String m1(date, duration) => "${date} · ${duration}";
+
+  static String m2(size) => "${size} MB";
+
+  static String m3(speed) => "${speed}×";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -31,6 +35,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Informácie o aplikácii, verzia a oznámenia o otvorenom softvéri.",
     ),
     "aboutTitle": MessageLookupByLibrary.simpleMessage("O aplikácii"),
+    "activeDays": MessageLookupByLibrary.simpleMessage("Aktívne dni"),
+    "allTimeListening": MessageLookupByLibrary.simpleMessage(
+      "Celkový čas počúvania",
+    ),
     "appDescription": MessageLookupByLibrary.simpleMessage(
       "Pokojný offline prehrávač audiokníh.",
     ),
@@ -43,16 +51,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "applicationLegalese": MessageLookupByLibrary.simpleMessage(
       "Autorské práva © 2026 prispievatelia Bookish",
     ),
+    "booksCompleted": MessageLookupByLibrary.simpleMessage("Dopočúvané knihy"),
     "chooseSpeechModel": MessageLookupByLibrary.simpleMessage(
       "Vybrať model reči",
     ),
     "chooseSpeechModelDescription": MessageLookupByLibrary.simpleMessage(
       "Klepnutím vyberte model. Modely, ktoré nie sú v zariadení, sa stiahnu automaticky.",
     ),
+    "couldNotLoadInsights": MessageLookupByLibrary.simpleMessage(
+      "Štatistiky sa nepodarilo načítať.",
+    ),
+    "emptyListeningHistory": MessageLookupByLibrary.simpleMessage(
+      "História počúvania sa zobrazí tu.",
+    ),
     "exportBackup": MessageLookupByLibrary.simpleMessage("Exportovať zálohu"),
     "exportBackupDescription": MessageLookupByLibrary.simpleMessage(
       "Uložiť prenosný súbor Bookish vo formáte JSON",
     ),
+    "finishedBook": MessageLookupByLibrary.simpleMessage("Dopočúvaná kniha"),
+    "lastSevenDays": MessageLookupByLibrary.simpleMessage("Posledných 7 dní"),
+    "listeningInsightsTitle": MessageLookupByLibrary.simpleMessage(
+      "Štatistiky počúvania",
+    ),
+    "listeningSessionDetails": m1,
     "localDataDescription": MessageLookupByLibrary.simpleMessage(
       "Zálohujte priebeh, poznámky, metadáta a nastavenia bez cloudového účtu.",
     ),
@@ -69,7 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "modelDownloaded": MessageLookupByLibrary.simpleMessage("Stiahnutý"),
     "modelNotDownloaded": MessageLookupByLibrary.simpleMessage("Nestiahnutý"),
     "modelSelected": MessageLookupByLibrary.simpleMessage("Vybraný"),
-    "modelSize": m1,
+    "modelSize": m2,
     "noSpeechModelsAvailable": MessageLookupByLibrary.simpleMessage(
       "Nie sú dostupné žiadne modely reči",
     ),
@@ -79,6 +100,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "openSourceLicensesDescription": MessageLookupByLibrary.simpleMessage(
       "Licencie Fluttera a všetkých balíkov použitých v Bookish",
     ),
+    "playbackSpeed": m3,
+    "recentSessions": MessageLookupByLibrary.simpleMessage("Nedávne počúvanie"),
+    "removedBook": MessageLookupByLibrary.simpleMessage("Odstránená kniha"),
     "restoreBackup": MessageLookupByLibrary.simpleMessage("Obnoviť zálohu"),
     "restoreBackupDescription": MessageLookupByLibrary.simpleMessage(
       "Nahradiť lokálne údaje knižnice zo zálohy",

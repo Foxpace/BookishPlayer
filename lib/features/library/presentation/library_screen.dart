@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/localization/generated/l10n.dart';
 import '../../../core/navigation/app_router.dart';
 import '../../../core/presentation/book_cover.dart';
 import '../../../core/presentation/formatters.dart';
+import '../../player/presentation/player_cubit.dart';
 import '../domain/audiobook.dart';
 import 'library_cubit.dart';
 import 'library_state.dart';

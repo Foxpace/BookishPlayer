@@ -41,6 +41,20 @@ void main() {
     expect(Audiobook.fromJson(book.toJson()), book);
   });
 
+  test('a recorded completion marks the book as finished', () {
+    final book = Audiobook(
+      id: 'completed',
+      title: 'Completed Book',
+      filePath: '/book.mp3',
+      durationMs: 120000,
+      addedAt: DateTime(2026),
+      completedAt: DateTime(2026, 2),
+    );
+
+    expect(book.listeningStatus, ListeningStatus.finished);
+    expect(book.isFinished, isTrue);
+  });
+
   test('orders multi-file tracks by persisted order', () {
     final book = Audiobook(
       id: 'multi',

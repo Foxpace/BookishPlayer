@@ -378,6 +378,121 @@ class S {
       args: [],
     );
   }
+
+  /// `Listening insights`
+  String get listeningInsightsTitle {
+    return Intl.message(
+      'Listening insights',
+      name: 'listeningInsightsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not load insights.`
+  String get couldNotLoadInsights {
+    return Intl.message(
+      'Could not load insights.',
+      name: 'couldNotLoadInsights',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All-time listening`
+  String get allTimeListening {
+    return Intl.message(
+      'All-time listening',
+      name: 'allTimeListening',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last 7 days`
+  String get lastSevenDays {
+    return Intl.message(
+      'Last 7 days',
+      name: 'lastSevenDays',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Books completed`
+  String get booksCompleted {
+    return Intl.message(
+      'Books completed',
+      name: 'booksCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active days`
+  String get activeDays {
+    return Intl.message('Active days', name: 'activeDays', desc: '', args: []);
+  }
+
+  /// `Recent sessions`
+  String get recentSessions {
+    return Intl.message(
+      'Recent sessions',
+      name: 'recentSessions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your listening history will appear here.`
+  String get emptyListeningHistory {
+    return Intl.message(
+      'Your listening history will appear here.',
+      name: 'emptyListeningHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Removed book`
+  String get removedBook {
+    return Intl.message(
+      'Removed book',
+      name: 'removedBook',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finished book`
+  String get finishedBook {
+    return Intl.message(
+      'Finished book',
+      name: 'finishedBook',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{date} · {duration}`
+  String listeningSessionDetails(String date, String duration) {
+    return Intl.message(
+      '$date · $duration',
+      name: 'listeningSessionDetails',
+      desc: '',
+      args: [date, duration],
+    );
+  }
+
+  /// `{speed}×`
+  String playbackSpeed(String speed) {
+    return Intl.message(
+      '$speed×',
+      name: 'playbackSpeed',
+      desc: '',
+      args: [speed],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

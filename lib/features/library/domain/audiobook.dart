@@ -37,6 +37,9 @@ enum ListeningStatus { wantToListen, notStarted, inProgress, finished }
 
 extension AudiobookProgress on Audiobook {
   ListeningStatus get listeningStatus {
+    if (completedAt != null) {
+      return ListeningStatus.finished;
+    }
     if (statusOverride case final override?) {
       return override;
     }

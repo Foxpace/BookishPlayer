@@ -175,9 +175,10 @@ void main() {
       addedAt: DateTime(2026),
     );
     final audio = _FakeAudioPlayer();
+    final books = _FakeBooks.withBooks([first, second]);
     final cubit = _createPlayerCubit(
       audio,
-      _FakeBooks.withBooks([first, second]),
+      books,
       _FakeExports(),
       _FakeSettings(),
     );
@@ -192,6 +193,10 @@ void main() {
 
     expect(cubit.state.book?.id, 'second');
     expect(audio.playing, isTrue);
+    final completed = await books.getBook('first');
+    expect(completed?.isFinished, isTrue);
+    expect(completed?.completedAt, isNotNull);
+    expect(completed?.positionMs, first.durationMs);
   });
 
   test('chapter-relative seeks cannot cascade into later chapters', () async {

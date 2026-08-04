@@ -51,7 +51,7 @@ class LibraryCubit extends Cubit<LibraryState> {
     }
   }
 
-  Future<void> deleteBook(Audiobook book) async {
+  Future<bool> deleteBook(Audiobook book) async {
     try {
       await _remover.run(book);
       emit(
@@ -65,6 +65,7 @@ class LibraryCubit extends Cubit<LibraryState> {
           ),
         ),
       );
+      return true;
     } catch (_) {
       emit(
         state.copyWith(
@@ -72,6 +73,7 @@ class LibraryCubit extends Cubit<LibraryState> {
           message: 'The book could not be removed.',
         ),
       );
+      return false;
     }
   }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
+import '../../../core/localization/generated/l10n.dart';
 import '../../../core/presentation/formatters.dart';
 import 'listening_insights_cubit.dart';
 import 'listening_insights_state.dart';
@@ -10,8 +12,10 @@ class ListeningInsightsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
+    final locale = Localizations.localeOf(context).toString();
     return Scaffold(
-      appBar: AppBar(title: const Text('Listening insights')),
+      appBar: AppBar(title: Text(l10n.listeningInsightsTitle)),
       body: BlocBuilder<ListeningInsightsCubit, ListeningInsightsState>(
         builder: (context, state) {
           if (state.status == ListeningInsightsStatus.loading) {
@@ -19,7 +23,7 @@ class ListeningInsightsScreen extends StatelessWidget {
           }
           if (state.status == ListeningInsightsStatus.failure) {
             return Center(
-              child: Text(state.message ?? 'Could not load insights.'),
+              child: Text(state.message ?? l10n.couldNotLoadInsights),
             );
           }
           final booksById = {for (final book in state.books) book.id: book};
@@ -31,40 +35,44 @@ class ListeningInsightsScreen extends StatelessWidget {
                 runSpacing: 12,
                 children: [
                   _InsightCard(
-                    label: 'All-time listening',
+                    label: l10n.allTimeListening,
                     value: formatDuration(state.totalListening),
                     icon: Icons.headphones_rounded,
                   ),
                   _InsightCard(
-                    label: 'Last 7 days',
+                    label: l10n.lastSevenDays,
                     value: formatDuration(state.lastSevenDays),
                     icon: Icons.calendar_view_week_rounded,
                   ),
                   _InsightCard(
-                    label: 'Books completed',
-                    value: '${state.completedBooks}',
+                    label: l10n.booksCompleted,
+                    value: NumberFormat.decimalPattern(
+                      locale,
+                    ).format(state.completedBooks),
                     icon: Icons.check_circle_outline_rounded,
                   ),
                   _InsightCard(
-                    label: 'Active days',
-                    value: '${state.activeDays}',
+                    label: l10n.activeDays,
+                    value: NumberFormat.decimalPattern(
+                      locale,
+                    ).format(state.activeDays),
                     icon: Icons.local_fire_department_outlined,
                   ),
                 ],
               ),
               const SizedBox(height: 28),
               Text(
-                'Recent sessions',
+                l10n.recentSessions,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 10),
               if (state.sessions.isEmpty)
-                const Card(
+                Card(
                   child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Text('Your listening history will appear here.'),
+                    padding: const EdgeInsets.all(24),
+                    child: Text(l10n.emptyListeningHistory),
                   ),
                 )
               else
@@ -73,12 +81,23 @@ class ListeningInsightsScreen extends StatelessWidget {
                     child: ListTile(
                       leading: const Icon(Icons.graphic_eq_rounded),
                       title: Text(
-                        booksById[session.bookId]?.title ?? 'Removed book',
+                        booksById[session.bookId]?.title ?? l10n.removedBook,
                       ),
                       subtitle: Text(
-                        '${session.startedAt.toLocal()} · ${formatDuration(Duration(milliseconds: session.listenedMs))}',
+                        l10n.listeningSessionDetails(
+                          formatDateTime(session.startedAt, locale),
+                          formatDuration(
+                            Duration(milliseconds: session.listenedMs),
+                          ),
+                        ),
                       ),
-                      trailing: Text('${session.speed}×'),
+                      trailing: Text(
+                        l10n.playbackSpeed(
+                          NumberFormat.decimalPattern(
+                            locale,
+                          ).format(session.speed),
+                        ),
+                      ),
                     ),
                   ),
             ],
