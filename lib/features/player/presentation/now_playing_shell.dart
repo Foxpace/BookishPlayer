@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/navigation/app_router.dart';
+import '../../../core/navigation/focus_navigation.dart';
 import '../../../core/presentation/book_cover.dart';
 import 'player_cubit.dart';
 import 'player_state.dart';
@@ -65,10 +66,15 @@ class _NowPlayingBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: InkWell(
-          onTap: () => context.pushNamed<void>(
-            AppRoutes.player,
-            pathParameters: {'bookId': book.id},
-          ),
+          onTap: () async {
+            await context.pushNamed<void>(
+              AppRoutes.player,
+              pathParameters: {'bookId': book.id},
+            );
+            if (context.mounted) {
+              dismissRestoredRouteFocus();
+            }
+          },
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

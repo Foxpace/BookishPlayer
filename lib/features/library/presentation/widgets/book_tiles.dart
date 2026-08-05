@@ -247,6 +247,7 @@ Future<void> _openBook(BuildContext context, Audiobook book) async {
     pathParameters: {'bookId': book.id},
   );
   if (context.mounted) {
+    dismissRestoredRouteFocus();
     await context.read<LibraryCubit>().load();
   }
 }
