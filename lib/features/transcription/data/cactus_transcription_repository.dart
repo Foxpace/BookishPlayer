@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../library/domain/audiobook.dart';
 import '../domain/transcription_repository.dart';
 import 'speech_model_catalog_cache.dart';
+import 'transcription_chunking.dart';
 
 @LazySingleton(as: TranscriptionRepository)
 class CactusTranscriptionRepository implements TranscriptionRepository {
@@ -119,7 +120,7 @@ class CactusTranscriptionRepository implements TranscriptionRepository {
           parts.add(text);
         }
       }
-      return parts.join(' ').trim();
+      return mergeTranscriptionParts(parts);
     } finally {
       for (final clip in clips) {
         if (clip.existsSync()) {
@@ -138,6 +139,7 @@ class CactusTranscriptionRepository implements TranscriptionRepository {
     final clips = <File>[];
     var trackOffset = Duration.zero;
     final tracks = book.playableTracks;
+    var clipIndex = 0;
 
     try {
       for (var index = 0; index < tracks.length; index++) {
@@ -147,40 +149,46 @@ class CactusTranscriptionRepository implements TranscriptionRepository {
         final clipStart = start > trackOffset ? start : trackOffset;
         final clipEnd = end < trackEnd ? end : trackEnd;
         if (clipEnd > clipStart) {
-          final localStart = clipStart - trackOffset;
-          final localDuration = clipEnd - clipStart;
-          final output = File(
-            p.join(
-              directory.path,
-              'bookish_quote_${DateTime.now().microsecondsSinceEpoch}_$index.wav',
-            ),
+          final chunks = planTranscriptionChunks(
+            start: clipStart,
+            end: clipEnd,
           );
-          final session = await FFmpegKit.executeWithArguments([
-            '-y',
-            '-ss',
-            _seconds(localStart),
-            '-t',
-            _seconds(localDuration),
-            '-i',
-            track.filePath,
-            '-vn',
-            '-ac',
-            '1',
-            '-ar',
-            '16000',
-            '-c:a',
-            'pcm_s16le',
-            output.path,
-          ]);
-          final returnCode = await session.getReturnCode();
-          if (!ReturnCode.isSuccess(returnCode)) {
-            final outputText = await session.getOutput();
-            throw TranscriptionException(
-              'Could not prepare the selected audio. ${outputText ?? ''}'
-                  .trim(),
+          for (final chunk in chunks) {
+            final localStart = chunk.start - trackOffset;
+            final localDuration = chunk.end - chunk.start;
+            final output = File(
+              p.join(
+                directory.path,
+                'bookish_quote_${DateTime.now().microsecondsSinceEpoch}_${index}_${clipIndex++}.wav',
+              ),
             );
+            final session = await FFmpegKit.executeWithArguments([
+              '-y',
+              '-i',
+              track.filePath,
+              '-ss',
+              _seconds(localStart),
+              '-t',
+              _seconds(localDuration),
+              '-vn',
+              '-ac',
+              '1',
+              '-ar',
+              '16000',
+              '-c:a',
+              'pcm_s16le',
+              output.path,
+            ]);
+            final returnCode = await session.getReturnCode();
+            if (!ReturnCode.isSuccess(returnCode)) {
+              final outputText = await session.getOutput();
+              throw TranscriptionException(
+                'Could not prepare the selected audio. ${outputText ?? ''}'
+                    .trim(),
+              );
+            }
+            clips.add(output);
           }
-          clips.add(output);
         }
         trackOffset = trackEnd;
         if (trackOffset >= end) {
