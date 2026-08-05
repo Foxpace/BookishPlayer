@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/localization/generated/l10n.dart';
 import '../../../core/navigation/app_router.dart';
+import '../../../core/navigation/focus_navigation.dart';
 import '../../../core/presentation/book_cover.dart';
 import '../../../core/presentation/formatters.dart';
 import '../../player/presentation/player_cubit.dart';

@@ -1,4 +1,5 @@
 import 'package:bookish_player/core/localization/generated/l10n.dart';
+import 'package:bookish_player/core/navigation/app_router.dart';
 import 'package:bookish_player/features/importing/domain/audiobook_artwork_extractor.dart';
 import 'package:bookish_player/features/importing/domain/file_import_repository.dart';
 import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   test('library layout is an intent-backed persisted state value', () async {
@@ -108,6 +110,72 @@ void main() {
 
     expect(find.text('Finished book'), findsOneWidget);
     expect(find.textContaining('left'), findsNothing);
+  });
+
+  testWidgets('search stays unfocused after returning from the player', (
+    tester,
+  ) async {
+    final book = Audiobook(
+      id: 'focused-search',
+      title: 'Focus test',
+      filePath: '/focus.mp3',
+      durationMs: 60000,
+      artworkScanned: true,
+      addedAt: DateTime(2026),
+    );
+    final cubit = LibraryCubit(
+      _Books([book]),
+      _Files(),
+      _Artwork(),
+      _Settings(),
+    );
+    addTearDown(cubit.close);
+    await cubit.load();
+
+    final router = GoRouter(
+      routes: [
+        GoRoute(path: '/', builder: (_, _) => const LibraryScreen()),
+        GoRoute(
+          path: '/player/:bookId',
+          name: AppRoutes.player,
+          builder: (_, _) => const Scaffold(body: Text('Player')),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: cubit,
+        child: MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+        ),
+      ),
+    );
+
+    await tester.enterText(find.byType(SearchBar), 'Focus');
+    expect(
+      tester.widget<EditableText>(find.byType(EditableText)).focusNode.hasFocus,
+      isTrue,
+    );
+
+    await tester.tap(find.text('Focus test'));
+    await tester.pumpAndSettle();
+    router.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SearchBar), findsOneWidget);
+    expect(
+      tester.widget<EditableText>(find.byType(EditableText)).focusNode.hasFocus,
+      isFalse,
+    );
   });
 }
 
