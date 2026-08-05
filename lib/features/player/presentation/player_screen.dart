@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -25,8 +27,35 @@ part 'widgets/book_map_sheet.dart';
 part 'widgets/quote_transcription_sheet.dart';
 part 'player_screen_actions.dart';
 
-class PlayerScreen extends StatelessWidget {
+class PlayerScreen extends StatefulWidget {
   const PlayerScreen({super.key});
+
+  @override
+  State<PlayerScreen> createState() => _PlayerScreenState();
+}
+
+class _PlayerScreenState extends State<PlayerScreen> {
+  var _canPop = false;
+
+  void _requestPop() {
+    if (_canPop) {
+      return;
+    }
+    setState(() => _canPop = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        unawaited(Navigator.maybePop(context));
+      }
+    });
+  }
+
+  void _onPopInvoked(bool didPop) {
+    if (didPop) {
+      unawaited(context.read<PlayerCubit>().saveProgress());
+      return;
+    }
+    _requestPop();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +78,9 @@ class PlayerScreen extends StatelessWidget {
             ),
           );
         }
-        return PopScope(
-          onPopInvokedWithResult: (_, _) =>
-              context.read<PlayerCubit>().saveProgress(),
+        return PopScope<void>(
+          canPop: _canPop,
+          onPopInvokedWithResult: (didPop, _) => _onPopInvoked(didPop),
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.transparent,
@@ -61,7 +90,7 @@ class PlayerScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 12),
                 child: _PlayerTopButton(
                   tooltip: 'Back to library',
-                  onPressed: () => Navigator.maybePop(context),
+                  onPressed: _requestPop,
                   icon: Icons.arrow_back_rounded,
                 ),
               ),
@@ -124,14 +153,14 @@ class PlayerScreen extends StatelessWidget {
                       state: state,
                       onChapters: state.chapterTimeline.isEmpty
                           ? null
-                          : () => _showChapters(
+                          : () => widget._showChapters(
                               context,
                               state.chapterTimeline,
                               state.currentChapterIndex,
                             ),
-                      onTimer: () => _showSleepTimer(context),
-                      onNotes: () => _showNotes(context),
-                      onQuote: () => _showTranscription(context),
+                      onTimer: () => widget._showSleepTimer(context),
+                      onNotes: () => widget._showNotes(context),
+                      onQuote: () => widget._showTranscription(context),
                     ),
                   ],
                 ),
