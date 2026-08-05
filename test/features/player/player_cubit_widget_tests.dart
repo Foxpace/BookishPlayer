@@ -2,6 +2,7 @@ part of 'player_cubit_test.dart';
 
 void registerPlayerCubitWidgetTests() {
   _registerNowPlayingWidgetTests();
+  _registerPlayerBackNavigationWidgetTests();
   _registerPlayerControlWidgetTests();
   _registerChapterSheetWidgetTests();
 }
@@ -87,6 +88,67 @@ void _registerNowPlayingWidgetTests() {
     expect(find.text('Finished Book'), findsNothing);
     expect(cubit.state.book, isNull);
     expect(audio.pauseCount, 1);
+  });
+}
+
+void _registerPlayerBackNavigationWidgetTests() {
+  testWidgets('system and toolbar back use the same committed pop', (
+    tester,
+  ) async {
+    final book = Audiobook(
+      id: 'book',
+      title: 'Book',
+      filePath: '/book.mp3',
+      durationMs: 60000,
+      addedAt: DateTime(2026),
+    );
+    final audio = _FakeAudioPlayer();
+    final books = _FakeBooks(book);
+    final cubit = _createPlayerCubit(
+      audio,
+      books,
+      _FakeExports(),
+      _FakeSettings(),
+    );
+    addTearDown(() async {
+      await cubit.close();
+      await audio.close();
+    });
+    await cubit.open(book);
+
+    final navigatorKey = GlobalKey<NavigatorState>();
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: cubit,
+        child: MaterialApp(
+          navigatorKey: navigatorKey,
+          home: const Scaffold(body: Text('Library')),
+        ),
+      ),
+    );
+
+    Future<void> openPlayer() async {
+      unawaited(
+        navigatorKey.currentState!.push<void>(
+          MaterialPageRoute<void>(builder: (_) => const PlayerScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    await openPlayer();
+    final popScope = find.byWidgetPredicate(
+      (widget) => widget is PopScope<void>,
+    );
+    expect(tester.widget<PopScope<void>>(popScope).canPop, isFalse);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Library'), findsOneWidget);
+
+    await openPlayer();
+    await tester.tap(find.byTooltip('Back to library'));
+    await tester.pumpAndSettle();
+    expect(find.text('Library'), findsOneWidget);
   });
 }
 
