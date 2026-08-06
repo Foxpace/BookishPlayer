@@ -32,8 +32,8 @@ class NowPlayingShell extends StatelessWidget {
                 previous.status != current.status ||
                 previous.isPlaying != current.isPlaying ||
                 previous.currentChapter != current.currentChapter ||
-                previous.position != current.position ||
-                previous.duration != current.duration,
+                previous.chapterPosition != current.chapterPosition ||
+                previous.chapterDuration != current.chapterDuration,
             builder: (context, state) {
               if (state.book == null || state.status == PlayerStatus.failure) {
                 return const SizedBox.shrink();
@@ -54,11 +54,10 @@ class _NowPlayingBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final book = state.book!;
-    final progress = state.duration > Duration.zero
-        ? (state.position.inMilliseconds / state.duration.inMilliseconds).clamp(
-            0.0,
-            1.0,
-          )
+    final progress = state.chapterDuration > Duration.zero
+        ? (state.chapterPosition.inMilliseconds /
+                  state.chapterDuration.inMilliseconds)
+              .clamp(0.0, 1.0)
         : 0.0;
     return Material(
       color: Theme.of(context).colorScheme.surfaceContainer,

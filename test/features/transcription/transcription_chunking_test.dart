@@ -54,5 +54,38 @@ void main() {
         'First sentence. Then another one.',
       );
     });
+
+    test('keeps a single deliberately repeated word', () {
+      expect(
+        mergeTranscriptionParts([
+          'It was difficult.',
+          'Difficult choices followed.',
+        ]),
+        'It was difficult. Difficult choices followed.',
+      );
+    });
+
+    test(
+      'aligns overlapping phrases when one word is transcribed differently',
+      () {
+        expect(
+          mergeTranscriptionParts([
+            'The story ended on a quiet night.',
+            'on a quiet knight before dawn.',
+          ]),
+          'The story ended on a quiet knight before dawn.',
+        );
+      },
+    );
+
+    test('uses the complete word when a chunk ends partway through it', () {
+      expect(
+        mergeTranscriptionParts([
+          'They walked around the for',
+          'around the forest before dawn.',
+        ]),
+        'They walked around the forest before dawn.',
+      );
+    });
   });
 }

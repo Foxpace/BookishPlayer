@@ -48,7 +48,11 @@ extension PlayerCubitLifecycle on PlayerCubit {
       unawaited(_finishListeningSession());
     }
     _emit(state.copyWith(isPlaying: playing));
-    final action = _resumePolicy.update(playing: playing);
+    final action = _resumePolicy.update(
+      playing: playing,
+      position: state.position,
+      chapterStart: state.chapterStart,
+    );
     if (action.shouldSave) {
       unawaited(saveProgress());
     }

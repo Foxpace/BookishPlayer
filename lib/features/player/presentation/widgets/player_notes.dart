@@ -122,8 +122,19 @@ class _NoteTile extends StatelessWidget {
         : noteChapter == null
         ? globalEnd
         : globalEnd - noteChapter.start;
+    final title = note.title?.trim();
+    final hasTitle = title != null && title.isNotEmpty;
+    final locale = Localizations.localeOf(context).toLanguageTag();
     return ListTile(
       contentPadding: EdgeInsets.zero,
+      onTap: () => Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: cubit,
+            child: NoteDetailScreen(note: note),
+          ),
+        ),
+      ),
       leading: IconButton.filledTonal(
         tooltip: 'Jump to note',
         onPressed: () {
@@ -136,16 +147,32 @@ class _NoteTile extends StatelessWidget {
           BookNoteKind.note => Icons.play_arrow_rounded,
         }),
       ),
-      title: Text(note.kind == BookNoteKind.bookmark ? 'Bookmark' : note.text),
+      title: Text(
+        hasTitle ? title : note.text,
+        maxLines: hasTitle ? 1 : 2,
+        overflow: TextOverflow.ellipsis,
+      ),
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 6),
-        child: Text(
-          [
-            ?(note.chapterTitle ?? noteChapter?.title),
-            relativeEnd == null
-                ? formatDuration(relativeStart)
-                : '${formatDuration(relativeStart)}–${formatDuration(relativeEnd)}',
-          ].join(' · '),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (hasTitle) ...[
+              Text(note.text, maxLines: 2, overflow: TextOverflow.ellipsis),
+              const SizedBox(height: 4),
+            ],
+            Text(
+              [
+                ?(note.chapterTitle ?? noteChapter?.title),
+                relativeEnd == null
+                    ? formatDuration(relativeStart)
+                    : '${formatDuration(relativeStart)}–${formatDuration(relativeEnd)}',
+                formatDateTime(note.createdAt, locale),
+              ].join(' · '),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
       trailing: IconButton(

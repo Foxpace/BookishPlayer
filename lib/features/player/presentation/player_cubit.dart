@@ -18,6 +18,7 @@ import '../application/series_continuation_policy.dart';
 import '../application/sleep_timer_coordinator.dart';
 import '../domain/audio_player_repository.dart';
 import '../domain/book_note.dart';
+import '../domain/quote_share_repository.dart';
 import 'player_state.dart';
 import 'player_state_factory.dart';
 import 'player_timeline_projector.dart';
@@ -34,10 +35,11 @@ class PlayerCubit extends Cubit<PlayerState> {
     this._history,
     BookNoteRepository noteRepository,
     LocalExportRepository exports,
+    QuoteShareRepository sharing,
     this._commands,
   ) : super(const PlayerState()) {
     _progress = PlayerProgressSaver(_audio, _books);
-    _notes = PlayerNotesService(noteRepository, exports);
+    _notes = PlayerNotesService(noteRepository, exports, sharing);
     _sessions = ListeningSessionTracker(_history);
     _sleep = SleepTimerCoordinator(_audio);
     _subscriptions.add(_commands.opened.listen(_onExternallyOpened));

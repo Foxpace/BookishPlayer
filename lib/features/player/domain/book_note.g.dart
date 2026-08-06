@@ -15,6 +15,7 @@ _BookNote _$BookNoteFromJson(Map<String, dynamic> json) => _BookNote(
   kind:
       $enumDecodeNullable(_$BookNoteKindEnumMap, json['kind']) ??
       BookNoteKind.note,
+  title: json['title'] as String?,
   chapterTitle: json['chapterTitle'] as String?,
   endPositionMs: (json['endPositionMs'] as num?)?.toInt(),
 );
@@ -26,6 +27,7 @@ Map<String, dynamic> _$BookNoteToJson(_BookNote instance) => <String, dynamic>{
   'text': instance.text,
   'createdAt': instance.createdAt.toIso8601String(),
   'kind': _$BookNoteKindEnumMap[instance.kind]!,
+  'title': instance.title,
   'chapterTitle': instance.chapterTitle,
   'endPositionMs': instance.endPositionMs,
 };

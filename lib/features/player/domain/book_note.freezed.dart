@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BookNote {
 
- String get id; String get bookId; int get positionMs; String get text; DateTime get createdAt; BookNoteKind get kind; String? get chapterTitle; int? get endPositionMs;
+ String get id; String get bookId; int get positionMs; String get text; DateTime get createdAt; BookNoteKind get kind; String? get title; String? get chapterTitle; int? get endPositionMs;
 /// Create a copy of BookNote
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $BookNoteCopyWith<BookNote> get copyWith => _$BookNoteCopyWithImpl<BookNote>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookNote&&(identical(other.id, id) || other.id == id)&&(identical(other.bookId, bookId) || other.bookId == bookId)&&(identical(other.positionMs, positionMs) || other.positionMs == positionMs)&&(identical(other.text, text) || other.text == text)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.endPositionMs, endPositionMs) || other.endPositionMs == endPositionMs));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookNote&&(identical(other.id, id) || other.id == id)&&(identical(other.bookId, bookId) || other.bookId == bookId)&&(identical(other.positionMs, positionMs) || other.positionMs == positionMs)&&(identical(other.text, text) || other.text == text)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.title, title) || other.title == title)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.endPositionMs, endPositionMs) || other.endPositionMs == endPositionMs));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,bookId,positionMs,text,createdAt,kind,chapterTitle,endPositionMs);
+int get hashCode => Object.hash(runtimeType,id,bookId,positionMs,text,createdAt,kind,title,chapterTitle,endPositionMs);
 
 @override
 String toString() {
-  return 'BookNote(id: $id, bookId: $bookId, positionMs: $positionMs, text: $text, createdAt: $createdAt, kind: $kind, chapterTitle: $chapterTitle, endPositionMs: $endPositionMs)';
+  return 'BookNote(id: $id, bookId: $bookId, positionMs: $positionMs, text: $text, createdAt: $createdAt, kind: $kind, title: $title, chapterTitle: $chapterTitle, endPositionMs: $endPositionMs)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $BookNoteCopyWith<$Res>  {
   factory $BookNoteCopyWith(BookNote value, $Res Function(BookNote) _then) = _$BookNoteCopyWithImpl;
 @useResult
 $Res call({
- String id, String bookId, int positionMs, String text, DateTime createdAt, BookNoteKind kind, String? chapterTitle, int? endPositionMs
+ String id, String bookId, int positionMs, String text, DateTime createdAt, BookNoteKind kind, String? title, String? chapterTitle, int? endPositionMs
 });
 
 
@@ -65,7 +65,7 @@ class _$BookNoteCopyWithImpl<$Res>
 
 /// Create a copy of BookNote
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? bookId = null,Object? positionMs = null,Object? text = null,Object? createdAt = null,Object? kind = null,Object? chapterTitle = freezed,Object? endPositionMs = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? bookId = null,Object? positionMs = null,Object? text = null,Object? createdAt = null,Object? kind = null,Object? title = freezed,Object? chapterTitle = freezed,Object? endPositionMs = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,bookId: null == bookId ? _self.bookId : bookId // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,8 @@ as String,positionMs: null == positionMs ? _self.positionMs : positionMs // igno
 as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
-as BookNoteKind,chapterTitle: freezed == chapterTitle ? _self.chapterTitle : chapterTitle // ignore: cast_nullable_to_non_nullable
+as BookNoteKind,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,chapterTitle: freezed == chapterTitle ? _self.chapterTitle : chapterTitle // ignore: cast_nullable_to_non_nullable
 as String?,endPositionMs: freezed == endPositionMs ? _self.endPositionMs : endPositionMs // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String bookId,  int positionMs,  String text,  DateTime createdAt,  BookNoteKind kind,  String? chapterTitle,  int? endPositionMs)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String bookId,  int positionMs,  String text,  DateTime createdAt,  BookNoteKind kind,  String? title,  String? chapterTitle,  int? endPositionMs)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BookNote() when $default != null:
-return $default(_that.id,_that.bookId,_that.positionMs,_that.text,_that.createdAt,_that.kind,_that.chapterTitle,_that.endPositionMs);case _:
+return $default(_that.id,_that.bookId,_that.positionMs,_that.text,_that.createdAt,_that.kind,_that.title,_that.chapterTitle,_that.endPositionMs);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.id,_that.bookId,_that.positionMs,_that.text,_that.createdA
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String bookId,  int positionMs,  String text,  DateTime createdAt,  BookNoteKind kind,  String? chapterTitle,  int? endPositionMs)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String bookId,  int positionMs,  String text,  DateTime createdAt,  BookNoteKind kind,  String? title,  String? chapterTitle,  int? endPositionMs)  $default,) {final _that = this;
 switch (_that) {
 case _BookNote():
-return $default(_that.id,_that.bookId,_that.positionMs,_that.text,_that.createdAt,_that.kind,_that.chapterTitle,_that.endPositionMs);case _:
+return $default(_that.id,_that.bookId,_that.positionMs,_that.text,_that.createdAt,_that.kind,_that.title,_that.chapterTitle,_that.endPositionMs);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.id,_that.bookId,_that.positionMs,_that.text,_that.createdA
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String bookId,  int positionMs,  String text,  DateTime createdAt,  BookNoteKind kind,  String? chapterTitle,  int? endPositionMs)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String bookId,  int positionMs,  String text,  DateTime createdAt,  BookNoteKind kind,  String? title,  String? chapterTitle,  int? endPositionMs)?  $default,) {final _that = this;
 switch (_that) {
 case _BookNote() when $default != null:
-return $default(_that.id,_that.bookId,_that.positionMs,_that.text,_that.createdAt,_that.kind,_that.chapterTitle,_that.endPositionMs);case _:
+return $default(_that.id,_that.bookId,_that.positionMs,_that.text,_that.createdAt,_that.kind,_that.title,_that.chapterTitle,_that.endPositionMs);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.id,_that.bookId,_that.positionMs,_that.text,_that.createdA
 @JsonSerializable()
 
 class _BookNote implements BookNote {
-  const _BookNote({required this.id, required this.bookId, required this.positionMs, required this.text, required this.createdAt, this.kind = BookNoteKind.note, this.chapterTitle, this.endPositionMs});
+  const _BookNote({required this.id, required this.bookId, required this.positionMs, required this.text, required this.createdAt, this.kind = BookNoteKind.note, this.title, this.chapterTitle, this.endPositionMs});
   factory _BookNote.fromJson(Map<String, dynamic> json) => _$BookNoteFromJson(json);
 
 @override final  String id;
@@ -225,6 +226,7 @@ class _BookNote implements BookNote {
 @override final  String text;
 @override final  DateTime createdAt;
 @override@JsonKey() final  BookNoteKind kind;
+@override final  String? title;
 @override final  String? chapterTitle;
 @override final  int? endPositionMs;
 
@@ -241,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookNote&&(identical(other.id, id) || other.id == id)&&(identical(other.bookId, bookId) || other.bookId == bookId)&&(identical(other.positionMs, positionMs) || other.positionMs == positionMs)&&(identical(other.text, text) || other.text == text)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.endPositionMs, endPositionMs) || other.endPositionMs == endPositionMs));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookNote&&(identical(other.id, id) || other.id == id)&&(identical(other.bookId, bookId) || other.bookId == bookId)&&(identical(other.positionMs, positionMs) || other.positionMs == positionMs)&&(identical(other.text, text) || other.text == text)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.title, title) || other.title == title)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.endPositionMs, endPositionMs) || other.endPositionMs == endPositionMs));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,bookId,positionMs,text,createdAt,kind,chapterTitle,endPositionMs);
+int get hashCode => Object.hash(runtimeType,id,bookId,positionMs,text,createdAt,kind,title,chapterTitle,endPositionMs);
 
 @override
 String toString() {
-  return 'BookNote(id: $id, bookId: $bookId, positionMs: $positionMs, text: $text, createdAt: $createdAt, kind: $kind, chapterTitle: $chapterTitle, endPositionMs: $endPositionMs)';
+  return 'BookNote(id: $id, bookId: $bookId, positionMs: $positionMs, text: $text, createdAt: $createdAt, kind: $kind, title: $title, chapterTitle: $chapterTitle, endPositionMs: $endPositionMs)';
 }
 
 
@@ -261,7 +263,7 @@ abstract mixin class _$BookNoteCopyWith<$Res> implements $BookNoteCopyWith<$Res>
   factory _$BookNoteCopyWith(_BookNote value, $Res Function(_BookNote) _then) = __$BookNoteCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String bookId, int positionMs, String text, DateTime createdAt, BookNoteKind kind, String? chapterTitle, int? endPositionMs
+ String id, String bookId, int positionMs, String text, DateTime createdAt, BookNoteKind kind, String? title, String? chapterTitle, int? endPositionMs
 });
 
 
@@ -278,7 +280,7 @@ class __$BookNoteCopyWithImpl<$Res>
 
 /// Create a copy of BookNote
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? bookId = null,Object? positionMs = null,Object? text = null,Object? createdAt = null,Object? kind = null,Object? chapterTitle = freezed,Object? endPositionMs = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? bookId = null,Object? positionMs = null,Object? text = null,Object? createdAt = null,Object? kind = null,Object? title = freezed,Object? chapterTitle = freezed,Object? endPositionMs = freezed,}) {
   return _then(_BookNote(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,bookId: null == bookId ? _self.bookId : bookId // ignore: cast_nullable_to_non_nullable
@@ -286,7 +288,8 @@ as String,positionMs: null == positionMs ? _self.positionMs : positionMs // igno
 as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
-as BookNoteKind,chapterTitle: freezed == chapterTitle ? _self.chapterTitle : chapterTitle // ignore: cast_nullable_to_non_nullable
+as BookNoteKind,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,chapterTitle: freezed == chapterTitle ? _self.chapterTitle : chapterTitle // ignore: cast_nullable_to_non_nullable
 as String?,endPositionMs: freezed == endPositionMs ? _self.endPositionMs : endPositionMs // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
