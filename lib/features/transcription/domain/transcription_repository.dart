@@ -40,6 +40,8 @@ class TranscriptionException implements Exception {
 }
 
 abstract interface class TranscriptionRepository {
+  Future<void> reset();
+
   Future<List<SpeechModel>> getModels({bool refresh = true});
 
   Future<bool> isModelDownloaded(String slug);

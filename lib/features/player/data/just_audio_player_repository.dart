@@ -125,6 +125,15 @@ class JustAudioPlayerRepository implements AudioPlayerRepository {
   Future<void> pause() => _handler.pause();
 
   @override
+  Future<void> clear() async {
+    await _handler.stop();
+    await _player.clearAudioSources();
+    _segments = const [];
+    _offsetsMs = const [0];
+    _totalDurationMs = 0;
+  }
+
+  @override
   Future<void> seek(Duration position) async {
     final location = _locationFor(position);
     // Changing the queue item and seeking in two separate operations briefly

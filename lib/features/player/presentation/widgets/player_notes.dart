@@ -131,7 +131,13 @@ class _NoteTile extends StatelessWidget {
         MaterialPageRoute(
           builder: (_) => BlocProvider.value(
             value: cubit,
-            child: NoteDetailScreen(note: note),
+            child: NoteDetailScreen(
+              note: note,
+              onSave: ({required title, required text}) =>
+                  cubit.updateNote(note, title: title, text: text),
+              onShare: (edited, {origin}) =>
+                  cubit.shareNote(edited, origin: origin),
+            ),
           ),
         ),
       ),

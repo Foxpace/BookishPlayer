@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/presentation/diagnostic_failure.dart';
 import '../../library/domain/audiobook.dart';
 import '../../library/domain/audiobook_catalog_repository.dart';
 import '../../library/domain/book_note_repository.dart';
@@ -84,6 +85,7 @@ class PlayerCubit extends Cubit<PlayerState> {
   final _series = const SeriesContinuationPolicy();
   final _chapters = const ChapterNavigationPolicy();
   var _openingLocally = false;
+  var _resettingAppData = false;
 
   void _emit(PlayerState value) => emit(value);
 
@@ -98,13 +100,8 @@ class PlayerCubit extends Cubit<PlayerState> {
       _openingLocally = true;
       final result = await _commands.open(book);
       await _applyOpened(result);
-    } catch (_) {
-      emit(
-        state.copyWith(
-          status: PlayerStatus.failure,
-          message: 'This audiobook could not be played.',
-        ),
-      );
+    } catch (error) {
+      _fail('This audiobook could not be played.', error);
     } finally {
       _openingLocally = false;
     }
@@ -121,13 +118,8 @@ class PlayerCubit extends Cubit<PlayerState> {
         throw StateError('missing book');
       }
       await open(book);
-    } catch (_) {
-      emit(
-        state.copyWith(
-          status: PlayerStatus.failure,
-          message: 'This audiobook is no longer in your library.',
-        ),
-      );
+    } catch (error) {
+      _fail('This audiobook could not be opened.', error);
     }
   }
 
@@ -145,6 +137,13 @@ class PlayerCubit extends Cubit<PlayerState> {
       await _commands.toggle();
     }
   }
+
+  void _fail(String action, Object error) => emit(
+    state.copyWith(
+      status: PlayerStatus.failure,
+      message: diagnosticFailureMessage(action, error),
+    ),
+  );
 
   void _onExternallyOpened(PlaybackOpenResult result) {
     if (!_openingLocally) {

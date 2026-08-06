@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/presentation/diagnostic_failure.dart';
 import '../../library/domain/audiobook_catalog_repository.dart';
+import '../../library/domain/book_metadata_repository.dart';
 import '../../player/domain/audio_player_repository.dart';
 import '../application/audiobook_import_workflow.dart';
 import '../application/import_progress.dart';
@@ -20,6 +22,7 @@ class ImportCubit extends Cubit<ImportState> {
     FileImportRepository files,
     AudioPlayerRepository audio,
     AudiobookCatalogRepository books,
+    BookMetadataRepository bookMetadata,
     M4bChapterParser chapters,
     AudiobookArtworkExtractor artwork,
     AudiobookMetadataExtractor metadata,
@@ -28,6 +31,7 @@ class ImportCubit extends Cubit<ImportState> {
         files,
         audio,
         books,
+        bookMetadata,
         chapters,
         artwork,
         metadata,
@@ -210,7 +214,8 @@ class ImportCubit extends Cubit<ImportState> {
       ImportStage.savingBook => 'saving the library entry',
       ImportStage.removingOriginals => 'removing the selected original files',
     };
-    return 'The failure happened while $stage. The detailed diagnostic below can be copied when reporting the problem.';
+    return '${diagnosticFailureMessage('The failure happened while $stage.', failure.error)}\n'
+        'The full diagnostic below can be copied when reporting the problem.';
   }
 
   String _buildDiagnostics(ImportWorkflowFailure failure) => [

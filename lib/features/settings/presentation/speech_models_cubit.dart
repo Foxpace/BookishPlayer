@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/presentation/diagnostic_failure.dart';
 import '../../transcription/domain/transcription_repository.dart';
 import '../domain/settings_repository.dart';
 import 'speech_models_state.dart';
@@ -40,11 +41,14 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
           ),
         ),
       );
-    } catch (_) {
+    } catch (error) {
       emit(
         state.copyWith(
           status: SpeechModelsStatus.failure,
-          message: 'Could not load speech models.',
+          message: diagnosticFailureMessage(
+            'Could not load speech models.',
+            error,
+          ),
         ),
       );
     }
@@ -122,13 +126,16 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
           message: 'Speech model downloaded and ready.',
         ),
       );
-    } catch (_) {
+    } catch (error) {
       emit(
         state.copyWith(
           status: SpeechModelsStatus.failure,
           downloadProgress: null,
           statusMessage: null,
-          message: 'Could not download the speech model.',
+          message: diagnosticFailureMessage(
+            'Could not download the speech model.',
+            error,
+          ),
         ),
       );
     }

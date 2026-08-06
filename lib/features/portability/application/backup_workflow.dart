@@ -14,7 +14,7 @@ class BackupWorkflow {
     if (backup == null) {
       return false;
     }
-    if (backup.schemaVersion != 1) {
+    if (backup.schemaVersion < 1 || backup.schemaVersion > 3) {
       throw const FormatException('Unsupported backup version');
     }
     await _store.restore(backup);

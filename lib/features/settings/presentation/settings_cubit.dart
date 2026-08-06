@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/presentation/diagnostic_failure.dart';
 import '../domain/settings_repository.dart';
 import '../domain/theme_preference.dart';
 import '../domain/playback_preferences.dart';
@@ -27,11 +28,14 @@ class SettingsCubit extends Cubit<SettingsState> {
           playback: playback,
         ),
       );
-    } catch (_) {
+    } catch (error) {
       emit(
         state.copyWith(
           status: SettingsStatus.failure,
-          message: 'Could not load appearance settings.',
+          message: diagnosticFailureMessage(
+            'Could not load appearance settings.',
+            error,
+          ),
         ),
       );
     }
@@ -42,11 +46,14 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(state.copyWith(playback: preferences, message: null));
     try {
       await _repository.setPlaybackPreferences(preferences);
-    } catch (_) {
+    } catch (error) {
       emit(
         state.copyWith(
           playback: previous,
-          message: 'Could not save playback settings.',
+          message: diagnosticFailureMessage(
+            'Could not save playback settings.',
+            error,
+          ),
         ),
       );
     }
@@ -68,12 +75,15 @@ class SettingsCubit extends Cubit<SettingsState> {
     );
     try {
       await _repository.setThemePreference(preference);
-    } catch (_) {
+    } catch (error) {
       emit(
         state.copyWith(
           status: SettingsStatus.failure,
           themePreference: previous,
-          message: 'Could not save appearance settings.',
+          message: diagnosticFailureMessage(
+            'Could not save appearance settings.',
+            error,
+          ),
         ),
       );
     }

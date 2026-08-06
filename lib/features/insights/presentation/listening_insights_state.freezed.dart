@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ListeningInsightsState {
 
- ListeningInsightsStatus get status; List<Audiobook> get books; List<ListeningSession> get sessions; Duration get totalListening; Duration get lastSevenDays; int get completedBooks; int get activeDays; String? get message;
+ ListeningInsightsStatus get status; Map<InsightsPeriod, ListeningActivityRange> get activityByPeriod; InsightsPeriod get selectedPeriod; Duration get totalListening; int get completedBooks; int get activeDays; String? get message;
 /// Create a copy of ListeningInsightsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ListeningInsightsStateCopyWith<ListeningInsightsState> get copyWith => _$Listen
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningInsightsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.books, books)&&const DeepCollectionEquality().equals(other.sessions, sessions)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.lastSevenDays, lastSevenDays) || other.lastSevenDays == lastSevenDays)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningInsightsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.activityByPeriod, activityByPeriod)&&(identical(other.selectedPeriod, selectedPeriod) || other.selectedPeriod == selectedPeriod)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(books),const DeepCollectionEquality().hash(sessions),totalListening,lastSevenDays,completedBooks,activeDays,message);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(activityByPeriod),selectedPeriod,totalListening,completedBooks,activeDays,message);
 
 @override
 String toString() {
-  return 'ListeningInsightsState(status: $status, books: $books, sessions: $sessions, totalListening: $totalListening, lastSevenDays: $lastSevenDays, completedBooks: $completedBooks, activeDays: $activeDays, message: $message)';
+  return 'ListeningInsightsState(status: $status, activityByPeriod: $activityByPeriod, selectedPeriod: $selectedPeriod, totalListening: $totalListening, completedBooks: $completedBooks, activeDays: $activeDays, message: $message)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ListeningInsightsStateCopyWith<$Res>  {
   factory $ListeningInsightsStateCopyWith(ListeningInsightsState value, $Res Function(ListeningInsightsState) _then) = _$ListeningInsightsStateCopyWithImpl;
 @useResult
 $Res call({
- ListeningInsightsStatus status, List<Audiobook> books, List<ListeningSession> sessions, Duration totalListening, Duration lastSevenDays, int completedBooks, int activeDays, String? message
+ ListeningInsightsStatus status, Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, InsightsPeriod selectedPeriod, Duration totalListening, int completedBooks, int activeDays, String? message
 });
 
 
@@ -62,13 +62,12 @@ class _$ListeningInsightsStateCopyWithImpl<$Res>
 
 /// Create a copy of ListeningInsightsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? books = null,Object? sessions = null,Object? totalListening = null,Object? lastSevenDays = null,Object? completedBooks = null,Object? activeDays = null,Object? message = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? activityByPeriod = null,Object? selectedPeriod = null,Object? totalListening = null,Object? completedBooks = null,Object? activeDays = null,Object? message = freezed,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as ListeningInsightsStatus,books: null == books ? _self.books : books // ignore: cast_nullable_to_non_nullable
-as List<Audiobook>,sessions: null == sessions ? _self.sessions : sessions // ignore: cast_nullable_to_non_nullable
-as List<ListeningSession>,totalListening: null == totalListening ? _self.totalListening : totalListening // ignore: cast_nullable_to_non_nullable
-as Duration,lastSevenDays: null == lastSevenDays ? _self.lastSevenDays : lastSevenDays // ignore: cast_nullable_to_non_nullable
+as ListeningInsightsStatus,activityByPeriod: null == activityByPeriod ? _self.activityByPeriod : activityByPeriod // ignore: cast_nullable_to_non_nullable
+as Map<InsightsPeriod, ListeningActivityRange>,selectedPeriod: null == selectedPeriod ? _self.selectedPeriod : selectedPeriod // ignore: cast_nullable_to_non_nullable
+as InsightsPeriod,totalListening: null == totalListening ? _self.totalListening : totalListening // ignore: cast_nullable_to_non_nullable
 as Duration,completedBooks: null == completedBooks ? _self.completedBooks : completedBooks // ignore: cast_nullable_to_non_nullable
 as int,activeDays: null == activeDays ? _self.activeDays : activeDays // ignore: cast_nullable_to_non_nullable
 as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
@@ -157,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ListeningInsightsStatus status,  List<Audiobook> books,  List<ListeningSession> sessions,  Duration totalListening,  Duration lastSevenDays,  int completedBooks,  int activeDays,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ListeningInsightsStatus status,  Map<InsightsPeriod, ListeningActivityRange> activityByPeriod,  InsightsPeriod selectedPeriod,  Duration totalListening,  int completedBooks,  int activeDays,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ListeningInsightsState() when $default != null:
-return $default(_that.status,_that.books,_that.sessions,_that.totalListening,_that.lastSevenDays,_that.completedBooks,_that.activeDays,_that.message);case _:
+return $default(_that.status,_that.activityByPeriod,_that.selectedPeriod,_that.totalListening,_that.completedBooks,_that.activeDays,_that.message);case _:
   return orElse();
 
 }
@@ -178,10 +177,10 @@ return $default(_that.status,_that.books,_that.sessions,_that.totalListening,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ListeningInsightsStatus status,  List<Audiobook> books,  List<ListeningSession> sessions,  Duration totalListening,  Duration lastSevenDays,  int completedBooks,  int activeDays,  String? message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ListeningInsightsStatus status,  Map<InsightsPeriod, ListeningActivityRange> activityByPeriod,  InsightsPeriod selectedPeriod,  Duration totalListening,  int completedBooks,  int activeDays,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _ListeningInsightsState():
-return $default(_that.status,_that.books,_that.sessions,_that.totalListening,_that.lastSevenDays,_that.completedBooks,_that.activeDays,_that.message);case _:
+return $default(_that.status,_that.activityByPeriod,_that.selectedPeriod,_that.totalListening,_that.completedBooks,_that.activeDays,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +197,10 @@ return $default(_that.status,_that.books,_that.sessions,_that.totalListening,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ListeningInsightsStatus status,  List<Audiobook> books,  List<ListeningSession> sessions,  Duration totalListening,  Duration lastSevenDays,  int completedBooks,  int activeDays,  String? message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ListeningInsightsStatus status,  Map<InsightsPeriod, ListeningActivityRange> activityByPeriod,  InsightsPeriod selectedPeriod,  Duration totalListening,  int completedBooks,  int activeDays,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _ListeningInsightsState() when $default != null:
-return $default(_that.status,_that.books,_that.sessions,_that.totalListening,_that.lastSevenDays,_that.completedBooks,_that.activeDays,_that.message);case _:
+return $default(_that.status,_that.activityByPeriod,_that.selectedPeriod,_that.totalListening,_that.completedBooks,_that.activeDays,_that.message);case _:
   return null;
 
 }
@@ -213,26 +212,19 @@ return $default(_that.status,_that.books,_that.sessions,_that.totalListening,_th
 
 
 class _ListeningInsightsState implements ListeningInsightsState {
-  const _ListeningInsightsState({this.status = ListeningInsightsStatus.loading, final  List<Audiobook> books = const <Audiobook>[], final  List<ListeningSession> sessions = const <ListeningSession>[], this.totalListening = Duration.zero, this.lastSevenDays = Duration.zero, this.completedBooks = 0, this.activeDays = 0, this.message}): _books = books,_sessions = sessions;
+  const _ListeningInsightsState({this.status = ListeningInsightsStatus.loading, final  Map<InsightsPeriod, ListeningActivityRange> activityByPeriod = const <InsightsPeriod, ListeningActivityRange>{}, this.selectedPeriod = InsightsPeriod.week, this.totalListening = Duration.zero, this.completedBooks = 0, this.activeDays = 0, this.message}): _activityByPeriod = activityByPeriod;
   
 
 @override@JsonKey() final  ListeningInsightsStatus status;
- final  List<Audiobook> _books;
-@override@JsonKey() List<Audiobook> get books {
-  if (_books is EqualUnmodifiableListView) return _books;
+ final  Map<InsightsPeriod, ListeningActivityRange> _activityByPeriod;
+@override@JsonKey() Map<InsightsPeriod, ListeningActivityRange> get activityByPeriod {
+  if (_activityByPeriod is EqualUnmodifiableMapView) return _activityByPeriod;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_books);
+  return EqualUnmodifiableMapView(_activityByPeriod);
 }
 
- final  List<ListeningSession> _sessions;
-@override@JsonKey() List<ListeningSession> get sessions {
-  if (_sessions is EqualUnmodifiableListView) return _sessions;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_sessions);
-}
-
+@override@JsonKey() final  InsightsPeriod selectedPeriod;
 @override@JsonKey() final  Duration totalListening;
-@override@JsonKey() final  Duration lastSevenDays;
 @override@JsonKey() final  int completedBooks;
 @override@JsonKey() final  int activeDays;
 @override final  String? message;
@@ -247,16 +239,16 @@ _$ListeningInsightsStateCopyWith<_ListeningInsightsState> get copyWith => __$Lis
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningInsightsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._books, _books)&&const DeepCollectionEquality().equals(other._sessions, _sessions)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.lastSevenDays, lastSevenDays) || other.lastSevenDays == lastSevenDays)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningInsightsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._activityByPeriod, _activityByPeriod)&&(identical(other.selectedPeriod, selectedPeriod) || other.selectedPeriod == selectedPeriod)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_books),const DeepCollectionEquality().hash(_sessions),totalListening,lastSevenDays,completedBooks,activeDays,message);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_activityByPeriod),selectedPeriod,totalListening,completedBooks,activeDays,message);
 
 @override
 String toString() {
-  return 'ListeningInsightsState(status: $status, books: $books, sessions: $sessions, totalListening: $totalListening, lastSevenDays: $lastSevenDays, completedBooks: $completedBooks, activeDays: $activeDays, message: $message)';
+  return 'ListeningInsightsState(status: $status, activityByPeriod: $activityByPeriod, selectedPeriod: $selectedPeriod, totalListening: $totalListening, completedBooks: $completedBooks, activeDays: $activeDays, message: $message)';
 }
 
 
@@ -267,7 +259,7 @@ abstract mixin class _$ListeningInsightsStateCopyWith<$Res> implements $Listenin
   factory _$ListeningInsightsStateCopyWith(_ListeningInsightsState value, $Res Function(_ListeningInsightsState) _then) = __$ListeningInsightsStateCopyWithImpl;
 @override @useResult
 $Res call({
- ListeningInsightsStatus status, List<Audiobook> books, List<ListeningSession> sessions, Duration totalListening, Duration lastSevenDays, int completedBooks, int activeDays, String? message
+ ListeningInsightsStatus status, Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, InsightsPeriod selectedPeriod, Duration totalListening, int completedBooks, int activeDays, String? message
 });
 
 
@@ -284,13 +276,12 @@ class __$ListeningInsightsStateCopyWithImpl<$Res>
 
 /// Create a copy of ListeningInsightsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? books = null,Object? sessions = null,Object? totalListening = null,Object? lastSevenDays = null,Object? completedBooks = null,Object? activeDays = null,Object? message = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? activityByPeriod = null,Object? selectedPeriod = null,Object? totalListening = null,Object? completedBooks = null,Object? activeDays = null,Object? message = freezed,}) {
   return _then(_ListeningInsightsState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as ListeningInsightsStatus,books: null == books ? _self._books : books // ignore: cast_nullable_to_non_nullable
-as List<Audiobook>,sessions: null == sessions ? _self._sessions : sessions // ignore: cast_nullable_to_non_nullable
-as List<ListeningSession>,totalListening: null == totalListening ? _self.totalListening : totalListening // ignore: cast_nullable_to_non_nullable
-as Duration,lastSevenDays: null == lastSevenDays ? _self.lastSevenDays : lastSevenDays // ignore: cast_nullable_to_non_nullable
+as ListeningInsightsStatus,activityByPeriod: null == activityByPeriod ? _self._activityByPeriod : activityByPeriod // ignore: cast_nullable_to_non_nullable
+as Map<InsightsPeriod, ListeningActivityRange>,selectedPeriod: null == selectedPeriod ? _self.selectedPeriod : selectedPeriod // ignore: cast_nullable_to_non_nullable
+as InsightsPeriod,totalListening: null == totalListening ? _self.totalListening : totalListening // ignore: cast_nullable_to_non_nullable
 as Duration,completedBooks: null == completedBooks ? _self.completedBooks : completedBooks // ignore: cast_nullable_to_non_nullable
 as int,activeDays: null == activeDays ? _self.activeDays : activeDays // ignore: cast_nullable_to_non_nullable
 as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable

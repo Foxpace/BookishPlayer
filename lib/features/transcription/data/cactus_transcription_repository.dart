@@ -22,6 +22,14 @@ class CactusTranscriptionRepository implements TranscriptionRepository {
   String? _initializedModel;
 
   @override
+  Future<void> reset() async {
+    if (_stt.isLoaded()) {
+      _stt.unload();
+    }
+    _initializedModel = null;
+  }
+
+  @override
   Future<List<SpeechModel>> getModels({bool refresh = true}) async {
     final documents = await getApplicationDocumentsDirectory();
     final cache = SpeechModelCatalogCache(documents);

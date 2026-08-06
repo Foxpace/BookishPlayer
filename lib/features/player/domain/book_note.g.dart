@@ -8,10 +8,10 @@ part of 'book_note.dart';
 
 _BookNote _$BookNoteFromJson(Map<String, dynamic> json) => _BookNote(
   id: json['id'] as String,
-  bookId: json['bookId'] as String,
   positionMs: (json['positionMs'] as num).toInt(),
   text: json['text'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
+  metadataId: json['metadataId'] as String,
   kind:
       $enumDecodeNullable(_$BookNoteKindEnumMap, json['kind']) ??
       BookNoteKind.note,
@@ -22,10 +22,10 @@ _BookNote _$BookNoteFromJson(Map<String, dynamic> json) => _BookNote(
 
 Map<String, dynamic> _$BookNoteToJson(_BookNote instance) => <String, dynamic>{
   'id': instance.id,
-  'bookId': instance.bookId,
   'positionMs': instance.positionMs,
   'text': instance.text,
   'createdAt': instance.createdAt.toIso8601String(),
+  'metadataId': instance.metadataId,
   'kind': _$BookNoteKindEnumMap[instance.kind]!,
   'title': instance.title,
   'chapterTitle': instance.chapterTitle,

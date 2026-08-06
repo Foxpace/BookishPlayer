@@ -7,13 +7,13 @@ part 'listening_session.g.dart';
 abstract class ListeningSession with _$ListeningSession {
   const factory ListeningSession({
     required String id,
-    required String bookId,
     required DateTime startedAt,
     required DateTime endedAt,
     required int listenedMs,
     required int startPositionMs,
     required int endPositionMs,
     required double speed,
+    required String metadataId,
   }) = _ListeningSession;
 
   factory ListeningSession.fromJson(Map<String, dynamic> json) =>

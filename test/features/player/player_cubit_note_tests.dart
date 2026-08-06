@@ -52,6 +52,13 @@ void _registerNoteWidgetTest() {
     await tester.pumpAndSettle();
     expect(find.byTooltip('Share note'), findsOneWidget);
     expect(find.text('Title (optional)'), findsOneWidget);
+    expect(tester.testTextInput.isVisible, isFalse);
+    expect(
+      tester
+          .widgetList<TextField>(find.byType(TextField))
+          .every((field) => field.focusNode?.hasFocus != true),
+      isTrue,
+    );
 
     await tester.enterText(find.byType(TextField).first, 'Key idea');
     await tester.enterText(find.byType(TextField).last, 'Edited note');

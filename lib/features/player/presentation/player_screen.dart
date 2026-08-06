@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/navigation/app_router.dart';
 import '../../../core/presentation/book_cover.dart';
+import '../../../core/presentation/diagnostic_failure_view.dart';
 import '../../../core/presentation/formatters.dart';
 import '../domain/book_note.dart';
 import '../domain/transcription_draft.dart';
@@ -66,17 +67,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
         if (book == null) {
           return Scaffold(
             appBar: AppBar(),
-            body: Center(
-              child: state.status == PlayerStatus.failure
-                  ? Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: Text(
-                        state.message ?? 'No audiobook selected',
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  : const CircularProgressIndicator(),
-            ),
+            body: state.status == PlayerStatus.failure
+                ? DiagnosticFailureView.fromMessage(
+                    message: state.message ?? 'No audiobook selected',
+                  )
+                : const Center(child: CircularProgressIndicator()),
           );
         }
         return PopScope<void>(

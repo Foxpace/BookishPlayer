@@ -299,7 +299,7 @@ $PlaybackPreferencesCopyWith<$Res> get playback {
 /// @nodoc
 mixin _$BookishBackup {
 
- DateTime get exportedAt; BackupSettings get settings; int get schemaVersion; List<Audiobook> get books; List<BookNote> get notes; List<ListeningSession> get sessions;
+ DateTime get exportedAt; BackupSettings get settings; int get schemaVersion; List<Audiobook> get books; List<BookNote> get notes; List<BookMetadata> get bookMetadata; List<ListeningSession> get sessions;
 /// Create a copy of BookishBackup
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -312,16 +312,16 @@ $BookishBackupCopyWith<BookishBackup> get copyWith => _$BookishBackupCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookishBackup&&(identical(other.exportedAt, exportedAt) || other.exportedAt == exportedAt)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other.books, books)&&const DeepCollectionEquality().equals(other.notes, notes)&&const DeepCollectionEquality().equals(other.sessions, sessions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookishBackup&&(identical(other.exportedAt, exportedAt) || other.exportedAt == exportedAt)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other.books, books)&&const DeepCollectionEquality().equals(other.notes, notes)&&const DeepCollectionEquality().equals(other.bookMetadata, bookMetadata)&&const DeepCollectionEquality().equals(other.sessions, sessions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,exportedAt,settings,schemaVersion,const DeepCollectionEquality().hash(books),const DeepCollectionEquality().hash(notes),const DeepCollectionEquality().hash(sessions));
+int get hashCode => Object.hash(runtimeType,exportedAt,settings,schemaVersion,const DeepCollectionEquality().hash(books),const DeepCollectionEquality().hash(notes),const DeepCollectionEquality().hash(bookMetadata),const DeepCollectionEquality().hash(sessions));
 
 @override
 String toString() {
-  return 'BookishBackup(exportedAt: $exportedAt, settings: $settings, schemaVersion: $schemaVersion, books: $books, notes: $notes, sessions: $sessions)';
+  return 'BookishBackup(exportedAt: $exportedAt, settings: $settings, schemaVersion: $schemaVersion, books: $books, notes: $notes, bookMetadata: $bookMetadata, sessions: $sessions)';
 }
 
 
@@ -332,7 +332,7 @@ abstract mixin class $BookishBackupCopyWith<$Res>  {
   factory $BookishBackupCopyWith(BookishBackup value, $Res Function(BookishBackup) _then) = _$BookishBackupCopyWithImpl;
 @useResult
 $Res call({
- DateTime exportedAt, BackupSettings settings, int schemaVersion, List<Audiobook> books, List<BookNote> notes, List<ListeningSession> sessions
+ DateTime exportedAt, BackupSettings settings, int schemaVersion, List<Audiobook> books, List<BookNote> notes, List<BookMetadata> bookMetadata, List<ListeningSession> sessions
 });
 
 
@@ -349,14 +349,15 @@ class _$BookishBackupCopyWithImpl<$Res>
 
 /// Create a copy of BookishBackup
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? exportedAt = null,Object? settings = null,Object? schemaVersion = null,Object? books = null,Object? notes = null,Object? sessions = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? exportedAt = null,Object? settings = null,Object? schemaVersion = null,Object? books = null,Object? notes = null,Object? bookMetadata = null,Object? sessions = null,}) {
   return _then(_self.copyWith(
 exportedAt: null == exportedAt ? _self.exportedAt : exportedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,settings: null == settings ? _self.settings : settings // ignore: cast_nullable_to_non_nullable
 as BackupSettings,schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
 as int,books: null == books ? _self.books : books // ignore: cast_nullable_to_non_nullable
 as List<Audiobook>,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
-as List<BookNote>,sessions: null == sessions ? _self.sessions : sessions // ignore: cast_nullable_to_non_nullable
+as List<BookNote>,bookMetadata: null == bookMetadata ? _self.bookMetadata : bookMetadata // ignore: cast_nullable_to_non_nullable
+as List<BookMetadata>,sessions: null == sessions ? _self.sessions : sessions // ignore: cast_nullable_to_non_nullable
 as List<ListeningSession>,
   ));
 }
@@ -451,10 +452,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime exportedAt,  BackupSettings settings,  int schemaVersion,  List<Audiobook> books,  List<BookNote> notes,  List<ListeningSession> sessions)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime exportedAt,  BackupSettings settings,  int schemaVersion,  List<Audiobook> books,  List<BookNote> notes,  List<BookMetadata> bookMetadata,  List<ListeningSession> sessions)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BookishBackup() when $default != null:
-return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,_that.notes,_that.sessions);case _:
+return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,_that.notes,_that.bookMetadata,_that.sessions);case _:
   return orElse();
 
 }
@@ -472,10 +473,10 @@ return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime exportedAt,  BackupSettings settings,  int schemaVersion,  List<Audiobook> books,  List<BookNote> notes,  List<ListeningSession> sessions)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime exportedAt,  BackupSettings settings,  int schemaVersion,  List<Audiobook> books,  List<BookNote> notes,  List<BookMetadata> bookMetadata,  List<ListeningSession> sessions)  $default,) {final _that = this;
 switch (_that) {
 case _BookishBackup():
-return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,_that.notes,_that.sessions);case _:
+return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,_that.notes,_that.bookMetadata,_that.sessions);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -492,10 +493,10 @@ return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime exportedAt,  BackupSettings settings,  int schemaVersion,  List<Audiobook> books,  List<BookNote> notes,  List<ListeningSession> sessions)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime exportedAt,  BackupSettings settings,  int schemaVersion,  List<Audiobook> books,  List<BookNote> notes,  List<BookMetadata> bookMetadata,  List<ListeningSession> sessions)?  $default,) {final _that = this;
 switch (_that) {
 case _BookishBackup() when $default != null:
-return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,_that.notes,_that.sessions);case _:
+return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,_that.notes,_that.bookMetadata,_that.sessions);case _:
   return null;
 
 }
@@ -507,7 +508,7 @@ return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,
 @JsonSerializable()
 
 class _BookishBackup implements BookishBackup {
-  const _BookishBackup({required this.exportedAt, required this.settings, this.schemaVersion = 1, final  List<Audiobook> books = const <Audiobook>[], final  List<BookNote> notes = const <BookNote>[], final  List<ListeningSession> sessions = const <ListeningSession>[]}): _books = books,_notes = notes,_sessions = sessions;
+  const _BookishBackup({required this.exportedAt, required this.settings, this.schemaVersion = 3, final  List<Audiobook> books = const <Audiobook>[], final  List<BookNote> notes = const <BookNote>[], final  List<BookMetadata> bookMetadata = const <BookMetadata>[], final  List<ListeningSession> sessions = const <ListeningSession>[]}): _books = books,_notes = notes,_bookMetadata = bookMetadata,_sessions = sessions;
   factory _BookishBackup.fromJson(Map<String, dynamic> json) => _$BookishBackupFromJson(json);
 
 @override final  DateTime exportedAt;
@@ -525,6 +526,13 @@ class _BookishBackup implements BookishBackup {
   if (_notes is EqualUnmodifiableListView) return _notes;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_notes);
+}
+
+ final  List<BookMetadata> _bookMetadata;
+@override@JsonKey() List<BookMetadata> get bookMetadata {
+  if (_bookMetadata is EqualUnmodifiableListView) return _bookMetadata;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_bookMetadata);
 }
 
  final  List<ListeningSession> _sessions;
@@ -548,16 +556,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookishBackup&&(identical(other.exportedAt, exportedAt) || other.exportedAt == exportedAt)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other._books, _books)&&const DeepCollectionEquality().equals(other._notes, _notes)&&const DeepCollectionEquality().equals(other._sessions, _sessions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookishBackup&&(identical(other.exportedAt, exportedAt) || other.exportedAt == exportedAt)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other._books, _books)&&const DeepCollectionEquality().equals(other._notes, _notes)&&const DeepCollectionEquality().equals(other._bookMetadata, _bookMetadata)&&const DeepCollectionEquality().equals(other._sessions, _sessions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,exportedAt,settings,schemaVersion,const DeepCollectionEquality().hash(_books),const DeepCollectionEquality().hash(_notes),const DeepCollectionEquality().hash(_sessions));
+int get hashCode => Object.hash(runtimeType,exportedAt,settings,schemaVersion,const DeepCollectionEquality().hash(_books),const DeepCollectionEquality().hash(_notes),const DeepCollectionEquality().hash(_bookMetadata),const DeepCollectionEquality().hash(_sessions));
 
 @override
 String toString() {
-  return 'BookishBackup(exportedAt: $exportedAt, settings: $settings, schemaVersion: $schemaVersion, books: $books, notes: $notes, sessions: $sessions)';
+  return 'BookishBackup(exportedAt: $exportedAt, settings: $settings, schemaVersion: $schemaVersion, books: $books, notes: $notes, bookMetadata: $bookMetadata, sessions: $sessions)';
 }
 
 
@@ -568,7 +576,7 @@ abstract mixin class _$BookishBackupCopyWith<$Res> implements $BookishBackupCopy
   factory _$BookishBackupCopyWith(_BookishBackup value, $Res Function(_BookishBackup) _then) = __$BookishBackupCopyWithImpl;
 @override @useResult
 $Res call({
- DateTime exportedAt, BackupSettings settings, int schemaVersion, List<Audiobook> books, List<BookNote> notes, List<ListeningSession> sessions
+ DateTime exportedAt, BackupSettings settings, int schemaVersion, List<Audiobook> books, List<BookNote> notes, List<BookMetadata> bookMetadata, List<ListeningSession> sessions
 });
 
 
@@ -585,14 +593,15 @@ class __$BookishBackupCopyWithImpl<$Res>
 
 /// Create a copy of BookishBackup
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? exportedAt = null,Object? settings = null,Object? schemaVersion = null,Object? books = null,Object? notes = null,Object? sessions = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? exportedAt = null,Object? settings = null,Object? schemaVersion = null,Object? books = null,Object? notes = null,Object? bookMetadata = null,Object? sessions = null,}) {
   return _then(_BookishBackup(
 exportedAt: null == exportedAt ? _self.exportedAt : exportedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,settings: null == settings ? _self.settings : settings // ignore: cast_nullable_to_non_nullable
 as BackupSettings,schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
 as int,books: null == books ? _self._books : books // ignore: cast_nullable_to_non_nullable
 as List<Audiobook>,notes: null == notes ? _self._notes : notes // ignore: cast_nullable_to_non_nullable
-as List<BookNote>,sessions: null == sessions ? _self._sessions : sessions // ignore: cast_nullable_to_non_nullable
+as List<BookNote>,bookMetadata: null == bookMetadata ? _self._bookMetadata : bookMetadata // ignore: cast_nullable_to_non_nullable
+as List<BookMetadata>,sessions: null == sessions ? _self._sessions : sessions // ignore: cast_nullable_to_non_nullable
 as List<ListeningSession>,
   ));
 }

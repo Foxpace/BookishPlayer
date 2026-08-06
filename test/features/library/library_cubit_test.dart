@@ -4,6 +4,8 @@ import 'package:bookish_player/features/importing/domain/audiobook_artwork_extra
 import 'package:bookish_player/features/importing/domain/file_import_repository.dart';
 import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
 import 'package:bookish_player/features/library/domain/audiobook.dart';
+import 'package:bookish_player/features/library/domain/listening_history_repository.dart';
+import 'package:bookish_player/features/library/domain/listening_session.dart';
 import 'package:bookish_player/features/library/presentation/library_cubit.dart';
 import 'package:bookish_player/features/library/presentation/library_screen.dart';
 import 'package:bookish_player/features/library/presentation/library_state.dart';
@@ -19,7 +21,15 @@ import 'package:go_router/go_router.dart';
 void main() {
   test('library layout is an intent-backed persisted state value', () async {
     final settings = _Settings();
-    final cubit = LibraryCubit(_Books(), _Files(), _Artwork(), settings);
+    final books = _Books();
+    final cubit = LibraryCubit(
+      books,
+      books,
+      books,
+      _Files(),
+      _Artwork(),
+      settings,
+    );
     addTearDown(cubit.close);
 
     await cubit.setLayout(LibraryLayout.grid);
@@ -51,7 +61,14 @@ void main() {
         addedAt: DateTime(2025),
       );
       final books = _Books([alpha, beta]);
-      final cubit = LibraryCubit(books, _Files(), _Artwork(), _Settings());
+      final cubit = LibraryCubit(
+        books,
+        books,
+        books,
+        _Files(),
+        _Artwork(),
+        _Settings(),
+      );
       addTearDown(cubit.close);
       await cubit.load();
 
@@ -83,8 +100,11 @@ void main() {
       artworkScanned: true,
       addedAt: DateTime(2026),
     );
+    final books = _Books([finished]);
     final cubit = LibraryCubit(
-      _Books([finished]),
+      books,
+      books,
+      books,
       _Files(),
       _Artwork(),
       _Settings(),
@@ -123,8 +143,11 @@ void main() {
       artworkScanned: true,
       addedAt: DateTime(2026),
     );
+    final books = _Books([book]);
     final cubit = LibraryCubit(
-      _Books([book]),
+      books,
+      books,
+      books,
       _Files(),
       _Artwork(),
       _Settings(),
@@ -210,13 +233,19 @@ class _Settings implements SettingsRepository {
   Future<void> setPlaybackPreferences(PlaybackPreferences preferences) async {}
 }
 
-class _Books implements AudiobookRepository {
+class _Books implements AudiobookRepository, ListeningHistoryRepository {
   _Books([this.books = const []]);
 
   List<Audiobook> books;
 
   @override
   Future<List<Audiobook>> getBooks() async => books;
+
+  @override
+  Future<List<ListeningSession>> getListeningSessions() async => [];
+
+  @override
+  Future<void> saveListeningSession(ListeningSession session) async {}
 
   @override
   Future<void> saveBook(Audiobook updated) async {

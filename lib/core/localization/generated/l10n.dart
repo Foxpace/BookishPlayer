@@ -409,6 +409,16 @@ class S {
     );
   }
 
+  /// `Listening time`
+  String get listeningTime {
+    return Intl.message(
+      'Listening time',
+      name: 'listeningTime',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Last 7 days`
   String get lastSevenDays {
     return Intl.message(
@@ -417,6 +427,51 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Last 30 days`
+  String get lastThirtyDays {
+    return Intl.message(
+      'Last 30 days',
+      name: 'lastThirtyDays',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last 12 months`
+  String get lastTwelveMonths {
+    return Intl.message(
+      'Last 12 months',
+      name: 'lastTwelveMonths',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Listening activity`
+  String get listeningActivity {
+    return Intl.message(
+      'Listening activity',
+      name: 'listeningActivity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Week`
+  String get week {
+    return Intl.message('Week', name: 'week', desc: '', args: []);
+  }
+
+  /// `Month`
+  String get month {
+    return Intl.message('Month', name: 'month', desc: '', args: []);
+  }
+
+  /// `Year`
+  String get year {
+    return Intl.message('Year', name: 'year', desc: '', args: []);
   }
 
   /// `Books completed`
@@ -434,31 +489,11 @@ class S {
     return Intl.message('Active days', name: 'activeDays', desc: '', args: []);
   }
 
-  /// `Recent sessions`
-  String get recentSessions {
-    return Intl.message(
-      'Recent sessions',
-      name: 'recentSessions',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Your listening history will appear here.`
   String get emptyListeningHistory {
     return Intl.message(
       'Your listening history will appear here.',
       name: 'emptyListeningHistory',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Removed book`
-  String get removedBook {
-    return Intl.message(
-      'Removed book',
-      name: 'removedBook',
       desc: '',
       args: [],
     );
@@ -471,26 +506,6 @@ class S {
       name: 'finishedBook',
       desc: '',
       args: [],
-    );
-  }
-
-  /// `{date} · {duration}`
-  String listeningSessionDetails(String date, String duration) {
-    return Intl.message(
-      '$date · $duration',
-      name: 'listeningSessionDetails',
-      desc: '',
-      args: [date, duration],
-    );
-  }
-
-  /// `{speed}×`
-  String playbackSpeed(String speed) {
-    return Intl.message(
-      '$speed×',
-      name: 'playbackSpeed',
-      desc: '',
-      args: [speed],
     );
   }
 }

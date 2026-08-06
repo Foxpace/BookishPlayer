@@ -9,6 +9,7 @@ import 'package:bookish_player/features/importing/presentation/import_state.dart
 import 'package:bookish_player/features/library/domain/audiobook.dart';
 import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
 import 'package:bookish_player/features/player/domain/audio_player_repository.dart';
+import 'package:bookish_player/features/library/domain/book_metadata.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -136,15 +137,19 @@ ImportCubit _cubit(
   List<String>? events,
   _Books? books,
   ImportedAudiobookMetadata metadata = const ImportedAudiobookMetadata(),
-}) => ImportCubit(
-  files,
-  _Audio(),
-  books ?? _Books(events ?? <String>[]),
-  _Chapters(),
-  _Artwork(),
-  _Metadata(metadata),
-  _Diagnostics(),
-);
+}) {
+  final repository = books ?? _Books(events ?? <String>[]);
+  return ImportCubit(
+    files,
+    _Audio(),
+    repository,
+    repository,
+    _Chapters(),
+    _Artwork(),
+    _Metadata(metadata),
+    _Diagnostics(),
+  );
+}
 
 class _Files implements FileImportRepository {
   _Files(this.selected, {this.events});
@@ -208,6 +213,9 @@ class _Books implements AudiobookRepository {
 
   final List<String> events;
   final saved = <Audiobook>[];
+
+  @override
+  Future<BookMetadata?> findBookMetadata(String fingerprint) async => null;
 
   @override
   Future<void> saveBook(Audiobook book) async {

@@ -70,6 +70,11 @@ class PlaybackCommandService {
     _currentBook = null;
   }
 
+  Future<void> reset() async {
+    await _audio.clear();
+    _currentBook = null;
+  }
+
   void markCompleted(Audiobook book) {
     if (_currentBook?.id == book.id) {
       _currentBook = book;
