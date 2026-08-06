@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:bookish_player/core/presentation/book_cover.dart';
 import 'package:bookish_player/features/library/domain/audiobook.dart';
 import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
 import 'package:bookish_player/features/library/domain/listening_session.dart';
 import 'package:bookish_player/features/player/domain/audio_player_repository.dart';
 import 'package:bookish_player/features/player/application/playback_command_service.dart';
 import 'package:bookish_player/features/player/domain/book_note.dart';
+import 'package:bookish_player/features/player/domain/quote_share_repository.dart';
 import 'package:bookish_player/features/player/presentation/player_cubit.dart';
 import 'package:bookish_player/features/player/presentation/player_state.dart';
 import 'package:bookish_player/features/player/presentation/player_screen.dart';
@@ -20,25 +22,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 part 'player_cubit_fakes.dart';
+part 'player_cubit_note_tests.dart';
 part 'player_cubit_widget_tests.dart';
+part 'player_screen_layout_tests.dart';
 
 PlayerCubit _createPlayerCubit(
   AudioPlayerRepository audio,
   _FakeBooks books,
   LocalExportRepository exports,
-  SettingsRepository settings,
-) => PlayerCubit(
+  SettingsRepository settings, [
+  _FakeSharing? sharing,
+]) => PlayerCubit(
   audio,
   books,
   books,
   books,
   exports,
+  sharing ?? _FakeSharing(),
   PlaybackCommandService(audio, books, settings),
 );
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   registerPlayerCubitWidgetTests();
+  registerPlayerCubitNoteTests();
+  registerPlayerScreenLayoutTests();
 
   test(
     'restores speed, checkpoints progress, and sleeps at chapter end',
@@ -113,47 +121,6 @@ void main() {
       expect(audio.currentPosition, const Duration(seconds: 65));
     },
   );
-
-  test('stores quote chapter and range metadata', () async {
-    final book = Audiobook(
-      id: 'book',
-      title: 'Book',
-      filePath: '/book.mp3',
-      durationMs: 120000,
-      addedAt: DateTime(2026),
-    );
-    final audio = _FakeAudioPlayer();
-    final books = _FakeBooks(book);
-    final cubit = _createPlayerCubit(
-      audio,
-      books,
-      _FakeExports(),
-      _FakeSettings(),
-    );
-    addTearDown(() async {
-      await cubit.close();
-      await audio.close();
-    });
-
-    await cubit.open(book);
-    await cubit.addNoteAt(
-      'A transcribed quote',
-      const Duration(seconds: 35),
-      chapterTitle: 'Chapter two',
-      endPosition: const Duration(seconds: 52),
-    );
-
-    expect(books.savedNote?.text, 'A transcribed quote');
-    expect(books.savedNote?.positionMs, 35000);
-    expect(books.savedNote?.endPositionMs, 52000);
-    expect(books.savedNote?.chapterTitle, 'Chapter two');
-
-    await cubit.addBookmark();
-    expect(books.savedNote?.kind, BookNoteKind.bookmark);
-    await cubit.addVoiceNote('Remember this idea');
-    expect(books.savedNote?.kind, BookNoteKind.voice);
-    expect(books.savedNote?.text, 'Remember this idea');
-  });
 
   test('continues with the next numbered unfinished series volume', () async {
     final first = Audiobook(

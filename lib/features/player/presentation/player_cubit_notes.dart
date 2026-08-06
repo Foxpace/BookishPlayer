@@ -57,6 +57,35 @@ extension PlayerCubitNotes on PlayerCubit {
     _emit(state.copyWith(notes: await _notes.delete(state.notes, note)));
   }
 
+  Future<void> updateNote(
+    BookNote note, {
+    required String? title,
+    required String text,
+  }) async {
+    final cleanText = text.trim();
+    if (cleanText.isEmpty) {
+      return;
+    }
+    final cleanTitle = title?.trim();
+    _emit(
+      state.copyWith(
+        notes: await _notes.update(
+          notes: state.notes,
+          note: note,
+          title: cleanTitle == null || cleanTitle.isEmpty ? null : cleanTitle,
+          text: cleanText,
+        ),
+      ),
+    );
+  }
+
+  Future<void> shareNote(BookNote note, {ShareOrigin? origin}) async {
+    final book = state.book;
+    if (book != null) {
+      await _notes.share(book, note, origin: origin);
+    }
+  }
+
   Future<bool> exportNotes() async {
     final book = state.book;
     return book == null ? false : _notes.export(book, state.notes);

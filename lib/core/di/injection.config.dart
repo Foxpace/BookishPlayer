@@ -271,6 +271,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i4.ListeningHistoryRepository>(),
         gh<_i463.BookNoteRepository>(),
         gh<_i23.LocalExportRepository>(),
+        gh<_i536.QuoteShareRepository>(),
         gh<_i234.PlaybackCommandService>(),
       ),
     );

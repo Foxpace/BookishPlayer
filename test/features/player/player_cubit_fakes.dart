@@ -159,6 +159,21 @@ class _FakeExports implements LocalExportRepository {
   Future<BookishBackup?> pickBackup() async => null;
 }
 
+class _FakeSharing implements QuoteShareRepository {
+  String? text;
+  String? subject;
+
+  @override
+  Future<void> share({
+    required String text,
+    required String subject,
+    ShareOrigin? origin,
+  }) async {
+    this.text = text;
+    this.subject = subject;
+  }
+}
+
 class _FakeSettings implements SettingsRepository {
   @override
   Future<PlaybackPreferences> getPlaybackPreferences() async =>

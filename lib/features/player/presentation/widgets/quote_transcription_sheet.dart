@@ -43,7 +43,7 @@ class _TranscriptionSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Choose the exact part of the audiobook. Recognition happens locally on this device.',
+                    'Choose the exact part of the audiobook. Transcription happens on this device and can take a while, especially for longer selections.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -166,7 +166,9 @@ class _TranscriptionSheet extends StatelessWidget {
                             )
                           : const Icon(Icons.graphic_eq_rounded),
                       label: Text(
-                        working ? 'Transcribing…' : 'Transcribe range',
+                        working
+                            ? 'Transcribing on device…'
+                            : 'Transcribe range',
                       ),
                     ),
                   ),

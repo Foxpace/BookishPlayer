@@ -14,6 +14,7 @@ abstract class BookNote with _$BookNote {
     required String text,
     required DateTime createdAt,
     @Default(BookNoteKind.note) BookNoteKind kind,
+    String? title,
     String? chapterTitle,
     int? endPositionMs,
   }) = _BookNote;
