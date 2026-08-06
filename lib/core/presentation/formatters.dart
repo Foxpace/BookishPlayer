@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 String formatDuration(Duration duration) {
-  final totalSeconds = duration.inSeconds.clamp(0, 359999);
+  final totalSeconds = duration.isNegative ? 0 : duration.inSeconds;
   final hours = totalSeconds ~/ 3600;
   final minutes = (totalSeconds % 3600) ~/ 60;
   final seconds = totalSeconds % 60;

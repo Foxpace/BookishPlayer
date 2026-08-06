@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/presentation/diagnostic_failure_view.dart';
 import 'import_cubit.dart';
 import 'import_state.dart';
 
@@ -17,12 +18,19 @@ class ImportScreen extends StatelessWidget {
             padding: const EdgeInsets.all(40),
             child: BlocBuilder<ImportCubit, ImportState>(
               builder: (context, state) {
-                if (state.status == ImportStatus.failure ||
-                    state.status == ImportStatus.cancelled) {
-                  return _ImportFailure(
-                    state: state,
-                    isCancelled: state.status == ImportStatus.cancelled,
+                if (state.status == ImportStatus.failure) {
+                  return DiagnosticFailureView(
+                    title: state.heading,
+                    details: state.diagnostics ?? state.detail,
+                    onRetry: context.read<ImportCubit>().retry,
+                    secondaryAction: TextButton(
+                      onPressed: () => context.pop(false),
+                      child: const Text('Back to library'),
+                    ),
                   );
+                }
+                if (state.status == ImportStatus.cancelled) {
+                  return _ImportFailure(state: state, isCancelled: true);
                 }
                 return Column(
                   mainAxisSize: MainAxisSize.min,

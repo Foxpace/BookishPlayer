@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/presentation/diagnostic_failure.dart';
 import '../application/load_library_workflow.dart';
 import '../application/remove_audiobook_workflow.dart';
 import '../../importing/domain/file_import_repository.dart';
@@ -8,17 +9,21 @@ import '../../importing/domain/audiobook_artwork_extractor.dart';
 import '../../settings/domain/settings_repository.dart';
 import '../domain/audiobook.dart';
 import '../domain/audiobook_catalog_repository.dart';
+import '../domain/book_note_repository.dart';
+import '../domain/listening_history_repository.dart';
 import 'library_state.dart';
 
 @injectable
 class LibraryCubit extends Cubit<LibraryState> {
   LibraryCubit(
     this._books,
+    BookNoteRepository notes,
+    ListeningHistoryRepository history,
     FileImportRepository files,
     AudiobookArtworkExtractor artwork,
     this._settings,
   ) : _loader = LoadLibraryWorkflow(_books, artwork, _settings),
-      _remover = RemoveAudiobookWorkflow(_books, files),
+      _remover = RemoveAudiobookWorkflow(_books, notes, history, files),
       super(const LibraryState());
 
   final AudiobookCatalogRepository _books;
@@ -41,11 +46,14 @@ class LibraryCubit extends Cubit<LibraryState> {
           sections: _buildSections(_visibleBooks(result.books), state.grouping),
         ),
       );
-    } catch (_) {
+    } catch (error) {
       emit(
         state.copyWith(
           status: LibraryStatus.failure,
-          message: 'Could not open your library.',
+          message: diagnosticFailureMessage(
+            'Could not open your library.',
+            error,
+          ),
         ),
       );
     }
@@ -66,11 +74,14 @@ class LibraryCubit extends Cubit<LibraryState> {
         ),
       );
       return true;
-    } catch (_) {
+    } catch (error) {
       emit(
         state.copyWith(
           status: LibraryStatus.failure,
-          message: 'The book could not be removed.',
+          message: diagnosticFailureMessage(
+            'The book could not be removed.',
+            error,
+          ),
         ),
       );
       return false;
@@ -94,8 +105,15 @@ class LibraryCubit extends Cubit<LibraryState> {
     emit(state.copyWith(layout: layout));
     try {
       await _settings.setLibraryLayout(layout.name);
-    } catch (_) {
-      emit(state.copyWith(message: 'The library layout could not be saved.'));
+    } catch (error) {
+      emit(
+        state.copyWith(
+          message: diagnosticFailureMessage(
+            'The library layout could not be saved.',
+            error,
+          ),
+        ),
+      );
     }
   }
 
@@ -132,8 +150,15 @@ class LibraryCubit extends Cubit<LibraryState> {
           if (book.id == updated.id) updated else book,
       ];
       _refresh(state.copyWith(books: books));
-    } catch (_) {
-      emit(state.copyWith(message: 'The book could not be updated.'));
+    } catch (error) {
+      emit(
+        state.copyWith(
+          message: diagnosticFailureMessage(
+            'The book could not be updated.',
+            error,
+          ),
+        ),
+      );
     }
   }
 

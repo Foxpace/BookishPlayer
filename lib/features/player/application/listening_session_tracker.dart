@@ -37,7 +37,7 @@ class ListeningSessionTracker {
     await _history.saveListeningSession(
       ListeningSession(
         id: _uuid.v4(),
-        bookId: book.id,
+        metadataId: book.metadataId,
         startedAt: startedAt,
         endedAt: endedAt,
         listenedMs: listened.inMilliseconds,

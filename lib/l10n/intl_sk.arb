@@ -39,13 +39,16 @@
   "listeningInsightsTitle": "Štatistiky počúvania",
   "couldNotLoadInsights": "Štatistiky sa nepodarilo načítať.",
   "allTimeListening": "Celkový čas počúvania",
+  "listeningTime": "Čas počúvania",
   "lastSevenDays": "Posledných 7 dní",
+  "lastThirtyDays": "Posledných 30 dní",
+  "lastTwelveMonths": "Posledných 12 mesiacov",
+  "listeningActivity": "Aktivita počúvania",
+  "week": "Týždeň",
+  "month": "Mesiac",
+  "year": "Rok",
   "booksCompleted": "Dopočúvané knihy",
   "activeDays": "Aktívne dni",
-  "recentSessions": "Nedávne počúvanie",
   "emptyListeningHistory": "História počúvania sa zobrazí tu.",
-  "removedBook": "Odstránená kniha",
-  "finishedBook": "Dopočúvaná kniha",
-  "listeningSessionDetails": "{date} · {duration}",
-  "playbackSpeed": "{speed}×"
+  "finishedBook": "Dopočúvaná kniha"
 }

@@ -22,11 +22,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(version) => "Version ${version}";
 
-  static String m1(date, duration) => "${date} · ${duration}";
-
-  static String m2(size) => "${size} MB";
-
-  static String m3(speed) => "${speed}×";
+  static String m1(size) => "${size} MB";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -70,10 +66,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "finishedBook": MessageLookupByLibrary.simpleMessage("Finished book"),
     "lastSevenDays": MessageLookupByLibrary.simpleMessage("Last 7 days"),
+    "lastThirtyDays": MessageLookupByLibrary.simpleMessage("Last 30 days"),
+    "lastTwelveMonths": MessageLookupByLibrary.simpleMessage("Last 12 months"),
+    "listeningActivity": MessageLookupByLibrary.simpleMessage(
+      "Listening activity",
+    ),
     "listeningInsightsTitle": MessageLookupByLibrary.simpleMessage(
       "Listening insights",
     ),
-    "listeningSessionDetails": m1,
+    "listeningTime": MessageLookupByLibrary.simpleMessage("Listening time"),
     "localDataDescription": MessageLookupByLibrary.simpleMessage(
       "Back up progress, notes, metadata, and settings without a cloud account.",
     ),
@@ -92,7 +93,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Not downloaded",
     ),
     "modelSelected": MessageLookupByLibrary.simpleMessage("Selected"),
-    "modelSize": m2,
+    "modelSize": m1,
+    "month": MessageLookupByLibrary.simpleMessage("Month"),
     "noSpeechModelsAvailable": MessageLookupByLibrary.simpleMessage(
       "No speech models available",
     ),
@@ -102,9 +104,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "openSourceLicensesDescription": MessageLookupByLibrary.simpleMessage(
       "Licenses for Flutter and every package used by Bookish",
     ),
-    "playbackSpeed": m3,
-    "recentSessions": MessageLookupByLibrary.simpleMessage("Recent sessions"),
-    "removedBook": MessageLookupByLibrary.simpleMessage("Removed book"),
     "restoreBackup": MessageLookupByLibrary.simpleMessage("Restore backup"),
     "restoreBackupDescription": MessageLookupByLibrary.simpleMessage(
       "Replace local library data from a backup",
@@ -128,5 +127,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "themeLightDescription": MessageLookupByLibrary.simpleMessage(
       "Warm paper and dark ink",
     ),
+    "week": MessageLookupByLibrary.simpleMessage("Week"),
+    "year": MessageLookupByLibrary.simpleMessage("Year"),
   };
 }

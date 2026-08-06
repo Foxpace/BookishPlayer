@@ -4,6 +4,7 @@ import '../../features/editing/presentation/metadata_editor_screen_root.dart';
 import '../../features/importing/presentation/import_screen_root.dart';
 import '../../features/insights/presentation/listening_insights_screen_root.dart';
 import '../../features/library/presentation/library_screen_root.dart';
+import '../../features/notes/presentation/note_gallery_screen_root.dart';
 import '../../features/player/presentation/player_screen_root.dart';
 import '../../features/settings/presentation/settings_screen_root.dart';
 import '../../features/storage/presentation/storage_assistant_screen_root.dart';
@@ -17,6 +18,7 @@ abstract final class AppRoutes {
   static const editBook = 'editBook';
   static const insights = 'insights';
   static const storage = 'storage';
+  static const notes = 'notes';
 }
 
 GoRouter createAppRouter() {
@@ -57,6 +59,11 @@ GoRouter createAppRouter() {
                 path: 'insights',
                 name: AppRoutes.insights,
                 builder: (_, _) => const ListeningInsightsScreenRoot(),
+              ),
+              GoRoute(
+                path: 'notes',
+                name: AppRoutes.notes,
+                builder: (_, _) => const NoteGalleryScreenRoot(),
               ),
               GoRoute(
                 path: 'storage',

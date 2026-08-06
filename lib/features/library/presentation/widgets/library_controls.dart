@@ -65,10 +65,21 @@ class _Header extends StatelessWidget {
             ],
           ),
         ),
-        IconButton.filledTonal(
-          tooltip: 'Settings',
-          onPressed: () => context.pushNamed(AppRoutes.settings),
-          icon: const Icon(Icons.settings_outlined),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton.filledTonal(
+              tooltip: 'Notes gallery',
+              onPressed: () => context.pushNamed(AppRoutes.notes),
+              icon: const Icon(Icons.collections_bookmark_outlined),
+            ),
+            const SizedBox(width: 8),
+            IconButton.filledTonal(
+              tooltip: 'Settings',
+              onPressed: () => context.pushNamed(AppRoutes.settings),
+              icon: const Icon(Icons.settings_outlined),
+            ),
+          ],
         ),
       ],
     );

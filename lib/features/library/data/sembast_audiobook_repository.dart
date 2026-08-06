@@ -1,10 +1,10 @@
 import 'package:injectable/injectable.dart';
 
 import '../../player/domain/book_note.dart';
+import '../domain/book_metadata.dart';
 import '../domain/audiobook.dart';
 import '../domain/audiobook_repository.dart';
 import '../domain/observable_audiobook_catalog_repository.dart';
-import '../domain/listening_session.dart';
 import 'audiobook_dao.dart';
 
 @LazySingleton(as: AudiobookRepository)
@@ -50,16 +50,11 @@ class SembastAudiobookRepository
   Future<List<BookNote>> getAllNotes() => _dao.getAllNotes();
 
   @override
-  Future<List<ListeningSession>> getListeningSessions() =>
-      _dao.getListeningSessions();
+  Future<List<BookMetadata>> getBookMetadata() => _dao.getBookMetadata();
 
   @override
-  Future<void> saveListeningSession(ListeningSession session) =>
-      _dao.putListeningSession(session);
-
-  @override
-  Future<void> replaceListeningSessions(List<ListeningSession> sessions) =>
-      _dao.replaceListeningSessions(sessions);
+  Future<BookMetadata?> findBookMetadata(String fingerprint) =>
+      _dao.findBookMetadata(fingerprint);
 
   @override
   Future<void> replaceLibrary(List<Audiobook> books, List<BookNote> notes) =>

@@ -11,6 +11,7 @@ abstract class Audiobook with _$Audiobook {
     required String filePath,
     required int durationMs,
     required DateTime addedAt,
+    @Default('') String metadataId,
     @Default('') String author,
     @Default('') String series,
     @Default('') String narrator,

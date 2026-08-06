@@ -9,10 +9,10 @@ enum BookNoteKind { note, bookmark, voice }
 abstract class BookNote with _$BookNote {
   const factory BookNote({
     required String id,
-    required String bookId,
     required int positionMs,
     required String text,
     required DateTime createdAt,
+    required String metadataId,
     @Default(BookNoteKind.note) BookNoteKind kind,
     String? title,
     String? chapterTitle,

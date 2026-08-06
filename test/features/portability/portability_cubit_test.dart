@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:bookish_player/features/library/domain/audiobook.dart';
 import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
 import 'package:bookish_player/features/library/domain/listening_session.dart';
+import 'package:bookish_player/features/library/domain/listening_history_repository.dart';
 import 'package:bookish_player/features/player/domain/book_note.dart';
+import 'package:bookish_player/features/library/domain/book_metadata.dart';
 import 'package:bookish_player/features/portability/domain/local_export_repository.dart';
 import 'package:bookish_player/features/portability/domain/backup_store_repository.dart';
 import 'package:bookish_player/features/portability/domain/bookish_backup.dart';
@@ -30,7 +32,7 @@ void main() {
     );
     final note = BookNote(
       id: 'note-1',
-      bookId: original.id,
+      metadataId: original.id,
       positionMs: 42000,
       text: 'A note',
       createdAt: DateTime.utc(2026, 1, 3),
@@ -39,7 +41,7 @@ void main() {
     );
     final session = ListeningSession(
       id: 'session-1',
-      bookId: original.id,
+      metadataId: original.id,
       startedAt: DateTime.utc(2026, 1, 4),
       endedAt: DateTime.utc(2026, 1, 4, 0, 20),
       listenedMs: 1200000,
@@ -47,7 +49,8 @@ void main() {
       endPositionMs: 1200000,
       speed: 1.25,
     );
-    final books = _Books([original], [note], [session]);
+    final metadata = metadataForBook(original);
+    final books = _Books([original], [note], [session], [metadata]);
     final settings = _Settings(
       ThemePreference.dark,
       const PlaybackPreferences(rewindSeconds: 30, voiceBoost: true),
@@ -62,7 +65,8 @@ void main() {
     books
       ..books = const []
       ..notes = const []
-      ..sessions = const [];
+      ..sessions = const []
+      ..metadata = const [];
     settings.preference = ThemePreference.system;
     settings.playback = const PlaybackPreferences();
 
@@ -75,6 +79,7 @@ void main() {
     expect(books.books.single.narrator, 'George Guidall');
     expect(books.books.single.year, 1969);
     expect(books.notes, [note]);
+    expect(books.metadata, [metadata]);
     expect(books.sessions, [session]);
     expect(settings.preference, ThemePreference.dark);
     expect(settings.playback.rewindSeconds, 30);
@@ -112,6 +117,7 @@ class _Store implements BackupStoreRepository {
     exportedAt: DateTime.utc(2026),
     books: books.books,
     notes: books.notes,
+    bookMetadata: books.metadata,
     sessions: books.sessions,
     settings: BackupSettings(
       theme: settings.preference.name,
@@ -124,19 +130,21 @@ class _Store implements BackupStoreRepository {
     books
       ..books = backup.books
       ..notes = backup.notes
-      ..sessions = backup.sessions;
+      ..sessions = backup.sessions
+      ..metadata = backup.bookMetadata;
     settings
       ..preference = ThemePreference.fromStorage(backup.settings.theme)
       ..playback = backup.settings.playback;
   }
 }
 
-class _Books implements AudiobookRepository {
-  _Books(this.books, this.notes, this.sessions);
+class _Books implements AudiobookRepository, ListeningHistoryRepository {
+  _Books(this.books, this.notes, this.sessions, this.metadata);
 
   List<Audiobook> books;
   List<BookNote> notes;
   List<ListeningSession> sessions;
+  List<BookMetadata> metadata;
 
   @override
   Future<List<Audiobook>> getBooks() async => books;
@@ -148,8 +156,8 @@ class _Books implements AudiobookRepository {
   Future<List<ListeningSession>> getListeningSessions() async => sessions;
 
   @override
-  Future<void> replaceListeningSessions(List<ListeningSession> sessions) async {
-    this.sessions = sessions;
+  Future<void> saveListeningSession(ListeningSession session) async {
+    sessions.add(session);
   }
 
   @override

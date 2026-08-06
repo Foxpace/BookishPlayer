@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/library/domain/audiobook_catalog_repository.dart';
 import '../../features/library/domain/audiobook_repository.dart';
 import '../../features/library/domain/book_note_repository.dart';
-import '../../features/library/domain/listening_history_repository.dart';
+import '../../features/library/domain/book_metadata_repository.dart';
 import '../../features/library/domain/observable_audiobook_catalog_repository.dart';
 import '../../features/library/data/sembast_audiobook_repository.dart';
 import '../../features/player/data/just_audio_player_repository.dart';
@@ -26,7 +26,7 @@ abstract class AppModule {
   BookNoteRepository bookNotes(AudiobookRepository repository) => repository;
 
   @lazySingleton
-  ListeningHistoryRepository listeningHistory(AudiobookRepository repository) =>
+  BookMetadataRepository bookMetadata(AudiobookRepository repository) =>
       repository;
 
   @lazySingleton

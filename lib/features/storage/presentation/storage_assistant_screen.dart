@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/presentation/diagnostic_failure.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/navigation/app_router.dart';
+import '../../player/presentation/player_cubit.dart';
+import '../../settings/presentation/settings_cubit.dart';
 import 'storage_assistant_cubit.dart';
 import 'storage_assistant_state.dart';
 
@@ -90,6 +96,35 @@ class StorageAssistantScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+              const SizedBox(height: 32),
+              Text(
+                'Reset Bookish',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Card(
+                child: ListTile(
+                  leading: Icon(
+                    Icons.delete_forever_rounded,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  title: const Text('Erase all app data'),
+                  subtitle: const Text(
+                    'Remove every book, note, setting, listening record, speech model, and app-managed file.',
+                  ),
+                  trailing: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      foregroundColor: Theme.of(context).colorScheme.onError,
+                    ),
+                    onPressed: () => _confirmReset(context),
+                    child: const Text('Erase'),
+                  ),
+                ),
+              ),
             ],
           );
         },
@@ -148,6 +183,67 @@ class StorageAssistantScreen extends StatelessWidget {
     );
     if (approved == true && context.mounted) {
       await context.read<StorageAssistantCubit>().removeMissingBook(id);
+    }
+  }
+
+  Future<void> _confirmReset(BuildContext context) async {
+    final approved = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        icon: Icon(
+          Icons.warning_amber_rounded,
+          color: Theme.of(dialogContext).colorScheme.error,
+        ),
+        title: const Text('Erase all Bookish data?'),
+        content: const Text(
+          'This permanently removes all audiobooks, covers, notes, listening history, settings, downloaded speech models, and app-managed files. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(dialogContext).colorScheme.error,
+              foregroundColor: Theme.of(dialogContext).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Erase everything'),
+          ),
+        ],
+      ),
+    );
+    if (approved != true || !context.mounted) {
+      return;
+    }
+    try {
+      await context.read<PlayerCubit>().resetForAppDataRemoval();
+    } catch (error) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              diagnosticFailureMessage(
+                'Playback could not be reset safely.',
+                error,
+              ),
+            ),
+          ),
+        );
+      }
+      return;
+    }
+    if (!context.mounted) {
+      return;
+    }
+    final cleared = await context.read<StorageAssistantCubit>().clearAll();
+    if (!cleared || !context.mounted) {
+      return;
+    }
+    await context.read<SettingsCubit>().reload();
+    if (context.mounted) {
+      context.goNamed(AppRoutes.library);
     }
   }
 }

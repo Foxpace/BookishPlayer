@@ -22,11 +22,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(version) => "Verzia ${version}";
 
-  static String m1(date, duration) => "${date} · ${duration}";
-
-  static String m2(size) => "${size} MB";
-
-  static String m3(speed) => "${speed}×";
+  static String m1(size) => "${size} MB";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -70,10 +66,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "finishedBook": MessageLookupByLibrary.simpleMessage("Dopočúvaná kniha"),
     "lastSevenDays": MessageLookupByLibrary.simpleMessage("Posledných 7 dní"),
+    "lastThirtyDays": MessageLookupByLibrary.simpleMessage("Posledných 30 dní"),
+    "lastTwelveMonths": MessageLookupByLibrary.simpleMessage(
+      "Posledných 12 mesiacov",
+    ),
+    "listeningActivity": MessageLookupByLibrary.simpleMessage(
+      "Aktivita počúvania",
+    ),
     "listeningInsightsTitle": MessageLookupByLibrary.simpleMessage(
       "Štatistiky počúvania",
     ),
-    "listeningSessionDetails": m1,
+    "listeningTime": MessageLookupByLibrary.simpleMessage("Čas počúvania"),
     "localDataDescription": MessageLookupByLibrary.simpleMessage(
       "Zálohujte priebeh, poznámky, metadáta a nastavenia bez cloudového účtu.",
     ),
@@ -90,7 +93,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "modelDownloaded": MessageLookupByLibrary.simpleMessage("Stiahnutý"),
     "modelNotDownloaded": MessageLookupByLibrary.simpleMessage("Nestiahnutý"),
     "modelSelected": MessageLookupByLibrary.simpleMessage("Vybraný"),
-    "modelSize": m2,
+    "modelSize": m1,
+    "month": MessageLookupByLibrary.simpleMessage("Mesiac"),
     "noSpeechModelsAvailable": MessageLookupByLibrary.simpleMessage(
       "Nie sú dostupné žiadne modely reči",
     ),
@@ -100,9 +104,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "openSourceLicensesDescription": MessageLookupByLibrary.simpleMessage(
       "Licencie Fluttera a všetkých balíkov použitých v Bookish",
     ),
-    "playbackSpeed": m3,
-    "recentSessions": MessageLookupByLibrary.simpleMessage("Nedávne počúvanie"),
-    "removedBook": MessageLookupByLibrary.simpleMessage("Odstránená kniha"),
     "restoreBackup": MessageLookupByLibrary.simpleMessage("Obnoviť zálohu"),
     "restoreBackupDescription": MessageLookupByLibrary.simpleMessage(
       "Nahradiť lokálne údaje knižnice zo zálohy",
@@ -126,5 +127,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "themeLightDescription": MessageLookupByLibrary.simpleMessage(
       "Teplý papier a tmavý atrament",
     ),
+    "week": MessageLookupByLibrary.simpleMessage("Týždeň"),
+    "year": MessageLookupByLibrary.simpleMessage("Rok"),
   };
 }

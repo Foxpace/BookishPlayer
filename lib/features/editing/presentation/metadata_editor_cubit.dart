@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/presentation/diagnostic_failure.dart';
 import '../../importing/domain/file_import_repository.dart';
 import '../../library/domain/audiobook.dart';
 import '../../library/domain/audiobook_catalog_repository.dart';
@@ -13,17 +14,33 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
 
   final AudiobookCatalogRepository _books;
   final FileImportRepository _files;
+  String? _bookId;
 
   Future<void> load(String bookId) async {
-    final book = await _books.getBook(bookId);
-    emit(
-      book == null
-          ? const MetadataEditorState(
-              status: MetadataEditorStatus.failure,
-              message: 'Audiobook not found.',
-            )
-          : MetadataEditorState(status: MetadataEditorStatus.ready, book: book),
-    );
+    _bookId = bookId;
+    try {
+      final book = await _books.getBook(bookId);
+      if (book == null) {
+        throw StateError('Audiobook "$bookId" was not found.');
+      }
+      emit(MetadataEditorState(status: MetadataEditorStatus.ready, book: book));
+    } catch (error) {
+      emit(
+        MetadataEditorState(
+          status: MetadataEditorStatus.failure,
+          message: diagnosticFailureMessage(
+            'The audiobook editor could not be opened.',
+            error,
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> retryLoad() async {
+    if (_bookId case final id?) {
+      await load(id);
+    }
   }
 
   Future<void> saveDetails({
@@ -117,11 +134,14 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     try {
       await _books.saveBook(book);
       emit(state.copyWith(status: MetadataEditorStatus.saved, book: book));
-    } catch (_) {
+    } catch (error) {
       emit(
         state.copyWith(
           status: MetadataEditorStatus.failure,
-          message: 'Could not save audiobook metadata.',
+          message: diagnosticFailureMessage(
+            'Could not save audiobook metadata.',
+            error,
+          ),
         ),
       );
     }

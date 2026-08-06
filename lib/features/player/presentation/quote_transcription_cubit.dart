@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../core/presentation/diagnostic_failure.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../library/domain/audiobook.dart';
@@ -106,7 +108,10 @@ class QuoteTranscriptionCubit extends Cubit<QuoteTranscriptionState> {
       emit(
         state.copyWith(
           status: QuoteTranscriptionStatus.failure,
-          message: error.toString(),
+          message: diagnosticFailureMessage(
+            'The quote could not be transcribed.',
+            error,
+          ),
         ),
       );
     }

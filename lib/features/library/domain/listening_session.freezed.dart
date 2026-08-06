@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ListeningSession {
 
- String get id; String get bookId; DateTime get startedAt; DateTime get endedAt; int get listenedMs; int get startPositionMs; int get endPositionMs; double get speed;
+ String get id; DateTime get startedAt; DateTime get endedAt; int get listenedMs; int get startPositionMs; int get endPositionMs; double get speed; String get metadataId;
 /// Create a copy of ListeningSession
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ListeningSessionCopyWith<ListeningSession> get copyWith => _$ListeningSessionCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningSession&&(identical(other.id, id) || other.id == id)&&(identical(other.bookId, bookId) || other.bookId == bookId)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.listenedMs, listenedMs) || other.listenedMs == listenedMs)&&(identical(other.startPositionMs, startPositionMs) || other.startPositionMs == startPositionMs)&&(identical(other.endPositionMs, endPositionMs) || other.endPositionMs == endPositionMs)&&(identical(other.speed, speed) || other.speed == speed));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningSession&&(identical(other.id, id) || other.id == id)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.listenedMs, listenedMs) || other.listenedMs == listenedMs)&&(identical(other.startPositionMs, startPositionMs) || other.startPositionMs == startPositionMs)&&(identical(other.endPositionMs, endPositionMs) || other.endPositionMs == endPositionMs)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.metadataId, metadataId) || other.metadataId == metadataId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,bookId,startedAt,endedAt,listenedMs,startPositionMs,endPositionMs,speed);
+int get hashCode => Object.hash(runtimeType,id,startedAt,endedAt,listenedMs,startPositionMs,endPositionMs,speed,metadataId);
 
 @override
 String toString() {
-  return 'ListeningSession(id: $id, bookId: $bookId, startedAt: $startedAt, endedAt: $endedAt, listenedMs: $listenedMs, startPositionMs: $startPositionMs, endPositionMs: $endPositionMs, speed: $speed)';
+  return 'ListeningSession(id: $id, startedAt: $startedAt, endedAt: $endedAt, listenedMs: $listenedMs, startPositionMs: $startPositionMs, endPositionMs: $endPositionMs, speed: $speed, metadataId: $metadataId)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ListeningSessionCopyWith<$Res>  {
   factory $ListeningSessionCopyWith(ListeningSession value, $Res Function(ListeningSession) _then) = _$ListeningSessionCopyWithImpl;
 @useResult
 $Res call({
- String id, String bookId, DateTime startedAt, DateTime endedAt, int listenedMs, int startPositionMs, int endPositionMs, double speed
+ String id, DateTime startedAt, DateTime endedAt, int listenedMs, int startPositionMs, int endPositionMs, double speed, String metadataId
 });
 
 
@@ -65,17 +65,17 @@ class _$ListeningSessionCopyWithImpl<$Res>
 
 /// Create a copy of ListeningSession
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? bookId = null,Object? startedAt = null,Object? endedAt = null,Object? listenedMs = null,Object? startPositionMs = null,Object? endPositionMs = null,Object? speed = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? startedAt = null,Object? endedAt = null,Object? listenedMs = null,Object? startPositionMs = null,Object? endPositionMs = null,Object? speed = null,Object? metadataId = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,bookId: null == bookId ? _self.bookId : bookId // ignore: cast_nullable_to_non_nullable
 as String,startedAt: null == startedAt ? _self.startedAt : startedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,endedAt: null == endedAt ? _self.endedAt : endedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,listenedMs: null == listenedMs ? _self.listenedMs : listenedMs // ignore: cast_nullable_to_non_nullable
 as int,startPositionMs: null == startPositionMs ? _self.startPositionMs : startPositionMs // ignore: cast_nullable_to_non_nullable
 as int,endPositionMs: null == endPositionMs ? _self.endPositionMs : endPositionMs // ignore: cast_nullable_to_non_nullable
 as int,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
-as double,
+as double,metadataId: null == metadataId ? _self.metadataId : metadataId // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -160,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String bookId,  DateTime startedAt,  DateTime endedAt,  int listenedMs,  int startPositionMs,  int endPositionMs,  double speed)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  DateTime startedAt,  DateTime endedAt,  int listenedMs,  int startPositionMs,  int endPositionMs,  double speed,  String metadataId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ListeningSession() when $default != null:
-return $default(_that.id,_that.bookId,_that.startedAt,_that.endedAt,_that.listenedMs,_that.startPositionMs,_that.endPositionMs,_that.speed);case _:
+return $default(_that.id,_that.startedAt,_that.endedAt,_that.listenedMs,_that.startPositionMs,_that.endPositionMs,_that.speed,_that.metadataId);case _:
   return orElse();
 
 }
@@ -181,10 +181,10 @@ return $default(_that.id,_that.bookId,_that.startedAt,_that.endedAt,_that.listen
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String bookId,  DateTime startedAt,  DateTime endedAt,  int listenedMs,  int startPositionMs,  int endPositionMs,  double speed)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  DateTime startedAt,  DateTime endedAt,  int listenedMs,  int startPositionMs,  int endPositionMs,  double speed,  String metadataId)  $default,) {final _that = this;
 switch (_that) {
 case _ListeningSession():
-return $default(_that.id,_that.bookId,_that.startedAt,_that.endedAt,_that.listenedMs,_that.startPositionMs,_that.endPositionMs,_that.speed);case _:
+return $default(_that.id,_that.startedAt,_that.endedAt,_that.listenedMs,_that.startPositionMs,_that.endPositionMs,_that.speed,_that.metadataId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +201,10 @@ return $default(_that.id,_that.bookId,_that.startedAt,_that.endedAt,_that.listen
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String bookId,  DateTime startedAt,  DateTime endedAt,  int listenedMs,  int startPositionMs,  int endPositionMs,  double speed)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  DateTime startedAt,  DateTime endedAt,  int listenedMs,  int startPositionMs,  int endPositionMs,  double speed,  String metadataId)?  $default,) {final _that = this;
 switch (_that) {
 case _ListeningSession() when $default != null:
-return $default(_that.id,_that.bookId,_that.startedAt,_that.endedAt,_that.listenedMs,_that.startPositionMs,_that.endPositionMs,_that.speed);case _:
+return $default(_that.id,_that.startedAt,_that.endedAt,_that.listenedMs,_that.startPositionMs,_that.endPositionMs,_that.speed,_that.metadataId);case _:
   return null;
 
 }
@@ -216,17 +216,17 @@ return $default(_that.id,_that.bookId,_that.startedAt,_that.endedAt,_that.listen
 @JsonSerializable()
 
 class _ListeningSession implements ListeningSession {
-  const _ListeningSession({required this.id, required this.bookId, required this.startedAt, required this.endedAt, required this.listenedMs, required this.startPositionMs, required this.endPositionMs, required this.speed});
+  const _ListeningSession({required this.id, required this.startedAt, required this.endedAt, required this.listenedMs, required this.startPositionMs, required this.endPositionMs, required this.speed, required this.metadataId});
   factory _ListeningSession.fromJson(Map<String, dynamic> json) => _$ListeningSessionFromJson(json);
 
 @override final  String id;
-@override final  String bookId;
 @override final  DateTime startedAt;
 @override final  DateTime endedAt;
 @override final  int listenedMs;
 @override final  int startPositionMs;
 @override final  int endPositionMs;
 @override final  double speed;
+@override final  String metadataId;
 
 /// Create a copy of ListeningSession
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +241,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningSession&&(identical(other.id, id) || other.id == id)&&(identical(other.bookId, bookId) || other.bookId == bookId)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.listenedMs, listenedMs) || other.listenedMs == listenedMs)&&(identical(other.startPositionMs, startPositionMs) || other.startPositionMs == startPositionMs)&&(identical(other.endPositionMs, endPositionMs) || other.endPositionMs == endPositionMs)&&(identical(other.speed, speed) || other.speed == speed));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningSession&&(identical(other.id, id) || other.id == id)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.listenedMs, listenedMs) || other.listenedMs == listenedMs)&&(identical(other.startPositionMs, startPositionMs) || other.startPositionMs == startPositionMs)&&(identical(other.endPositionMs, endPositionMs) || other.endPositionMs == endPositionMs)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.metadataId, metadataId) || other.metadataId == metadataId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,bookId,startedAt,endedAt,listenedMs,startPositionMs,endPositionMs,speed);
+int get hashCode => Object.hash(runtimeType,id,startedAt,endedAt,listenedMs,startPositionMs,endPositionMs,speed,metadataId);
 
 @override
 String toString() {
-  return 'ListeningSession(id: $id, bookId: $bookId, startedAt: $startedAt, endedAt: $endedAt, listenedMs: $listenedMs, startPositionMs: $startPositionMs, endPositionMs: $endPositionMs, speed: $speed)';
+  return 'ListeningSession(id: $id, startedAt: $startedAt, endedAt: $endedAt, listenedMs: $listenedMs, startPositionMs: $startPositionMs, endPositionMs: $endPositionMs, speed: $speed, metadataId: $metadataId)';
 }
 
 
@@ -261,7 +261,7 @@ abstract mixin class _$ListeningSessionCopyWith<$Res> implements $ListeningSessi
   factory _$ListeningSessionCopyWith(_ListeningSession value, $Res Function(_ListeningSession) _then) = __$ListeningSessionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String bookId, DateTime startedAt, DateTime endedAt, int listenedMs, int startPositionMs, int endPositionMs, double speed
+ String id, DateTime startedAt, DateTime endedAt, int listenedMs, int startPositionMs, int endPositionMs, double speed, String metadataId
 });
 
 
@@ -278,17 +278,17 @@ class __$ListeningSessionCopyWithImpl<$Res>
 
 /// Create a copy of ListeningSession
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? bookId = null,Object? startedAt = null,Object? endedAt = null,Object? listenedMs = null,Object? startPositionMs = null,Object? endPositionMs = null,Object? speed = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? startedAt = null,Object? endedAt = null,Object? listenedMs = null,Object? startPositionMs = null,Object? endPositionMs = null,Object? speed = null,Object? metadataId = null,}) {
   return _then(_ListeningSession(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,bookId: null == bookId ? _self.bookId : bookId // ignore: cast_nullable_to_non_nullable
 as String,startedAt: null == startedAt ? _self.startedAt : startedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,endedAt: null == endedAt ? _self.endedAt : endedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,listenedMs: null == listenedMs ? _self.listenedMs : listenedMs // ignore: cast_nullable_to_non_nullable
 as int,startPositionMs: null == startPositionMs ? _self.startPositionMs : startPositionMs // ignore: cast_nullable_to_non_nullable
 as int,endPositionMs: null == endPositionMs ? _self.endPositionMs : endPositionMs // ignore: cast_nullable_to_non_nullable
 as int,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
-as double,
+as double,metadataId: null == metadataId ? _self.metadataId : metadataId // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

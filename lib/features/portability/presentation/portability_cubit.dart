@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/presentation/diagnostic_failure.dart';
 import '../application/backup_workflow.dart';
 import '../domain/backup_store_repository.dart';
 import '../domain/local_export_repository.dart';
@@ -24,11 +25,14 @@ class PortabilityCubit extends Cubit<PortabilityState> {
           message: saved ? 'Backup exported.' : null,
         ),
       );
-    } catch (_) {
+    } catch (error) {
       emit(
-        const PortabilityState(
+        PortabilityState(
           status: PortabilityStatus.failure,
-          message: 'Could not export the backup.',
+          message: diagnosticFailureMessage(
+            'Could not export the backup.',
+            error,
+          ),
         ),
       );
     }
@@ -48,11 +52,14 @@ class PortabilityCubit extends Cubit<PortabilityState> {
               'Backup restored. Audio files must remain available locally.',
         ),
       );
-    } catch (_) {
+    } catch (error) {
       emit(
-        const PortabilityState(
+        PortabilityState(
           status: PortabilityStatus.failure,
-          message: 'This backup could not be restored.',
+          message: diagnosticFailureMessage(
+            'This backup could not be restored.',
+            error,
+          ),
         ),
       );
     }

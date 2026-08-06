@@ -28,7 +28,7 @@ _BookishBackup _$BookishBackupFromJson(Map<String, dynamic> json) =>
       settings: BackupSettings.fromJson(
         json['settings'] as Map<String, dynamic>,
       ),
-      schemaVersion: (json['schemaVersion'] as num?)?.toInt() ?? 1,
+      schemaVersion: (json['schemaVersion'] as num?)?.toInt() ?? 3,
       books:
           (json['books'] as List<dynamic>?)
               ?.map((e) => Audiobook.fromJson(e as Map<String, dynamic>))
@@ -39,6 +39,11 @@ _BookishBackup _$BookishBackupFromJson(Map<String, dynamic> json) =>
               ?.map((e) => BookNote.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const <BookNote>[],
+      bookMetadata:
+          (json['bookMetadata'] as List<dynamic>?)
+              ?.map((e) => BookMetadata.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const <BookMetadata>[],
       sessions:
           (json['sessions'] as List<dynamic>?)
               ?.map((e) => ListeningSession.fromJson(e as Map<String, dynamic>))
@@ -53,5 +58,6 @@ Map<String, dynamic> _$BookishBackupToJson(_BookishBackup instance) =>
       'schemaVersion': instance.schemaVersion,
       'books': instance.books.map((e) => e.toJson()).toList(),
       'notes': instance.notes.map((e) => e.toJson()).toList(),
+      'bookMetadata': instance.bookMetadata.map((e) => e.toJson()).toList(),
       'sessions': instance.sessions.map((e) => e.toJson()).toList(),
     };

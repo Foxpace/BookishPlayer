@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/presentation/book_cover.dart';
+import '../../../core/presentation/diagnostic_failure_view.dart';
 import '../../../core/presentation/formatters.dart';
 import '../../library/domain/audiobook.dart';
 import 'metadata_editor_cubit.dart';
@@ -18,11 +19,12 @@ class MetadataEditorScreen extends StatelessWidget {
         builder: (context, state) {
           final book = state.book;
           if (book == null) {
-            return Center(
-              child: state.status == MetadataEditorStatus.failure
-                  ? Text(state.message ?? 'Audiobook not found')
-                  : const CircularProgressIndicator(),
-            );
+            return state.status == MetadataEditorStatus.failure
+                ? DiagnosticFailureView.fromMessage(
+                    message: state.message ?? 'Audiobook not found',
+                    onRetry: context.read<MetadataEditorCubit>().retryLoad,
+                  )
+                : const Center(child: CircularProgressIndicator());
           }
           return _EditorForm(book: book);
         },

@@ -1,6 +1,18 @@
 part of 'player_cubit.dart';
 
 extension PlayerCubitLifecycle on PlayerCubit {
+  Future<void> resetForAppDataRemoval() async {
+    _resettingAppData = true;
+    try {
+      _sleep.cancel();
+      await _finishListeningSession();
+      await _commands.reset();
+      _emit(const PlayerState());
+    } finally {
+      _resettingAppData = false;
+    }
+  }
+
   Future<void> removeBook(String bookId) async {
     if (state.book?.id != bookId) {
       return;
@@ -42,6 +54,10 @@ extension PlayerCubitLifecycle on PlayerCubit {
   }
 
   void _handlePlaying(bool playing) {
+    if (_resettingAppData) {
+      _emit(state.copyWith(isPlaying: false));
+      return;
+    }
     if (playing) {
       _sessions.start(state.position);
     } else {

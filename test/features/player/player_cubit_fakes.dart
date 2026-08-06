@@ -61,6 +61,13 @@ class _FakeAudioPlayer implements AudioPlayerRepository {
   }
 
   @override
+  Future<void> clear() async {
+    currentPosition = Duration.zero;
+    playing = false;
+    _playing.add(false);
+  }
+
+  @override
   Future<void> seek(Duration position) async {
     currentPosition = position;
   }
@@ -86,7 +93,7 @@ class _FakeAudioPlayer implements AudioPlayerRepository {
   Future<void> dispose() async {}
 }
 
-class _FakeBooks implements AudiobookRepository {
+class _FakeBooks implements AudiobookRepository, ListeningHistoryRepository {
   _FakeBooks(this.book) : _books = {book.id: book};
 
   _FakeBooks.withBooks(List<Audiobook> books)
@@ -130,13 +137,13 @@ class _FakeBooks implements AudiobookRepository {
   @override
   Future<List<BookNote>> getAllNotes() async => [];
   @override
+  Future<List<BookMetadata>> getBookMetadata() async => [];
+  @override
+  Future<BookMetadata?> findBookMetadata(String fingerprint) async => null;
+  @override
   Future<List<ListeningSession>> getListeningSessions() async => [];
   @override
   Future<void> saveListeningSession(ListeningSession session) async {}
-  @override
-  Future<void> replaceListeningSessions(
-    List<ListeningSession> sessions,
-  ) async {}
   @override
   Future<void> saveNote(BookNote note) async => savedNote = note;
   @override

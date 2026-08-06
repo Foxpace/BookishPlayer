@@ -27,7 +27,7 @@ class PlayerNotesService {
   }) async {
     final note = BookNote(
       id: _uuid.v4(),
-      bookId: book.id,
+      metadataId: book.metadataId,
       positionMs: position.inMilliseconds,
       text: text,
       createdAt: DateTime.now(),

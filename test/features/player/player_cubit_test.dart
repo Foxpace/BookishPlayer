@@ -4,9 +4,11 @@ import 'package:bookish_player/core/presentation/book_cover.dart';
 import 'package:bookish_player/features/library/domain/audiobook.dart';
 import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
 import 'package:bookish_player/features/library/domain/listening_session.dart';
+import 'package:bookish_player/features/library/domain/listening_history_repository.dart';
 import 'package:bookish_player/features/player/domain/audio_player_repository.dart';
 import 'package:bookish_player/features/player/application/playback_command_service.dart';
 import 'package:bookish_player/features/player/domain/book_note.dart';
+import 'package:bookish_player/features/library/domain/book_metadata.dart';
 import 'package:bookish_player/features/player/domain/quote_share_repository.dart';
 import 'package:bookish_player/features/player/presentation/player_cubit.dart';
 import 'package:bookish_player/features/player/presentation/player_state.dart';
@@ -47,6 +49,36 @@ void main() {
   registerPlayerCubitWidgetTests();
   registerPlayerCubitNoteTests();
   registerPlayerScreenLayoutTests();
+
+  test('app data reset clears playback and the active player state', () async {
+    final book = Audiobook(
+      id: 'reset-book',
+      title: 'Reset book',
+      filePath: '/reset.mp3',
+      durationMs: 60000,
+      addedAt: DateTime(2026),
+    );
+    final audio = _FakeAudioPlayer();
+    final books = _FakeBooks(book);
+    final cubit = _createPlayerCubit(
+      audio,
+      books,
+      _FakeExports(),
+      _FakeSettings(),
+    );
+    addTearDown(() async {
+      await cubit.close();
+      await audio.close();
+    });
+    await cubit.open(book);
+    await cubit.togglePlayback();
+
+    await cubit.resetForAppDataRemoval();
+
+    expect(cubit.state, const PlayerState());
+    expect(audio.playing, isFalse);
+    expect(audio.currentPosition, Duration.zero);
+  });
 
   test(
     'restores speed, checkpoints progress, and sleeps at chapter end',

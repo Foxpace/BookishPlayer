@@ -13,6 +13,7 @@ abstract interface class AudioPlayerRepository {
   Future<void> load(Audiobook book);
   Future<void> play();
   Future<void> pause();
+  Future<void> clear();
   Future<void> seek(Duration position);
   Future<void> setSpeed(double speed);
   Future<void> setSkipIntervals(Duration rewind, Duration forward);

@@ -1,14 +1,16 @@
-import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 
 import '../../library/domain/audiobook.dart';
 import '../../library/domain/audiobook_catalog_repository.dart';
+import '../../library/domain/book_metadata.dart';
+import '../../library/domain/book_metadata_repository.dart';
 import '../../player/domain/audio_player_repository.dart';
 import '../domain/audiobook_artwork_extractor.dart';
 import '../domain/audiobook_metadata_extractor.dart';
 import '../domain/file_import_repository.dart';
 import '../domain/m4b_chapter_parser.dart';
 import 'import_progress.dart';
+import 'import_title.dart';
 
 typedef ImportProgressCallback = void Function(ImportProgress progress);
 
@@ -17,6 +19,7 @@ class AudiobookImportWorkflow {
     this._files,
     this._audio,
     this._books,
+    this._bookMetadata,
     this._chapters,
     this._artwork,
     this._metadata,
@@ -25,6 +28,7 @@ class AudiobookImportWorkflow {
   final FileImportRepository _files;
   final AudioPlayerRepository _audio;
   final AudiobookCatalogRepository _books;
+  final BookMetadataRepository _bookMetadata;
   final M4bChapterParser _chapters;
   final AudiobookArtworkExtractor _artwork;
   final AudiobookMetadataExtractor _metadata;
@@ -92,7 +96,7 @@ class AudiobookImportWorkflow {
     int total,
     ImportProgressCallback onProgress,
   ) async {
-    var title = _titleFromFilename(selected.displayName);
+    var title = audiobookTitleFromFilename(selected.displayName);
     _progress(
       onProgress,
       ImportProgress(
@@ -145,8 +149,16 @@ class AudiobookImportWorkflow {
         title: title,
       ),
     );
-    final artworkPath = await _artwork.extract(imported.path);
-    if (artworkPath != null) {
+    final archivedMetadata = await _bookMetadata.findBookMetadata(
+      bookMetadataFingerprint(
+        title: title,
+        author: metadata.author ?? '',
+        durationMs: duration.inMilliseconds,
+      ),
+    );
+    final artworkPath =
+        archivedMetadata?.artworkPath ?? await _artwork.extract(imported.path);
+    if (artworkPath != null && archivedMetadata?.artworkPath != artworkPath) {
       _pendingPaths.add(artworkPath);
     }
     _progress(
@@ -270,23 +282,5 @@ class AudiobookImportWorkflow {
     _activeFile = null;
     _parserDiagnostics = const [];
     _stageStartedAt = null;
-  }
-
-  String _titleFromFilename(String filename) {
-    final raw = p
-        .basenameWithoutExtension(filename)
-        .replaceAll(RegExp('[_-]+'), ' ')
-        .trim();
-    if (raw.isEmpty) {
-      return 'Untitled audiobook';
-    }
-    return raw
-        .split(RegExp(r'\s+'))
-        .map(
-          (word) => word.isEmpty
-              ? word
-              : '${word[0].toUpperCase()}${word.substring(1)}',
-        )
-        .join(' ');
   }
 }
