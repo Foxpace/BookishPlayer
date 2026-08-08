@@ -175,13 +175,24 @@ void _registerPlayerControlWidgetTests() {
       await audio.close();
     });
     await cubit.open(book);
+    var outputPickerCalls = 0;
 
     await tester.pumpWidget(
       BlocProvider.value(
         value: cubit,
-        child: const MaterialApp(home: PlayerScreen()),
+        child: MaterialApp(
+          home: PlayerScreen(
+            onPickAudioOutput: () async {
+              outputPickerCalls++;
+            },
+          ),
+        ),
       ),
     );
+
+    await tester.tap(find.byTooltip('Choose audio output'));
+    await tester.pump();
+    expect(outputPickerCalls, 1);
 
     final labels = tester.widgetList<Text>(find.text('15'));
     expect(labels, hasLength(2));
@@ -205,6 +216,22 @@ void _registerPlayerControlWidgetTests() {
     expect(forwardLabel.transform.getTranslation().x, -0.5);
     expect(rewindLabel.transform.getTranslation().y, 3.5);
     expect(forwardLabel.transform.getTranslation().y, 3.5);
+
+    final centers = [
+      for (final key in const [
+        'previous-chapter-slot',
+        'rewind-slot',
+        'playback-slot',
+        'forward-slot',
+        'next-chapter-slot',
+      ])
+        tester.getCenter(find.byKey(ValueKey(key))).dx,
+    ];
+    final gaps = [
+      for (var index = 1; index < centers.length; index++)
+        centers[index] - centers[index - 1],
+    ];
+    expect(gaps, everyElement(closeTo(gaps.first, .01)));
   });
 }
 

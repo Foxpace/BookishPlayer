@@ -29,3 +29,8 @@ abstract class CarPlayHostApi {
 abstract class CarPlayFlutterApi {
   void playBook(String id);
 }
+
+@HostApi()
+abstract class AudioOutputHostApi {
+  void showPicker();
+}

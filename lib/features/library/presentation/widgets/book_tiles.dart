@@ -269,30 +269,12 @@ Future<void> _showFullTitle(BuildContext context, Audiobook book) async {
 }
 
 Future<void> _confirmDelete(BuildContext context, Audiobook book) async {
-  final shouldDelete = await showDialog<bool>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text('Remove from this device?'),
-      content: Text(
-        '“${book.title}”, its notes, cover, and copied audio files will be '
-        'deleted from Bookish. Your original files are not affected.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext, false),
-          child: const Text('Cancel'),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(dialogContext, true),
-          child: const Text('Remove from device'),
-        ),
-      ],
-    ),
-  );
-  if (shouldDelete == true && context.mounted) {
-    final removed = await context.read<LibraryCubit>().deleteBook(book);
-    if (removed && context.mounted) {
-      await context.read<PlayerCubit>().removeBook(book.id);
-    }
+  final mode = await showAudiobookRemovalDialog(context, book);
+  if (mode == null || !context.mounted) {
+    return;
+  }
+  await context.read<PlayerCubit>().removeBook(book.id);
+  if (context.mounted) {
+    await context.read<LibraryCubit>().deleteBook(book, mode);
   }
 }

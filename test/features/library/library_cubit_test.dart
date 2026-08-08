@@ -22,14 +22,7 @@ void main() {
   test('library layout is an intent-backed persisted state value', () async {
     final settings = _Settings();
     final books = _Books();
-    final cubit = LibraryCubit(
-      books,
-      books,
-      books,
-      _Files(),
-      _Artwork(),
-      settings,
-    );
+    final cubit = LibraryCubit(books, _Files(), _Artwork(), settings);
     addTearDown(cubit.close);
 
     await cubit.setLayout(LibraryLayout.grid);
@@ -61,14 +54,7 @@ void main() {
         addedAt: DateTime(2025),
       );
       final books = _Books([alpha, beta]);
-      final cubit = LibraryCubit(
-        books,
-        books,
-        books,
-        _Files(),
-        _Artwork(),
-        _Settings(),
-      );
+      final cubit = LibraryCubit(books, _Files(), _Artwork(), _Settings());
       addTearDown(cubit.close);
       await cubit.load();
 
@@ -101,14 +87,7 @@ void main() {
       addedAt: DateTime(2026),
     );
     final books = _Books([finished]);
-    final cubit = LibraryCubit(
-      books,
-      books,
-      books,
-      _Files(),
-      _Artwork(),
-      _Settings(),
-    );
+    final cubit = LibraryCubit(books, _Files(), _Artwork(), _Settings());
     addTearDown(cubit.close);
     await cubit.load();
 
@@ -144,14 +123,7 @@ void main() {
       addedAt: DateTime(2026),
     );
     final books = _Books([book]);
-    final cubit = LibraryCubit(
-      books,
-      books,
-      books,
-      _Files(),
-      _Artwork(),
-      _Settings(),
-    );
+    final cubit = LibraryCubit(books, _Files(), _Artwork(), _Settings());
     addTearDown(cubit.close);
     await cubit.load();
 

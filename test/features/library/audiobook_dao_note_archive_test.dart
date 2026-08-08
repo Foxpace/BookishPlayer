@@ -2,6 +2,7 @@ import 'package:bookish_player/core/database/bookish_database.dart';
 import 'package:bookish_player/features/library/data/audiobook_dao.dart';
 import 'package:bookish_player/features/library/data/listening_history_dao.dart';
 import 'package:bookish_player/features/library/domain/audiobook.dart';
+import 'package:bookish_player/features/library/domain/audiobook_removal_mode.dart';
 import 'package:bookish_player/features/library/domain/listening_session.dart';
 import 'package:bookish_player/features/player/domain/book_note.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -147,6 +148,53 @@ void main() {
       expect(rawSession, isNot(contains('bookId')));
     },
   );
+
+  test('delete everything removes notes, metadata, and history', () async {
+    final database = await databaseFactoryMemory.openDatabase('purge.db');
+    addTearDown(database.close);
+    final wrapper = BookishDatabase.forTesting(database);
+    final books = AudiobookDao(wrapper);
+    final history = ListeningHistoryDao(wrapper);
+    final book = Audiobook(
+      id: 'purged-book',
+      title: 'Kindred',
+      author: 'Octavia E. Butler',
+      artworkPath: '/covers/kindred.jpg',
+      filePath: '/audio/kindred.m4b',
+      durationMs: 3600000,
+      addedAt: DateTime.utc(2026),
+    );
+    await books.putBook(book);
+    final stored = (await books.getBook(book.id))!;
+    await books.putNote(
+      BookNote(
+        id: 'purged-note',
+        metadataId: stored.metadataId,
+        positionMs: 120000,
+        text: 'Remember this.',
+        createdAt: DateTime.utc(2026, 1, 2),
+      ),
+    );
+    await history.saveListeningSession(
+      ListeningSession(
+        id: 'purged-session',
+        metadataId: stored.metadataId,
+        startedAt: DateTime.utc(2026, 1, 2),
+        endedAt: DateTime.utc(2026, 1, 2, 0, 5),
+        listenedMs: 300000,
+        startPositionMs: 0,
+        endPositionMs: 300000,
+        speed: 1,
+      ),
+    );
+
+    await books.deleteBook(book.id, mode: AudiobookRemovalMode.deleteAllData);
+
+    expect(await books.getBooks(), isEmpty);
+    expect(await books.getAllNotes(), isEmpty);
+    expect(await books.getBookMetadata(), isEmpty);
+    expect(await history.getListeningSessions(), isEmpty);
+  });
 
   test(
     'metadata parse failures identify the stored audiobook record',

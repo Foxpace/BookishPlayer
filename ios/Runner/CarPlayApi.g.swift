@@ -351,3 +351,29 @@ class CarPlayFlutterApi: CarPlayFlutterApiProtocol {
     }
   }
 }
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol AudioOutputHostApi {
+  func showPicker() throws
+}
+
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class AudioOutputHostApiSetup {
+  static var codec: FlutterStandardMessageCodec { CarPlayApiPigeonCodec.shared }
+  /// Sets up an instance of `AudioOutputHostApi` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: AudioOutputHostApi?, messageChannelSuffix: String = "") {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
+    let showPickerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.bookish_player.AudioOutputHostApi.showPicker\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      showPickerChannel.setMessageHandler { _, reply in
+        do {
+          try api.showPicker()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      showPickerChannel.setMessageHandler(nil)
+    }
+  }
+}

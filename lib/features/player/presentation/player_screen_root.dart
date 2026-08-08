@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/di/injection.dart';
+import '../domain/audio_output_picker.dart';
 import 'player_cubit.dart';
 import 'player_screen.dart';
 import 'quote_transcription_cubit.dart';
@@ -54,7 +55,7 @@ class _PlayerScreenRootState extends State<PlayerScreenRoot>
         BlocProvider(create: (_) => getIt<QuoteTranscriptionCubit>()),
         BlocProvider(create: (_) => getIt<VoiceNoteCubit>()),
       ],
-      child: const PlayerScreen(),
+      child: PlayerScreen(onPickAudioOutput: getIt<AudioOutputPicker>().show),
     );
   }
 }

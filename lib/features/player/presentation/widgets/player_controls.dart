@@ -12,6 +12,7 @@ class _Transport extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
+          key: const ValueKey('previous-chapter-slot'),
           child: IconButton(
             tooltip: 'Previous chapter',
             onPressed: state.book?.chapters.isNotEmpty == true
@@ -22,39 +23,53 @@ class _Transport extends StatelessWidget {
           ),
         ),
         Expanded(
+          key: const ValueKey('rewind-slot'),
           child: _SkipButton(
             label: '${state.playback.rewindSeconds}',
             onPressed: () =>
                 cubit.skipBy(Duration(seconds: -state.playback.rewindSeconds)),
           ),
         ),
-        SizedBox.square(
-          dimension: 72,
-          child: FilledButton(
-            onPressed: state.status == PlayerStatus.ready
-                ? cubit.togglePlayback
-                : null,
-            style: FilledButton.styleFrom(
-              shape: const CircleBorder(),
-              padding: EdgeInsets.zero,
-            ),
-            child: state.status == PlayerStatus.loading
-                ? const SizedBox.square(
-                    dimension: 26,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : Icon(
-                    state.isPlaying
-                        ? Icons.pause_rounded
-                        : Icons.play_arrow_rounded,
-                    size: 40,
+        Expanded(
+          key: const ValueKey('playback-slot'),
+          child: SizedBox(
+            height: 72,
+            child: OverflowBox(
+              minWidth: 0,
+              minHeight: 0,
+              maxWidth: 72,
+              maxHeight: 72,
+              child: SizedBox.square(
+                dimension: 72,
+                child: FilledButton(
+                  onPressed: state.status == PlayerStatus.ready
+                      ? cubit.togglePlayback
+                      : null,
+                  style: FilledButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: EdgeInsets.zero,
                   ),
+                  child: state.status == PlayerStatus.loading
+                      ? const SizedBox.square(
+                          dimension: 26,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Icon(
+                          state.isPlaying
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          size: 40,
+                        ),
+                ),
+              ),
+            ),
           ),
         ),
         Expanded(
+          key: const ValueKey('forward-slot'),
           child: _SkipButton(
             label: '${state.playback.forwardSeconds}',
             flipIcon: true,
@@ -63,6 +78,7 @@ class _Transport extends StatelessWidget {
           ),
         ),
         Expanded(
+          key: const ValueKey('next-chapter-slot'),
           child: IconButton(
             tooltip: 'Next chapter',
             onPressed: state.book?.chapters.isNotEmpty == true
@@ -118,6 +134,7 @@ class _SpeedButton extends StatelessWidget {
 class _PlayerTools extends StatelessWidget {
   const _PlayerTools({
     required this.state,
+    required this.onPickAudioOutput,
     required this.onChapters,
     required this.onTimer,
     required this.onNotes,
@@ -125,6 +142,7 @@ class _PlayerTools extends StatelessWidget {
   });
 
   final PlayerState state;
+  final VoidCallback? onPickAudioOutput;
   final VoidCallback? onChapters;
   final VoidCallback onTimer;
   final VoidCallback onNotes;
@@ -134,6 +152,16 @@ class _PlayerTools extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
+        Expanded(
+          child: _ToolButton(
+            tooltip: 'Choose audio output',
+            onPressed: onPickAudioOutput,
+            child: const _ToolVisual(
+              icon: Icons.speaker_group_outlined,
+              label: 'Output',
+            ),
+          ),
+        ),
         Expanded(child: _SpeedButton(speed: state.speed)),
         Expanded(
           child: _ToolButton(

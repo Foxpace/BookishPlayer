@@ -65,6 +65,10 @@ import 'package:bookish_player/features/player/data/share_plus_quote_share_repos
     as _i454;
 import 'package:bookish_player/features/player/data/speech_to_text_voice_note_repository.dart'
     as _i232;
+import 'package:bookish_player/features/player/data/system_audio_output_picker.dart'
+    as _i334;
+import 'package:bookish_player/features/player/domain/audio_output_picker.dart'
+    as _i265;
 import 'package:bookish_player/features/player/domain/audio_player_repository.dart'
     as _i712;
 import 'package:bookish_player/features/player/domain/quote_share_repository.dart'
@@ -178,6 +182,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1021.BackupStoreRepository>(
       () => _i382.SembastBackupStoreRepository(gh<_i987.BookishDatabase>()),
     );
+    gh.lazySingleton<_i265.AudioOutputPicker>(
+      () => _i334.SystemAudioOutputPicker(),
+    );
     gh.lazySingleton<_i955.ImportDiagnosticsRepository>(
       () => _i814.SystemImportDiagnosticsRepository(),
     );
@@ -226,16 +233,6 @@ extension GetItInjectableX on _i174.GetIt {
       ),
       preResolve: true,
     );
-    gh.factory<_i1055.LibraryCubit>(
-      () => _i1055.LibraryCubit(
-        gh<_i643.AudiobookCatalogRepository>(),
-        gh<_i463.BookNoteRepository>(),
-        gh<_i4.ListeningHistoryRepository>(),
-        gh<_i550.FileImportRepository>(),
-        gh<_i556.AudiobookArtworkExtractor>(),
-        gh<_i856.SettingsRepository>(),
-      ),
-    );
     gh.factory<_i785.ImportCubit>(
       () => _i785.ImportCubit(
         gh<_i550.FileImportRepository>(),
@@ -282,6 +279,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i102.NoteGalleryCubit(
         gh<_i463.BookNoteRepository>(),
         gh<_i602.BookMetadataRepository>(),
+      ),
+    );
+    gh.factory<_i1055.LibraryCubit>(
+      () => _i1055.LibraryCubit(
+        gh<_i643.AudiobookCatalogRepository>(),
+        gh<_i550.FileImportRepository>(),
+        gh<_i556.AudiobookArtworkExtractor>(),
+        gh<_i856.SettingsRepository>(),
       ),
     );
     gh.lazySingleton<_i234.PlaybackCommandService>(

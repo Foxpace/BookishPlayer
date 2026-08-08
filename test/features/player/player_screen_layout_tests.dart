@@ -53,7 +53,14 @@ void registerPlayerScreenLayoutTests() {
       tester.getCenter(find.byType(BookCover)).dx,
       lessThan(tester.getCenter(find.byTooltip('Previous chapter')).dx),
     );
-    for (final label in ['1.0×', 'Quote', 'Chapters', 'Timer', 'Notes']) {
+    for (final label in [
+      'Output',
+      '1.0×',
+      'Quote',
+      'Chapters',
+      'Timer',
+      'Notes',
+    ]) {
       final bounds = tester.getRect(find.text(label));
       expect(bounds.top, greaterThanOrEqualTo(0));
       expect(bounds.bottom, lessThanOrEqualTo(390));

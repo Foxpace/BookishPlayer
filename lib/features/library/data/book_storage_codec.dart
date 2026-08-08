@@ -37,7 +37,7 @@ Audiobook hydrateBook(Map<String, dynamic> stored, BookMetadata metadata) =>
       'year': metadata.year,
       'folder': metadata.folder,
       'seriesPosition': metadata.seriesPosition,
-      'completedAt': metadata.completedAt,
+      'completedAt': metadata.completedAt?.toIso8601String(),
       'durationMs': metadata.durationMs,
       'artworkPath': metadata.artworkPath,
       'artworkScanned': metadata.artworkScanned,
