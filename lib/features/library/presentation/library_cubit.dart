@@ -9,21 +9,18 @@ import '../../importing/domain/audiobook_artwork_extractor.dart';
 import '../../settings/domain/settings_repository.dart';
 import '../domain/audiobook.dart';
 import '../domain/audiobook_catalog_repository.dart';
-import '../domain/book_note_repository.dart';
-import '../domain/listening_history_repository.dart';
+import '../domain/audiobook_removal_mode.dart';
 import 'library_state.dart';
 
 @injectable
 class LibraryCubit extends Cubit<LibraryState> {
   LibraryCubit(
     this._books,
-    BookNoteRepository notes,
-    ListeningHistoryRepository history,
     FileImportRepository files,
     AudiobookArtworkExtractor artwork,
     this._settings,
   ) : _loader = LoadLibraryWorkflow(_books, artwork, _settings),
-      _remover = RemoveAudiobookWorkflow(_books, notes, history, files),
+      _remover = RemoveAudiobookWorkflow(_books, files),
       super(const LibraryState());
 
   final AudiobookCatalogRepository _books;
@@ -59,9 +56,9 @@ class LibraryCubit extends Cubit<LibraryState> {
     }
   }
 
-  Future<bool> deleteBook(Audiobook book) async {
+  Future<bool> deleteBook(Audiobook book, AudiobookRemovalMode mode) async {
     try {
-      await _remover.run(book);
+      await _remover.run(book, mode);
       emit(
         state.copyWith(
           books: state.books.where((item) => item.id != book.id).toList(),

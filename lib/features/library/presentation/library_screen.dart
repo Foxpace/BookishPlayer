@@ -9,6 +9,7 @@ import '../../../core/presentation/book_cover.dart';
 import '../../../core/presentation/formatters.dart';
 import '../../player/presentation/player_cubit.dart';
 import '../domain/audiobook.dart';
+import 'widgets/audiobook_removal_dialog.dart';
 import 'library_cubit.dart';
 import 'library_state.dart';
 

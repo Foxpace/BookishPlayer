@@ -1,0 +1,1 @@
+enum AudiobookRemovalMode { keepUserData, deleteAllData }

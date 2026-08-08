@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import '../../player/domain/book_note.dart';
 import '../domain/book_metadata.dart';
 import '../domain/audiobook.dart';
+import '../domain/audiobook_removal_mode.dart';
 import '../domain/audiobook_repository.dart';
 import '../domain/observable_audiobook_catalog_repository.dart';
 import 'audiobook_dao.dart';
@@ -35,7 +36,10 @@ class SembastAudiobookRepository
       _dao.updatePlaybackSpeed(id, speed);
 
   @override
-  Future<void> deleteBook(String id) => _dao.deleteBook(id);
+  Future<void> deleteBook(
+    String id, {
+    AudiobookRemovalMode mode = AudiobookRemovalMode.keepUserData,
+  }) => _dao.deleteBook(id, mode: mode);
 
   @override
   Future<List<BookNote>> getNotes(String bookId) => _dao.getNotes(bookId);

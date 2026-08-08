@@ -30,7 +30,9 @@ part 'widgets/quote_transcription_sheet.dart';
 part 'player_screen_actions.dart';
 
 class PlayerScreen extends StatefulWidget {
-  const PlayerScreen({super.key});
+  const PlayerScreen({this.onPickAudioOutput, super.key});
+
+  final Future<void> Function()? onPickAudioOutput;
 
   @override
   State<PlayerScreen> createState() => _PlayerScreenState();
@@ -38,6 +40,18 @@ class PlayerScreen extends StatefulWidget {
 
 class _PlayerScreenState extends State<PlayerScreen> {
   var _canPop = false;
+
+  Future<void> _pickAudioOutput() async {
+    try {
+      await widget.onPickAudioOutput?.call();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Audio outputs could not be opened.')),
+        );
+      }
+    }
+  }
 
   void _requestPop() {
     if (_canPop) {
@@ -116,6 +130,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   final details = _PlayerDetails(
                     state: state,
                     compact: isLandscape,
+                    onPickAudioOutput: widget.onPickAudioOutput == null
+                        ? null
+                        : _pickAudioOutput,
                     onChapters: state.chapterTimeline.isEmpty
                         ? null
                         : () => widget._showChapters(
@@ -206,6 +223,7 @@ class _PlayerDetails extends StatelessWidget {
   const _PlayerDetails({
     required this.state,
     required this.compact,
+    required this.onPickAudioOutput,
     required this.onChapters,
     required this.onTimer,
     required this.onNotes,
@@ -214,6 +232,7 @@ class _PlayerDetails extends StatelessWidget {
 
   final PlayerState state;
   final bool compact;
+  final VoidCallback? onPickAudioOutput;
   final VoidCallback? onChapters;
   final VoidCallback onTimer;
   final VoidCallback onNotes;
@@ -241,6 +260,7 @@ class _PlayerDetails extends StatelessWidget {
         SizedBox(height: compact ? 10 : 18),
         _PlayerTools(
           state: state,
+          onPickAudioOutput: onPickAudioOutput,
           onChapters: onChapters,
           onTimer: onTimer,
           onNotes: onNotes,

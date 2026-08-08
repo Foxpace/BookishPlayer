@@ -18,6 +18,7 @@ extension PlayerCubitLifecycle on PlayerCubit {
       return;
     }
     _sleep.cancel();
+    await _finishListeningSession();
     await _commands.removeBook(bookId);
     _emit(const PlayerState());
   }

@@ -4,6 +4,7 @@ import 'package:sembast/sembast.dart';
 import '../../../core/database/bookish_database.dart';
 import '../../player/domain/book_note.dart';
 import '../domain/audiobook.dart';
+import '../domain/audiobook_removal_mode.dart';
 import '../domain/book_metadata.dart';
 import 'book_storage_codec.dart';
 
@@ -97,28 +98,24 @@ class AudiobookDao {
     await _books.record(id).update(_database, {'playbackSpeed': speed});
   }
 
-  Future<void> deleteBook(String id) async {
+  Future<void> deleteBook(
+    String id, {
+    AudiobookRemovalMode mode = AudiobookRemovalMode.keepUserData,
+  }) async {
     await _database.transaction((transaction) async {
       final stored = await _books.record(id).get(transaction);
       final metadataId = stored?['metadataId'] as String?;
-      final noteCount = metadataId == null
-          ? 0
-          : await _notes.count(
-              transaction,
-              filter: Filter.equals('metadataId', metadataId),
-            );
-      final sessionCount = metadataId == null
-          ? 0
-          : await _sessions.count(
-              transaction,
-              filter: Filter.equals('metadataId', metadataId),
-            );
       if (metadataId != null) {
-        final metadataValue = await _metadata
-            .record(metadataId)
-            .get(transaction);
-        final completed = metadataValue?['completedAt'] != null;
-        if (noteCount == 0 && sessionCount == 0 && !completed) {
+        if (mode == AudiobookRemovalMode.deleteAllData) {
+          final matchingMetadata = Filter.equals('metadataId', metadataId);
+          await _notes.delete(
+            transaction,
+            finder: Finder(filter: matchingMetadata),
+          );
+          await _sessions.delete(
+            transaction,
+            finder: Finder(filter: matchingMetadata),
+          );
           await _metadata.record(metadataId).delete(transaction);
         } else {
           await _metadata.record(metadataId).update(transaction, {

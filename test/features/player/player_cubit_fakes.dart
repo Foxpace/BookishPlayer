@@ -149,7 +149,10 @@ class _FakeBooks implements AudiobookRepository, ListeningHistoryRepository {
   @override
   Future<void> deleteNote(String id) async {}
   @override
-  Future<void> deleteBook(String id) async {}
+  Future<void> deleteBook(
+    String id, {
+    AudiobookRemovalMode mode = AudiobookRemovalMode.keepUserData,
+  }) async {}
   @override
   Future<void> replaceLibrary(
     List<Audiobook> books,
