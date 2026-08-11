@@ -1,0 +1,28 @@
+export 'app_message_localization.dart';
+
+enum AppMessage {
+  storageInspectFailed,
+  unusedFilesRemoved,
+  allDataRemoved,
+  clearDataFailed,
+  metadataEditorLoadFailed,
+  metadataSaveFailed,
+  notesLoadFailed,
+  speechRecognitionUnavailable,
+  speechRecognitionFailed,
+  settingsLoadFailed,
+  playbackSettingsSaveFailed,
+  appearanceSettingsSaveFailed,
+  speechModelsLoadFailed,
+  speechModelDownloaded,
+  speechModelDownloadFailed,
+  noSpeechDetected,
+  quoteTranscriptionFailed,
+  libraryLoadFailed,
+  bookRemovalFailed,
+  libraryLayoutSaveFailed,
+  bookUpdateFailed,
+  listeningInsightsLoadFailed,
+  audiobookPlaybackFailed,
+  audiobookOpenFailed,
+}

@@ -1,71 +1,99 @@
 import 'dart:io';
 
-import 'package:bookish_player/features/transcription/data/speech_model_catalog_cache.dart';
-import 'package:bookish_player/features/transcription/domain/transcription_repository.dart';
+import 'package:bookish_player/features/transcription/repos/implementations/speech_model_catalog_cache.dart';
+import 'package:bookish_player/features/transcription/repos/transcription_repositories.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  late Directory directory;
+  group('Speech model catalog cache', () {
+    late Directory directory;
+    late SpeechModelCatalogCache sut;
 
-  setUp(() {
-    directory = Directory.systemTemp.createTempSync('bookish-model-cache-');
-  });
+    setUp(() {
+      directory = Directory.systemTemp.createTempSync('bookish-model-cache-');
+      sut = SpeechModelCatalogCache(directory);
+    });
 
-  tearDown(() {
-    if (directory.existsSync()) {
-      directory.deleteSync(recursive: true);
-    }
-  });
+    tearDown(() {
+      if (directory.existsSync()) {
+        directory.deleteSync(recursive: true);
+      }
+    });
 
-  test('persists the online model catalog for offline reads', () {
-    final cache = SpeechModelCatalogCache(directory);
-    const models = [
-      SpeechModel(slug: 'whisper-tiny', sizeMb: 75, isDownloaded: false),
-      SpeechModel(slug: 'whisper-base', sizeMb: 142, isDownloaded: false),
-    ];
+    test(
+      'Given the speech model catalog cache, When its behavior is exercised, Then persists the online model catalog for offline reads',
+      () {
+        // GIVEN
+        const models = [
+          SpeechModel(slug: 'whisper-tiny', sizeMb: 75, isDownloaded: false),
+          SpeechModel(slug: 'whisper-base', sizeMb: 142, isDownloaded: false),
+        ];
 
-    cache.write(models);
-    final restored = cache.read();
+        sut.write(models);
+        // WHEN
+        final restored = sut.read();
 
-    expect(restored.map((model) => model.slug), [
-      'whisper-tiny',
-      'whisper-base',
-    ]);
-    expect(restored.map((model) => model.sizeMb), [75, 142]);
-  });
-
-  test('discovers downloaded models from local model directories', () {
-    final model = Directory('${directory.path}/models/custom-whisper')
-      ..createSync(recursive: true);
-    File('${model.path}/weights.bin').writeAsBytesSync([1]);
-
-    final cache = SpeechModelCatalogCache(directory);
-
-    expect(cache.downloadedSlugs(), {'custom-whisper'});
-  });
-
-  test('reconciles cached models with authoritative local downloads', () {
-    final models = reconcileSpeechModels(
-      catalog: const [
-        SpeechModel(slug: 'whisper-tiny', sizeMb: 75, isDownloaded: false),
-        SpeechModel(slug: 'whisper-base', sizeMb: 142, isDownloaded: true),
-      ],
-      downloadedSlugs: {'whisper-tiny', 'offline-only-model'},
+        // THEN
+        expect(restored.map((model) => model.slug), [
+          'whisper-tiny',
+          'whisper-base',
+        ]);
+        expect(restored.map((model) => model.sizeMb), [75, 142]);
+      },
     );
 
-    expect(models.map((model) => model.slug), [
-      'whisper-tiny',
-      'whisper-base',
-      'offline-only-model',
-    ]);
-    expect(models.map((model) => model.isDownloaded), [true, false, true]);
-  });
+    test(
+      'Given the speech model catalog cache, When its behavior is exercised, Then discovers downloaded models from local model directories',
+      () {
+        // GIVEN
+        final model = Directory('${directory.path}/models/custom-whisper')
+          ..createSync(recursive: true);
+        File('${model.path}/weights.bin').writeAsBytesSync([1]);
 
-  test('ignores a corrupt cached response', () {
-    File(
-      '${directory.path}/bookish_speech_models.json',
-    ).writeAsStringSync('{not-json');
+        // WHEN
+        final downloaded = sut.downloadedSlugs();
 
-    expect(SpeechModelCatalogCache(directory).read(), isEmpty);
+        // THEN
+        expect(downloaded, {'custom-whisper'});
+      },
+    );
+
+    test(
+      'Given the speech model catalog cache, When its behavior is exercised, Then reconciles cached models with authoritative local downloads',
+      () {
+        // WHEN
+        final models = reconcileSpeechModels(
+          catalog: const [
+            SpeechModel(slug: 'whisper-tiny', sizeMb: 75, isDownloaded: false),
+            SpeechModel(slug: 'whisper-base', sizeMb: 142, isDownloaded: true),
+          ],
+          downloadedSlugs: {'whisper-tiny', 'offline-only-model'},
+        );
+
+        // THEN
+        expect(models.map((model) => model.slug), [
+          'whisper-tiny',
+          'whisper-base',
+          'offline-only-model',
+        ]);
+        expect(models.map((model) => model.isDownloaded), [true, false, true]);
+      },
+    );
+
+    test(
+      'Given the speech model catalog cache, When its behavior is exercised, Then ignores a corrupt cached response',
+      () {
+        // GIVEN
+        File(
+          '${directory.path}/bookish_speech_models.json',
+        ).writeAsStringSync('{not-json');
+
+        // WHEN
+        final restored = sut.read();
+
+        // THEN
+        expect(restored, isEmpty);
+      },
+    );
   });
 }

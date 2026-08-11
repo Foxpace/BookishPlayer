@@ -24,8 +24,12 @@ ios/Runner.xcodeproj/xcuserdata/
 .DS_Store
 
 # Signing material
+android/key.properties
 *.jks
 *.keystore
 *.mobileprovision
 *.p12
 *.cer
+
+# Local test reports
+coverage/

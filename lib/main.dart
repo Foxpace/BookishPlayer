@@ -1,61 +1,43 @@
-import 'package:audio_service/audio_service.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:just_audio/just_audio.dart';
 
+import 'core/diagnostics/app_error_handler.dart';
+import 'app/app_bootstrapper.dart';
+import 'app/bookish_app.dart';
 import 'core/di/injection.dart';
-import 'core/localization/generated/l10n.dart';
-import 'core/theme/bookish_theme.dart';
-import 'features/player/data/bookish_audio_handler.dart';
-import 'features/player/application/playback_command_service.dart';
-import 'features/player/data/just_audio_player_repository.dart';
-import 'features/player/domain/audio_player_repository.dart';
-import 'features/player/presentation/player_cubit.dart';
-import 'features/library/domain/audiobook_catalog_repository.dart';
-import 'features/library/domain/observable_audiobook_catalog_repository.dart';
-import 'features/player/data/pigeon_car_play_bridge.dart';
-import 'features/settings/domain/theme_preference.dart';
-import 'features/settings/presentation/settings_cubit.dart';
-import 'features/settings/presentation/settings_state.dart';
+import 'features/player/cubits/player_cubit.dart';
+import 'features/settings/cubits/settings_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
-  final audioHandler = await AudioService.init(
-    builder: () => BookishAudioHandler(
-      getIt<AudioPlayer>(),
-      getIt<AudiobookCatalogRepository>(),
-      getIt<PlaybackCommandService>(),
-    ),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.tomasrepcik.bookish.audio',
-      androidNotificationChannelName: 'Bookish playback',
-      androidNotificationIcon: 'drawable/ic_launcher_monochrome',
-      // Keep the media service foregrounded across brief interruptions. On
-      // Android 12+, a backgrounded app may otherwise be unable to promote the
-      // service again when playback resumes.
-      androidStopForegroundOnPause: false,
-      fastForwardInterval: BookishAudioHandler.skipInterval,
-      rewindInterval: BookishAudioHandler.skipInterval,
-    ),
-  );
-  getIt.registerSingleton<AudioHandler>(audioHandler);
-  final playerRepository = getIt<AudioPlayerRepository>();
-  if (playerRepository is! JustAudioPlayerRepository) {
-    throw StateError('The audio repository does not support audio_service.');
-  }
-  playerRepository.attachAudioHandler(audioHandler);
-  await PigeonCarPlayBridge(
-    getIt<ObservableAudiobookCatalogRepository>(),
-    getIt<PlaybackCommandService>(),
-  ).initialize();
-  runApp(const BookishAppRoot());
+  final errorHandler = getIt<AppErrorHandler>()..install();
+  await runZonedGuarded(() async {
+    await getIt<AppBootstrapper>().initialize();
+    runApp(
+      BookishAppRoot(
+        settingsCubit: getIt<SettingsCubit>(),
+        playerCubit: getIt<PlayerCubit>(),
+        router: getIt<GoRouter>(),
+      ),
+    );
+  }, errorHandler.recordUncaught);
 }
 
 class BookishAppRoot extends StatefulWidget {
-  const BookishAppRoot({super.key});
+  const BookishAppRoot({
+    required this.settingsCubit,
+    required this.playerCubit,
+    required this.router,
+    super.key,
+  });
+
+  final SettingsCubit settingsCubit;
+  final PlayerCubit playerCubit;
+  final GoRouter router;
 
   @override
   State<BookishAppRoot> createState() => _BookishAppRootState();
@@ -68,8 +50,8 @@ class _BookishAppRootState extends State<BookishAppRoot> {
   @override
   void initState() {
     super.initState();
-    _settingsCubit = getIt<SettingsCubit>()..load();
-    _playerCubit = getIt<PlayerCubit>();
+    _settingsCubit = widget.settingsCubit..load();
+    _playerCubit = widget.playerCubit;
   }
 
   @override
@@ -79,42 +61,7 @@ class _BookishAppRootState extends State<BookishAppRoot> {
         BlocProvider.value(value: _settingsCubit),
         BlocProvider.value(value: _playerCubit),
       ],
-      child: const BookishApp(),
+      child: BookishApp(router: widget.router),
     );
-  }
-}
-
-class BookishApp extends StatelessWidget {
-  const BookishApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      buildWhen: (previous, current) =>
-          previous.themePreference != current.themePreference,
-      builder: (context, state) => MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        onGenerateTitle: (context) => S.of(context).appTitle,
-        localizationsDelegates: const [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        theme: BookishTheme.light,
-        darkTheme: BookishTheme.dark,
-        themeMode: _themeMode(state.themePreference),
-        routerConfig: getIt<GoRouter>(),
-      ),
-    );
-  }
-
-  ThemeMode _themeMode(ThemePreference preference) {
-    return switch (preference) {
-      ThemePreference.system => ThemeMode.system,
-      ThemePreference.light => ThemeMode.light,
-      ThemePreference.dark => ThemeMode.dark,
-    };
   }
 }

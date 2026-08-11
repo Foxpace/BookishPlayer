@@ -1,282 +1,240 @@
-import 'dart:async';
-
-import 'package:bookish_player/core/presentation/book_cover.dart';
-import 'package:bookish_player/features/library/domain/audiobook.dart';
-import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
-import 'package:bookish_player/features/library/domain/audiobook_removal_mode.dart';
-import 'package:bookish_player/features/library/domain/listening_session.dart';
-import 'package:bookish_player/features/library/domain/listening_history_repository.dart';
-import 'package:bookish_player/features/player/domain/audio_player_repository.dart';
-import 'package:bookish_player/features/player/application/playback_command_service.dart';
-import 'package:bookish_player/features/player/domain/book_note.dart';
-import 'package:bookish_player/features/library/domain/book_metadata.dart';
-import 'package:bookish_player/features/player/domain/quote_share_repository.dart';
-import 'package:bookish_player/features/player/presentation/player_cubit.dart';
-import 'package:bookish_player/features/player/presentation/player_state.dart';
-import 'package:bookish_player/features/player/presentation/player_screen.dart';
-import 'package:bookish_player/features/portability/domain/local_export_repository.dart';
-import 'package:bookish_player/features/portability/domain/bookish_backup.dart';
-import 'package:bookish_player/features/player/presentation/now_playing_shell.dart';
-import 'package:bookish_player/features/settings/domain/playback_preferences.dart';
-import 'package:bookish_player/features/settings/domain/settings_repository.dart';
-import 'package:bookish_player/features/settings/domain/theme_preference.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_test/flutter_test.dart';
-
-part 'player_cubit_fakes.dart';
-part 'player_cubit_note_tests.dart';
-part 'player_cubit_widget_tests.dart';
-part 'player_screen_layout_tests.dart';
-
-PlayerCubit _createPlayerCubit(
-  AudioPlayerRepository audio,
-  _FakeBooks books,
-  LocalExportRepository exports,
-  SettingsRepository settings, [
-  _FakeSharing? sharing,
-]) => PlayerCubit(
-  audio,
-  books,
-  books,
-  books,
-  exports,
-  sharing ?? _FakeSharing(),
-  PlaybackCommandService(audio, books, settings),
-);
+import 'player_test_support.dart';
+import 'player_cubit_note_tests.dart';
+import 'player_cubit_playback_flow_tests.dart';
+import 'player_cubit_widget_tests.dart';
+import 'player_screen_layout_tests.dart';
+import 'package:bookish_player/features/player/use_cases/playback_command_service.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-  registerPlayerCubitWidgetTests();
-  registerPlayerCubitNoteTests();
-  registerPlayerScreenLayoutTests();
+  group('Player cubit', () {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    registerPlayerCubitWidgetTests();
+    registerPlayerCubitNoteTests();
+    registerPlayerCubitPlaybackFlowTests();
+    registerPlayerScreenLayoutTests();
 
-  test('app data reset clears playback and the active player state', () async {
-    final book = Audiobook(
-      id: 'reset-book',
-      title: 'Reset book',
-      filePath: '/reset.mp3',
-      durationMs: 60000,
-      addedAt: DateTime(2026),
-    );
-    final audio = _FakeAudioPlayer();
-    final books = _FakeBooks(book);
-    final cubit = _createPlayerCubit(
-      audio,
-      books,
-      _FakeExports(),
-      _FakeSettings(),
-    );
-    addTearDown(() async {
-      await cubit.close();
-      await audio.close();
-    });
-    await cubit.open(book);
-    await cubit.togglePlayback();
+    group('Player intents', () {
+      late _PlayerHarness harness;
 
-    await cubit.resetForAppDataRemoval();
+      tearDown(() => harness.close());
 
-    expect(cubit.state, const PlayerState());
-    expect(audio.playing, isFalse);
-    expect(audio.currentPosition, Duration.zero);
-  });
+      test(
+        'Given the player cubit, When its behavior is exercised, Then external playback requests are handled as Cubit intents',
+        () async {
+          // GIVEN
+          final book = _book(id: 'external-book', title: 'External book');
+          harness = _PlayerHarness([book]);
+          final sut = harness.sut;
 
-  test(
-    'restores speed, checkpoints progress, and sleeps at chapter end',
-    () async {
-      final book = Audiobook(
-        id: 'book',
-        title: 'Book',
-        filePath: '/book.mp3',
-        durationMs: 120000,
-        addedAt: DateTime(2026),
-        playbackSpeed: 1.5,
-        chapters: const [
-          AudioChapter(title: 'One', startMs: 0),
-          AudioChapter(title: 'Two', startMs: 60000),
-        ],
-      );
-      final audio = _FakeAudioPlayer();
-      final books = _FakeBooks(book);
-      final cubit = _createPlayerCubit(
-        audio,
-        books,
-        _FakeExports(),
-        _FakeSettings(),
-      );
-      addTearDown(() async {
-        await cubit.close();
-        await audio.close();
-      });
+          // WHEN
+          await harness.playBook(book.id);
 
-      await cubit.open(book);
-      expect(cubit.state.speed, 1.5);
-      expect(audio.speed, 1.5);
-      expect(cubit.state.currentChapter?.title, 'One');
-      expect(cubit.state.chapterDuration, const Duration(seconds: 60));
-      expect(cubit.state.chapterTimeline, hasLength(2));
-      expect(
-        cubit.state.chapterTimeline.map((chapter) => chapter.duration),
-        everyElement(const Duration(seconds: 60)),
+          // THEN
+          expect(sut.state.book?.id, book.id);
+          expect(sut.state.status, PlayerStatus.ready);
+          expect(harness.audio.playing, isTrue);
+        },
       );
 
-      await cubit.changeSpeed(1.75);
-      expect(books.savedSpeed, 1.75);
+      test(
+        'Given the player cubit, When its behavior is exercised, Then app data reset clears playback and the active player state',
+        () async {
+          // GIVEN
+          final book = _book(id: 'reset-book', title: 'Reset book');
+          harness = _PlayerHarness([book]);
+          final sut = await harness.open(book, playing: true);
 
-      audio.emitPosition(const Duration(seconds: 12, milliseconds: 345));
-      await Future<void>.delayed(const Duration(milliseconds: 350));
-      expect(books.progress, const Duration(seconds: 12, milliseconds: 345));
-      expect(
-        cubit.state.chapterPosition,
-        const Duration(seconds: 12, milliseconds: 345),
+          // WHEN
+          await sut.resetForAppDataRemoval();
+
+          // THEN
+          expect(sut.state, const PlayerState());
+          expect(harness.audio.playing, isFalse);
+          expect(harness.audio.currentPosition, Duration.zero);
+        },
       );
 
-      await cubit.seekWithinChapter(const Duration(seconds: 30));
-      expect(audio.currentPosition, const Duration(seconds: 30));
-      await cubit.previousChapter();
-      expect(audio.currentPosition, Duration.zero);
-      await cubit.nextChapter();
-      expect(audio.currentPosition, const Duration(seconds: 60));
-      await cubit.previousChapter();
-      expect(audio.currentPosition, Duration.zero);
-      audio.emitPosition(const Duration(seconds: 12, milliseconds: 345));
+      test(
+        'Given the player cubit, When its behavior is exercised, Then continues with the next numbered unfinished series volume',
+        () async {
+          // GIVEN
+          final first = _book(
+            id: 'first',
+            title: 'First',
+            details: (
+              durationMs: 60000,
+              series: 'Saga',
+              seriesPosition: 1,
+              addedAt: DateTime(2025),
+              chapters: const [],
+            ),
+          );
+          final second = _book(
+            id: 'second',
+            title: 'Second',
+            details: (
+              durationMs: 60000,
+              series: 'Saga',
+              seriesPosition: 2,
+              addedAt: DateTime(2026),
+              chapters: const [],
+            ),
+          );
+          harness = _PlayerHarness([first, second]);
+          final sut = await harness.open(first);
 
-      cubit.sleepAtEndOfChapter();
-      expect(cubit.state.sleepTimerType, SleepTimerType.endOfChapter);
-      audio.emitPosition(const Duration(seconds: 60));
-      await Future<void>.delayed(Duration.zero);
-      expect(audio.pauseCount, 1);
-      expect(cubit.state.sleepTimerType, isNull);
-      expect(cubit.state.currentChapter?.title, 'Two');
-      expect(cubit.state.chapterPosition, Duration.zero);
+          harness.audio.emitCompleted();
+          // WHEN
+          await Future<void>.delayed(const Duration(milliseconds: 20));
 
-      await cubit.seekWithinChapter(const Duration(seconds: 5));
-      expect(audio.currentPosition, const Duration(seconds: 65));
-    },
-  );
+          // THEN
+          expect(sut.state.book?.id, 'second');
+          expect(harness.audio.playing, isTrue);
+          final completed = await harness.books.getBook('first');
+          expect(completed?.isFinished, isTrue);
+          expect(completed?.completedAt, isNotNull);
+          expect(completed?.positionMs, first.durationMs);
+        },
+      );
 
-  test('continues with the next numbered unfinished series volume', () async {
-    final first = Audiobook(
-      id: 'first',
-      title: 'First',
-      series: 'Saga',
-      seriesPosition: 1,
-      filePath: '/first.mp3',
-      durationMs: 60000,
-      addedAt: DateTime(2025),
-    );
-    final second = Audiobook(
-      id: 'second',
-      title: 'Second',
-      series: 'Saga',
-      seriesPosition: 2,
-      filePath: '/second.mp3',
-      durationMs: 60000,
-      addedAt: DateTime(2026),
-    );
-    final audio = _FakeAudioPlayer();
-    final books = _FakeBooks.withBooks([first, second]);
-    final cubit = _createPlayerCubit(
-      audio,
-      books,
-      _FakeExports(),
-      _FakeSettings(),
-    );
-    addTearDown(() async {
-      await cubit.close();
-      await audio.close();
+      test(
+        'Given the player cubit, When its behavior is exercised, Then chapter-relative seeks cannot cascade into later chapters',
+        () async {
+          // GIVEN
+          final book = _book(
+            id: 'book',
+            title: 'Book',
+            details: (
+              durationMs: 90000,
+              series: '',
+              seriesPosition: null,
+              addedAt: null,
+              chapters: const [
+                AudioChapter(title: 'One', startMs: 0),
+                AudioChapter(title: 'Two', startMs: 30000),
+                AudioChapter(title: 'Three', startMs: 60000),
+              ],
+            ),
+          );
+          harness = _PlayerHarness([book]);
+          final sut = await harness.open(book);
+          await sut.seekWithinChapter(const Duration(seconds: 30));
+          // WHEN
+          await sut.seekWithinChapter(const Duration(seconds: 30));
+
+          // THEN
+          expect(
+            harness.audio.currentPosition,
+            const Duration(milliseconds: 29999),
+          );
+          expect(sut.state.currentChapterIndex, 0);
+          expect(sut.state.currentChapter?.title, 'One');
+        },
+      );
+
+      test(
+        'Given the player cubit, When its behavior is exercised, Then stops a paused current book before switching queues',
+        () async {
+          // GIVEN
+          final first = _book(id: 'first', title: 'First');
+          final second = _book(
+            id: 'second',
+            title: 'Second',
+            details: const (
+              durationMs: 90000,
+              series: '',
+              seriesPosition: null,
+              addedAt: null,
+              chapters: [],
+            ),
+          );
+          harness = _PlayerHarness([first, second]);
+          final sut = harness.sut;
+
+          // WHEN
+          await sut.open(first);
+          // THEN
+          expect(harness.audio.playing, isFalse);
+          expect(harness.audio.currentPosition, Duration.zero);
+          harness.audio.currentPosition = const Duration(seconds: 12);
+
+          await sut.open(second);
+
+          expect(harness.audio.pauseCount, 1);
+          expect(sut.state.book?.id, 'second');
+          expect(sut.state.isPlaying, isFalse);
+          expect(harness.audio.currentPosition, Duration.zero);
+          expect((await harness.books.getBook('first'))?.positionMs, 12000);
+
+          await sut.openById('first');
+
+          expect(sut.state.book?.id, 'first');
+          expect(harness.audio.currentPosition, const Duration(seconds: 12));
+        },
+      );
     });
-    await cubit.open(first);
-
-    audio.emitCompleted();
-    await Future<void>.delayed(const Duration(milliseconds: 20));
-
-    expect(cubit.state.book?.id, 'second');
-    expect(audio.playing, isTrue);
-    final completed = await books.getBook('first');
-    expect(completed?.isFinished, isTrue);
-    expect(completed?.completedAt, isNotNull);
-    expect(completed?.positionMs, first.durationMs);
-  });
-
-  test('chapter-relative seeks cannot cascade into later chapters', () async {
-    final book = Audiobook(
-      id: 'book',
-      title: 'Book',
-      filePath: '/book.mp3',
-      durationMs: 90000,
-      addedAt: DateTime(2026),
-      chapters: const [
-        AudioChapter(title: 'One', startMs: 0),
-        AudioChapter(title: 'Two', startMs: 30000),
-        AudioChapter(title: 'Three', startMs: 60000),
-      ],
-    );
-    final audio = _FakeAudioPlayer();
-    final cubit = _createPlayerCubit(
-      audio,
-      _FakeBooks(book),
-      _FakeExports(),
-      _FakeSettings(),
-    );
-    addTearDown(() async {
-      await cubit.close();
-      await audio.close();
-    });
-    await cubit.open(book);
-
-    await cubit.seekWithinChapter(const Duration(seconds: 30));
-    await cubit.seekWithinChapter(const Duration(seconds: 30));
-
-    expect(audio.currentPosition, const Duration(milliseconds: 29999));
-    expect(cubit.state.currentChapterIndex, 0);
-    expect(cubit.state.currentChapter?.title, 'One');
-  });
-
-  test('stops a paused current book before switching queues', () async {
-    final first = Audiobook(
-      id: 'first',
-      title: 'First',
-      filePath: '/first.mp3',
-      durationMs: 60000,
-      addedAt: DateTime(2026),
-    );
-    final second = Audiobook(
-      id: 'second',
-      title: 'Second',
-      filePath: '/second.mp3',
-      durationMs: 90000,
-      addedAt: DateTime(2026),
-    );
-    final audio = _FakeAudioPlayer();
-    final books = _FakeBooks.withBooks([first, second]);
-    final cubit = _createPlayerCubit(
-      audio,
-      books,
-      _FakeExports(),
-      _FakeSettings(),
-    );
-    addTearDown(() async {
-      await cubit.close();
-      await audio.close();
-    });
-
-    await cubit.open(first);
-    expect(audio.playing, isFalse);
-    expect(audio.currentPosition, Duration.zero);
-    audio.currentPosition = const Duration(seconds: 12);
-
-    await cubit.open(second);
-
-    expect(audio.pauseCount, 1);
-    expect(cubit.state.book?.id, 'second');
-    expect(cubit.state.isPlaying, isFalse);
-    expect(audio.currentPosition, Duration.zero);
-    expect((await books.getBook('first'))?.positionMs, 12000);
-
-    await cubit.openById('first');
-
-    expect(cubit.state.book?.id, 'first');
-    expect(audio.currentPosition, const Duration(seconds: 12));
   });
 }
+
+final class _PlayerHarness {
+  _PlayerHarness(List<Audiobook> availableBooks)
+    : audio = FakeAudioPlayer(),
+      books = FakeBooks.withBooks(availableBooks) {
+    final created = createPlayerCubitHarness(
+      audio,
+      books,
+      FakeExports(),
+      FakeSettings(),
+    );
+    sut = created.sut;
+    _commands = created.commands;
+  }
+
+  final FakeAudioPlayer audio;
+  final FakeBooks books;
+  late final PlayerCubit sut;
+  late final PlaybackCommandService _commands;
+
+  Future<void> playBook(String bookId) => _commands.playBook(bookId);
+
+  Future<PlayerCubit> open(Audiobook book, {bool playing = false}) async {
+    await sut.open(book);
+    if (playing) {
+      await sut.togglePlayback();
+    }
+    return sut;
+  }
+
+  Future<void> close() async {
+    await sut.close();
+    await audio.close();
+  }
+}
+
+Audiobook _book({
+  required String id,
+  required String title,
+  ({
+    int durationMs,
+    String series,
+    double? seriesPosition,
+    DateTime? addedAt,
+    List<AudioChapter> chapters,
+  })
+  details = const (
+    durationMs: 60000,
+    series: '',
+    seriesPosition: null,
+    addedAt: null,
+    chapters: [],
+  ),
+}) => Audiobook(
+  id: id,
+  title: title,
+  series: details.series,
+  seriesPosition: details.seriesPosition,
+  filePath: '/$id.mp3',
+  durationMs: details.durationMs,
+  addedAt: details.addedAt ?? DateTime(2026),
+  chapters: details.chapters,
+);

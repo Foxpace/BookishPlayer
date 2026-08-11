@@ -1,73 +1,118 @@
-import 'package:bookish_player/features/library/domain/book_metadata.dart';
-import 'package:bookish_player/features/library/domain/book_metadata_repository.dart';
-import 'package:bookish_player/features/library/domain/book_note_repository.dart';
-import 'package:bookish_player/features/notes/presentation/note_gallery_cubit.dart';
-import 'package:bookish_player/features/notes/presentation/note_gallery_screen.dart';
-import 'package:bookish_player/features/player/domain/book_note.dart';
+import 'package:bookish_player/features/library/models/library_models.dart';
+import 'package:bookish_player/features/library/repos/book_metadata_repository.dart';
+import 'package:bookish_player/features/notes/repos/book_note_repository.dart';
+import 'package:bookish_player/features/notes/ui/note_gallery_screen.dart';
+import 'package:bookish_player/features/notes/ui/book_notes_screen.dart';
+import 'package:bookish_player/features/notes/ui/note_detail_screen.dart';
+import 'package:bookish_player/features/notes/models/note_models.dart';
+import 'package:bookish_player/features/notes/cubits/note_gallery_cubit.dart';
+import 'package:bookish_player/features/notes/cubits/notes_cubits.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/pump_bookish_app.dart';
+import 'note_gallery_robot.dart';
+import 'notes_test_builder.dart';
+
 void main() {
-  testWidgets('opens a book note list and edits the selected note', (
-    tester,
-  ) async {
-    final metadata = BookMetadata(
-      id: 'archive',
-      fingerprint: 'fingerprint',
-      title: 'The Test Book',
-      durationMs: 60000,
-      createdAt: DateTime(2026),
-      activeBookId: 'book',
+  group('Note gallery screen', () {
+    testWidgets(
+      'Given the note gallery screen, When its behavior is exercised, Then opens a book note list and edits the selected note',
+      (tester) async {
+        final robot = NoteGalleryRobot(tester);
+
+        // GIVEN
+        final metadata = BookMetadata(
+          id: 'archive',
+          fingerprint: 'fingerprint',
+          title: 'The Test Book',
+          durationMs: 60000,
+          createdAt: DateTime(2026),
+          activeBookId: 'book',
+        );
+        final notes = _FakeNotes([
+          BookNote(
+            id: 'first',
+            metadataId: 'archive',
+            positionMs: 1000,
+            text: 'First note',
+            createdAt: DateTime(2026, 1, 2),
+          ),
+          BookNote(
+            id: 'second',
+            metadataId: 'archive',
+            positionMs: 2000,
+            text: 'Second note',
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        ]);
+        final cubit = createNoteGalleryCubit(notes, _FakeMetadata(metadata));
+        addTearDown(cubit.close);
+        await cubit.load();
+
+        // WHEN
+        await tester.pumpBookishApp(child: _NoteGalleryHarness(cubit: cubit));
+
+        // THEN
+        robot.expectGallerySummary(const ['2 notes across 1 book', '2 notes']);
+
+        await robot.openBook('The Test Book');
+
+        robot.expectBookNotes(const ['First note', 'Second note']);
+
+        await robot.openNote('First note');
+
+        robot.expectNoteDetail(title: 'Note', titleHint: 'Title (optional)');
+        await robot.replaceNoteText('Edited note');
+        await robot.saveNote('Save');
+
+        expect(notes.saved?.text, 'Edited note');
+        robot.expectNoteText('Edited note');
+      },
     );
-    final notes = _FakeNotes([
-      BookNote(
-        id: 'first',
-        metadataId: 'archive',
-        positionMs: 1000,
-        text: 'First note',
-        createdAt: DateTime(2026, 1, 2),
-      ),
-      BookNote(
-        id: 'second',
-        metadataId: 'archive',
-        positionMs: 2000,
-        text: 'Second note',
-        createdAt: DateTime(2026, 1, 1),
-      ),
-    ]);
-    final cubit = NoteGalleryCubit(notes, _FakeMetadata(metadata));
-    addTearDown(cubit.close);
-    await cubit.load();
-
-    await tester.pumpWidget(
-      BlocProvider.value(
-        value: cubit,
-        child: const MaterialApp(home: NoteGalleryScreen()),
-      ),
-    );
-
-    expect(find.text('2 notes across 1 book'), findsOneWidget);
-    expect(find.text('2 notes'), findsOneWidget);
-
-    await tester.tap(find.text('The Test Book'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('First note'), findsOneWidget);
-    expect(find.text('Second note'), findsOneWidget);
-
-    await tester.tap(find.text('First note'));
-    await tester.pumpAndSettle();
-
-    expect(find.widgetWithText(AppBar, 'Note'), findsOneWidget);
-    expect(find.text('Title (optional)'), findsOneWidget);
-    await tester.enterText(find.byType(TextField).last, 'Edited note');
-    await tester.tap(find.text('Save'));
-    await tester.pumpAndSettle();
-
-    expect(notes.saved?.text, 'Edited note');
-    expect(find.text('Edited note'), findsOneWidget);
   });
+}
+
+class _NoteGalleryHarness extends StatelessWidget {
+  const _NoteGalleryHarness({required this.cubit});
+
+  final NoteGalleryCubit cubit;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<NoteGalleryCubit, NoteGalleryState>(
+      bloc: cubit,
+      builder: (context, state) => NoteGalleryScreen(
+        state: state,
+        onRetry: cubit.load,
+        onOpenBookNotes: (metadata) => Navigator.of(context).push<void>(
+          MaterialPageRoute(
+            builder: (_) => BlocBuilder<NoteGalleryCubit, NoteGalleryState>(
+              bloc: cubit,
+              builder: (context, state) => BookNotesScreen(
+                metadata: metadata,
+                notes: state.notes,
+                onOpenNote: (note) => _openNote(context, note),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openNote(BuildContext context, BookNote note) {
+    return Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => NoteDetailScreen(
+          note: note,
+          onSave: ({required title, required text}) =>
+              cubit.updateNote(note, title: title, text: text),
+        ),
+      ),
+    );
+  }
 }
 
 class _FakeNotes implements BookNoteRepository {

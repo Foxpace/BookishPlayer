@@ -1,26 +1,46 @@
-import 'package:bookish_player/features/insights/presentation/listening_insights_cubit.dart';
-import 'package:bookish_player/features/insights/presentation/listening_insights_state.dart';
-import 'package:bookish_player/features/library/domain/book_metadata.dart';
-import 'package:bookish_player/features/library/domain/book_metadata_repository.dart';
-import 'package:bookish_player/features/library/domain/listening_history_repository.dart';
-import 'package:bookish_player/features/library/domain/listening_session.dart';
+import 'package:bookish_player/core/presentation/app_message.dart';
+import 'package:bookish_player/features/insights/use_cases/load_listening_insights_use_case.dart';
+import 'package:bookish_player/features/insights/use_cases/insights_use_cases.dart';
+import 'package:bookish_player/features/insights/cubits/listening_insights_cubit.dart';
+import 'package:bookish_player/features/insights/cubits/insights_cubits.dart';
+import 'package:bookish_player/features/insights/repos/implementations/library_listening_insights_repository.dart';
+import 'package:bookish_player/features/library/models/library_models.dart';
+import 'package:bookish_player/features/library/repos/book_metadata_repository.dart';
+import 'package:bookish_player/features/library/repos/listening_history_repository.dart';
+import 'package:bookish_player/features/library/models/listening_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/fakes/fake_clock.dart';
+
 void main() {
-  test(
-    'load failure exposes the operation, type, and parsing detail',
-    () async {
-      final cubit = ListeningInsightsCubit(_BrokenMetadata(), _EmptyHistory());
-      addTearDown(cubit.close);
+  group('Malformed listening metadata', () {
+    test(
+      'Given malformed listening metadata, When listening insights are loaded, Then a typed revisioned failure is emitted',
+      () async {
+        // GIVEN
+        final sut = ListeningInsightsCubit(
+          InsightsUseCases(
+            loadListeningInsights: LoadListeningInsightsUseCase(
+              LibraryListeningInsightsRepository(
+                _BrokenMetadata(),
+                _EmptyHistory(),
+              ),
+              FakeClock(),
+            ),
+          ),
+        );
+        addTearDown(sut.close);
 
-      await cubit.load();
+        // WHEN
+        await sut.load();
 
-      expect(cubit.state.status, ListeningInsightsStatus.failure);
-      expect(cubit.state.message, contains('could not be loaded'));
-      expect(cubit.state.message, contains('FormatException'));
-      expect(cubit.state.message, contains('metadata record "broken-book"'));
-    },
-  );
+        // THEN
+        expect(sut.state.status, ListeningInsightsStatus.failure);
+        expect(sut.state.message, AppMessage.listeningInsightsLoadFailed);
+        expect(sut.state.effectRevision, 1);
+      },
+    );
+  });
 }
 
 class _BrokenMetadata implements BookMetadataRepository {

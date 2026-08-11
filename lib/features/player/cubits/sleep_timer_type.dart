@@ -1,0 +1,1 @@
+enum SleepTimerType { fixed, endOfChapter }
