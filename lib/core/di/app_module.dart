@@ -2,46 +2,59 @@ import 'package:injectable/injectable.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/library/domain/audiobook_catalog_repository.dart';
-import '../../features/library/domain/audiobook_repository.dart';
-import '../../features/library/domain/book_note_repository.dart';
-import '../../features/library/domain/book_metadata_repository.dart';
-import '../../features/library/domain/observable_audiobook_catalog_repository.dart';
-import '../../features/library/data/sembast_audiobook_repository.dart';
-import '../../features/player/data/just_audio_player_repository.dart';
-import '../../features/player/domain/audio_player_repository.dart';
+import '../../features/library/repos/audiobook_catalog_repository.dart';
+import '../../features/library/repos/audiobook_repository.dart';
+import '../../features/notes/repos/book_note_repository.dart';
+import '../../features/library/repos/book_metadata_repository.dart';
+import '../../features/library/repos/observable_audiobook_catalog_repository.dart';
+import '../../features/library/repos/implementations/sembast_audiobook_repository.dart';
+import '../../features/player/repos/implementations/player_audio_repository.dart';
+import '../../features/player/repos/audio_player_repository.dart';
 import '../database/bookish_database.dart';
-import '../navigation/app_router.dart';
+import '../navigation/app_navigation.dart';
 
 @module
 abstract class AppModule {
+  @Environment('prod')
   @preResolve
-  Future<BookishDatabase> get database => BookishDatabase.open();
+  Future<BookishDatabase> provideDatabase() => BookishDatabase.open();
 
   @lazySingleton
-  AudiobookCatalogRepository audiobookCatalog(AudiobookRepository repository) =>
+  AudiobookRepository provideAudiobookRepository(
+    SembastAudiobookRepository repository,
+  ) => repository;
+
+  @lazySingleton
+  AudiobookCatalogRepository provideAudiobookCatalog(
+    SembastAudiobookRepository repository,
+  ) => repository;
+
+  @lazySingleton
+  BookNoteRepository provideBookNotes(SembastAudiobookRepository repository) =>
       repository;
 
   @lazySingleton
-  BookNoteRepository bookNotes(AudiobookRepository repository) => repository;
+  BookMetadataRepository provideBookMetadata(
+    SembastAudiobookRepository repository,
+  ) => repository;
 
   @lazySingleton
-  BookMetadataRepository bookMetadata(AudiobookRepository repository) =>
-      repository;
+  ObservableAudiobookCatalogRepository provideObservableAudiobookCatalog(
+    SembastAudiobookRepository repository,
+  ) => repository;
 
+  @Environment('prod')
   @lazySingleton
-  ObservableAudiobookCatalogRepository observableAudiobookCatalog(
-    AudiobookRepository repository,
-  ) => repository as SembastAudiobookRepository;
+  AndroidLoudnessEnhancer provideLoudnessEnhancer() =>
+      AndroidLoudnessEnhancer();
 
+  @Environment('prod')
   @lazySingleton
-  AndroidLoudnessEnhancer get loudnessEnhancer => AndroidLoudnessEnhancer();
+  AndroidEqualizer provideEqualizer() => AndroidEqualizer();
 
+  @Environment('prod')
   @lazySingleton
-  AndroidEqualizer get equalizer => AndroidEqualizer();
-
-  @lazySingleton
-  AudioPlayer audioPlayer(
+  AudioPlayer provideAudioPlayer(
     AndroidLoudnessEnhancer loudnessEnhancer,
     AndroidEqualizer equalizer,
   ) => AudioPlayer(
@@ -52,10 +65,11 @@ abstract class AppModule {
   );
 
   @lazySingleton
-  GoRouter get router => createAppRouter();
+  GoRouter provideRouter() => createAppRouter();
 
+  @Environment('prod')
   @preResolve
-  Future<AudioPlayerRepository> playerRepository(
+  Future<JustAudioPlayerRepository> provideJustAudioPlayerRepository(
     AudioPlayer player,
     AndroidLoudnessEnhancer loudnessEnhancer,
     AndroidEqualizer equalizer,
@@ -68,4 +82,10 @@ abstract class AppModule {
     await repository.configure();
     return repository;
   }
+
+  @Environment('prod')
+  @lazySingleton
+  AudioPlayerRepository provideAudioPlayerRepository(
+    JustAudioPlayerRepository repository,
+  ) => repository;
 }

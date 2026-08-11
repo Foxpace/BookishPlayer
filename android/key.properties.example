@@ -1,0 +1,5 @@
+# Copy this file to key.properties. Never commit key.properties or the keystore.
+storeFile=/absolute/path/to/bookish-release.jks
+storePassword=replace-with-local-secret
+keyAlias=bookish
+keyPassword=replace-with-local-secret

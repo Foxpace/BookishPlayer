@@ -1,30 +1,40 @@
-import 'package:bookish_player/features/settings/domain/settings_repository.dart';
-import 'package:bookish_player/features/settings/domain/playback_preferences.dart';
-import 'package:bookish_player/features/settings/domain/theme_preference.dart';
-import 'package:bookish_player/features/settings/presentation/settings_cubit.dart';
-import 'package:bookish_player/features/settings/presentation/settings_state.dart';
+import 'package:bookish_player/features/settings/repos/settings_repository.dart';
+import 'package:bookish_player/features/settings/models/playback_preferences.dart';
+import 'package:bookish_player/features/settings/models/theme_preference.dart';
+import 'package:bookish_player/features/settings/cubits/settings_cubit.dart';
+import 'package:bookish_player/features/settings/cubits/settings_cubits.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'settings_test_use_cases.dart';
+
 void main() {
-  test('loads and persists an independent theme preference', () async {
-    final repository = _FakeSettingsRepository(ThemePreference.dark);
-    final cubit = SettingsCubit(repository);
-    addTearDown(cubit.close);
+  group('Settings cubit', () {
+    test(
+      'Given the settings cubit, When its behavior is exercised, Then loads and persists an independent theme preference',
+      () async {
+        // GIVEN
+        final repository = _FakeSettingsStore(ThemePreference.dark);
+        final sut = SettingsCubit(buildSettingsUseCases(repository));
+        addTearDown(sut.close);
 
-    await cubit.load();
+        // WHEN
+        await sut.load();
 
-    expect(cubit.state.status, SettingsStatus.ready);
-    expect(cubit.state.themePreference, ThemePreference.dark);
+        // THEN
+        expect(sut.state.status, SettingsStatus.ready);
+        expect(sut.state.themePreference, ThemePreference.dark);
 
-    await cubit.setThemePreference(ThemePreference.light);
+        await sut.setThemePreference(ThemePreference.light);
 
-    expect(cubit.state.themePreference, ThemePreference.light);
-    expect(repository.savedPreference, ThemePreference.light);
+        expect(sut.state.themePreference, ThemePreference.light);
+        expect(repository.savedPreference, ThemePreference.light);
+      },
+    );
   });
 }
 
-class _FakeSettingsRepository implements SettingsRepository {
-  _FakeSettingsRepository(this.preference);
+class _FakeSettingsStore implements SettingsRepository {
+  _FakeSettingsStore(this.preference);
 
   ThemePreference preference;
   ThemePreference? savedPreference;

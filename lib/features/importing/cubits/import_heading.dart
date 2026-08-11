@@ -1,0 +1,16 @@
+enum ImportHeading {
+  openingFileBrowser,
+  preparingSelection,
+  copyingAudiobook,
+  readingAudioInformation,
+  analyzingChapters,
+  extractingArtwork,
+  savingToLibrary,
+  removingOriginals,
+  noTransferredAudiobooks,
+  noFilesSelected,
+  originalsRemain,
+  fileAccessFailed,
+  malformedMetadata,
+  importFailed,
+}

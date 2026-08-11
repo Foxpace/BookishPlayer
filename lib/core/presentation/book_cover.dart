@@ -2,27 +2,30 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+typedef BookCoverLayout = ({double size, double heightFactor, BoxFit imageFit});
+
 class BookCover extends StatelessWidget {
   const BookCover({
     required this.title,
     this.artworkPath,
-    this.size = 72,
-    this.heightFactor = 1.22,
-    this.imageFit = BoxFit.contain,
+    this.layout = const (
+      size: 72,
+      heightFactor: 1.22,
+      imageFit: BoxFit.contain,
+    ),
     this.heroTag,
     super.key,
   });
 
   final String title;
   final String? artworkPath;
-  final double size;
-  final double heightFactor;
-  final BoxFit imageFit;
+  final BookCoverLayout layout;
   final Object? heroTag;
 
   @override
   Widget build(BuildContext context) {
-    final palette = _paletteFor(title);
+    final (:size, :heightFactor, :imageFit) = layout;
+    final palette = _selectPalette(title);
     const coverRadius = BorderRadius.all(Radius.circular(4));
     final cover = Container(
       width: size,
@@ -40,23 +43,27 @@ class BookCover extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: coverRadius,
-        child: artworkPath == null
-            ? _FallbackCover(size: size, palette: palette)
-            : Image.file(
-                File(artworkPath!),
-                width: size,
-                height: size * heightFactor,
-                fit: imageFit,
-                filterQuality: FilterQuality.high,
-                errorBuilder: (_, _, _) =>
-                    _FallbackCover(size: size, palette: palette),
-              ),
+        child: switch (artworkPath) {
+          null => _FallbackCover(size: size, palette: palette),
+          final path => Image.file(
+            File(path),
+            width: size,
+            height: size * heightFactor,
+            fit: imageFit,
+            filterQuality: FilterQuality.high,
+            errorBuilder: (_, _, _) =>
+                _FallbackCover(size: size, palette: palette),
+          ),
+        },
       ),
     );
-    return heroTag == null ? cover : Hero(tag: heroTag!, child: cover);
+    return switch (heroTag) {
+      null => cover,
+      final tag => Hero(tag: tag, child: cover),
+    };
   }
 
-  List<Color> _paletteFor(String value) {
+  List<Color> _selectPalette(String value) {
     const palettes = [
       [Color(0xFFB85C3D), Color(0xFF713729)],
       [Color(0xFF496A69), Color(0xFF263F40)],

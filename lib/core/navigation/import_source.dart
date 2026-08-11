@@ -1,0 +1,1 @@
+enum ImportSource { files, finderTransfer }

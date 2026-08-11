@@ -2,94 +2,125 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bookish_player/features/importing/data/embedded_audio_metadata_reader.dart';
+import 'package:bookish_player/features/importing/repos/implementations/embedded_metadata.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('reads conservative text metadata from ID3 tags', () async {
-    final directory = await Directory.systemTemp.createTemp('bookish-id3-');
-    addTearDown(() => directory.delete(recursive: true));
-    final file = File('${directory.path}/book.mp3');
-    final frames = <int>[
+  group('Embedded audio metadata reader', () {
+    late Directory directory;
+
+    setUp(() async {
+      directory = await Directory.systemTemp.createTemp('bookish-metadata-');
+    });
+
+    tearDown(() => directory.delete(recursive: true));
+
+    test(
+      'Given the embedded audio metadata reader, When its behavior is exercised, Then reads conservative text metadata from ID3 tags',
+      () async {
+        // GIVEN
+        final file = await _taggedId3Fixture(directory);
+
+        // WHEN
+        final metadata = readEmbeddedTextMetadata(file);
+
+        // THEN
+        expect(metadata.title, 'A Wizard of Earthsea');
+        expect(metadata.author, 'Ursula K. Le Guin');
+        expect(metadata.series, 'Earthsea');
+        expect(metadata.narrator, 'Rob Inglis');
+        expect(metadata.year, 1968);
+      },
+    );
+
+    test(
+      'Given the embedded audio metadata reader, When its behavior is exercised, Then does not infer metadata from missing or unrelated tags',
+      () async {
+        // GIVEN
+        final file = await _unrelatedId3Fixture(directory);
+
+        // WHEN
+        final metadata = readEmbeddedTextMetadata(file);
+
+        // THEN
+        expect(metadata.title, isNull);
+        expect(metadata.author, isNull);
+        expect(metadata.series, isNull);
+        expect(metadata.narrator, isNull);
+        expect(metadata.year, isNull);
+      },
+    );
+
+    test(
+      'Given the embedded audio metadata reader, When its behavior is exercised, Then reads explicit metadata atoms from M4B files',
+      () async {
+        // GIVEN
+        final file = await _taggedM4bFixture(directory);
+
+        // WHEN
+        final metadata = readEmbeddedTextMetadata(file);
+
+        // THEN
+        expect(metadata.title, 'The Left Hand of Darkness');
+        expect(metadata.author, 'Ursula K. Le Guin');
+        expect(metadata.series, 'Hainish Cycle');
+        expect(metadata.narrator, 'George Guidall');
+        expect(metadata.year, 1969);
+      },
+    );
+  });
+}
+
+Future<File> _taggedId3Fixture(Directory directory) =>
+    _writeId3Fixture(directory, [
       ..._textFrame('TIT2', 'A Wizard of Earthsea'),
       ..._textFrame('TPE2', 'Ursula K. Le Guin'),
       ..._userTextFrame('SERIES', 'Earthsea'),
       ..._userTextFrame('NARRATOR', 'Rob Inglis'),
       ..._textFrame('TDRC', '1968-01-01'),
-    ];
-    await file.writeAsBytes([
-      ...ascii.encode('ID3'),
-      3,
-      0,
-      0,
-      ..._synchsafe(frames.length),
-      ...frames,
-      ...List<int>.filled(32, 0),
-    ]);
+    ], padding: 32);
 
-    final metadata = readEmbeddedTextMetadata(file);
+Future<File> _unrelatedId3Fixture(Directory directory) => _writeId3Fixture(
+  directory,
+  [..._textFrame('TALB', 'An Album Name'), ..._textFrame('TDRC', 'not a year')],
+);
 
-    expect(metadata.title, 'A Wizard of Earthsea');
-    expect(metadata.author, 'Ursula K. Le Guin');
-    expect(metadata.series, 'Earthsea');
-    expect(metadata.narrator, 'Rob Inglis');
-    expect(metadata.year, 1968);
-  });
+Future<File> _writeId3Fixture(
+  Directory directory,
+  List<int> frames, {
+  int padding = 0,
+}) async {
+  final file = File('${directory.path}/book.mp3');
+  await file.writeAsBytes([
+    ...ascii.encode('ID3'),
+    3,
+    0,
+    0,
+    ..._synchsafe(frames.length),
+    ...frames,
+    ...List<int>.filled(padding, 0),
+  ]);
+  return file;
+}
 
-  test('does not infer metadata from missing or unrelated tags', () async {
-    final directory = await Directory.systemTemp.createTemp('bookish-id3-');
-    addTearDown(() => directory.delete(recursive: true));
-    final file = File('${directory.path}/book.mp3');
-    final frames = <int>[
-      ..._textFrame('TALB', 'An Album Name'),
-      ..._textFrame('TDRC', 'not a year'),
-    ];
-    await file.writeAsBytes([
-      ...ascii.encode('ID3'),
-      3,
-      0,
-      0,
-      ..._synchsafe(frames.length),
-      ...frames,
-    ]);
-
-    final metadata = readEmbeddedTextMetadata(file);
-
-    expect(metadata.title, isNull);
-    expect(metadata.author, isNull);
-    expect(metadata.series, isNull);
-    expect(metadata.narrator, isNull);
-    expect(metadata.year, isNull);
-  });
-
-  test('reads explicit metadata atoms from M4B files', () async {
-    final directory = await Directory.systemTemp.createTemp('bookish-m4b-');
-    addTearDown(() => directory.delete(recursive: true));
-    final file = File('${directory.path}/book.m4b');
-    final ilst = _box('ilst', [
-      ..._mp4Item('©nam', 'The Left Hand of Darkness'),
-      ..._mp4Item('aART', 'Ursula K. Le Guin'),
-      ..._mp4Item('©grp', 'Hainish Cycle'),
-      ..._mp4Item('©day', '1969'),
-      ..._mp4Freeform('NARRATOR', 'George Guidall'),
-    ]);
-    await file.writeAsBytes([
-      ..._box('ftyp', ascii.encode('M4B \u0000\u0000\u0000\u0000')),
-      ..._box('moov', [
-        ..._box('udta', [
-          ..._box('meta', [0, 0, 0, 0, ...ilst]),
-        ]),
+Future<File> _taggedM4bFixture(Directory directory) async {
+  final file = File('${directory.path}/book.m4b');
+  final ilst = _box('ilst', [
+    ..._mp4Item('©nam', 'The Left Hand of Darkness'),
+    ..._mp4Item('aART', 'Ursula K. Le Guin'),
+    ..._mp4Item('©grp', 'Hainish Cycle'),
+    ..._mp4Item('©day', '1969'),
+    ..._mp4Freeform('NARRATOR', 'George Guidall'),
+  ]);
+  await file.writeAsBytes([
+    ..._box('ftyp', ascii.encode('M4B \u0000\u0000\u0000\u0000')),
+    ..._box('moov', [
+      ..._box('udta', [
+        ..._box('meta', [0, 0, 0, 0, ...ilst]),
       ]),
-    ]);
-
-    final metadata = readEmbeddedTextMetadata(file);
-
-    expect(metadata.title, 'The Left Hand of Darkness');
-    expect(metadata.author, 'Ursula K. Le Guin');
-    expect(metadata.series, 'Hainish Cycle');
-    expect(metadata.narrator, 'George Guidall');
-    expect(metadata.year, 1969);
-  });
+    ]),
+  ]);
+  return file;
 }
 
 List<int> _textFrame(String id, String value) =>

@@ -1,0 +1,1 @@
+enum LibraryLayout { list, grid }

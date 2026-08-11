@@ -1,95 +1,114 @@
 import 'dart:convert';
 
-import 'package:bookish_player/features/library/domain/audiobook.dart';
-import 'package:bookish_player/features/library/domain/audiobook_repository.dart';
-import 'package:bookish_player/features/library/domain/listening_session.dart';
-import 'package:bookish_player/features/library/domain/listening_history_repository.dart';
-import 'package:bookish_player/features/player/domain/book_note.dart';
-import 'package:bookish_player/features/library/domain/book_metadata.dart';
-import 'package:bookish_player/features/portability/domain/local_export_repository.dart';
-import 'package:bookish_player/features/portability/domain/backup_store_repository.dart';
-import 'package:bookish_player/features/portability/domain/bookish_backup.dart';
-import 'package:bookish_player/features/portability/presentation/portability_cubit.dart';
-import 'package:bookish_player/features/portability/presentation/portability_state.dart';
-import 'package:bookish_player/features/settings/domain/settings_repository.dart';
-import 'package:bookish_player/features/settings/domain/playback_preferences.dart';
-import 'package:bookish_player/features/settings/domain/theme_preference.dart';
+import 'package:bookish_player/features/portability/use_cases/backup_workflow.dart';
+import 'package:bookish_player/features/portability/use_cases/portability_use_case_bundle.dart';
+import 'package:bookish_player/features/library/models/library_models.dart';
+import 'package:bookish_player/features/library/models/listening_session.dart';
+import 'package:bookish_player/features/notes/models/note_models.dart';
+import 'package:bookish_player/features/portability/repos/local_export_repository.dart';
+import 'package:bookish_player/features/portability/repos/backup_store_repository.dart';
+import 'package:bookish_player/features/portability/models/bookish_backup.dart';
+import 'package:bookish_player/features/portability/cubits/portability_cubit.dart';
+import 'package:bookish_player/features/portability/cubits/portability_cubits.dart';
+import 'package:bookish_player/features/settings/models/playback_preferences.dart';
+import 'package:bookish_player/features/settings/models/theme_preference.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('backup export and import preserve all audiobook metadata', () async {
-    final original = Audiobook(
-      id: 'book-1',
-      title: 'The Left Hand of Darkness',
-      filePath: '/books/left-hand.m4b',
-      durationMs: 3600000,
-      addedAt: DateTime.utc(2026, 1, 2),
-      author: 'Ursula K. Le Guin',
-      series: 'Hainish Cycle',
-      narrator: 'George Guidall',
-      year: 1969,
-      folder: 'Science Fiction',
-    );
-    final note = BookNote(
-      id: 'note-1',
-      metadataId: original.id,
-      positionMs: 42000,
-      text: 'A note',
-      createdAt: DateTime.utc(2026, 1, 3),
-      chapterTitle: 'Chapter one',
-      endPositionMs: 48000,
-    );
-    final session = ListeningSession(
-      id: 'session-1',
-      metadataId: original.id,
-      startedAt: DateTime.utc(2026, 1, 4),
-      endedAt: DateTime.utc(2026, 1, 4, 0, 20),
-      listenedMs: 1200000,
-      startPositionMs: 0,
-      endPositionMs: 1200000,
-      speed: 1.25,
-    );
-    final metadata = metadataForBook(original);
-    final books = _Books([original], [note], [session], [metadata]);
-    final settings = _Settings(
-      ThemePreference.dark,
-      const PlaybackPreferences(rewindSeconds: 30, voiceBoost: true),
-    );
-    final files = _Exports();
-    final cubit = PortabilityCubit(_Store(books, settings), files);
+  group('Complete local library backup', () {
+    test(
+      'Given a complete local library backup, When it is exported and restored, Then all audiobook metadata is preserved',
+      () async {
+        // GIVEN
+        final original = Audiobook(
+          id: 'book-1',
+          title: 'The Left Hand of Darkness',
+          filePath: '/books/left-hand.m4b',
+          durationMs: 3600000,
+          addedAt: DateTime.utc(2026, 1, 2),
+          author: 'Ursula K. Le Guin',
+          series: 'Hainish Cycle',
+          narrator: 'George Guidall',
+          year: 1969,
+          folder: 'Science Fiction',
+        );
+        final note = BookNote(
+          id: 'note-1',
+          metadataId: original.id,
+          positionMs: 42000,
+          text: 'A note',
+          createdAt: DateTime.utc(2026, 1, 3),
+          chapterTitle: 'Chapter one',
+          endPositionMs: 48000,
+        );
+        final session = ListeningSession(
+          id: 'session-1',
+          metadataId: original.id,
+          startedAt: DateTime.utc(2026, 1, 4),
+          endedAt: DateTime.utc(2026, 1, 4, 0, 20),
+          listenedMs: 1200000,
+          startPositionMs: 0,
+          endPositionMs: 1200000,
+          speed: 1.25,
+        );
+        final metadata = metadataForBook(original);
+        final books = _Books([original], [note], [session], [metadata]);
+        final settings = _Settings(
+          ThemePreference.dark,
+          const PlaybackPreferences(rewindSeconds: 30, voiceBoost: true),
+        );
+        final files = _Exports();
+        final workflow = BackupWorkflow(
+          _Store(books, settings),
+          files,
+          const BookishBackupValidator(),
+        );
+        final sut = PortabilityCubit(
+          PortabilityUseCases(
+            ExportBackupUseCase(workflow),
+            RestoreBackupUseCase(workflow),
+          ),
+        );
 
-    await cubit.backup();
+        // WHEN
+        await sut.backup();
 
-    expect(cubit.state.status, PortabilityStatus.success);
-    expect(files.backup, isNotNull);
-    books
-      ..books = const []
-      ..notes = const []
-      ..sessions = const []
-      ..metadata = const [];
-    settings.preference = ThemePreference.system;
-    settings.playback = const PlaybackPreferences();
+        // THEN
+        expect(sut.state.status, PortabilityStatus.success);
+        expect(files.backup, isNotNull);
+        books
+          ..books = const []
+          ..notes = const []
+          ..sessions = const []
+          ..metadata = const [];
+        settings.preference = ThemePreference.system;
+        settings.playback = const PlaybackPreferences();
 
-    await cubit.restore();
+        await sut.restore();
 
-    expect(cubit.state.status, PortabilityStatus.success);
-    expect(books.books, [original]);
-    expect(books.books.single.author, 'Ursula K. Le Guin');
-    expect(books.books.single.series, 'Hainish Cycle');
-    expect(books.books.single.narrator, 'George Guidall');
-    expect(books.books.single.year, 1969);
-    expect(books.notes, [note]);
-    expect(books.metadata, [metadata]);
-    expect(books.sessions, [session]);
-    expect(settings.preference, ThemePreference.dark);
-    expect(settings.playback.rewindSeconds, 30);
-    expect(settings.playback.voiceBoost, isTrue);
-    await cubit.close();
+        expect(sut.state.status, PortabilityStatus.success);
+        expect(books.books, [original]);
+        expect(books.books.single.author, 'Ursula K. Le Guin');
+        expect(books.books.single.series, 'Hainish Cycle');
+        expect(books.books.single.narrator, 'George Guidall');
+        expect(books.books.single.year, 1969);
+        expect(books.notes, [note]);
+        expect(books.metadata, [metadata]);
+        expect(books.sessions, [session]);
+        expect(settings.preference, ThemePreference.dark);
+        expect(settings.playback.rewindSeconds, 30);
+        expect(settings.playback.voiceBoost, isTrue);
+        await sut.close();
+      },
+    );
   });
 }
 
 class _Exports implements LocalExportRepository {
   BookishBackup? backup;
+
+  @override
+  Future<bool> exportNotes(Audiobook book, List<BookNote> notes) async => false;
 
   @override
   Future<bool> exportBackup(BookishBackup backup) async {
@@ -101,9 +120,6 @@ class _Exports implements LocalExportRepository {
 
   @override
   Future<BookishBackup?> pickBackup() async => backup;
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class _Store implements BackupStoreRepository {
@@ -138,72 +154,18 @@ class _Store implements BackupStoreRepository {
   }
 }
 
-class _Books implements AudiobookRepository, ListeningHistoryRepository {
+class _Books {
   _Books(this.books, this.notes, this.sessions, this.metadata);
 
   List<Audiobook> books;
   List<BookNote> notes;
   List<ListeningSession> sessions;
   List<BookMetadata> metadata;
-
-  @override
-  Future<List<Audiobook>> getBooks() async => books;
-
-  @override
-  Future<List<BookNote>> getAllNotes() async => notes;
-
-  @override
-  Future<List<ListeningSession>> getListeningSessions() async => sessions;
-
-  @override
-  Future<void> saveListeningSession(ListeningSession session) async {
-    sessions.add(session);
-  }
-
-  @override
-  Future<void> replaceLibrary(
-    List<Audiobook> books,
-    List<BookNote> notes,
-  ) async {
-    this.books = books;
-    this.notes = notes;
-  }
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class _Settings implements SettingsRepository {
+class _Settings {
   _Settings(this.preference, this.playback);
 
   ThemePreference preference;
   PlaybackPreferences playback;
-
-  @override
-  Future<ThemePreference> getThemePreference() async => preference;
-
-  @override
-  Future<void> setThemePreference(ThemePreference preference) async {
-    this.preference = preference;
-  }
-
-  @override
-  Future<String?> getLibraryLayout() async => null;
-
-  @override
-  Future<void> setLibraryLayout(String layout) async {}
-
-  @override
-  Future<String?> getSpeechModel() async => null;
-
-  @override
-  Future<void> setSpeechModel(String model) async {}
-
-  @override
-  Future<PlaybackPreferences> getPlaybackPreferences() async => playback;
-
-  @override
-  Future<void> setPlaybackPreferences(PlaybackPreferences preferences) async {
-    playback = preferences;
-  }
 }

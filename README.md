@@ -4,6 +4,18 @@ Bookish is a quiet, offline-first audiobook player for iOS and Android. It keeps
 your books, playback history, notes, and preferences on your device and is built
 for both single-file audiobooks and multi-file collections.
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/library.png" alt="Bookish library" width="30%">
+  <img src="docs/screenshots/player.png" alt="Bookish audiobook player" width="30%">
+  <img src="docs/screenshots/settings.png" alt="Bookish settings" width="30%">
+</p>
+
+The screenshots feature the public-domain LibriVox recording of
+[*Alice's Adventures in Wonderland*](https://librivox.org/alices-adventures-in-wonderland-by-lewis-carroll-5/)
+by Lewis Carroll.
+
 ## What Bookish can do
 
 ### Import and organize
@@ -12,8 +24,8 @@ for both single-file audiobooks and multi-file collections.
   document picker, including files from iCloud and Android document providers.
 - Copy imported audio into app-private storage so books remain available
   offline.
-- Combine naturally ordered multi-file selections into one continuous book and
-  create chapters at track boundaries.
+- Keep every selected numbered or multi-file item as a separate audiobook;
+  imported files are never silently combined.
 - Read embedded M4B `chpl`, QuickTime text-track, and supported audio-metadata
   chapters without loading complete media files into memory.
 - Extract embedded cover art from MP3, MP4/M4B, FLAC, OGG, Opus, and WAV files.
@@ -65,7 +77,7 @@ The source follows a feature-first structure under `lib/features/` with a
 pragmatic MVI flow:
 
 ```text
-Widget -> Cubit intent -> application workflow/domain port -> data adapter
+Widget -> Cubit intent -> named use case -> repository port -> adapter
    ^                                                        |
    +---------------- immutable state -----------------------+
 ```
@@ -75,20 +87,22 @@ The current feature modules are:
 - `library` — saved books, metadata, listening history, and Sembast persistence
 - `importing` — file selection, durable copying, metadata probing, and chapter
   parsing
-- `player` — playback, progress, sleep timers, notes, and player UI
+- `player` — playback, queueing, progress, listening sessions, sleep timers,
+  and player UI
 - `editing` — offline metadata, cover, track-order, and chapter editing
-- `notes` — the library-wide note gallery and archived notes
+- `notes` — note capture, detail, gallery, sharing, archived notes, and Markdown
+  export
 - `insights` — listening-history aggregation and activity views
 - `transcription` — local speech-model management and audio transcription
 - `storage` — storage diagnostics, cleanup, and app-data reset
-- `portability` — Markdown note export and JSON backup/restore
-- `settings` — persisted appearance, playback, library, and speech preferences
+- `portability` — schema-versioned whole-app JSON backup and restore
+- `settings` — persisted appearance, playback, and library preferences
 - `core` — navigation, dependency injection, database setup, localization,
   theming, and shared presentation code
 
 Every route has a `ScreenRoot` composition boundary. Roots resolve Cubits through
 GetIt/Injectable; ordinary widgets bind immutable state and dispatch user intent.
-Application workflows coordinate multi-step work, domain ports isolate data
+Named use cases coordinate multi-step work, repository ports isolate platform
 adapters, and data-only state uses Freezed. Named `go_router` routes include
 deep-linkable player IDs.
 
@@ -108,6 +122,10 @@ flutter analyze
 flutter test
 flutter run
 ```
+
+For a local coverage report, run `flutter test --coverage` followed by
+`dart run tool/coverage_report.dart`. Add `--enforce` to check the documented
+targets locally. This repository intentionally contains no CI/CD workflow.
 
 Do not edit generated `*.freezed.dart`, `*.g.dart`, or `injection.config.dart`
 files by hand.

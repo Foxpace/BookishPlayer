@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../localization/generated/l10n.dart';
+import 'diagnostic_details_panel.dart';
+
 class DiagnosticFailureView extends StatelessWidget {
   const DiagnosticFailureView({
     required this.title,
     required this.details,
     this.onRetry,
-    this.retryLabel = 'Try again',
-    this.secondaryAction,
+    this.actions = const (retryLabel: null, secondary: null),
     super.key,
   });
 
   factory DiagnosticFailureView.fromMessage({
     required String message,
     VoidCallback? onRetry,
-    String retryLabel = 'Try again',
+    String? retryLabel,
     Widget? secondaryAction,
     Key? key,
   }) {
@@ -24,19 +26,18 @@ class DiagnosticFailureView extends StatelessWidget {
       title: separator < 0 ? message : message.substring(0, separator),
       details: separator < 0 ? message : message.substring(separator + 1),
       onRetry: onRetry,
-      retryLabel: retryLabel,
-      secondaryAction: secondaryAction,
+      actions: (retryLabel: retryLabel, secondary: secondaryAction),
     );
   }
 
   final String title;
   final String details;
   final VoidCallback? onRetry;
-  final String retryLabel;
-  final Widget? secondaryAction;
+  final ({String? retryLabel, Widget? secondary}) actions;
 
   @override
   Widget build(BuildContext context) {
+    final (:retryLabel, secondary: secondaryAction) = actions;
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
@@ -60,7 +61,7 @@ class DiagnosticFailureView extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                'We’re sorry for the inconvenience. Please try again. If the issue keeps happening, expand and copy the error details below and send them to us.',
+                S.of(context).diagnosticFailureApology,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -71,47 +72,17 @@ class DiagnosticFailureView extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: Text(retryLabel),
+                  label: Text(retryLabel ?? S.of(context).tryAgain),
                 ),
               ],
-              if (secondaryAction != null) ...[
+              if (secondaryAction case final action?) ...[
                 const SizedBox(height: 6),
-                secondaryAction!,
+                action,
               ],
               const SizedBox(height: 16),
-              ExpansionTile(
-                tilePadding: EdgeInsets.zero,
-                title: const Text('Error details'),
-                subtitle: const Text(
-                  'Share these details if the issue repeats',
-                ),
-                children: [
-                  Container(
-                    width: double.infinity,
-                    constraints: const BoxConstraints(maxHeight: 260),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: SingleChildScrollView(
-                      child: SelectableText(
-                        details,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontFamily: 'monospace',
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  OutlinedButton.icon(
-                    onPressed: () => _copy(context),
-                    icon: const Icon(Icons.copy_rounded),
-                    label: const Text('Copy error details'),
-                  ),
-                ],
+              DiagnosticDetailsPanel(
+                details: details,
+                onCopy: () => _copyErrorDetails(context),
               ),
             ],
           ),
@@ -120,12 +91,12 @@ class DiagnosticFailureView extends StatelessWidget {
     );
   }
 
-  Future<void> _copy(BuildContext context) async {
+  Future<void> _copyErrorDetails(BuildContext context) async {
     await Clipboard.setData(ClipboardData(text: details));
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Error details copied')));
+      ).showSnackBar(SnackBar(content: Text(S.of(context).errorDetailsCopied)));
     }
   }
 }

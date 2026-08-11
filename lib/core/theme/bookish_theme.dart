@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+part 'bookish_text_styles.dart';
+
 abstract final class BookishTheme {
+  static const _bodyFontFamily = 'serif';
+  static const _diagnosticFontFamily = 'monospace';
   static const _ochre = Color(0xFFBD6C3B);
   static const _lightPaper = Color(0xFFF7F3EA);
   static const _lightInk = Color(0xFF26241F);
@@ -11,28 +15,31 @@ abstract final class BookishTheme {
     brightness: Brightness.light,
     background: _lightPaper,
     foreground: _lightInk,
-    surface: const Color(0xFFFFFCF6),
-    border: const Color(0xFFE8E0D2),
-    field: const Color(0xFFFFFCF6),
+    palette: const (
+      surface: Color(0xFFFFFCF6),
+      border: Color(0xFFE8E0D2),
+      field: Color(0xFFFFFCF6),
+    ),
   );
 
   static ThemeData get dark => _build(
     brightness: Brightness.dark,
     background: _darkPaper,
     foreground: _darkInk,
-    surface: const Color(0xFF211F1A),
-    border: const Color(0xFF3B382F),
-    field: const Color(0xFF292720),
+    palette: const (
+      surface: Color(0xFF211F1A),
+      border: Color(0xFF3B382F),
+      field: Color(0xFF292720),
+    ),
   );
 
   static ThemeData _build({
     required Brightness brightness,
     required Color background,
     required Color foreground,
-    required Color surface,
-    required Color border,
-    required Color field,
+    required ({Color surface, Color border, Color field}) palette,
   }) {
+    final (:surface, :border, :field) = palette;
     final scheme = ColorScheme.fromSeed(
       seedColor: _ochre,
       brightness: brightness,
@@ -49,7 +56,7 @@ abstract final class BookishTheme {
       textTheme: base.textTheme.apply(
         bodyColor: foreground,
         displayColor: foreground,
-        fontFamily: 'serif',
+        fontFamily: _bodyFontFamily,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
