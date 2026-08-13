@@ -1,0 +1,31 @@
+include: package:lints/recommended.yaml
+
+plugins:
+  lintel:
+    version: 0.1.5
+    diagnostics:
+      completer_errors_need_stack_trace: true
+      data_class_uses_freezed: true
+      file_line_count: true
+      long_parameter_list: true
+      maintainability_limits: true
+      no_assignments_in_conditions: true
+      no_compatibility_shims: true
+      no_dynamic: true
+      no_empty_test_groups: true
+      no_enum_values_by_index: true
+      no_global_mutable_state: true
+      no_non_null_assertions: true
+      no_one_field_records: true
+      no_public_test_members: true
+      no_self_assignment: true
+      no_self_comparison: true
+      no_widget_returning_helpers: true
+      prefer_contains_key: true
+      single_public_declaration_per_file: true
+      single_operation_try_blocks: true
+      test_body_uses_given_when_then_comments: true
+      test_descriptions_use_given_when_then: true
+      test_groups_describe_intention: true
+      test_line_count: true
+      visual_grouping: true

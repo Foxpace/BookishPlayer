@@ -2,25 +2,28 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Bookish (Debug)",
+      "name": "Bookish Store (Debug)",
       "request": "launch",
       "type": "dart",
+      "cwd": "apps/store",
       "program": "lib/main.dart",
       "flutterMode": "debug"
     },
     {
-      "name": "Bookish (Profile)",
+      "name": "Bookish Store (Release)",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main.dart",
-      "flutterMode": "profile"
-    },
-    {
-      "name": "Bookish (Release)",
-      "request": "launch",
-      "type": "dart",
+      "cwd": "apps/store",
       "program": "lib/main.dart",
       "flutterMode": "release"
+    },
+    {
+      "name": "Bookish Internal (Debug)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/internal",
+      "program": "lib/main.dart",
+      "flutterMode": "debug"
     }
   ]
 }

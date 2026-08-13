@@ -1,0 +1,25 @@
+name: bookish_internal
+description: "Internal Bookish distribution with optional transcription."
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  bookish_cactus_transcription:
+    path: ../../packages/bookish_cactus_transcription
+  bookish_player:
+    path: ../../packages/bookish_player
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  config:
+    enable-swift-package-manager: false
+  uses-material-design: true

@@ -1,0 +1,1 @@
+enum CactusDownloadPhase { downloading, failure }

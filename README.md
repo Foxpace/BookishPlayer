@@ -59,9 +59,10 @@ by Lewis Carroll.
 - Browse notes across the whole library or by book, including notes retained
   from removed books.
 - Export a book's notes as Markdown.
-- Transcribe a selected passage locally, adjust the captured range, edit the
-  result, and share it as a quote.
-- Download and manage on-device speech models from Settings.
+- In internal builds, transcribe a selected passage locally, adjust the
+  captured range, edit the result, and share it as a quote.
+- In internal builds, download and manage on-device speech models from
+  Settings. Store builds exclude this capability and its native packages.
 
 ### Keep data under your control
 
@@ -73,7 +74,8 @@ by Lewis Carroll.
 
 ## Architecture
 
-The source follows a feature-first structure under `lib/features/` with a
+The shared source follows a feature-first structure under
+`packages/bookish_player/lib/features/` with a
 pragmatic MVI flow:
 
 ```text
@@ -109,19 +111,62 @@ deep-linkable player IDs.
 The complete boundaries and enforced size limits are documented in
 [`docs/architecture.md`](docs/architecture.md).
 
+## Distribution targets
+
+The repository keeps both distributions on one branch with independent Flutter
+dependency graphs:
+
+- `apps/store` is the Google Play and Apple App Store target. It has no
+  dependency on Cactus or the transcription FFmpeg adapter.
+- `apps/internal` enables transcription and depends on
+  `packages/bookish_cactus_transcription`. The app owns the GetIt registration
+  and maps the package's standalone DTOs to Bookish domain models.
+- `packages/bookish_player` contains the shared application, feature, and test
+  code.
+
+The optional Cactus package has no dependency on Bookish, GetIt, or Injectable;
+it can be constructed and used as an ordinary library.
+
+The Android and iOS projects were copied from the original application rather
+than regenerated, preserving the existing native configuration.
+
 ## Development
 
 Bookish requires the Flutter SDK and a configured iOS or Android toolchain.
 
 ```sh
+cd packages/bookish_player
 flutter pub get
 flutter pub run intl_utils:generate
 dart run build_runner build
 dart format lib test
 flutter analyze
 flutter test
+
+cd ../../apps/store
+flutter run
+
+cd ../internal
 flutter run
 ```
+
+Build store artifacts only through the guarded scripts:
+
+```sh
+./tool/build_store.sh android
+./tool/build_store.sh ios
+```
+
+Both app targets share the same release identity. Apple team and bundle values
+live in `signing/ios/Signing.xcconfig`. For Android release signing, copy
+`signing/android/key.properties.example` to
+`signing/android/key.properties` and place the referenced private keystore in
+that directory. The credential file and keystore remain untracked.
+
+Each script uses the committed store lockfile and fails before building if
+Cactus or `ffmpeg_kit_flutter_new_audio` enters the store dependency graph.
+`./tool/verify_store_dependencies.sh` runs that guard without producing a store
+artifact.
 
 For a local coverage report, run `flutter test --coverage` followed by
 `dart run tool/coverage_report.dart`. Add `--enforce` to check the documented
@@ -130,13 +175,13 @@ targets locally. This repository intentionally contains no CI/CD workflow.
 Do not edit generated `*.freezed.dart`, `*.g.dart`, or `injection.config.dart`
 files by hand.
 
-Localization source files live in `lib/l10n`. After changing an ARB file, run
+Localization source files live in `packages/bookish_player/lib/l10n`. After changing an ARB file, run
 `flutter pub run intl_utils:generate` to refresh the generated `S` class. The app
 follows the device locale and currently supports English and Slovak.
 
 ## Test media
 
 An M4B sample from the freely available LibriVox collection below is kept in
-`test_samples/` for local parser and playback testing:
+`packages/bookish_player/test_samples/` for local parser and playback testing:
 
 - <https://archive.org/details/LibrivoxM4bCollectionAudiobooks_22>
