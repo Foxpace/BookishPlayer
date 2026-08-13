@@ -1,6 +1,11 @@
 # Bookish architecture
 
-Bookish uses feature-first modules with a pragmatic MVI loop:
+Bookish uses one shared feature package and two application targets. The
+`apps/store` dependency graph excludes optional transcription native packages;
+`apps/internal` registers the adapter exported by
+`packages/bookish_cactus_transcription`. Both targets consume
+`packages/bookish_player`, which uses feature-first modules with a pragmatic
+MVI loop:
 
 ```text
 Widget -> Cubit intent -> use case -> repository port -> adapter

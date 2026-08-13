@@ -1,0 +1,3 @@
+// Shared non-secret signing identity for both Flutter app targets.
+BOOKISH_DEVELOPMENT_TEAM = X33CS3JF24
+BOOKISH_BUNDLE_IDENTIFIER = com.tomasrepcik.bookish

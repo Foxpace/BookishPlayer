@@ -1,0 +1,6 @@
+# Both Flutter app targets read signing/android/key.properties.
+# Keep the real file and keystore private.
+storeFile=bookish-release.jks
+storePassword=
+keyAlias=bookish
+keyPassword=

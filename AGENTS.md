@@ -2,16 +2,19 @@
 
 ## Project Structure & Module Organization
 
-Bookish is a Flutter audiobook player. Application code lives in `lib/`. Shared navigation, DI, database, theme, and reusable presentation code belong in `lib/core/`; feature code belongs in `lib/features/<feature>/` and is divided into `cubits`, `models`, `repos`, `ui`, and `use_cases` as needed. Tests mirror that layout under `test/`. Lintel enforces architectural boundaries through `dart analyze`. Platform projects are in `android/` and `ios/`; app artwork is in `assets/`, and media fixtures are in `test_samples/`. See `docs/architecture.md` before changing boundaries.
+Bookish is a Flutter audiobook player. Shared application code lives in `packages/bookish_player/lib/`. Shared navigation, DI, database, theme, and reusable presentation code belong in `packages/bookish_player/lib/core/`; feature code belongs in `packages/bookish_player/lib/features/<feature>/` and is divided into `cubits`, `models`, `repos`, `ui`, and `use_cases` as needed. Tests mirror that layout under `packages/bookish_player/test/`. Lintel enforces architectural boundaries through `dart analyze`. Store platform projects are in `apps/store/android/` and `apps/store/ios/`; internal platform projects are in `apps/internal/`. The optional Cactus adapter lives in `packages/bookish_cactus_transcription/` and must never become a dependency of `apps/store`. See `docs/architecture.md` before changing boundaries.
 
 ## Build, Test, and Development Commands
 
-- `flutter pub get` resolves dependencies.
+- Run shared development commands from `packages/bookish_player/`.
+- `flutter pub get` resolves shared dependencies.
 - `dart run build_runner build` regenerates Freezed, JSON, and Injectable output after annotated model or DI changes.
 - `dart format lib test` formats handwritten Dart sources.
 - `flutter analyze` runs the configured Flutter lints.
 - `flutter test` runs unit, widget, and parser tests.
 - `flutter run` launches the app on a selected device.
+- `../../tool/verify_store_dependencies.sh` proves the store graph excludes Cactus and its FFmpeg adapter.
+- `../../tool/build_store.sh android|ios` creates guarded store artifacts from `apps/store`.
 
 Run analysis and the full test suite before submitting changes. Do not hand-edit `*.freezed.dart`, `*.g.dart`, or `injection.config.dart`.
 
