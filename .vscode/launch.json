@@ -10,6 +10,14 @@
       "flutterMode": "debug"
     },
     {
+      "name": "Bookish Store (Profile)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/store",
+      "program": "lib/main.dart",
+      "flutterMode": "profile"
+    },
+    {
       "name": "Bookish Store (Release)",
       "request": "launch",
       "type": "dart",
@@ -24,6 +32,60 @@
       "cwd": "apps/internal",
       "program": "lib/main.dart",
       "flutterMode": "debug"
+    },
+    {
+      "name": "Bookish Internal (Profile)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/internal",
+      "program": "lib/main.dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "Bookish Internal (Release)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/internal",
+      "program": "lib/main.dart",
+      "flutterMode": "release"
+    },
+    {
+      "name": "Bookish Player (All Tests)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "packages/bookish_player",
+      "program": "test"
+    },
+    {
+      "name": "Bookish Player (Current Test File)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "packages/bookish_player",
+      "program": "${file}"
+    },
+    {
+      "name": "Cactus Transcription (All Tests)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "packages/bookish_cactus_transcription",
+      "program": "test"
+    },
+    {
+      "name": "Cactus Transcription (Current Test File)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "packages/bookish_cactus_transcription",
+      "program": "${file}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "All Package Tests",
+      "configurations": [
+        "Bookish Player (All Tests)",
+        "Cactus Transcription (All Tests)"
+      ],
+      "stopAll": true
     }
   ]
 }
