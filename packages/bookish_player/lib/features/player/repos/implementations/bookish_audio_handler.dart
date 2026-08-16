@@ -7,8 +7,7 @@ import '../../use_cases/playback_command_service.dart';
 
 class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
   BookishAudioHandler(this._player, this._books, this._commands) {
-    _player.playbackEventStream.listen(_broadcastState);
-    _player.playingStream.listen((_) => _broadcastState(_player.playbackEvent));
+    _player.playerEventStream.listen(_broadcastState);
     _player.sequenceStream.listen((_) => _broadcastQueue());
     _player.currentIndexStream.listen((_) => _broadcastCurrentItem());
   }
@@ -128,7 +127,7 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
       milliseconds: extras?['forwardMs'] as int? ?? 15000,
     );
 
-    _broadcastState(_player.playbackEvent);
+    _broadcastState(_player.playerEvent);
   }
 
   @override
@@ -175,34 +174,35 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
     }
   }
 
-  void _broadcastState(PlaybackEvent event) {
+  void _broadcastState(PlayerEvent event) {
     playbackState.add(_buildPlaybackState(event));
   }
 
-  PlaybackState _buildPlaybackState(PlaybackEvent event) => PlaybackState(
-    controls: _mediaControls(),
+  PlaybackState _buildPlaybackState(PlayerEvent event) => PlaybackState(
+    controls: _mediaControls(playing: event.playing),
     systemActions: const {
       MediaAction.seek,
       MediaAction.seekForward,
       MediaAction.seekBackward,
     },
     androidCompactActionIndices: const [1, 2, 3],
-    processingState: _audioProcessingState,
-    playing: _player.playing,
-    updatePosition: _player.position,
-    bufferedPosition: _player.bufferedPosition,
+    processingState: _audioProcessingState(event.playbackEvent.processingState),
+    playing: event.playing,
+    updatePosition: event.playbackEvent.updatePosition,
+    bufferedPosition: event.playbackEvent.bufferedPosition,
     speed: _player.speed,
-    queueIndex: event.currentIndex,
+    updateTime: event.playbackEvent.updateTime,
+    queueIndex: event.playbackEvent.currentIndex,
   );
 
-  List<MediaControl> _mediaControls() => [
+  List<MediaControl> _mediaControls({required bool playing}) => [
     MediaControl.skipToPrevious,
     MediaControl(
       androidIcon: 'drawable/ic_replay_15',
       label: 'Rewind ${_rewindInterval.inSeconds} seconds',
       action: MediaAction.rewind,
     ),
-    if (_player.playing) MediaControl.pause else MediaControl.play,
+    if (playing) MediaControl.pause else MediaControl.play,
     MediaControl(
       androidIcon: 'drawable/ic_forward_15',
       label: 'Forward ${_forwardInterval.inSeconds} seconds',
@@ -211,8 +211,8 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
     MediaControl.skipToNext,
   ];
 
-  AudioProcessingState get _audioProcessingState =>
-      switch (_player.processingState) {
+  AudioProcessingState _audioProcessingState(ProcessingState state) =>
+      switch (state) {
         ProcessingState.idle => AudioProcessingState.idle,
         ProcessingState.loading => AudioProcessingState.loading,
         ProcessingState.buffering => AudioProcessingState.buffering,
