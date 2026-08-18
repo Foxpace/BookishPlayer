@@ -4,17 +4,16 @@ import 'package:cactus/cactus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-import 'cactus_audio_clip_factory.dart';
-import 'cactus_models.dart';
-import 'speech_model_catalog_cache.dart';
-import 'transcription_chunking.dart';
+import '../cactus_models.dart';
+import '../cactus_pcm_stream_factory.dart';
+import '../speech_model_catalog_cache.dart';
 
 class CactusTranscriptionRepository {
-  CactusTranscriptionRepository(this._clips) {
+  CactusTranscriptionRepository(this._audio) {
     CactusConfig.isTelemetryEnabled = false;
   }
 
-  final CactusAudioClipFactory _clips;
+  final CactusPcmStreamFactory _audio;
   final _stt = CactusSTT();
   String? _initializedModel;
 
@@ -119,43 +118,16 @@ class CactusTranscriptionRepository {
       _initializedModel = model;
     }
 
-    final clips = await _clips.createClips(source, start, end);
-    if (clips.isEmpty) {
-      throw const CactusTranscriptionException(
-        'The selected range contains no audio.',
+    final result = await _stt.transcribe(
+      audioStream: _audio.createStream(source, start, end),
+    );
+    if (!result.success) {
+      throw CactusTranscriptionException(
+        result.errorMessage ?? 'Cactus could not transcribe this audio.',
       );
     }
 
-    try {
-      return await _transcribeClips(clips);
-    } finally {
-      for (final clip in clips) {
-        if (clip.existsSync()) {
-          clip.deleteSync();
-        }
-      }
-    }
-  }
-
-  Future<String> _transcribeClips(List<File> clips) async {
-    final parts = <String>[];
-    for (final clip in clips) {
-      _stt.reset();
-      final result = await _stt.transcribe(audioFilePath: clip.path);
-
-      if (!result.success) {
-        throw CactusTranscriptionException(
-          result.errorMessage ?? 'Cactus could not transcribe this audio.',
-        );
-      }
-
-      final text = result.text.trim();
-      if (text.isNotEmpty) {
-        parts.add(text);
-      }
-    }
-
-    return mergeTranscriptionParts(parts);
+    return result.text.trim();
   }
 
   Future<bool> _hasInternetConnection() async {
