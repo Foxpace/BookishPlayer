@@ -1,6 +1,8 @@
 import 'package:bookish_cactus_transcription/bookish_cactus_transcription.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
-import 'package:bookish_player/features/transcription/repos/transcription_repositories.dart';
+import 'package:bookish_player/features/transcription/models/speech_model.dart';
+import 'package:bookish_player/features/transcription/models/transcription_download.dart';
+import 'package:bookish_player/features/transcription/repos/transcription_repository.dart';
 
 class BookishCactusTranscriptionRepository implements TranscriptionRepository {
   BookishCactusTranscriptionRepository(this._cactus);
