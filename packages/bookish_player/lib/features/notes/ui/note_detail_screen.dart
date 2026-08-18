@@ -4,7 +4,7 @@ import '../../../core/localization/generated/l10n.dart';
 import '../../../core/presentation/bookish_scaffold.dart';
 import '../../../core/presentation/formatters.dart';
 import '../../player/models/share_origin.dart';
-import '../models/note_models.dart';
+import '../models/book_note.dart';
 
 typedef SaveNoteCallback =
     Future<void> Function({required String? title, required String text});

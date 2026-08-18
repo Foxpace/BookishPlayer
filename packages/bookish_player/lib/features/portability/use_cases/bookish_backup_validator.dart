@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../library/models/library_models.dart';
 import '../../library/models/listening_session.dart';
-import '../../notes/models/note_models.dart';
+import '../../notes/models/book_note.dart';
 import '../models/bookish_backup.dart';
 
 import 'backup_validation_failure.dart';

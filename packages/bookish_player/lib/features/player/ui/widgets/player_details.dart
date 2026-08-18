@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../library/models/library_models.dart';
 import '../../cubits/player_cubits.dart';
 import '../../cubits/player_ui_intents.dart';
-import 'player_controls.dart';
+import 'player_tools.dart';
+import 'player_transport.dart';
 import 'player_timeline.dart';
 
 class PlayerDetails extends StatelessWidget {

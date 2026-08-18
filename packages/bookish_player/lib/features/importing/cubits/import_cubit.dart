@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../core/app_metadata.dart';
 import '../../../core/diagnostics/app_error.dart';
-import '../use_cases/importing_use_cases.dart';
+import '../use_cases/import_use_cases.dart';
 import '../models/import_models.dart';
 import 'import_cubits.dart';
 

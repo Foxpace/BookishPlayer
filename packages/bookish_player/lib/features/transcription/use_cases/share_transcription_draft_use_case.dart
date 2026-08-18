@@ -1,6 +1,8 @@
 import 'package:injectable/injectable.dart';
 
-import '../../player/repos/player_repositories.dart';
+import '../../player/models/share_origin.dart';
+
+import '../../player/repos/quote_share_repository.dart';
 import '../models/transcription_draft.dart';
 
 @Environment('internal')

@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/pump_bookish_app.dart';
-import 'notes_test_builder.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
+import '../../../test_support/features/notes/notes_test_builder.dart';
 
 void main() {
   group('Voice note sheet', () {

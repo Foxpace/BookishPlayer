@@ -1,6 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'insights_models.dart';
+import 'insights_period.dart';
+
+
+import 'listening_activity_range.dart';
 
 part 'listening_insights_summary.freezed.dart';
 

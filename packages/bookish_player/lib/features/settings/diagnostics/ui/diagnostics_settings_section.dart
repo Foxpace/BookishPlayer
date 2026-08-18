@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
-import '../cubits/diagnostics_cubits.dart';
+import '../cubits/diagnostics_state.dart';
+import '../cubits/diagnostics_status.dart';
 
 class DiagnosticsSettingsSection extends StatelessWidget {
   const DiagnosticsSettingsSection({

@@ -1,11 +1,12 @@
 import 'package:bookish_player/features/importing/use_cases/import_cleanup.dart';
 import 'package:bookish_player/features/importing/models/import_runtime_state.dart';
 import 'package:bookish_player/features/importing/models/import_models.dart';
-import 'package:bookish_player/features/importing/repos/import_repositories.dart';
+import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
+import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_app_diagnostics.dart';
-import '../../support/fakes/fake_clock.dart';
+import '../../../test_support/support/fakes/fake_app_diagnostics.dart';
+import '../../../test_support/support/fakes/fake_clock.dart';
 
 void main() {
   group('Deterministic import progress tracking', () {

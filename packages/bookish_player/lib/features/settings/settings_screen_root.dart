@@ -8,15 +8,15 @@ import '../../core/app_metadata.dart';
 import '../../app/app_capabilities.dart';
 import '../../core/di/injection.dart';
 import '../../core/localization/generated/l10n.dart';
-import '../../core/navigation/app_navigation.dart';
+import '../../core/navigation/app_router.dart';
 import '../../core/presentation/app_message.dart';
 import '../portability/backup_settings_root.dart';
 import '../transcription/speech_models_root.dart';
 import 'cubits/settings_cubit.dart';
 import 'cubits/settings_intents.dart';
-import 'cubits/settings_cubits.dart';
+import 'cubits/settings_state.dart';
 import 'diagnostics/diagnostics_settings_root.dart';
-import 'ui/settings_ui.dart';
+import 'ui/settings_screen.dart';
 import 'ui/widgets/bookish_about_dialog.dart';
 
 /// Independent composition boundary for the settings feature.

@@ -2,7 +2,7 @@ import 'package:bookish_player/core/presentation/app_message.dart';
 import 'package:bookish_player/features/insights/use_cases/load_listening_insights_use_case.dart';
 import 'package:bookish_player/features/insights/use_cases/insights_use_cases.dart';
 import 'package:bookish_player/features/insights/cubits/listening_insights_cubit.dart';
-import 'package:bookish_player/features/insights/cubits/insights_cubits.dart';
+import 'package:bookish_player/features/insights/cubits/listening_insights_status.dart';
 import 'package:bookish_player/features/insights/repos/implementations/library_listening_insights_repository.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/library/repos/book_metadata_repository.dart';
@@ -10,7 +10,7 @@ import 'package:bookish_player/features/library/repos/listening_history_reposito
 import 'package:bookish_player/features/library/models/listening_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_clock.dart';
+import '../../../test_support/support/fakes/fake_clock.dart';
 
 void main() {
   group('Malformed listening metadata', () {

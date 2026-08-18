@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:bookish_player/features/player/repos/implementations/player_audio_repository.dart';
+import 'package:bookish_player/features/player/models/playback_segments.dart';
+import 'package:bookish_player/features/player/repos/implementations/just_audio_player_repository.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:just_audio/just_audio.dart';

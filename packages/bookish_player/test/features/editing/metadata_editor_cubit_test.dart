@@ -1,12 +1,12 @@
 import 'package:bookish_player/core/presentation/app_message.dart';
 import 'package:bookish_player/features/editing/cubits/metadata_editor_cubit.dart';
-import 'package:bookish_player/features/editing/cubits/editing_cubits.dart';
+import 'package:bookish_player/features/editing/cubits/metadata_editor_status.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_library_test_support.dart';
-import '../../support/fixtures.dart';
-import 'editing_test_builder.dart';
+import '../../../test_support/support/fakes/fake_library_test_support.dart';
+import '../../../test_support/support/fixtures.dart';
+import '../../../test_support/features/editing/editing_test_builder.dart';
 
 void main() {
   group('Audiobook metadata editor', () {

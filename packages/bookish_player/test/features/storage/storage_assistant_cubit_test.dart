@@ -9,8 +9,8 @@ import 'package:bookish_player/features/storage/models/storage_report.dart';
 import 'package:bookish_player/features/storage/cubits/storage_assistant_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fixtures.dart';
-import 'storage_test_builder.dart';
+import '../../../test_support/support/fixtures.dart';
+import '../../../test_support/features/storage/storage_test_builder.dart';
 
 void main() {
   group('Local library storage', () {

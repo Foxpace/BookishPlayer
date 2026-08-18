@@ -1,6 +1,8 @@
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/transcription/repos/transcription_preferences.dart';
-import 'package:bookish_player/features/transcription/repos/transcription_repositories.dart';
+import 'package:bookish_player/features/transcription/models/speech_model.dart';
+import 'package:bookish_player/features/transcription/models/transcription_download.dart';
+import 'package:bookish_player/features/transcription/repos/transcription_repository.dart';
 import 'package:bookish_player/features/transcription/cubits/speech_models_cubit.dart';
 import 'package:bookish_player/features/transcription/cubits/transcription_cubits.dart';
 import 'package:bookish_player/features/transcription/ui/speech_models_section.dart';
@@ -10,8 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/pump_bookish_app.dart';
-import 'transcription_test_builder.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
+import '../../../test_support/features/transcription/transcription_test_builder.dart';
 
 void main() {
   group('Local speech-model catalog', () {

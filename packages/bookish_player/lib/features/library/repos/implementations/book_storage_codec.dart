@@ -1,6 +1,6 @@
 import '../../models/library_models.dart';
 import '../../models/listening_session.dart';
-import '../../../notes/models/note_models.dart';
+import '../../../notes/models/book_note.dart';
 
 const _metadataKeys = {
   'title',

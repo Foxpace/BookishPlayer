@@ -4,8 +4,9 @@ import '../../../core/localization/generated/l10n.dart';
 import '../../../core/presentation/app_message.dart';
 import '../../../core/presentation/bookish_scaffold.dart';
 import '../../../core/presentation/diagnostic_failure_view.dart';
-import '../cubits/insights_cubits.dart';
-import '../models/insights_models.dart';
+import '../cubits/listening_insights_state.dart';
+import '../cubits/listening_insights_status.dart';
+import '../models/insights_period.dart';
 import 'widgets/all_time_listening_summary.dart';
 import 'widgets/listening_activity_section.dart';
 

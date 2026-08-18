@@ -4,7 +4,7 @@ import 'package:bookish_player/features/importing/ui/widgets/import_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/pump_bookish_app.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
 
 void main() {
   group('Audiobook import presentation', () {

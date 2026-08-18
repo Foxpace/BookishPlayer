@@ -3,9 +3,9 @@ import 'package:bookish_player/features/player/ui/widgets/now_playing_bar.dart';
 import 'package:bookish_player/features/settings/cubits/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-import '../features/player/player_test_support.dart';
-import '../features/settings/settings_test_use_cases.dart';
-import '../support/fixtures.dart';
+import '../../test_support/features/player/player_test_support.dart';
+import '../../test_support/features/settings/settings_test_use_cases.dart';
+import '../../test_support/support/fixtures.dart';
 
 void main() {
   testWidgets(

@@ -8,10 +8,10 @@ import '../../features/notes/repos/book_note_repository.dart';
 import '../../features/library/repos/book_metadata_repository.dart';
 import '../../features/library/repos/observable_audiobook_catalog_repository.dart';
 import '../../features/library/repos/implementations/sembast_audiobook_repository.dart';
-import '../../features/player/repos/implementations/player_audio_repository.dart';
+import '../../features/player/repos/implementations/just_audio_player_repository.dart';
 import '../../features/player/repos/audio_player_repository.dart';
 import '../database/bookish_database.dart';
-import '../navigation/app_navigation.dart';
+import '../navigation/app_router.dart';
 
 @module
 abstract class AppModule {

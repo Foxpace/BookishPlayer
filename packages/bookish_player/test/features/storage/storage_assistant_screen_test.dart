@@ -1,4 +1,4 @@
-import 'package:bookish_player/core/navigation/app_navigation.dart';
+import 'package:bookish_player/core/navigation/app_router.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/library/repos/audiobook_catalog_repository.dart';
 import 'package:bookish_player/features/library/models/audiobook_removal_mode.dart';
@@ -12,11 +12,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../support/fixtures.dart';
-import '../../support/pump_bookish_app.dart';
-import 'storage_assistant_robot.dart';
-import 'storage_assistant_test_harness.dart';
-import 'storage_test_builder.dart';
+import '../../../test_support/support/fixtures.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
+import '../../../test_support/features/storage/storage_assistant_robot.dart';
+import '../../../test_support/features/storage/storage_assistant_test_harness.dart';
+import '../../../test_support/features/storage/storage_test_builder.dart';
 
 void main() {
   group('Inspected local library', () {

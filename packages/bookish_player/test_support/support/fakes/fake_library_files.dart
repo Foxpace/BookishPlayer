@@ -1,4 +1,5 @@
-import 'package:bookish_player/features/importing/repos/import_repositories.dart';
+import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
+import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 
 class FakeLibraryFiles implements FileImportRepository {
   String? pickedCover;

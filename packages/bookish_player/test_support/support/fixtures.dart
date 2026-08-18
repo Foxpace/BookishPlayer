@@ -1,6 +1,6 @@
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/library/models/listening_session.dart';
-import 'package:bookish_player/features/notes/models/note_models.dart';
+import 'package:bookish_player/features/notes/models/book_note.dart';
 import 'package:bookish_player/features/portability/models/bookish_backup.dart';
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 

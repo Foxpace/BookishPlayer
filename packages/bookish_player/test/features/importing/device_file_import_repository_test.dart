@@ -6,7 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_id_generator.dart';
+import '../../../test_support/support/fakes/fake_id_generator.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

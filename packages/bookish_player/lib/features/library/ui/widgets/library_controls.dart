@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
-import '../../../../core/navigation/app_navigation.dart' show ImportSource;
+import '../../../../core/navigation/import_source.dart' show ImportSource;
 
 Future<void> importAudiobooks(
   BuildContext context,

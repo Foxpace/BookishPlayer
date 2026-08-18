@@ -5,14 +5,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/localization/generated/l10n.dart';
-import '../core/navigation/app_navigation.dart';
+import '../core/navigation/app_router.dart';
 import '../core/navigation/focus_navigation.dart';
 import '../core/theme/bookish_theme.dart';
 import '../features/player/cubits/player_cubit.dart';
 import '../features/player/cubits/player_cubits.dart';
 import '../features/player/ui/now_playing_shell.dart';
 import '../features/settings/cubits/settings_cubit.dart';
-import '../features/settings/cubits/settings_cubits.dart';
+import '../features/settings/cubits/settings_state.dart';
 import '../features/settings/models/theme_preference.dart';
 
 class BookishApp extends StatelessWidget {

@@ -1,6 +1,9 @@
 import 'package:injectable/injectable.dart';
 
-import '../repos/transcription_repositories.dart';
+import '../models/speech_model.dart';
+
+
+import '../repos/transcription_repository.dart';
 
 @Environment('internal')
 @injectable

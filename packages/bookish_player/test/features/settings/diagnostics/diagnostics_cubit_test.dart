@@ -1,9 +1,11 @@
 import 'package:bookish_player/core/diagnostics/app_diagnostics.dart';
 import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_workflow.dart';
-import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_use_case_bundle.dart';
+import 'package:bookish_player/features/settings/diagnostics/use_cases/delete_diagnostics_use_case.dart';
+import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_use_cases.dart';
 import 'package:bookish_player/features/settings/diagnostics/repos/diagnostics_export_repository.dart';
 import 'package:bookish_player/features/settings/diagnostics/cubits/diagnostics_cubit.dart';
-import 'package:bookish_player/features/settings/diagnostics/cubits/diagnostics_cubits.dart';
+import 'package:bookish_player/features/settings/diagnostics/cubits/diagnostics_message.dart';
+import 'package:bookish_player/features/settings/diagnostics/cubits/diagnostics_status.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

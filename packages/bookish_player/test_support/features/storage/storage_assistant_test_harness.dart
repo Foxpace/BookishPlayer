@@ -1,5 +1,5 @@
 import 'package:bookish_player/core/localization/generated/l10n.dart';
-import 'package:bookish_player/core/navigation/app_navigation.dart';
+import 'package:bookish_player/core/navigation/app_router.dart';
 import 'package:bookish_player/core/presentation/app_message.dart';
 import 'package:bookish_player/features/storage/cubits/storage_assistant_cubit.dart';
 import 'package:bookish_player/features/storage/cubits/storage_assistant_state.dart';

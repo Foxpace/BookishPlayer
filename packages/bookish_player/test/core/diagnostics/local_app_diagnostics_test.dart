@@ -5,7 +5,7 @@ import 'package:bookish_player/core/diagnostics/diagnostics_file_provider.dart';
 import 'package:bookish_player/core/diagnostics/local_app_diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_clock.dart';
+import '../../../test_support/support/fakes/fake_clock.dart';
 
 void main() {
   late Directory directory;

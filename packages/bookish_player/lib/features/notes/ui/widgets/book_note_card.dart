@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/formatters.dart';
-import '../../models/note_models.dart';
+import '../../models/book_note.dart';
+import '../../models/book_note_kind.dart';
 
 class BookNoteCard extends StatelessWidget {
   const BookNoteCard({required this.note, required this.onOpen, super.key});

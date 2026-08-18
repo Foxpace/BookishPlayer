@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/localization/generated/l10n.dart';
-import '../notes/models/note_models.dart';
+import '../notes/models/book_note.dart';
 import 'cubits/player_cubit.dart';
 import 'cubits/player_cubits.dart';
 import 'ui/widgets/notes_sheet.dart';

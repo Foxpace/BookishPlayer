@@ -6,11 +6,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/di/injection.dart';
 import '../../core/localization/generated/l10n.dart';
-import '../../core/navigation/app_navigation.dart';
+import '../../core/navigation/app_router.dart';
 import '../../core/presentation/formatters.dart';
 import '../../app/app_capabilities.dart';
 import '../library/models/library_models.dart';
-import '../notes/models/note_models.dart';
+import '../notes/models/book_note.dart';
 import '../notes/ui/note_detail_screen.dart';
 import '../notes/ui/widgets/note_composer_sheet.dart';
 import '../notes/voice_note_root.dart';
@@ -19,13 +19,13 @@ import '../transcription/quote_transcription_root.dart';
 import '../transcription/transcription_preview_root.dart';
 import 'cubits/player_cubit.dart';
 import 'cubits/player_cubits.dart';
-import 'cubits/player_timeline.dart';
+import 'cubits/player_state_timeline.dart';
 import 'cubits/player_ui_intents.dart';
 import 'player_chapters_sheet_root.dart';
 import 'player_notes_sheet_root.dart';
 import 'player_sleep_timer_sheet_root.dart';
 import 'ui/player_seek_ui.dart';
-import 'ui/player_ui.dart';
+import 'ui/player_screen.dart';
 
 /// Composition boundary for one player route and its Cubit lifetime.
 class PlayerScreenRoot extends StatefulWidget {

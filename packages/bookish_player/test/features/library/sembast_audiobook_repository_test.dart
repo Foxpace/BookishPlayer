@@ -5,7 +5,7 @@ import 'package:bookish_player/features/library/models/audiobook_removal_mode.da
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sembast/sembast_memory.dart';
 
-import '../../support/fixtures.dart';
+import '../../../test_support/support/fixtures.dart';
 
 void main() {
   group('Sembast audiobook adapter', () {

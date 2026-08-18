@@ -5,7 +5,7 @@ import '../../core/di/injection.dart';
 import '../library/models/library_models.dart';
 import 'cubits/note_gallery_cubit.dart';
 import 'cubits/notes_cubits.dart';
-import 'models/note_models.dart';
+import 'models/book_note.dart';
 import 'ui/book_notes_screen.dart';
 import 'ui/note_detail_screen.dart';
 import 'ui/note_gallery_screen.dart';

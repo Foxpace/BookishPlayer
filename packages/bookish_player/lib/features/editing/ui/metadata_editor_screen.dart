@@ -5,7 +5,8 @@ import '../../../core/presentation/app_message.dart';
 import '../../../core/presentation/bookish_scaffold.dart';
 import '../../../core/presentation/diagnostic_failure_view.dart';
 import '../../library/models/library_models.dart';
-import '../cubits/editing_cubits.dart';
+import '../cubits/metadata_editor_state.dart';
+import '../cubits/metadata_editor_status.dart';
 import 'metadata_editor_form.dart';
 
 typedef MetadataEditorIntents = ({

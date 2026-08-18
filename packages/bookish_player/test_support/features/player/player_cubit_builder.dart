@@ -18,7 +18,8 @@ import 'package:bookish_player/features/player/use_cases/series_continuation_pol
 import 'package:bookish_player/features/player/use_cases/show_audio_output_picker_use_case.dart';
 import 'package:bookish_player/features/player/use_cases/sleep_timer_use_case.dart';
 import 'package:bookish_player/features/player/repos/audio_player_repository.dart';
-import 'package:bookish_player/features/player/repos/player_repositories.dart';
+import 'package:bookish_player/features/player/models/share_origin.dart';
+import 'package:bookish_player/features/player/repos/quote_share_repository.dart';
 import 'package:bookish_player/features/player/repos/audio_output_picker.dart';
 import 'package:bookish_player/features/player/cubits/player_cubit.dart';
 import 'package:bookish_player/features/player/cubits/player_playback_streams.dart';

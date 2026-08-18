@@ -1,7 +1,7 @@
 import 'package:bookish_player/features/portability/use_cases/portability_use_case_bundle.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fixtures.dart';
+import '../../../test_support/support/fixtures.dart';
 
 void main() {
   const sut = BookishBackupValidator();

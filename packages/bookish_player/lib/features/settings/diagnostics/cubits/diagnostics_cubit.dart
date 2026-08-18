@@ -1,8 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../use_cases/diagnostics_use_case_bundle.dart';
-import 'diagnostics_cubits.dart';
+
+import '../use_cases/diagnostics_use_cases.dart';
+import 'diagnostics_message.dart';
+import 'diagnostics_state.dart';
+import 'diagnostics_status.dart';
 
 @injectable
 class DiagnosticsCubit extends Cubit<DiagnosticsState> {

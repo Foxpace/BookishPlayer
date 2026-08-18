@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 
-import '../../../importing/repos/import_repositories.dart';
+import '../../../importing/repos/file_import_repository.dart';
+
 import '../../../library/models/library_models.dart';
 import '../../../library/repos/audiobook_catalog_repository.dart';
 import '../book_editing_repository.dart';

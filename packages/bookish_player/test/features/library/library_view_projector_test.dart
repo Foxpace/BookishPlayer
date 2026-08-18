@@ -2,7 +2,7 @@ import 'package:bookish_player/features/library/cubits/library_cubits.dart';
 import 'package:bookish_player/features/library/cubits/library_state_projection.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fixtures.dart';
+import '../../../test_support/support/fixtures.dart';
 
 void main() {
   group('Books across every listening and metadata category', () {

@@ -3,9 +3,11 @@ import 'package:injectable/injectable.dart';
 import '../../../core/foundation/clock.dart';
 import '../../../core/foundation/id_generator.dart';
 import '../../library/models/library_models.dart';
-import '../../player/repos/player_repositories.dart';
+import '../../player/models/share_origin.dart';
+import '../../player/repos/quote_share_repository.dart';
 import '../../portability/repos/local_export_repository.dart';
-import '../models/note_models.dart';
+import '../models/book_note.dart';
+import '../models/book_note_kind.dart';
 import '../repos/book_note_repository.dart';
 
 typedef PlayerNoteInput = ({

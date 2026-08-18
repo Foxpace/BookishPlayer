@@ -5,7 +5,7 @@ import '../../../../core/database/bookish_database.dart';
 import '../../../library/repos/implementations/book_storage_codec.dart';
 import '../../../library/models/library_models.dart';
 import '../../../library/models/listening_session.dart';
-import '../../../notes/models/note_models.dart';
+import '../../../notes/models/book_note.dart';
 import '../../../settings/models/playback_preferences.dart';
 import '../backup_store_repository.dart';
 import '../../models/bookish_backup.dart';

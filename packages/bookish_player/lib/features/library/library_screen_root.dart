@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/di/injection.dart';
 import '../../core/localization/generated/l10n.dart';
-import '../../core/navigation/app_navigation.dart';
+import '../../core/navigation/app_router.dart';
+import '../../core/navigation/import_source.dart';
 import '../../core/navigation/focus_navigation.dart';
 import '../../core/presentation/app_message.dart';
 import '../player/cubits/player_cubit.dart';
@@ -15,9 +16,9 @@ import 'models/library_models.dart';
 import 'ui/library_screen.dart';
 import 'ui/widgets/audiobook_removal_dialog.dart';
 import 'ui/widgets/full_title_dialog.dart';
-import 'ui/widgets/library_widgets.dart';
+import 'ui/widgets/library_controls.dart';
 import 'ui/widgets/library_view_sheet.dart';
-import 'use_cases/library_use_case_bundle.dart';
+import 'use_cases/library_use_cases.dart';
 
 /// Composition boundary for the library feature.
 class LibraryScreenRoot extends StatelessWidget {

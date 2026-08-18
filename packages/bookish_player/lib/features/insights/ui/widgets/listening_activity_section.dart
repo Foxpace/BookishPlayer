@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
-import '../../cubits/insights_cubits.dart';
-import '../../models/insights_models.dart';
+import '../../cubits/listening_insights_state.dart';
+import '../../models/insights_period.dart';
 import 'recent_activity_card.dart';
 
 class ListeningActivitySection extends StatelessWidget {

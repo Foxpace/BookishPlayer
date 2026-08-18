@@ -2,17 +2,19 @@ import 'package:bookish_player/features/importing/use_cases/audiobook_import_wor
 import 'package:bookish_player/features/importing/use_cases/import_cleanup.dart';
 import 'package:bookish_player/features/importing/use_cases/import_source_gateway.dart';
 import 'package:bookish_player/features/importing/use_cases/imported_book_saver.dart';
-import 'package:bookish_player/features/importing/use_cases/importing_use_cases.dart';
+import 'package:bookish_player/features/importing/use_cases/copy_import_diagnostics_use_case.dart';
+import 'package:bookish_player/features/importing/use_cases/import_use_cases.dart';
+import 'package:bookish_player/features/importing/use_cases/remove_transferred_sources_use_case.dart';
 import 'package:bookish_player/features/importing/repos/audiobook_metadata_extractor.dart';
-import 'package:bookish_player/features/importing/repos/import_repositories.dart';
+import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:bookish_player/features/importing/cubits/import_cubit.dart';
 import 'package:bookish_player/features/importing/cubits/import_cubits.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_clock.dart';
-import '../../support/fakes/fake_app_diagnostics.dart';
-import '../../support/fakes/fake_id_generator.dart';
-import 'import_test_support.dart';
+import '../../../test_support/support/fakes/fake_clock.dart';
+import '../../../test_support/support/fakes/fake_app_diagnostics.dart';
+import '../../../test_support/support/fakes/fake_id_generator.dart';
+import '../../../test_support/features/importing/import_test_support.dart';
 
 void main() {
   group('Import cubit', () {

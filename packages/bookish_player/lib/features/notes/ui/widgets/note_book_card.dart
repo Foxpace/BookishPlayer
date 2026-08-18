@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/localization/generated/l10n.dart';
 import '../../../../core/presentation/book_cover.dart';
 import '../../../library/models/library_models.dart';
-import '../../models/note_models.dart';
+import '../../models/book_note.dart';
 
 class NoteBookCard extends StatelessWidget {
   const NoteBookCard({

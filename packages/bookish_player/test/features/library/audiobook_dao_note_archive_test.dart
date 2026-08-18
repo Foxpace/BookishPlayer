@@ -4,7 +4,7 @@ import 'package:bookish_player/features/library/repos/implementations/listening_
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/library/models/audiobook_removal_mode.dart';
 import 'package:bookish_player/features/library/models/listening_session.dart';
-import 'package:bookish_player/features/notes/models/note_models.dart';
+import 'package:bookish_player/features/notes/models/book_note.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sembast/sembast_memory.dart';
 

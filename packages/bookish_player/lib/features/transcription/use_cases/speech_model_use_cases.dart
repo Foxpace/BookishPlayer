@@ -1,6 +1,9 @@
 import 'package:injectable/injectable.dart';
 
-import '../repos/transcription_repositories.dart';
+import '../models/speech_model.dart';
+
+
+import '../repos/transcription_repository.dart';
 import 'refresh_speech_models_use_case.dart';
 import 'read_selected_speech_model_use_case.dart';
 import 'select_speech_model_use_case.dart';

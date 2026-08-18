@@ -1,6 +1,6 @@
-import 'package:bookish_player/features/player/repos/player_repositories.dart';
+import 'package:bookish_player/features/player/repos/quote_share_repository.dart';
 import 'package:bookish_player/features/transcription/repos/transcription_preferences.dart';
-import 'package:bookish_player/features/transcription/repos/transcription_repositories.dart';
+import 'package:bookish_player/features/transcription/repos/transcription_repository.dart';
 import 'package:bookish_player/features/transcription/use_cases/transcription_use_case_bundle.dart';
 
 QuoteTranscriptionUseCases buildQuoteTranscriptionUseCases({

@@ -3,8 +3,8 @@ import 'package:bookish_player/features/transcription/models/transcription_draft
 import 'package:bookish_player/features/transcription/ui/transcription_preview_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/pump_bookish_app.dart';
-import 'transcription_preview_robot.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
+import '../../../test_support/features/transcription/transcription_preview_robot.dart';
 
 void main() {
   group('Transcription preview screen', () {

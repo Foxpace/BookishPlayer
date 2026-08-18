@@ -2,7 +2,7 @@ import 'package:bookish_player/features/settings/ui/widgets/bookish_about_dialog
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/pump_bookish_app.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
 
 void main() {
   group('Bookish about dialog', () {

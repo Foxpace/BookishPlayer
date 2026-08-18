@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/generated/l10n.dart';
 import '../../../core/presentation/bookish_scaffold.dart';
 import '../../library/models/library_models.dart';
-import '../models/note_models.dart';
+import '../models/book_note.dart';
 import 'widgets/book_note_card.dart';
 import 'widgets/book_notes_header.dart';
 

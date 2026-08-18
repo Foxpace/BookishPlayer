@@ -1,0 +1,9 @@
+limits:
+  file_lines: 300
+  class_lines: 300
+  behavior_method_lines: 90
+  build_method_lines: 60
+  function_lines: 90
+  consecutive_nonblank_lines: 19
+  parameters: 5
+  test_lines: 90

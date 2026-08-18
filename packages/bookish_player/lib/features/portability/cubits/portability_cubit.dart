@@ -2,7 +2,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../use_cases/portability_use_case_bundle.dart';
-import 'portability_cubits.dart';
+import 'portability_message.dart';
+import 'portability_state.dart';
+import 'portability_status.dart';
 
 @injectable
 class PortabilityCubit extends Cubit<PortabilityState> {

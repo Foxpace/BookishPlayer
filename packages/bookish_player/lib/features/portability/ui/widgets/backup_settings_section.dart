@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
-import '../../cubits/portability_cubits.dart';
+import '../../cubits/portability_state.dart';
+import '../../cubits/portability_status.dart';
 
 class BackupSettingsSection extends StatelessWidget {
   const BackupSettingsSection({

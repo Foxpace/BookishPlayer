@@ -2,8 +2,8 @@ import 'package:bookish_player/features/library/cubits/library_intents.dart';
 import 'package:bookish_player/features/library/ui/widgets/book_actions_menu.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fixtures.dart';
-import '../../support/pump_bookish_app.dart';
+import '../../../test_support/support/fixtures.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
 
 void main() {
   group('Book actions menu with a typed callback', () {

@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../library/models/library_models.dart';
 import '../models/playback_open_result.dart';
-import '../../notes/models/note_models.dart';
+import '../../notes/models/book_note.dart';
 import 'player_state.dart';
 import 'player_status.dart';
 import 'player_state_timeline.dart';

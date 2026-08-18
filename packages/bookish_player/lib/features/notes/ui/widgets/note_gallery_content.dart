@@ -5,7 +5,7 @@ import '../../../../core/presentation/app_message.dart';
 import '../../../../core/presentation/diagnostic_failure_view.dart';
 import '../../../library/models/library_models.dart';
 import '../../cubits/notes_cubits.dart';
-import '../../models/note_models.dart';
+import '../../models/book_note.dart';
 import 'note_book_card.dart';
 
 class NoteGalleryContent extends StatelessWidget {

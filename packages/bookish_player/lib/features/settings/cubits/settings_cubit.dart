@@ -4,8 +4,9 @@ import 'package:injectable/injectable.dart';
 import '../../../core/presentation/app_message.dart';
 import '../models/playback_preferences.dart';
 import '../models/theme_preference.dart';
-import '../use_cases/settings_use_case_bundle.dart';
-import 'settings_cubits.dart';
+import '../use_cases/settings_use_cases.dart';
+import 'settings_state.dart';
+import 'settings_status.dart';
 
 @lazySingleton
 class SettingsCubit extends Cubit<SettingsState> {

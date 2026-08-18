@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../library/models/library_models.dart';
 import '../../library/repos/book_metadata_repository.dart';
-import '../models/note_models.dart';
+import '../models/book_note.dart';
 import '../repos/book_note_repository.dart';
 import 'update_gallery_note_use_case.dart';
 
