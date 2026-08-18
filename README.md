@@ -16,6 +16,9 @@ The screenshots feature the public-domain LibriVox recording of
 [*Alice's Adventures in Wonderland*](https://librivox.org/alices-adventures-in-wonderland-by-lewis-carroll-5/)
 by Lewis Carroll.
 
+Regenerate all three images from deterministic Flutter fixtures with
+`./tool/generate_readme_screenshots.sh`.
+
 ## What Bookish can do
 
 ### Import and organize
