@@ -40,13 +40,13 @@ class LibraryHeader extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton.filledTonal(
+            IconButton(
               tooltip: S.of(context).notesGallery,
               onPressed: onOpenNotes,
               icon: const Icon(Icons.collections_bookmark_outlined),
             ),
             const SizedBox(width: 8),
-            IconButton.filledTonal(
+            IconButton(
               tooltip: S.of(context).settingsTitle,
               onPressed: onOpenSettings,
               icon: const Icon(Icons.settings_outlined),
