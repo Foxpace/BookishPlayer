@@ -1,8 +1,8 @@
-import 'player_test_support.dart';
-import 'player_cubit_note_tests.dart';
-import 'player_cubit_playback_flow_tests.dart';
-import 'player_cubit_widget_tests.dart';
-import 'player_screen_layout_tests.dart';
+import '../../../test_support/features/player/player_test_support.dart';
+import '../../../test_support/features/player/player_cubit_note_tests.dart';
+import '../../../test_support/features/player/player_cubit_playback_flow_tests.dart';
+import '../../../test_support/features/player/player_cubit_widget_tests.dart';
+import '../../../test_support/features/player/player_screen_layout_tests.dart';
 import 'package:bookish_player/features/player/use_cases/playback_command_service.dart';
 
 void main() {

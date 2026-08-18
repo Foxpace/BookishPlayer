@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/platform/file_picker_gateway.dart';
 import '../../../library/models/library_models.dart';
-import '../../../notes/models/note_models.dart';
+import '../../../notes/models/book_note.dart';
 import '../../models/bookish_backup.dart';
 import '../local_export_repository.dart';
 

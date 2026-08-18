@@ -3,7 +3,8 @@ import 'package:injectable/injectable.dart';
 import '../models/chapter_parse_report.dart';
 import '../repos/audiobook_artwork_extractor.dart';
 import '../repos/audiobook_metadata_extractor.dart';
-import '../repos/import_repositories.dart';
+import '../repos/file_import_repository.dart';
+import '../repos/selected_audio_file.dart';
 import '../repos/m4b_chapter_parser.dart';
 import '../repos/media_probe.dart';
 

@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 
-import '../../../notes/models/note_models.dart';
+import '../../../notes/models/book_note.dart';
+
 import '../../models/library_models.dart';
 import '../../models/audiobook_removal_mode.dart';
 import '../audiobook_repository.dart';

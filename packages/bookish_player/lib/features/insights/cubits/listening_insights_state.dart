@@ -1,7 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../core/presentation/app_message.dart';
-import '../models/insights_models.dart';
+import '../models/insights_period.dart';
+import '../models/listening_activity_range.dart';
 
 import 'listening_insights_status.dart';
 part 'listening_insights_state.freezed.dart';

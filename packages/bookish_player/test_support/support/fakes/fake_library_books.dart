@@ -3,7 +3,7 @@ import 'package:bookish_player/features/library/models/audiobook_removal_mode.da
 import 'package:bookish_player/features/library/repos/audiobook_repository.dart';
 import 'package:bookish_player/features/library/repos/listening_history_repository.dart';
 import 'package:bookish_player/features/library/models/listening_session.dart';
-import 'package:bookish_player/features/notes/models/note_models.dart';
+import 'package:bookish_player/features/notes/models/book_note.dart';
 
 class FakeLibraryBooks
     implements AudiobookRepository, ListeningHistoryRepository {

@@ -1,5 +1,6 @@
 import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_workflow.dart';
-import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_use_case_bundle.dart';
+import 'package:bookish_player/features/settings/diagnostics/use_cases/delete_diagnostics_use_case.dart';
+import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_use_cases.dart';
 import 'package:bookish_player/features/settings/diagnostics/repos/diagnostics_export_repository.dart';
 import 'package:bookish_player/features/settings/diagnostics/cubits/diagnostics_cubit.dart';
 import 'package:bookish_player/features/settings/diagnostics/ui/diagnostics_settings_section.dart';
@@ -7,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../support/fakes/fake_app_diagnostics.dart';
-import '../../../support/pump_bookish_app.dart';
+import '../../../../test_support/support/fakes/fake_app_diagnostics.dart';
+import '../../../../test_support/support/pump_bookish_app.dart';
 
 void main() {
   group('Diagnostics settings capability', () {

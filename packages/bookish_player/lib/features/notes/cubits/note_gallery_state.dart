@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../core/presentation/app_message.dart';
-import '../models/note_models.dart';
+import '../models/book_note.dart';
 import '../../library/models/library_models.dart';
 
 import 'note_gallery_status.dart';

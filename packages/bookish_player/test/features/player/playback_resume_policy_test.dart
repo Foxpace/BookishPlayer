@@ -1,7 +1,7 @@
 import 'package:bookish_player/features/player/use_cases/playback_resume_policy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_clock.dart';
+import '../../../test_support/support/fakes/fake_clock.dart';
 
 void main() {
   group('Playback resume policy', () {

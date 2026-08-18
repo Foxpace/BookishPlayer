@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
-import 'player_top_button.dart';
 
 class PlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
   const PlayerAppBar({
@@ -21,14 +20,10 @@ class PlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      leadingWidth: 64,
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 12),
-        child: PlayerTopButton(
-          tooltip: S.of(context).backToLibraryTooltip,
-          onPressed: onBack,
-          icon: Icons.arrow_back_rounded,
-        ),
+      leading: IconButton(
+        tooltip: S.of(context).backToLibraryTooltip,
+        onPressed: onBack,
+        icon: const Icon(Icons.arrow_back_rounded),
       ),
       title: Text(
         S.of(context).nowPlaying,
@@ -36,13 +31,10 @@ class PlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: PlayerTopButton(
-            tooltip: S.of(context).settingsTitle,
-            onPressed: onOpenSettings,
-            icon: Icons.settings_outlined,
-          ),
+        IconButton(
+          tooltip: S.of(context).settingsTitle,
+          onPressed: onOpenSettings,
+          icon: const Icon(Icons.settings_outlined),
         ),
       ],
     );

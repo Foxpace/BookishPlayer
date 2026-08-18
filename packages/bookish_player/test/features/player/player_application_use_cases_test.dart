@@ -6,11 +6,11 @@ import 'package:bookish_player/features/player/use_cases/sleep_timer_use_case.da
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 import 'package:fake_async/fake_async.dart';
 
-import '../../support/fakes/fake_clock.dart';
-import '../../support/fakes/fake_id_generator.dart';
-import '../../support/fakes/fake_library_test_support.dart';
-import '../../support/fixtures.dart';
-import 'player_test_support.dart';
+import '../../../test_support/support/fakes/fake_clock.dart';
+import '../../../test_support/support/fakes/fake_id_generator.dart';
+import '../../../test_support/support/fakes/fake_library_test_support.dart';
+import '../../../test_support/support/fixtures.dart';
+import '../../../test_support/features/player/player_test_support.dart';
 
 void main() {
   group('Stateless playback sleep use case', () {

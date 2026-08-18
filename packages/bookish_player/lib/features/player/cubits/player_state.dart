@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../core/presentation/app_message.dart';
 import '../../library/models/library_models.dart';
-import '../../notes/models/note_models.dart';
+import '../../notes/models/book_note.dart';
 import '../../settings/models/playback_preferences.dart';
 
 import 'player_status.dart';

@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_library_test_support.dart';
-import '../../support/fixtures.dart';
-import '../../support/pump_bookish_app.dart';
-import 'library_test_builder.dart';
+import '../../../test_support/support/fakes/fake_library_test_support.dart';
+import '../../../test_support/support/fixtures.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
+import '../../../test_support/features/library/library_test_builder.dart';
 
 void main() {
   group('Audiobook library presentation', () {

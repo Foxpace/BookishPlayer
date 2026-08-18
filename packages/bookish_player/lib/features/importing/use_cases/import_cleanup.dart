@@ -1,7 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import '../../../core/diagnostics/app_diagnostics.dart';
-import '../repos/import_repositories.dart';
+import '../repos/file_import_repository.dart';
 
 @injectable
 class ImportCleanup {

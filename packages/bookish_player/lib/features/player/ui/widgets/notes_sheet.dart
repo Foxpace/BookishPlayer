@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../notes/models/note_models.dart';
+import '../../../notes/models/book_note.dart';
+
 import '../../../../core/localization/generated/l10n.dart';
 import '../../cubits/player_cubits.dart';
 import 'player_note_tile.dart';

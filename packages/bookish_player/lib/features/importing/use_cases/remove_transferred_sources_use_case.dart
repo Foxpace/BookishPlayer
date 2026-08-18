@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import '../repos/import_repositories.dart';
+import '../repos/selected_audio_file.dart';
 import 'audiobook_import_workflow.dart';
 
 @injectable

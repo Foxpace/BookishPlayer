@@ -4,7 +4,7 @@ import 'package:bookish_player/features/notes/cubits/voice_note_cubit.dart';
 import 'package:bookish_player/features/notes/cubits/notes_cubits.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'notes_test_builder.dart';
+import '../../../test_support/features/notes/notes_test_builder.dart';
 
 void main() {
   group('Voice-note transcription port', () {

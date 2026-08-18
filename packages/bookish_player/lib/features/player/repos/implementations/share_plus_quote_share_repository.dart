@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:injectable/injectable.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../player_repositories.dart';
+import '../../models/share_origin.dart';
+
+import '../quote_share_repository.dart';
 
 @LazySingleton(as: QuoteShareRepository)
 class SharePlusQuoteShareRepository implements QuoteShareRepository {

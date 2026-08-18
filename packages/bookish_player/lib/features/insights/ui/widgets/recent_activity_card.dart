@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/formatters.dart';
-import '../../models/insights_models.dart';
+import '../../models/listening_activity.dart';
 import 'activity_bucket_row.dart';
 
 class RecentActivityCard extends StatelessWidget {

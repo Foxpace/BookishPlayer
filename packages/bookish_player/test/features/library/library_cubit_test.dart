@@ -1,5 +1,5 @@
 import 'package:bookish_player/core/localization/generated/l10n.dart';
-import 'package:bookish_player/core/navigation/app_navigation.dart';
+import 'package:bookish_player/core/navigation/app_router.dart';
 import 'package:bookish_player/core/navigation/focus_navigation.dart';
 import 'package:bookish_player/features/library/cubits/library_intents.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
@@ -12,9 +12,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../support/fakes/fake_library_test_support.dart';
-import 'library_screen_robot.dart';
-import 'library_test_builder.dart';
+import '../../../test_support/support/fakes/fake_library_test_support.dart';
+import '../../../test_support/features/library/library_screen_robot.dart';
+import '../../../test_support/features/library/library_test_builder.dart';
 
 void main() {
   group('Library cubit', () {

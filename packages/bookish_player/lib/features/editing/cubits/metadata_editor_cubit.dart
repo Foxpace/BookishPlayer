@@ -5,7 +5,8 @@ import '../../../core/presentation/app_message.dart';
 import '../../library/models/library_models.dart';
 import '../models/editable_book_details.dart';
 import '../use_cases/editing_use_cases_barrel.dart';
-import 'editing_cubits.dart';
+import 'metadata_editor_state.dart';
+import 'metadata_editor_status.dart';
 
 @injectable
 class MetadataEditorCubit extends Cubit<MetadataEditorState> {

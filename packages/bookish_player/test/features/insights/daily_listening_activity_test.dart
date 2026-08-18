@@ -1,4 +1,5 @@
-import 'package:bookish_player/features/insights/models/insights_models.dart';
+import 'package:bookish_player/features/insights/models/insights_period.dart';
+import 'package:bookish_player/features/insights/models/listening_activity.dart';
 import 'package:bookish_player/features/library/models/listening_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 

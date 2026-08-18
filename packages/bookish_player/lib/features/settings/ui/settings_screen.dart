@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/generated/l10n.dart';
 import '../../../core/presentation/bookish_scaffold.dart';
 import '../cubits/settings_intents.dart';
-import '../cubits/settings_cubits.dart';
+import '../cubits/settings_state.dart';
 import '../models/playback_preferences.dart';
 import '../models/theme_preference.dart';
 import 'widgets/about_section.dart';

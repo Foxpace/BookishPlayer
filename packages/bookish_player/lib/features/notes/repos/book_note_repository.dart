@@ -1,4 +1,4 @@
-import '../models/note_models.dart';
+import '../models/book_note.dart';
 
 abstract interface class BookNoteRepository {
   Future<List<BookNote>> getNotes(String bookId);

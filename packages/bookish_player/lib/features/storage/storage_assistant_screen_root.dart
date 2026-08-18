@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/di/injection.dart';
 import '../../core/localization/generated/l10n.dart';
-import '../../core/navigation/app_navigation.dart';
+import '../../core/navigation/app_router.dart';
 import '../../core/presentation/app_message.dart';
 import '../player/cubits/player_cubit.dart';
 import '../settings/cubits/settings_cubit.dart';

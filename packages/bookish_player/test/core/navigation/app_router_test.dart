@@ -1,4 +1,4 @@
-import 'package:bookish_player/core/navigation/app_navigation.dart';
+import 'package:bookish_player/core/navigation/app_router.dart';
 import 'package:bookish_player/app/bookish_app.dart';
 import 'package:flutter_test/flutter_test.dart';
 

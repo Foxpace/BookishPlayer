@@ -4,7 +4,8 @@ import '../../../../core/localization/generated/l10n.dart';
 import '../../cubits/library_cubits.dart';
 import '../../cubits/library_intents.dart';
 import '../../models/library_models.dart';
-import 'book_tiles.dart';
+import 'book_grid_tile.dart';
+import 'book_tile.dart';
 
 typedef LibraryBookActions = ({
   ValueChanged<Audiobook> open,

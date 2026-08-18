@@ -4,12 +4,12 @@ import 'package:bookish_player/features/portability/use_cases/backup_workflow.da
 import 'package:bookish_player/features/portability/use_cases/portability_use_case_bundle.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/library/models/listening_session.dart';
-import 'package:bookish_player/features/notes/models/note_models.dart';
+import 'package:bookish_player/features/notes/models/book_note.dart';
 import 'package:bookish_player/features/portability/repos/local_export_repository.dart';
 import 'package:bookish_player/features/portability/repos/backup_store_repository.dart';
 import 'package:bookish_player/features/portability/models/bookish_backup.dart';
 import 'package:bookish_player/features/portability/cubits/portability_cubit.dart';
-import 'package:bookish_player/features/portability/cubits/portability_cubits.dart';
+import 'package:bookish_player/features/portability/cubits/portability_status.dart';
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 import 'package:bookish_player/features/settings/models/theme_preference.dart';
 import 'package:flutter_test/flutter_test.dart';

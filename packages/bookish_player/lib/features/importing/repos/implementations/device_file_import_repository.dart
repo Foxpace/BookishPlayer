@@ -7,7 +7,8 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/foundation/id_generator.dart';
 import '../../../../core/platform/file_picker_gateway.dart';
-import '../import_repositories.dart';
+import '../file_import_repository.dart';
+import '../selected_audio_file.dart';
 import 'device_file_copy_worker.dart';
 
 @LazySingleton(as: FileImportRepository)

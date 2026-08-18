@@ -5,8 +5,10 @@ import '../../../core/presentation/bookish_scaffold.dart';
 import '../cubits/library_intents.dart';
 import '../cubits/library_cubits.dart';
 import '../models/library_models.dart';
-import 'widgets/library_widgets.dart';
-import 'widgets/library_sections.dart';
+import 'widgets/library_header.dart';
+import 'widgets/library_search_controls.dart';
+import 'widgets/empty_library.dart';
+import 'widgets/library_section_view.dart';
 
 typedef LibraryScreenIntents = ({
   VoidCallback importBooks,

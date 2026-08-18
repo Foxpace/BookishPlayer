@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import '../../library/models/library_models.dart';
 import '../../library/repos/audiobook_catalog_repository.dart';
 import '../../notes/use_cases/player_notes_service.dart';
-import '../../notes/models/note_models.dart';
+import '../../notes/models/book_note.dart';
 import '../repos/audio_player_repository.dart';
 import 'player_lifecycle_policies.dart';
 import 'playback_command_service.dart';

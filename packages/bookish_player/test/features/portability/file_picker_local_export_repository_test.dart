@@ -6,7 +6,7 @@ import 'package:bookish_player/features/portability/repos/implementations/file_p
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fixtures.dart';
+import '../../../test_support/support/fixtures.dart';
 
 void main() {
   group('Isolated local file picker', () {

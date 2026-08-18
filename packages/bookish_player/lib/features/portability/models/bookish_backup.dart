@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../library/models/library_models.dart';
 import '../../library/models/listening_session.dart';
-import '../../notes/models/note_models.dart';
+import '../../notes/models/book_note.dart';
 import '../../settings/models/playback_preferences.dart';
 
 part 'bookish_backup.freezed.dart';

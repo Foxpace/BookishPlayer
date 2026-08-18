@@ -1,4 +1,4 @@
-import '../../notes/models/note_models.dart';
+import '../../notes/models/book_note.dart';
 import '../../notes/repos/book_note_repository.dart';
 import '../models/library_models.dart';
 import 'audiobook_catalog_repository.dart';

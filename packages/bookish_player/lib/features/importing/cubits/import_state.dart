@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../models/import_models.dart';
-import '../repos/import_repositories.dart';
+import '../repos/selected_audio_file.dart';
 
 import 'import_status.dart';
 import 'import_heading.dart';

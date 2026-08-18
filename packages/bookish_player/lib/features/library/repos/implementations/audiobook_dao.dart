@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:sembast/sembast.dart';
 
 import '../../../../core/database/bookish_database.dart';
-import '../../../notes/models/note_models.dart';
+import '../../../notes/models/book_note.dart';
 import '../../models/library_models.dart';
 import '../../models/audiobook_removal_mode.dart';
 import 'book_storage_codec.dart';

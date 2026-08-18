@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/localization/generated/l10n.dart';
 import 'cubits/diagnostics_cubit.dart';
-import 'cubits/diagnostics_cubits.dart';
+import 'cubits/diagnostics_message.dart';
+import 'cubits/diagnostics_state.dart';
 import 'ui/diagnostics_settings_section.dart';
 
 class DiagnosticsSettingsRoot extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../core/foundation/clock.dart';
 import '../repos/listening_insights_repository.dart';
-import '../models/insights_models.dart';
+import '../models/listening_activity.dart';
 import '../models/listening_insights_summary.dart';
 
 @injectable

@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../core/presentation/app_message.dart';
 import '../use_cases/note_use_case_bundle.dart';
-import '../models/note_models.dart';
+import '../models/book_note.dart';
 import 'notes_cubits.dart';
 
 @injectable

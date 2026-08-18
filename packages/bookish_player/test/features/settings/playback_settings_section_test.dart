@@ -1,14 +1,14 @@
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 import 'package:bookish_player/features/settings/cubits/settings_cubit.dart';
-import 'package:bookish_player/features/settings/cubits/settings_cubits.dart';
+import 'package:bookish_player/features/settings/cubits/settings_state.dart';
 import 'package:bookish_player/features/settings/ui/widgets/playback_settings_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_library_test_support.dart';
-import '../../support/pump_bookish_app.dart';
-import 'settings_test_use_cases.dart';
+import '../../../test_support/support/fakes/fake_library_test_support.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
+import '../../../test_support/features/settings/settings_test_use_cases.dart';
 
 void main() {
   group('Loaded playback preferences', () {

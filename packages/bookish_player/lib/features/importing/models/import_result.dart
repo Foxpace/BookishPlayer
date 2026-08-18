@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../repos/import_repositories.dart';
+import '../repos/selected_audio_file.dart';
 part 'import_result.freezed.dart';
 
 @freezed

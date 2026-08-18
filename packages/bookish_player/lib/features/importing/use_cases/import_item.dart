@@ -1,5 +1,5 @@
 import '../models/import_models.dart';
-import '../repos/import_repositories.dart';
+import '../repos/selected_audio_file.dart';
 
 typedef ImportItem = ({
   SelectedAudioFile selected,

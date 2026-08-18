@@ -1,5 +1,5 @@
 import 'package:bookish_player/features/editing/cubits/metadata_editor_cubit.dart';
-import 'package:bookish_player/features/editing/cubits/editing_cubits.dart';
+import 'package:bookish_player/features/editing/cubits/metadata_editor_state.dart';
 import 'package:bookish_player/features/editing/ui/metadata_editor_screen.dart';
 import 'package:bookish_player/features/editing/ui/widgets/chapter_editor_dialog.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_library_test_support.dart';
-import '../../support/fixtures.dart';
-import '../../support/pump_bookish_app.dart';
-import 'editing_test_builder.dart';
-import 'metadata_editor_robot.dart';
+import '../../../test_support/support/fakes/fake_library_test_support.dart';
+import '../../../test_support/support/fixtures.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
+import '../../../test_support/features/editing/editing_test_builder.dart';
+import '../../../test_support/features/editing/metadata_editor_robot.dart';
 
 void main() {
   group('Editable audiobook', () {

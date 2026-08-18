@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../../../core/presentation/formatters.dart';
-import '../../../notes/models/note_models.dart';
+import '../../../notes/models/book_note.dart';
+import '../../../notes/models/book_note_kind.dart';
 import '../../cubits/player_cubits.dart';
 
 class PlayerNoteTile extends StatelessWidget {

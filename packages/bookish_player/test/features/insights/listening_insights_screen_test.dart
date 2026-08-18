@@ -1,7 +1,7 @@
 import 'package:bookish_player/features/insights/use_cases/load_listening_insights_use_case.dart';
 import 'package:bookish_player/features/insights/use_cases/insights_use_cases.dart';
 import 'package:bookish_player/features/insights/cubits/listening_insights_cubit.dart';
-import 'package:bookish_player/features/insights/cubits/insights_cubits.dart';
+import 'package:bookish_player/features/insights/cubits/listening_insights_state.dart';
 import 'package:bookish_player/features/insights/repos/implementations/library_listening_insights_repository.dart';
 import 'package:bookish_player/features/insights/ui/listening_insights_screen.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
@@ -12,10 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/fakes/fake_clock.dart';
-import '../../support/fixtures.dart';
-import '../../support/pump_bookish_app.dart';
-import 'listening_insights_robot.dart';
+import '../../../test_support/support/fakes/fake_clock.dart';
+import '../../../test_support/support/fixtures.dart';
+import '../../../test_support/support/pump_bookish_app.dart';
+import '../../../test_support/features/insights/listening_insights_robot.dart';
 
 void main() {
   group('Populated local listening history', () {

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/di/injection.dart';
 import 'cubits/metadata_editor_cubit.dart';
-import 'cubits/editing_cubits.dart';
+import 'cubits/metadata_editor_state.dart';
 import 'ui/metadata_editor_screen.dart';
 import 'ui/widgets/chapter_editor_dialog.dart';
 

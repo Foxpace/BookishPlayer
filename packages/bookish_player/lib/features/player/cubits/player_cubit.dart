@@ -5,7 +5,8 @@ import 'package:injectable/injectable.dart';
 
 import '../../../core/presentation/app_message.dart';
 import '../../library/models/library_models.dart';
-import '../../notes/models/note_models.dart';
+import '../../notes/models/book_note.dart';
+import '../../notes/models/book_note_kind.dart';
 import '../models/playback_open_result.dart';
 import '../models/share_origin.dart';
 import '../use_cases/playback_command_service.dart';

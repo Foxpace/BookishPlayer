@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import '../models/note_models.dart';
+import '../models/book_note.dart';
 import '../repos/book_note_repository.dart';
 
 @injectable

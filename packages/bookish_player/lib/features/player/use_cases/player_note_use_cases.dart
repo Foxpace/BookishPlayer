@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../library/models/library_models.dart';
 import '../../notes/use_cases/player_notes_service.dart';
-import '../../notes/models/note_models.dart';
+import '../../notes/models/book_note.dart';
 import '../models/share_origin.dart';
 
 @lazySingleton

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/di/injection.dart';
 import 'cubits/listening_insights_cubit.dart';
-import 'cubits/insights_cubits.dart';
+import 'cubits/listening_insights_state.dart';
 import 'ui/listening_insights_screen.dart';
 
 class ListeningInsightsScreenRoot extends StatelessWidget {

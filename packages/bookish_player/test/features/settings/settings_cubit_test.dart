@@ -2,10 +2,10 @@ import 'package:bookish_player/features/settings/repos/settings_repository.dart'
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 import 'package:bookish_player/features/settings/models/theme_preference.dart';
 import 'package:bookish_player/features/settings/cubits/settings_cubit.dart';
-import 'package:bookish_player/features/settings/cubits/settings_cubits.dart';
+import 'package:bookish_player/features/settings/cubits/settings_status.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'settings_test_use_cases.dart';
+import '../../../test_support/features/settings/settings_test_use_cases.dart';
 
 void main() {
   group('Settings cubit', () {
