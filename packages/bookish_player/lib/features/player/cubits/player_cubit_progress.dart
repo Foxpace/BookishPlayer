@@ -7,7 +7,7 @@ extension PlayerCubitProgress on PlayerCubit {
     if (chapterEnd != null && position.inMilliseconds >= chapterEnd) {
       unawaited(_sleepAtChapterBoundary());
     }
-    if (_useCases.sleep.checkpointDue(_runtime.progressCheckpoint)) {
+    if (_application.progressCheckpointDue()) {
       unawaited(saveProgress());
     }
   }
@@ -28,44 +28,6 @@ extension PlayerCubitProgress on PlayerCubit {
     }
   }
 
-  Future<void> saveProgress() async {
-    final book = state.book;
-    if (book == null) {
-      return;
-    }
-
-    _runtime = _runtime.copyWith(
-      pendingProgress: PlayerProgressSnapshot(
-        book: book,
-        position: state.position,
-      ),
-    );
-    if (_runtime.progressWriteInFlight) {
-      return;
-    }
-    await _flushProgressWrites();
-  }
-
-  Future<void> _flushProgressWrites() async {
-    _runtime = _runtime.copyWith(progressWriteInFlight: true);
-    try {
-      while (_runtime.pendingProgress != null) {
-        await _writePendingProgress();
-      }
-    } finally {
-      _runtime = _runtime.copyWith(progressWriteInFlight: false);
-    }
-  }
-
-  Future<void> _writePendingProgress() async {
-    final pending = _runtime.pendingProgress;
-    _runtime = _runtime.copyWith(pendingProgress: null);
-    if (pending == null) {
-      return;
-    }
-    final savedAt = await _useCases.sleep.save(pending.book, pending.position);
-    if (savedAt != null) {
-      _runtime = _runtime.copyWith(lastProgressSavedAt: savedAt);
-    }
-  }
+  Future<void> saveProgress() =>
+      _application.saveProgress(state.book, state.position);
 }

@@ -140,8 +140,6 @@ import 'package:bookish_player/features/notes/use_cases/voice_note_use_cases.dar
     as _i363;
 import 'package:bookish_player/features/player/cubits/player_cubit.dart'
     as _i948;
-import 'package:bookish_player/features/player/cubits/player_playback_streams.dart'
-    as _i163;
 import 'package:bookish_player/features/player/cubits/player_state_factory.dart'
     as _i570;
 import 'package:bookish_player/features/player/repos/audio_output_picker.dart'
@@ -170,6 +168,10 @@ import 'package:bookish_player/features/player/use_cases/playback_command_servic
     as _i11;
 import 'package:bookish_player/features/player/use_cases/playback_resume_policy.dart'
     as _i199;
+import 'package:bookish_player/features/player/use_cases/player_application.dart'
+    as _i681;
+import 'package:bookish_player/features/player/use_cases/player_device_gateway.dart'
+    as _i893;
 import 'package:bookish_player/features/player/use_cases/player_lifecycle_policies.dart'
     as _i1024;
 import 'package:bookish_player/features/player/use_cases/player_lifecycle_use_cases.dart'
@@ -182,12 +184,8 @@ import 'package:bookish_player/features/player/use_cases/player_sleep_use_cases.
     as _i246;
 import 'package:bookish_player/features/player/use_cases/player_transport_use_cases.dart'
     as _i369;
-import 'package:bookish_player/features/player/use_cases/player_use_cases.dart'
-    as _i671;
 import 'package:bookish_player/features/player/use_cases/series_continuation_policy.dart'
     as _i626;
-import 'package:bookish_player/features/player/use_cases/show_audio_output_picker_use_case.dart'
-    as _i579;
 import 'package:bookish_player/features/player/use_cases/sleep_timer_use_case.dart'
     as _i903;
 import 'package:bookish_player/features/portability/cubits/portability_cubit.dart'
@@ -406,9 +404,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i754.SettingsDao>(
       () => _i754.SettingsDao(gh<_i987.BookishDatabase>()),
-    );
-    gh.lazySingleton<_i579.ShowAudioOutputPickerUseCase>(
-      () => _i579.ShowAudioOutputPickerUseCase(gh<_i759.AudioOutputPicker>()),
     );
     gh.factory<_i484.ShareTranscriptionDraftUseCase>(
       () => _i484.ShareTranscriptionDraftUseCase(
@@ -794,10 +789,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i993.ImportDiagnosticsRepository>(),
       ),
     );
-    gh.lazySingleton<_i163.PlayerPlaybackStreams>(
-      () => _i163.PlayerPlaybackStreams(
+    gh.lazySingleton<_i893.PlayerDeviceGateway>(
+      () => _i893.PlayerDeviceGateway(
         gh<_i1014.AudioPlayerRepository>(),
         gh<_i11.PlaybackCommandService>(),
+        gh<_i759.AudioOutputPicker>(),
       ),
     );
     gh.lazySingleton<_i369.PlayerTransportUseCases>(
@@ -841,26 +837,25 @@ extension GetItInjectableX on _i174.GetIt {
         chapters: gh<_i121.EditingChapterUseCases>(),
       ),
     );
+    gh.lazySingleton<_i681.PlayerApplication>(
+      () => _i681.PlayerApplication(
+        gh<_i1068.PlayerLifecycleUseCases>(),
+        gh<_i276.PlayerNoteUseCases>(),
+        gh<_i246.PlayerSleepUseCases>(),
+        gh<_i369.PlayerTransportUseCases>(),
+        gh<_i893.PlayerDeviceGateway>(),
+      ),
+    );
     gh.factory<_i1000.MetadataEditorCubit>(
       () => _i1000.MetadataEditorCubit(gh<_i498.EditingUseCases>()),
     );
     gh.factory<_i411.ListeningInsightsCubit>(
       () => _i411.ListeningInsightsCubit(gh<_i811.InsightsUseCases>()),
     );
-    gh.lazySingleton<_i671.PlayerUseCases>(
-      () => _i671.PlayerUseCases(
-        lifecycle: gh<_i1068.PlayerLifecycleUseCases>(),
-        notes: gh<_i276.PlayerNoteUseCases>(),
-        sleep: gh<_i246.PlayerSleepUseCases>(),
-        transport: gh<_i369.PlayerTransportUseCases>(),
-        showAudioOutputPicker: gh<_i579.ShowAudioOutputPickerUseCase>(),
-      ),
-    );
     gh.lazySingleton<_i948.PlayerCubit>(
       () => _i948.PlayerCubit(
-        gh<_i671.PlayerUseCases>(),
+        gh<_i681.PlayerApplication>(),
         gh<_i570.PlayerStateFactory>(),
-        gh<_i163.PlayerPlaybackStreams>(),
       ),
     );
     return this;
