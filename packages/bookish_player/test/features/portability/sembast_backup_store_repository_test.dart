@@ -1,4 +1,5 @@
 import 'package:bookish_player/core/database/bookish_database.dart';
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/notes/models/book_note.dart';
 import 'package:bookish_player/features/portability/repos/implementations/sembast_backup_store_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,7 +24,7 @@ void main() {
         await sut.restore(backupFixture(theme: 'dark'));
 
         // WHEN
-        final snapshot = await sut.snapshot();
+        final snapshot = _success(await sut.snapshot());
 
         // THEN
         expect(snapshot.books.single.id, 'book-1');
@@ -51,9 +52,14 @@ void main() {
         );
 
         // THEN
-        await expectLater(sut.restore(invalid), throwsStateError);
+        expect(
+          await sut.restore(invalid),
+          const Result<bool>.failure(
+            AppFailure.invalidData('backup.storage.corrupted'),
+          ),
+        );
 
-        final snapshot = await sut.snapshot();
+        final snapshot = _success(await sut.snapshot());
         expect(snapshot.books.single.id, 'book-1');
         expect(snapshot.notes.single.id, 'note-1');
       },
@@ -77,10 +83,17 @@ void main() {
         await sut.restore(legacy);
 
         // WHEN
-        final snapshot = await sut.snapshot();
+        final snapshot = _success(await sut.snapshot());
         // THEN
         expect(snapshot.books.single.metadataId, metadata.id);
       },
     );
   });
 }
+
+S _success<S>(Result<S> result) => switch (result) {
+  ResultSuccess(:final value) => value,
+  ResultFailure(:final failure) => throw TestFailure(
+    'Expected success, received $failure.',
+  ),
+};

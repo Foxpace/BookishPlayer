@@ -1,47 +1,43 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-
-import '../use_cases/diagnostics_use_cases.dart';
+import '../../../../core/foundation/result.dart';
+import '../use_cases/diagnostics_workflow.dart';
 import 'diagnostics_message.dart';
 import 'diagnostics_state.dart';
 import 'diagnostics_status.dart';
 
 @injectable
 class DiagnosticsCubit extends Cubit<DiagnosticsState> {
-  DiagnosticsCubit(this._useCases) : super(const DiagnosticsState());
+  DiagnosticsCubit(this._workflow) : super(const DiagnosticsState());
 
-  final DiagnosticsUseCases _useCases;
+  final DiagnosticsWorkflow _workflow;
 
   Future<void> export() async {
     emit(state.copyWith(status: DiagnosticsStatus.working, message: null));
-    try {
-      await _exportDiagnosticsAndEmit();
-    } catch (_) {
-      _emitExportFailure();
-    }
+    await _exportDiagnosticsAndEmit();
   }
 
   Future<void> clear() async {
     emit(state.copyWith(status: DiagnosticsStatus.working, message: null));
-    try {
-      await _clearDiagnosticsAndEmit();
-    } catch (_) {
-      _emitDeleteFailure();
-    }
+    await _clearDiagnosticsAndEmit();
   }
 
   Future<void> _exportDiagnosticsAndEmit() async {
-    final exported = await _useCases.exportDiagnostics();
-    emit(
-      state.copyWith(
-        status: exported ? DiagnosticsStatus.success : DiagnosticsStatus.idle,
-        message: exported
-            ? DiagnosticsMessage.exported
-            : DiagnosticsMessage.noRecords,
-        effectRevision: state.effectRevision + 1,
-      ),
-    );
+    switch (await _workflow.export()) {
+      case ResultSuccess(:final value):
+        emit(
+          state.copyWith(
+            status: value ? DiagnosticsStatus.success : DiagnosticsStatus.idle,
+            message: value
+                ? DiagnosticsMessage.exported
+                : DiagnosticsMessage.noRecords,
+            effectRevision: state.effectRevision + 1,
+          ),
+        );
+      case ResultFailure():
+        _emitExportFailure();
+    }
   }
 
   void _emitExportFailure() => emit(
@@ -53,14 +49,18 @@ class DiagnosticsCubit extends Cubit<DiagnosticsState> {
   );
 
   Future<void> _clearDiagnosticsAndEmit() async {
-    await _useCases.deleteDiagnostics();
-    emit(
-      state.copyWith(
-        status: DiagnosticsStatus.success,
-        message: DiagnosticsMessage.deleted,
-        effectRevision: state.effectRevision + 1,
-      ),
-    );
+    switch (await _workflow.clear()) {
+      case ResultSuccess():
+        emit(
+          state.copyWith(
+            status: DiagnosticsStatus.success,
+            message: DiagnosticsMessage.deleted,
+            effectRevision: state.effectRevision + 1,
+          ),
+        );
+      case ResultFailure():
+        _emitDeleteFailure();
+    }
   }
 
   void _emitDeleteFailure() => emit(

@@ -1,24 +1,16 @@
 import 'package:bookish_player/features/player/repos/quote_share_repository.dart';
 import 'package:bookish_player/features/transcription/repos/transcription_preferences.dart';
 import 'package:bookish_player/features/transcription/repos/transcription_repository.dart';
-import 'package:bookish_player/features/transcription/use_cases/transcription_use_case_bundle.dart';
+import 'package:bookish_player/features/transcription/use_cases/quote_transcription_application.dart';
+import 'package:bookish_player/features/transcription/use_cases/speech_model_application.dart';
 
-QuoteTranscriptionUseCases buildQuoteTranscriptionUseCases({
+QuoteTranscriptionApplication buildQuoteTranscriptionApplication({
   required TranscriptionRepository transcription,
   required TranscriptionPreferences preferences,
   required QuoteShareRepository sharing,
-}) => QuoteTranscriptionUseCases(
-  TranscribeQuoteUseCase(transcription, preferences),
-  ShareTranscriptionDraftUseCase(sharing),
-);
+}) => QuoteTranscriptionApplication(transcription, preferences, sharing);
 
-SpeechModelUseCases buildSpeechModelUseCases({
+SpeechModelApplication buildSpeechModelApplication({
   required TranscriptionRepository transcription,
   required TranscriptionPreferences preferences,
-}) => SpeechModelUseCases(
-  loadCachedModels: LoadCachedSpeechModelsUseCase(transcription),
-  refreshModels: RefreshSpeechModelsUseCase(transcription),
-  selectedModel: ReadSelectedSpeechModelUseCase(preferences),
-  selectModel: SelectSpeechModelUseCase(preferences),
-  downloadModel: DownloadSpeechModelUseCase(transcription),
-);
+}) => SpeechModelApplication(transcription, preferences);

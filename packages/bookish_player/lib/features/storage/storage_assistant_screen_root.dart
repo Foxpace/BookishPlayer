@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/use_cases/app_data_reset_coordinator.dart';
 import '../../core/di/injection.dart';
 import '../../core/localization/generated/l10n.dart';
 import '../../core/navigation/app_router.dart';
 import '../../core/presentation/app_message.dart';
 import '../player/cubits/player_cubit.dart';
 import '../settings/cubits/settings_cubit.dart';
+import 'repos/app_data_reset_repository.dart';
 import 'cubits/storage_assistant_cubit.dart';
 import 'cubits/storage_assistant_state.dart';
 import 'ui/storage_assistant_screen.dart';
-import 'use_cases/storage_use_case_bundle.dart';
+import 'use_cases/storage_assistant_workflow.dart';
 
 class StorageAssistantScreenRoot extends StatelessWidget {
   const StorageAssistantScreenRoot({super.key});
@@ -19,10 +21,14 @@ class StorageAssistantScreenRoot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<StorageAssistantCubit>(
-      create: (_) => StorageAssistantCubit(getIt<StorageUseCases>(), (
-        resetPlayback: getIt<PlayerCubit>().resetForAppDataRemoval,
-        reloadSettings: getIt<SettingsCubit>().reload,
-      ))..load(),
+      create: (_) => StorageAssistantCubit(
+        getIt<StorageAssistantWorkflow>(),
+        AppDataResetCoordinator(
+          resetPlayback: getIt<PlayerCubit>().resetForAppDataRemoval,
+          deletePersistentData: getIt<AppDataResetRepository>().clearAll,
+          reloadSettings: getIt<SettingsCubit>().reload,
+        ),
+      )..load(),
       child: BlocConsumer<StorageAssistantCubit, StorageAssistantState>(
         listenWhen: (previous, current) =>
             current.message != null &&
@@ -137,8 +143,8 @@ class StorageAssistantScreenRoot extends StatelessWidget {
     if (approved != true || !context.mounted) {
       return;
     }
-    final cleared = await cubit.clearAll();
-    if (cleared && context.mounted) {
+    final outcome = await cubit.clearAll();
+    if (outcome.dataRemoved && context.mounted) {
       context.goNamed(AppRoutes.library);
     }
   }

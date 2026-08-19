@@ -92,7 +92,7 @@ class _ImportDiagnostics extends StatelessWidget {
         ExpansionTile(
           tilePadding: EdgeInsets.zero,
           title: Text(strings.technicalDetails),
-          subtitle: Text(strings.exceptionAndStackTrace),
+          subtitle: Text(strings.importDiagnosticPrivacy),
           children: [
             Container(
               width: double.infinity,

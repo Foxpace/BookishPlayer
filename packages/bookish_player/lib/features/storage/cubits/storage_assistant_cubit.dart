@@ -1,60 +1,57 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
-import '../use_cases/storage_use_case_bundle.dart';
+import '../../../core/use_cases/app_data_reset.dart';
+import '../../../core/use_cases/app_data_reset_outcome.dart';
+import '../use_cases/storage_assistant_workflow.dart';
 import 'storage_assistant_state.dart';
 
-typedef StorageScreenTools = ({
-  Future<void> Function() resetPlayback,
-  Future<void> Function() reloadSettings,
-});
-
 class StorageAssistantCubit extends Cubit<StorageAssistantState> {
-  StorageAssistantCubit(this._useCases, this._tools)
+  StorageAssistantCubit(this._workflow, this._appDataReset)
     : super(const StorageAssistantState());
 
-  final StorageUseCases _useCases;
-  final StorageScreenTools _tools;
+  final StorageAssistantWorkflow _workflow;
+  final AppDataReset _appDataReset;
 
   Future<void> load() async {
     emit(state.copyWith(loading: true, message: null));
-    try {
-      await _inspectStorageAndEmit();
-    } catch (_) {
-      _emitStorageInspectionFailure();
-    }
+    await _inspectStorageAndEmit();
   }
 
   Future<void> cleanOrphans() async {
-    try {
-      await _cleanOrphansAndEmit();
-    } catch (_) {
-      _emitStorageCleanupFailure();
-    }
+    await _cleanOrphansAndEmit();
   }
 
   Future<void> removeMissingBook(String id) async {
-    await _useCases.removeMissingBook(id);
-    await load();
-  }
-
-  Future<bool> clearAll() async {
-    emit(state.copyWith(loading: true, message: null));
-    try {
-      return await _clearAllDataAndEmit();
-    } catch (_) {
-      return _emitClearAllFailure();
+    switch (await _workflow.removeMissingBook(id)) {
+      case ResultSuccess():
+        await load();
+      case ResultFailure():
+        _emitStorageCleanupFailure();
     }
   }
 
+  Future<AppDataResetOutcome> clearAll() async {
+    emit(state.copyWith(loading: true, message: null));
+    final outcome = await _appDataReset.reset();
+    _emitResetOutcome(outcome);
+    return outcome;
+  }
+
   Future<void> _inspectStorageAndEmit() async {
-    final result = await _useCases.inspectStorage();
-    emit(
-      state.copyWith(
-        loading: false,
-        books: result.books,
-        report: result.report,
-      ),
-    );
+    switch (await _workflow.inspect()) {
+      case ResultSuccess(:final value):
+        emit(
+          state.copyWith(
+            loading: false,
+            books: value.books,
+            report: value.report,
+          ),
+        );
+      case ResultFailure():
+        _emitStorageInspectionFailure();
+    }
   }
 
   void _emitStorageInspectionFailure() => emit(
@@ -66,14 +63,20 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
   );
 
   Future<void> _cleanOrphansAndEmit() async {
-    await _useCases.cleanOrphanFiles(state.report);
-    await load();
-    emit(
-      state.copyWith(
-        message: AppMessage.unusedFilesRemoved,
-        effectRevision: state.effectRevision + 1,
-      ),
-    );
+    switch (await _workflow.cleanOrphans(state.report)) {
+      case ResultSuccess():
+        await load();
+        if (state.message != AppMessage.storageInspectFailed) {
+          emit(
+            state.copyWith(
+              message: AppMessage.unusedFilesRemoved,
+              effectRevision: state.effectRevision + 1,
+            ),
+          );
+        }
+      case ResultFailure():
+        _emitStorageCleanupFailure();
+    }
   }
 
   void _emitStorageCleanupFailure() => emit(
@@ -84,28 +87,21 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
     ),
   );
 
-  Future<bool> _clearAllDataAndEmit() async {
-    await _tools.resetPlayback();
-    await _useCases.clearBookishData();
-    await _tools.reloadSettings();
+  void _emitResetOutcome(AppDataResetOutcome outcome) {
+    final message = switch (outcome) {
+      AppDataResetOutcome.completed => AppMessage.allDataRemoved,
+      AppDataResetOutcome.completedWithSettingsReloadWarning =>
+        AppMessage.allDataRemovedSettingsReloadFailed,
+      AppDataResetOutcome.playbackResetFailed ||
+      AppDataResetOutcome.persistentDeletionFailed =>
+        AppMessage.clearDataFailed,
+    };
     emit(
       state.copyWith(
         loading: false,
-        message: AppMessage.allDataRemoved,
+        message: message,
         effectRevision: state.effectRevision + 1,
       ),
     );
-    return true;
-  }
-
-  bool _emitClearAllFailure() {
-    emit(
-      state.copyWith(
-        loading: false,
-        message: AppMessage.clearDataFailed,
-        effectRevision: state.effectRevision + 1,
-      ),
-    );
-    return false;
   }
 }

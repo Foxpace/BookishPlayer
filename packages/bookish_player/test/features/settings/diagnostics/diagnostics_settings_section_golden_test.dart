@@ -1,6 +1,4 @@
 import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_workflow.dart';
-import 'package:bookish_player/features/settings/diagnostics/use_cases/delete_diagnostics_use_case.dart';
-import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_use_cases.dart';
 import 'package:bookish_player/features/settings/diagnostics/repos/diagnostics_export_repository.dart';
 import 'package:bookish_player/features/settings/diagnostics/cubits/diagnostics_cubit.dart';
 import 'package:bookish_player/features/settings/diagnostics/ui/diagnostics_settings_section.dart';
@@ -87,14 +85,7 @@ Widget _screen(DiagnosticsCubit cubit) {
 }
 
 DiagnosticsCubit _cubit() => DiagnosticsCubit(
-  DiagnosticsUseCases(
-    ExportDiagnosticsUseCase(
-      DiagnosticsWorkflow(FakeAppDiagnostics(), _FakeDiagnosticsExporter()),
-    ),
-    DeleteDiagnosticsUseCase(
-      DiagnosticsWorkflow(FakeAppDiagnostics(), _FakeDiagnosticsExporter()),
-    ),
-  ),
+  DiagnosticsWorkflow(FakeAppDiagnostics(), _FakeDiagnosticsExporter()),
 );
 
 class _FakeDiagnosticsExporter implements DiagnosticsExportRepository {

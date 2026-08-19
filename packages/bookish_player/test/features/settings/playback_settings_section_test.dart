@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../../test_support/support/fakes/fake_library_test_support.dart';
 import '../../../test_support/support/pump_bookish_app.dart';
-import '../../../test_support/features/settings/settings_test_use_cases.dart';
+import '../../../test_support/features/settings/settings_test_application.dart';
 
 void main() {
   group('Loaded playback preferences', () {
@@ -21,7 +21,7 @@ void main() {
           rewindSeconds: 20,
           forwardSeconds: 30,
         );
-      cubit = SettingsCubit(buildSettingsUseCases(settings));
+      cubit = SettingsCubit(buildSettingsApplication(settings));
       await cubit.load();
     });
 

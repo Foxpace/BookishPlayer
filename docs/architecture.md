@@ -8,9 +8,9 @@ Bookish uses one shared feature package and two application targets. The
 MVI loop:
 
 ```text
-Widget -> Cubit intent -> use case -> repository port -> adapter
-   ^                                                    |
-   +---------------- immutable state -------------------+
+Widget -> Cubit intent -> application module -> repository port -> adapter
+   ^                                                           |
+   +-------------------- immutable state -----------------------+
 ```
 
 ## Feature structure
@@ -21,7 +21,7 @@ feature/
   cubits/              # screen Cubit, state, and UI intents
   models/              # feature-owned value types
   repos/               # ports and implementations/
-  use_cases/           # named actions and one injected umbrella
+  use_cases/           # cohesive application modules and domain policies
   ui/
     feature_screen.dart
     widgets/
@@ -39,10 +39,14 @@ feature/
 - Give each reusable or visually independent public widget its own file. Small
   private helper widgets may stay with their parent.
 - A Cubit owns and emits all screen state. It receives one feature-specific
-  use-case umbrella and exposes user or system intents.
-- Use cases accept domain values, return domain results, and own repository
-  interactions or multi-step workflows. A single-operation use case exposes
-  `call`; multi-operation workflows use verb-led methods.
+  application module and exposes user or system intents.
+- Application modules expose verb-led behavior and hide repositories, policies,
+  command ordering, subscriptions, timers, and other resource handles. A module
+  may contain an occasional pass-through operation, but its interface as a
+  whole must provide useful depth through coordination, policy, translation,
+  or result construction.
+- Avoid one-operation wrapper classes and public field bags. Inject a contract
+  directly when no behavior is worth hiding.
 - Start independent asynchronous work together; preserve ordering only when an
   operation needs a previous result.
 - Repository ports isolate packages, files, databases, codecs, and platform
@@ -57,6 +61,7 @@ feature/
 
 | Capability | Owns |
 | --- | --- |
+| `app` | App-wide startup, reset coordination, and target composition |
 | `library` | Audiobooks, metadata, catalog persistence, history, filtering, grouping, and removal |
 | `importing` | File selection, media probing, import processing, cleanup, and source removal |
 | `editing` | Metadata and chapter editing |
@@ -64,12 +69,22 @@ feature/
 | `notes` | Note capture, detail, gallery, voice notes, sharing, and Markdown export |
 | `transcription` | Quote transcription, speech models, preferences, and clip preparation |
 | `portability` | Backup validation, export, and transactional restore |
-| `storage` | Library inspection, cleanup assistance, and app-data reset |
+| `storage` | Library inspection, cleanup assistance, and persistent data deletion |
 | `settings` | Preferences and local diagnostic controls |
 
 - Keep numbered audiobook files as separate import inputs.
 - Treat grouping and ordering as explicit user actions, not persistence or
   folder-name conventions.
+- Run imports on their own route and return a structured result containing the
+  final status, committed count, and failed item. The library reloads whenever
+  at least one book was committed, even if a later item failed or was cancelled.
+- Block ambient back navigation while import work is active. Explicit
+  cancellation interrupts file copying, waits for parsing and persistence to
+  reach a safe boundary, removes only pending files, and preserves completed
+  books.
+- Keep failed item names in ephemeral presentation state. Copyable diagnostics
+  contain classified stages and timings but omit book names, titles, paths, raw
+  exceptions, and stack traces.
 
 ## Dependency direction
 
@@ -86,11 +101,12 @@ player        -> library repository ports + notes repository ports
 notes         -> library repository ports
 transcription -> transcription and preference ports
 insights      -> library history ports
-storage       -> library/storage/settings repository ports
+storage       -> library and storage repository ports
 portability   -> library/notes/settings repository ports
 ```
 
-- Cross-feature orchestration may use another feature's repository port.
+- Cross-feature orchestration may use another feature's repository port. App-wide
+  workflows live under `app/use_cases/` and own their full command sequence.
 - Compose cross-feature presentation only in app, router, or `ScreenRoot` code.
 - Never import another feature's repository implementation.
 
@@ -99,9 +115,20 @@ portability   -> library/notes/settings repository ports
 - Each screen or workflow has one Cubit state stream.
 - Every Cubit state is Freezed. Loading, progress, success, typed failures, and
   revisioned one-time effects are explicit state.
+- Expected failures cross repository and application boundaries as
+  `Result<T>` values containing the app-wide `AppFailure`. `AppFailure` has four
+  stable categories, a specific string detail, and the original caught error
+  when one exists. Do not add feature-specific result or failure types.
+- Cubits branch on results and must not use exceptions as workflow control
+  flow. Throws are reserved for programmer/configuration invariants and SDK
+  protocols such as stream error channels; adapters convert those errors before
+  they reach presentation.
+- Independent adapter packages may own vendor-specific outcomes. The app target
+  adapter translates them into `Result<T>` so vendor types never enter feature
+  or presentation code.
 - Screen and retry context belongs in state, not parallel mutable Cubit fields.
-  Non-rendering bookkeeping uses one immutable Freezed runtime state. Only
-  lifecycle handles, such as a cancellable timer, may remain separately mutable.
+  Non-rendering workflow bookkeeping and resource handles belong inside the
+  application module that owns their lifecycle.
 - Advance effect revisions from the emitted state; do not duplicate them in a
   private counter.
 - Widgets localize typed message identifiers. Cubits do not expose localized
@@ -113,12 +140,13 @@ portability   -> library/notes/settings repository ports
 
 ## Player
 
-- Make `PlayerCubit` the sole owner of mutable player product and presentation
-  state.
-- Allow audio services, policies, trackers, savers, and coordinators to retain
-  dependencies and platform-resource handles only.
-- Do not store the active book, progress, completion, session, sleep timer, or
-  screen state outside `PlayerCubit`.
+- Make `PlayerCubit` the sole owner of immutable player presentation state.
+- Give `PlayerCubit` one `PlayerApplication` dependency. The application hides
+  repositories, policies, command ordering, audio subscriptions, the sleep
+  timer, queued progress writes, and listening-session bookkeeping.
+- Keep the active book, progress, completion, and other renderable product state
+  in `PlayerState`; keep non-rendering workflow runtime private to
+  `PlayerApplication`.
 - Publish external audio and CarPlay actions as typed `PlaybackBookRequest`s.
   `PlayerCubit` consumes each request, opens the book, emits state, and
   completes the request.

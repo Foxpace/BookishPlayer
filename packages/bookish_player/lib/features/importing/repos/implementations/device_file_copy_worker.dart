@@ -28,7 +28,11 @@ class _FileCopyOperation {
     final result = _copyBytes(source, destination);
 
     _closeOpenFiles();
-    _validateCopy(result);
+    final validationFailure = _validateCopy(result);
+    if (validationFailure != null) {
+      reportCopyFailure(validationFailure, StackTrace.current);
+      return;
+    }
 
     partial.renameSync(request.destinationPath);
     _reportProgress(result.copiedBytes, result.totalBytes);
@@ -112,13 +116,11 @@ class _FileCopyOperation {
     _source = null;
   }
 
-  void _validateCopy(_CopyResult result) {
+  String? _validateCopy(_CopyResult result) {
     if (result.copiedBytes != result.totalBytes) {
-      throw FileSystemException(
-        'Copied ${result.copiedBytes} of ${result.totalBytes} bytes.',
-        request.sourcePath,
-      );
+      return 'Copied ${result.copiedBytes} of ${result.totalBytes} bytes.';
     }
+    return null;
   }
 
   void _reportProgress(int copiedBytes, int totalBytes) =>

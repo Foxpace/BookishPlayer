@@ -113,10 +113,7 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
     final speed = extras?['speed'];
     if (speed is num) {
       await _player.setSpeed(speed.toDouble());
-      return;
     }
-
-    throw ArgumentError.value(speed, 'speed', 'must be a number');
   }
 
   void _setSkipIntervals(Map<String, dynamic>? extras) {

@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 
 import '../../notes/models/book_note.dart';
 
-
 typedef ComposePlayerCapability = Future<void> Function(BuildContext context);
 typedef OpenPlayerNote =
     Future<void> Function(BuildContext context, BookNote note);

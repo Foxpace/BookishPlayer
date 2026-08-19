@@ -7,7 +7,7 @@ extension PlayerCubitNotesAndSleep on PlayerCubit {
       _addMoment(text, BookNoteKind.voice);
 
   Future<void> _addMoment(String text, BookNoteKind kind) => _applyNotes(
-    _useCases.notes.add(
+    _application.addNote(
       book: state.book,
       notes: state.notes,
       input: (
@@ -26,7 +26,7 @@ extension PlayerCubitNotesAndSleep on PlayerCubit {
     String? chapterTitle,
     Duration? endPosition,
   }) => _applyNotes(
-    _useCases.notes.add(
+    _application.addNote(
       book: state.book,
       notes: state.notes,
       input: (
@@ -40,14 +40,14 @@ extension PlayerCubitNotesAndSleep on PlayerCubit {
   );
 
   Future<void> deleteNote(BookNote note) =>
-      _applyNotes(_useCases.notes.delete(state.notes, note));
+      _applyNotes(_application.deleteNote(state.notes, note));
 
   Future<void> updateNote(
     BookNote note, {
     required String? title,
     required String text,
   }) => _applyNotes(
-    _useCases.notes.update(
+    _application.updateNote(
       notes: state.notes,
       note: note,
       title: title,
@@ -56,8 +56,9 @@ extension PlayerCubitNotesAndSleep on PlayerCubit {
   );
 
   Future<void> shareNote(BookNote note, {ShareOrigin? origin}) =>
-      _useCases.notes.share(state.book, note, origin: origin);
-  Future<bool> exportNotes() => _useCases.notes.export(state.book, state.notes);
+      _application.shareNote(state.book, note, origin: origin);
+  Future<bool> exportNotes() =>
+      _application.exportNotes(state.book, state.notes);
 
   Future<void> _applyNotes(Future<List<BookNote>> operation) async {
     final notes = await operation;
@@ -67,8 +68,7 @@ extension PlayerCubitNotesAndSleep on PlayerCubit {
   }
 
   void setSleepTimer(Duration duration) {
-    _cancelSleepTimer();
-    _sleepTimer = _useCases.sleep.scheduleFixed(
+    _application.scheduleFixedSleep(
       duration: duration,
       fadeSeconds: state.playback.sleepFadeSeconds,
       onFinished: _finishSleep,
@@ -93,8 +93,7 @@ extension PlayerCubitNotesAndSleep on PlayerCubit {
       return;
     }
 
-    _cancelSleepTimer();
-    final scheduled = _useCases.sleep.scheduleChapterEnd(
+    final chapterEnd = _application.scheduleChapterEndSleep(
       book: book,
       position: state.position,
       fallbackMinutes: state.playback.chapterFallbackMinutes,
@@ -102,31 +101,25 @@ extension PlayerCubitNotesAndSleep on PlayerCubit {
       onFinished: _finishSleep,
     );
 
-    _sleepTimer = scheduled.fallbackTimer;
     _emit(
       state.copyWith(
         sleepTimerType: SleepTimerType.endOfChapter,
         sleepRemainingMinutes: null,
-        sleepChapterEndMs: scheduled.chapterEnd,
+        sleepChapterEndMs: chapterEnd,
       ),
     );
   }
 
   void cancelSleepTimer() {
-    _cancelSleepTimer();
+    _application.cancelSleepTimer();
     _emit(_states.clearSleep(state));
-  }
-
-  void _cancelSleepTimer() {
-    _sleepTimer?.cancel();
-    _sleepTimer = null;
   }
 
   Future<void> _sleepAtChapterBoundary() async {
     if (state.sleepChapterEndMs == null) {
       return;
     }
-    await _useCases.sleep.pause();
+    await _application.pauseForSleep();
     await saveProgress();
     cancelSleepTimer();
   }

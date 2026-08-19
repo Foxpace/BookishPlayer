@@ -1,3 +1,4 @@
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/transcription/repos/transcription_preferences.dart';
 import 'package:bookish_player/features/transcription/models/speech_model.dart';
@@ -25,7 +26,7 @@ void main() {
       transcription = _Transcription();
       preferences = _Preferences()..selected = 'whisper-tiny';
       cubit = SpeechModelsCubit(
-        buildSpeechModelUseCases(
+        buildSpeechModelApplication(
           transcription: transcription,
           preferences: preferences,
         ),
@@ -94,7 +95,7 @@ void main() {
       (tester) async {
         // GIVEN
         final cubit = SpeechModelsCubit(
-          buildSpeechModelUseCases(
+          buildSpeechModelApplication(
             transcription: _Transcription()..models = const [],
             preferences: _Preferences(),
           ),
@@ -213,10 +214,10 @@ class _Transcription implements TranscriptionRepository {
   Future<void> reset() async {}
 
   @override
-  Future<String> transcribeRange({
+  Future<Result<String>> transcribeRange({
     required Audiobook book,
     required Duration start,
     required Duration end,
     required String model,
-  }) async => '';
+  }) async => const Result.success('');
 }

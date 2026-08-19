@@ -2,8 +2,10 @@ include: package:flutter_lints/flutter.yaml
 
 plugins:
   lintel:
-    version: 0.1.5
+    version: 0.1.6
     diagnostics:
+      application_module_hides_collaborators: true
+      avoid_trivial_application_modules: true
       bloc_fields_must_be_private: true
       bloc_state_must_use_state_suffix: true
       completer_errors_need_stack_trace: true
@@ -41,7 +43,6 @@ plugins:
       test_descriptions_use_given_when_then: true
       test_groups_describe_intention: true
       test_line_count: true
-      use_case_umbrella: true
       visual_grouping: true
       widget_dispatches_intents_only: true
       widget_file_cohesion: true

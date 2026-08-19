@@ -26,6 +26,7 @@ void main() {
     late StorageAssistantCubit cubit;
     var playbackResetCalls = 0;
     var settingsReloadCalls = 0;
+    var settingsReloadFails = false;
 
     setUp(() async {
       books = _Books([
@@ -37,12 +38,16 @@ void main() {
       storage = _Storage();
       reset = _Reset();
       cubit = createStorageCubit(
-        StorageAssistantWorkflow(books, storage, reset),
+        StorageAssistantWorkflow(books, storage),
         resetPlayback: () async {
           playbackResetCalls++;
         },
+        deletePersistentData: reset.clearAll,
         reloadSettings: () async {
           settingsReloadCalls++;
+          if (settingsReloadFails) {
+            throw StateError('settings unavailable');
+          }
         },
       );
       await cubit.load();
@@ -95,8 +100,9 @@ void main() {
 
         // GIVEN
         final failingCubit = createStorageCubit(
-          StorageAssistantWorkflow(books, storage, reset),
+          StorageAssistantWorkflow(books, storage),
           resetPlayback: () => throw StateError('audio busy'),
+          deletePersistentData: reset.clearAll,
         );
         addTearDown(failingCubit.close);
         await failingCubit.load();
@@ -117,11 +123,12 @@ void main() {
     );
 
     testWidgets(
-      'Given an inspected local library, When erasing all data succeeds, Then settings reload and navigation returns to the library',
+      'Given deleted app data and a settings reload failure, When reset finishes, Then a warning is shown and navigation returns to the library',
       (tester) async {
         final robot = StorageAssistantRobot(tester);
 
         // GIVEN
+        settingsReloadFails = true;
         final router = GoRouter(
           initialLocation: '/storage',
           routes: [
@@ -159,6 +166,9 @@ void main() {
         expect(reset.clearCalls, 1);
         expect(settingsReloadCalls, 1);
         robot.expectLibraryDestination('Library destination');
+        robot.expectResetWarning(
+          'All Bookish data was removed, but settings could not be refreshed.',
+        );
       },
     );
   });

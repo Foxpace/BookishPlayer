@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ImportResult {
 
- List<SelectedAudioFile> get selectedFiles; int get importedCount;
+ List<SelectedAudioFile> get selectedFiles; int get importedCount; List<String> get stageHistory; String? get diagnostics; ImportFailedItem? get failedItem; ImportFailureKind? get failureKind; ImportStage? get failureStage; bool get originalRemovalOnly;
 /// Create a copy of ImportResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ImportResultCopyWith<ImportResult> get copyWith => _$ImportResultCopyWithImpl<I
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportResult&&const DeepCollectionEquality().equals(other.selectedFiles, selectedFiles)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportResult&&const DeepCollectionEquality().equals(other.selectedFiles, selectedFiles)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&const DeepCollectionEquality().equals(other.stageHistory, stageHistory)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics)&&(identical(other.failedItem, failedItem) || other.failedItem == failedItem)&&(identical(other.failureKind, failureKind) || other.failureKind == failureKind)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.originalRemovalOnly, originalRemovalOnly) || other.originalRemovalOnly == originalRemovalOnly));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(selectedFiles),importedCount);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(selectedFiles),importedCount,const DeepCollectionEquality().hash(stageHistory),diagnostics,failedItem,failureKind,failureStage,originalRemovalOnly);
 
 @override
 String toString() {
-  return 'ImportResult(selectedFiles: $selectedFiles, importedCount: $importedCount)';
+  return 'ImportResult(selectedFiles: $selectedFiles, importedCount: $importedCount, stageHistory: $stageHistory, diagnostics: $diagnostics, failedItem: $failedItem, failureKind: $failureKind, failureStage: $failureStage, originalRemovalOnly: $originalRemovalOnly)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $ImportResultCopyWith<$Res>  {
   factory $ImportResultCopyWith(ImportResult value, $Res Function(ImportResult) _then) = _$ImportResultCopyWithImpl;
 @useResult
 $Res call({
- List<SelectedAudioFile> selectedFiles, int importedCount
+ List<SelectedAudioFile> selectedFiles, int importedCount, List<String> stageHistory, String? diagnostics, ImportFailedItem? failedItem, ImportFailureKind? failureKind, ImportStage? failureStage, bool originalRemovalOnly
 });
 
 
-
+$ImportFailedItemCopyWith<$Res>? get failedItem;
 
 }
 /// @nodoc
@@ -62,14 +62,32 @@ class _$ImportResultCopyWithImpl<$Res>
 
 /// Create a copy of ImportResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? selectedFiles = null,Object? importedCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? selectedFiles = null,Object? importedCount = null,Object? stageHistory = null,Object? diagnostics = freezed,Object? failedItem = freezed,Object? failureKind = freezed,Object? failureStage = freezed,Object? originalRemovalOnly = null,}) {
   return _then(_self.copyWith(
 selectedFiles: null == selectedFiles ? _self.selectedFiles : selectedFiles // ignore: cast_nullable_to_non_nullable
 as List<SelectedAudioFile>,importedCount: null == importedCount ? _self.importedCount : importedCount // ignore: cast_nullable_to_non_nullable
-as int,
+as int,stageHistory: null == stageHistory ? _self.stageHistory : stageHistory // ignore: cast_nullable_to_non_nullable
+as List<String>,diagnostics: freezed == diagnostics ? _self.diagnostics : diagnostics // ignore: cast_nullable_to_non_nullable
+as String?,failedItem: freezed == failedItem ? _self.failedItem : failedItem // ignore: cast_nullable_to_non_nullable
+as ImportFailedItem?,failureKind: freezed == failureKind ? _self.failureKind : failureKind // ignore: cast_nullable_to_non_nullable
+as ImportFailureKind?,failureStage: freezed == failureStage ? _self.failureStage : failureStage // ignore: cast_nullable_to_non_nullable
+as ImportStage?,originalRemovalOnly: null == originalRemovalOnly ? _self.originalRemovalOnly : originalRemovalOnly // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
+/// Create a copy of ImportResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ImportFailedItemCopyWith<$Res>? get failedItem {
+    if (_self.failedItem == null) {
+    return null;
+  }
 
+  return $ImportFailedItemCopyWith<$Res>(_self.failedItem!, (value) {
+    return _then(_self.copyWith(failedItem: value));
+  });
+}
 }
 
 
@@ -151,10 +169,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<SelectedAudioFile> selectedFiles,  int importedCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<SelectedAudioFile> selectedFiles,  int importedCount,  List<String> stageHistory,  String? diagnostics,  ImportFailedItem? failedItem,  ImportFailureKind? failureKind,  ImportStage? failureStage,  bool originalRemovalOnly)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ImportResult() when $default != null:
-return $default(_that.selectedFiles,_that.importedCount);case _:
+return $default(_that.selectedFiles,_that.importedCount,_that.stageHistory,_that.diagnostics,_that.failedItem,_that.failureKind,_that.failureStage,_that.originalRemovalOnly);case _:
   return orElse();
 
 }
@@ -172,10 +190,10 @@ return $default(_that.selectedFiles,_that.importedCount);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<SelectedAudioFile> selectedFiles,  int importedCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<SelectedAudioFile> selectedFiles,  int importedCount,  List<String> stageHistory,  String? diagnostics,  ImportFailedItem? failedItem,  ImportFailureKind? failureKind,  ImportStage? failureStage,  bool originalRemovalOnly)  $default,) {final _that = this;
 switch (_that) {
 case _ImportResult():
-return $default(_that.selectedFiles,_that.importedCount);case _:
+return $default(_that.selectedFiles,_that.importedCount,_that.stageHistory,_that.diagnostics,_that.failedItem,_that.failureKind,_that.failureStage,_that.originalRemovalOnly);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -192,10 +210,10 @@ return $default(_that.selectedFiles,_that.importedCount);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<SelectedAudioFile> selectedFiles,  int importedCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<SelectedAudioFile> selectedFiles,  int importedCount,  List<String> stageHistory,  String? diagnostics,  ImportFailedItem? failedItem,  ImportFailureKind? failureKind,  ImportStage? failureStage,  bool originalRemovalOnly)?  $default,) {final _that = this;
 switch (_that) {
 case _ImportResult() when $default != null:
-return $default(_that.selectedFiles,_that.importedCount);case _:
+return $default(_that.selectedFiles,_that.importedCount,_that.stageHistory,_that.diagnostics,_that.failedItem,_that.failureKind,_that.failureStage,_that.originalRemovalOnly);case _:
   return null;
 
 }
@@ -207,7 +225,7 @@ return $default(_that.selectedFiles,_that.importedCount);case _:
 
 
 class _ImportResult implements ImportResult {
-  const _ImportResult({required final  List<SelectedAudioFile> selectedFiles, required this.importedCount}): _selectedFiles = selectedFiles;
+  const _ImportResult({required final  List<SelectedAudioFile> selectedFiles, required this.importedCount, final  List<String> stageHistory = const <String>[], this.diagnostics, this.failedItem, this.failureKind, this.failureStage, this.originalRemovalOnly = false}): _selectedFiles = selectedFiles,_stageHistory = stageHistory;
   
 
  final  List<SelectedAudioFile> _selectedFiles;
@@ -218,6 +236,18 @@ class _ImportResult implements ImportResult {
 }
 
 @override final  int importedCount;
+ final  List<String> _stageHistory;
+@override@JsonKey() List<String> get stageHistory {
+  if (_stageHistory is EqualUnmodifiableListView) return _stageHistory;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_stageHistory);
+}
+
+@override final  String? diagnostics;
+@override final  ImportFailedItem? failedItem;
+@override final  ImportFailureKind? failureKind;
+@override final  ImportStage? failureStage;
+@override@JsonKey() final  bool originalRemovalOnly;
 
 /// Create a copy of ImportResult
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +259,16 @@ _$ImportResultCopyWith<_ImportResult> get copyWith => __$ImportResultCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportResult&&const DeepCollectionEquality().equals(other._selectedFiles, _selectedFiles)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportResult&&const DeepCollectionEquality().equals(other._selectedFiles, _selectedFiles)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&const DeepCollectionEquality().equals(other._stageHistory, _stageHistory)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics)&&(identical(other.failedItem, failedItem) || other.failedItem == failedItem)&&(identical(other.failureKind, failureKind) || other.failureKind == failureKind)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.originalRemovalOnly, originalRemovalOnly) || other.originalRemovalOnly == originalRemovalOnly));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_selectedFiles),importedCount);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_selectedFiles),importedCount,const DeepCollectionEquality().hash(_stageHistory),diagnostics,failedItem,failureKind,failureStage,originalRemovalOnly);
 
 @override
 String toString() {
-  return 'ImportResult(selectedFiles: $selectedFiles, importedCount: $importedCount)';
+  return 'ImportResult(selectedFiles: $selectedFiles, importedCount: $importedCount, stageHistory: $stageHistory, diagnostics: $diagnostics, failedItem: $failedItem, failureKind: $failureKind, failureStage: $failureStage, originalRemovalOnly: $originalRemovalOnly)';
 }
 
 
@@ -249,11 +279,11 @@ abstract mixin class _$ImportResultCopyWith<$Res> implements $ImportResultCopyWi
   factory _$ImportResultCopyWith(_ImportResult value, $Res Function(_ImportResult) _then) = __$ImportResultCopyWithImpl;
 @override @useResult
 $Res call({
- List<SelectedAudioFile> selectedFiles, int importedCount
+ List<SelectedAudioFile> selectedFiles, int importedCount, List<String> stageHistory, String? diagnostics, ImportFailedItem? failedItem, ImportFailureKind? failureKind, ImportStage? failureStage, bool originalRemovalOnly
 });
 
 
-
+@override $ImportFailedItemCopyWith<$Res>? get failedItem;
 
 }
 /// @nodoc
@@ -266,15 +296,33 @@ class __$ImportResultCopyWithImpl<$Res>
 
 /// Create a copy of ImportResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? selectedFiles = null,Object? importedCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? selectedFiles = null,Object? importedCount = null,Object? stageHistory = null,Object? diagnostics = freezed,Object? failedItem = freezed,Object? failureKind = freezed,Object? failureStage = freezed,Object? originalRemovalOnly = null,}) {
   return _then(_ImportResult(
 selectedFiles: null == selectedFiles ? _self._selectedFiles : selectedFiles // ignore: cast_nullable_to_non_nullable
 as List<SelectedAudioFile>,importedCount: null == importedCount ? _self.importedCount : importedCount // ignore: cast_nullable_to_non_nullable
-as int,
+as int,stageHistory: null == stageHistory ? _self._stageHistory : stageHistory // ignore: cast_nullable_to_non_nullable
+as List<String>,diagnostics: freezed == diagnostics ? _self.diagnostics : diagnostics // ignore: cast_nullable_to_non_nullable
+as String?,failedItem: freezed == failedItem ? _self.failedItem : failedItem // ignore: cast_nullable_to_non_nullable
+as ImportFailedItem?,failureKind: freezed == failureKind ? _self.failureKind : failureKind // ignore: cast_nullable_to_non_nullable
+as ImportFailureKind?,failureStage: freezed == failureStage ? _self.failureStage : failureStage // ignore: cast_nullable_to_non_nullable
+as ImportStage?,originalRemovalOnly: null == originalRemovalOnly ? _self.originalRemovalOnly : originalRemovalOnly // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
+/// Create a copy of ImportResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ImportFailedItemCopyWith<$Res>? get failedItem {
+    if (_self.failedItem == null) {
+    return null;
+  }
 
+  return $ImportFailedItemCopyWith<$Res>(_self.failedItem!, (value) {
+    return _then(_self.copyWith(failedItem: value));
+  });
+}
 }
 
 // dart format on

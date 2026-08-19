@@ -1,18 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../../library/models/library_models.dart';
 import '../models/editable_book_details.dart';
-import '../use_cases/editing_use_cases_barrel.dart';
+import '../use_cases/editing_application.dart';
 import 'metadata_editor_state.dart';
 import 'metadata_editor_status.dart';
 
 @injectable
 class MetadataEditorCubit extends Cubit<MetadataEditorState> {
-  MetadataEditorCubit(this._useCases) : super(const MetadataEditorState());
+  MetadataEditorCubit(this._application) : super(const MetadataEditorState());
 
-  final EditingUseCases _useCases;
+  final EditingApplication _application;
 
   Future<void> load(String bookId) async {
     emit(
@@ -22,11 +23,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
         message: null,
       ),
     );
-    try {
-      await _loadBookAndEmit(bookId);
-    } catch (_) {
-      _emitBookLoadFailure();
-    }
+    await _loadBookAndEmit(bookId);
   }
 
   Future<void> retryLoad() async {
@@ -41,7 +38,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
       return;
     }
 
-    await _saveBook(_useCases.editDetails(book, details));
+    await _saveBook(_application.editDetails(book, details));
   }
 
   Future<void> changeCover() async {
@@ -49,7 +46,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     if (book == null) {
       return;
     }
-    await _saveBook(_useCases.changeCover(book));
+    await _saveBook(_application.changeCover(book));
   }
 
   Future<void> reorderTrack(int oldIndex, int newIndex) async {
@@ -57,7 +54,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     if (book == null || book.tracks.isEmpty) {
       return;
     }
-    await _saveBook(_useCases.reorderTracks(book, oldIndex, newIndex));
+    await _saveBook(_application.reorderTracks(book, oldIndex, newIndex));
   }
 
   Future<void> addChapter(String title, Duration position) async {
@@ -65,7 +62,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     if (book == null || title.trim().isEmpty) {
       return;
     }
-    await _saveBook(_useCases.addChapter(book, title, position));
+    await _saveBook(_application.addChapter(book, title, position));
   }
 
   Future<void> deleteChapter(AudioChapter chapter) async {
@@ -73,28 +70,28 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     if (book == null) {
       return;
     }
-    await _saveBook(_useCases.deleteChapter(book, chapter));
+    await _saveBook(_application.deleteChapter(book, chapter));
   }
 
-  Future<void> _saveBook(Future<Audiobook> operation) async {
+  Future<void> _saveBook(Future<Result<Audiobook>> operation) async {
     emit(state.copyWith(status: MetadataEditorStatus.saving));
-    try {
-      await _saveBookAndEmit(operation);
-    } catch (_) {
-      _emitBookSaveFailure();
-    }
+    await _saveBookAndEmit(operation);
   }
 
   Future<void> _loadBookAndEmit(String bookId) async {
-    final book = await _useCases.loadBook(bookId);
-    emit(
-      MetadataEditorState(
-        status: MetadataEditorStatus.ready,
-        bookId: bookId,
-        book: book,
-        effectRevision: state.effectRevision,
-      ),
-    );
+    switch (await _application.loadBook(bookId)) {
+      case ResultSuccess(:final value):
+        emit(
+          MetadataEditorState(
+            status: MetadataEditorStatus.ready,
+            bookId: bookId,
+            book: value,
+            effectRevision: state.effectRevision,
+          ),
+        );
+      case ResultFailure():
+        _emitBookLoadFailure();
+    }
   }
 
   void _emitBookLoadFailure() => emit(
@@ -106,9 +103,13 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     ),
   );
 
-  Future<void> _saveBookAndEmit(Future<Audiobook> operation) async {
-    final book = await operation;
-    emit(state.copyWith(status: MetadataEditorStatus.saved, book: book));
+  Future<void> _saveBookAndEmit(Future<Result<Audiobook>> operation) async {
+    switch (await operation) {
+      case ResultSuccess(:final value):
+        emit(state.copyWith(status: MetadataEditorStatus.saved, book: value));
+      case ResultFailure():
+        _emitBookSaveFailure();
+    }
   }
 
   void _emitBookSaveFailure() => emit(

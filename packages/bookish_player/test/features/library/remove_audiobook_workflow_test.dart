@@ -1,10 +1,15 @@
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
+import 'package:bookish_player/features/importing/models/import_cancellation.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
-import 'package:bookish_player/features/library/use_cases/remove_audiobook_use_case.dart';
+import 'package:bookish_player/features/library/use_cases/library_application.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/library/repos/audiobook_catalog_repository.dart';
 import 'package:bookish_player/features/library/models/audiobook_removal_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../../test_support/support/fakes/fake_library_artwork.dart';
+import '../../../test_support/support/fakes/fake_library_dependencies.dart';
 
 void main() {
   group('Remove audiobook workflow', () {
@@ -18,19 +23,25 @@ void main() {
     );
     late _Books books;
     late _Files files;
-    late RemoveAudiobookUseCase sut;
+    late LibraryApplication sut;
 
     setUp(() {
       books = _Books();
       files = _Files();
-      sut = RemoveAudiobookUseCase(books, files);
+      sut = LibraryApplication(
+        books,
+        FakeLibraryArtwork(),
+        files,
+        FakeLibrarySettings(),
+        (_) async {},
+      );
     });
 
     test(
       'Given the remove audiobook workflow, When its behavior is exercised, Then audio-only removal retains imported artwork',
       () async {
         // WHEN
-        await sut(book, AudiobookRemovalMode.keepUserData);
+        await sut.removeBook(book, AudiobookRemovalMode.keepUserData);
 
         // THEN
         expect(books.mode, AudiobookRemovalMode.keepUserData);
@@ -42,7 +53,7 @@ void main() {
       'Given the remove audiobook workflow, When its behavior is exercised, Then full removal also deletes imported artwork',
       () async {
         // WHEN
-        await sut(book, AudiobookRemovalMode.deleteAllData);
+        await sut.removeBook(book, AudiobookRemovalMode.deleteAllData);
 
         // THEN
         expect(books.mode, AudiobookRemovalMode.deleteAllData);
@@ -91,25 +102,30 @@ class _Files implements FileImportRepository {
   Future<void> clearTemporaryFiles() async {}
 
   @override
-  Future<List<SelectedAudioFile>> findTransferredAudioFiles() async => const [];
+  Future<Result<List<SelectedAudioFile>>> findTransferredAudioFiles() async =>
+      const Result.success([]);
 
   @override
-  Future<ImportedAudioFile> importFile(
+  Future<Result<ImportedAudioFile>> importFile(
     SelectedAudioFile selected, {
+    ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
-  }) async => ImportedAudioFile(
-    path: selected.sourcePath,
-    displayName: selected.displayName,
+  }) async => Result.success(
+    ImportedAudioFile(
+      path: selected.sourcePath,
+      displayName: selected.displayName,
+    ),
   );
 
   @override
   Future<String?> pickAndImportCover(String bookId) async => null;
 
   @override
-  Future<List<SelectedAudioFile>> pickAudioFiles() async => const [];
+  Future<Result<List<SelectedAudioFile>>> pickAudioFiles() async =>
+      const Result.success([]);
 
   @override
-  Future<void> removeTransferredAudioFiles(
+  Future<Result<bool>> removeTransferredAudioFiles(
     List<SelectedAudioFile> files,
-  ) async {}
+  ) async => const Result.success(true);
 }

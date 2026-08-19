@@ -4,6 +4,7 @@ enum AppMessage {
   storageInspectFailed,
   unusedFilesRemoved,
   allDataRemoved,
+  allDataRemovedSettingsReloadFailed,
   clearDataFailed,
   metadataEditorLoadFailed,
   metadataSaveFailed,

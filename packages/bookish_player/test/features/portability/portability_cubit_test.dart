@@ -1,7 +1,8 @@
 import 'dart:convert';
 
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/portability/use_cases/backup_workflow.dart';
-import 'package:bookish_player/features/portability/use_cases/portability_use_case_bundle.dart';
+import 'package:bookish_player/features/portability/use_cases/bookish_backup_validator.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/library/models/listening_session.dart';
 import 'package:bookish_player/features/notes/models/book_note.dart';
@@ -63,12 +64,7 @@ void main() {
           files,
           const BookishBackupValidator(),
         );
-        final sut = PortabilityCubit(
-          PortabilityUseCases(
-            ExportBackupUseCase(workflow),
-            RestoreBackupUseCase(workflow),
-          ),
-        );
+        final sut = PortabilityCubit(workflow);
 
         // WHEN
         await sut.backup();
@@ -129,20 +125,22 @@ class _Store implements BackupStoreRepository {
   final _Settings settings;
 
   @override
-  Future<BookishBackup> snapshot() async => BookishBackup(
-    exportedAt: DateTime.utc(2026),
-    books: books.books,
-    notes: books.notes,
-    bookMetadata: books.metadata,
-    sessions: books.sessions,
-    settings: BackupSettings(
-      theme: settings.preference.name,
-      playback: settings.playback,
+  Future<Result<BookishBackup>> snapshot() async => Result.success(
+    BookishBackup(
+      exportedAt: DateTime.utc(2026),
+      books: books.books,
+      notes: books.notes,
+      bookMetadata: books.metadata,
+      sessions: books.sessions,
+      settings: BackupSettings(
+        theme: settings.preference.name,
+        playback: settings.playback,
+      ),
     ),
   );
 
   @override
-  Future<void> restore(BookishBackup backup) async {
+  Future<Result<bool>> restore(BookishBackup backup) async {
     books
       ..books = backup.books
       ..notes = backup.notes
@@ -151,6 +149,7 @@ class _Store implements BackupStoreRepository {
     settings
       ..preference = ThemePreference.fromStorage(backup.settings.theme)
       ..playback = backup.settings.playback;
+    return const Result.success(true);
   }
 }
 

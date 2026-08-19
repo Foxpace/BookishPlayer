@@ -80,8 +80,8 @@ class StorageAssistantTestHarness extends StatelessWidget {
     if (!approved || !context.mounted) {
       return;
     }
-    final cleared = await cubit.clearAll();
-    if (cleared && context.mounted && navigateAfterReset) {
+    final outcome = await cubit.clearAll();
+    if (outcome.dataRemoved && context.mounted && navigateAfterReset) {
       context.goNamed(AppRoutes.library);
     }
   }

@@ -1,3 +1,4 @@
+import '../../../core/foundation/result.dart';
 import '../../library/models/library_models.dart';
 import '../models/speech_model.dart';
 import '../models/transcription_download.dart';
@@ -14,7 +15,7 @@ abstract interface class TranscriptionRepository {
     TranscriptionDownloadProgress? onProgress,
   });
 
-  Future<String> transcribeRange({
+  Future<Result<String>> transcribeRange({
     required Audiobook book,
     required Duration start,
     required Duration end,

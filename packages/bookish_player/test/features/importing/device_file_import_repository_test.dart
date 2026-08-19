@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/core/platform/file_picker_gateway.dart';
+import 'package:bookish_player/features/importing/models/import_cancellation.dart';
 import 'package:bookish_player/features/importing/repos/implementations/device_file_import_repository.dart';
+import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,11 +37,12 @@ void main() {
 
         // THEN
         try {
-          await copyFileInBackground(
+          final result = await copyFileInBackground(
             source.path,
             destination,
             onProgress: (copied, total) => progress.add((copied, total)),
           );
+          expect(result, const Result<bool>.success(true));
 
           final copied = File(destination);
           expect(await copied.length(), chunk * chunkCount);
@@ -54,6 +58,42 @@ void main() {
                 ),
             bytes,
           );
+        } finally {
+          await temporary.delete(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'Given an active background copy, When intentional cancellation is requested, Then the worker stops and removes partial and destination files',
+      () async {
+        // GIVEN
+        final temporary = await Directory.systemTemp.createTemp(
+          'bookish_cancelled_copy_test_',
+        );
+        final source = File('${temporary.path}/source.m4b');
+        final destination = '${temporary.path}/destination.m4b';
+        source.writeAsBytesSync(List<int>.filled(8 * 1024 * 1024, 7));
+        final cancellation = ImportCancellationSignal();
+
+        // WHEN
+        try {
+          final copy = copyFileInBackground(
+            source.path,
+            destination,
+            cancellation: cancellation,
+            onProgress: (_, _) => cancellation.cancel(),
+          );
+
+          // THEN
+          expect(
+            await copy,
+            const Result<bool>.failure(
+              AppFailure.cancelled('import.cancelled'),
+            ),
+          );
+          expect(File(destination).existsSync(), isFalse);
+          expect(File('$destination.part').existsSync(), isFalse);
         } finally {
           await temporary.delete(recursive: true);
         }
@@ -109,7 +149,7 @@ void main() {
         ]);
 
         // WHEN
-        final selected = await sut.pickAudioFiles();
+        final selected = _success(await sut.pickAudioFiles());
 
         // THEN
         expect(selected.map((file) => file.displayName), [
@@ -121,7 +161,7 @@ void main() {
         expect(picker.allowMultiple, isTrue);
 
         picker.result = null;
-        expect(await sut.pickAudioFiles(), isEmpty);
+        expect(_success(await sut.pickAudioFiles()), isEmpty);
       },
     );
 
@@ -135,13 +175,9 @@ void main() {
 
         // THEN
         expect(
-          sut.pickAudioFiles(),
-          throwsA(
-            isA<FileSystemException>().having(
-              (error) => error.message,
-              'message',
-              contains('cloud-only.m4b'),
-            ),
+          await sut.pickAudioFiles(),
+          const Result<List<SelectedAudioFile>>.failure(
+            AppFailure.operationFailed('import.fileAccess'),
           ),
         );
       },
@@ -159,7 +195,7 @@ void main() {
         File('${documents.path}/ignore.txt').writeAsStringSync('ignore');
 
         // WHEN
-        final transferred = await sut.findTransferredAudioFiles();
+        final transferred = _success(await sut.findTransferredAudioFiles());
         // THEN
         expect(transferred.map((file) => file.displayName), [
           'beta.m4b',
@@ -167,16 +203,21 @@ void main() {
         ]);
 
         final progress = <(int, int)>[];
-        final imported = await sut.importFile(
-          transferred.first,
-          onProgress: (copied, total) => progress.add((copied, total)),
+        final imported = _success(
+          await sut.importFile(
+            transferred.first,
+            onProgress: (copied, total) => progress.add((copied, total)),
+          ),
         );
         expect(imported.displayName, 'beta.m4b');
         expect(imported.path, '${support.path}/audiobooks/audio-0.m4b');
         expect(File(imported.path).readAsStringSync(), 'beta');
         expect(progress.last, (4, 4));
 
-        await sut.removeTransferredAudioFiles(transferred);
+        expect(
+          await sut.removeTransferredAudioFiles(transferred),
+          const Result<bool>.success(true),
+        );
         expect(alpha.existsSync(), isFalse);
         expect(beta.existsSync(), isFalse);
         await sut.deleteImportedFile(imported.path);
@@ -212,6 +253,13 @@ void main() {
     );
   });
 }
+
+S _success<S>(Result<S> result) => switch (result) {
+  ResultSuccess(:final value) => value,
+  ResultFailure(:final failure) => throw TestFailure(
+    'Expected success, received $failure.',
+  ),
+};
 
 class _FilePicker implements FilePickerGateway {
   FilePickerResult? result;

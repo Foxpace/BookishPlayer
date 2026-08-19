@@ -11,10 +11,11 @@ part 'import_state.freezed.dart';
 @freezed
 abstract class ImportState with _$ImportState {
   const factory ImportState({
-    @Default(ImportStatus.picking) ImportStatus status,
+    @Default(ImportStatus.idle) ImportStatus status,
+    @Default(false) bool cancellationRequested,
     @Default(false) bool finderTransfer,
     @Default(<SelectedAudioFile>[]) List<SelectedAudioFile> selectedFiles,
-    ImportWorkflowFailure? workflowFailure,
+    ImportResult? failureResult,
     @Default(ImportStage.selectingFiles) ImportStage stage,
     @Default(0) int importedCount,
     @Default(0) int totalFiles,
