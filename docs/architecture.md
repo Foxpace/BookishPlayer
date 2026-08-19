@@ -116,8 +116,8 @@ portability   -> library/notes/settings repository ports
 - Every Cubit state is Freezed. Loading, progress, success, typed failures, and
   revisioned one-time effects are explicit state.
 - Screen and retry context belongs in state, not parallel mutable Cubit fields.
-  Non-rendering bookkeeping uses one immutable Freezed runtime state. Only
-  lifecycle handles, such as a cancellable timer, may remain separately mutable.
+  Non-rendering workflow bookkeeping and resource handles belong inside the
+  application module that owns their lifecycle.
 - Advance effect revisions from the emitted state; do not duplicate them in a
   private counter.
 - Widgets localize typed message identifiers. Cubits do not expose localized
@@ -129,12 +129,13 @@ portability   -> library/notes/settings repository ports
 
 ## Player
 
-- Make `PlayerCubit` the sole owner of mutable player product and presentation
-  state.
-- Allow audio services, policies, trackers, savers, and coordinators to retain
-  dependencies and platform-resource handles only.
-- Do not store the active book, progress, completion, session, sleep timer, or
-  screen state outside `PlayerCubit`.
+- Make `PlayerCubit` the sole owner of immutable player presentation state.
+- Give `PlayerCubit` one `PlayerApplication` dependency. The application hides
+  repositories, policies, command ordering, audio subscriptions, the sleep
+  timer, queued progress writes, and listening-session bookkeeping.
+- Keep the active book, progress, completion, and other renderable product state
+  in `PlayerState`; keep non-rendering workflow runtime private to
+  `PlayerApplication`.
 - Publish external audio and CarPlay actions as typed `PlaybackBookRequest`s.
   `PlayerCubit` consumes each request, opens the book, emits state, and
   completes the request.
