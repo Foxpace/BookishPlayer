@@ -2,13 +2,25 @@ import 'package:injectable/injectable.dart';
 import 'package:sembast/sembast.dart';
 
 import '../../../../core/database/bookish_database.dart';
+import '../../../../core/foundation/result.dart';
 import '../../../library/repos/implementations/book_storage_codec.dart';
 import '../../../library/models/library_models.dart';
 import '../../../library/models/listening_session.dart';
 import '../../../notes/models/book_note.dart';
 import '../../../settings/models/playback_preferences.dart';
 import '../backup_store_repository.dart';
+import '../backup_store_failure.dart';
 import '../../models/bookish_backup.dart';
+
+typedef _StoredRecords = List<RecordSnapshot<String, Map<String, Object?>>>;
+typedef _SnapshotRecords = ({
+  _StoredRecords books,
+  _StoredRecords notes,
+  _StoredRecords metadata,
+  _StoredRecords sessions,
+  Map<String, Object?>? appearance,
+  Map<String, Object?>? playback,
+});
 
 @LazySingleton(as: BackupStoreRepository)
 class SembastBackupStoreRepository implements BackupStoreRepository {
@@ -23,15 +35,19 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
   final _settings = stringMapStoreFactory.store('settings');
 
   @override
-  Future<BookishBackup> snapshot() async {
-    final (
-      bookRecords,
-      noteRecords,
-      metadataRecords,
-      sessionRecords,
-      appearance,
-      playback,
-    ) = await (
+  Future<Result<BookishBackup, BackupStoreFailure>> snapshot() async {
+    try {
+      return await _createSnapshot();
+    } catch (_) {
+      return const Result.failure(BackupStoreFailure.persistence);
+    }
+  }
+
+  Future<Result<BookishBackup, BackupStoreFailure>> _createSnapshot() async =>
+      _snapshotResult(await _readSnapshotRecords());
+
+  Future<_SnapshotRecords> _readSnapshotRecords() async {
+    final (books, notes, metadata, sessions, appearance, playback) = await (
       _books.find(_database),
       _notes.find(_database),
       _metadata.find(_database),
@@ -39,26 +55,61 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
       _settings.record('appearance').get(_database),
       _settings.record('playback').get(_database),
     ).wait;
-    final metadataById = _metadataById(metadataRecords);
-
-    return BookishBackup(
-      exportedAt: DateTime.now(),
-      books: [
-        for (final record in bookRecords)
-          _hydrateStoredBook(record.value, metadataById),
-      ],
-      notes: [
-        for (final record in noteRecords)
-          BookNote.fromJson(Map<String, dynamic>.from(record.value)),
-      ],
-      bookMetadata: metadataById.values.toList(),
-      sessions: [
-        for (final record in sessionRecords)
-          ListeningSession.fromJson(Map<String, dynamic>.from(record.value)),
-      ],
-      settings: _backupSettings(appearance, playback),
+    return (
+      books: books,
+      notes: notes,
+      metadata: metadata,
+      sessions: sessions,
+      appearance: appearance,
+      playback: playback,
     );
   }
+
+  Result<BookishBackup, BackupStoreFailure> _snapshotResult(
+    _SnapshotRecords records,
+  ) {
+    final metadataById = _metadataById(records.metadata);
+    final books = _hydrateStoredBooks(records.books, metadataById);
+    return books == null
+        ? const Result.failure(BackupStoreFailure.corruptedData)
+        : Result.success(_buildBackup(records, metadataById, books));
+  }
+
+  List<Audiobook>? _hydrateStoredBooks(
+    _StoredRecords records,
+    Map<String, BookMetadata> metadataById,
+  ) {
+    final books = <Audiobook>[];
+    for (final record in records) {
+      final book = _hydrateStoredBook(record.value, metadataById);
+      if (book == null) {
+        return null;
+      }
+      books.add(book);
+    }
+    return books;
+  }
+
+  BookishBackup _buildBackup(
+    _SnapshotRecords records,
+    Map<String, BookMetadata> metadataById,
+    List<Audiobook> books,
+  ) => BookishBackup(
+    exportedAt: DateTime.now(),
+    books: books,
+    notes: [for (final record in records.notes) _noteFrom(record.value)],
+    bookMetadata: metadataById.values.toList(),
+    sessions: [
+      for (final record in records.sessions) _sessionFrom(record.value),
+    ],
+    settings: _backupSettings(records.appearance, records.playback),
+  );
+
+  BookNote _noteFrom(Map<String, Object?> value) =>
+      BookNote.fromJson(Map<String, dynamic>.from(value));
+
+  ListeningSession _sessionFrom(Map<String, Object?> value) =>
+      ListeningSession.fromJson(Map<String, dynamic>.from(value));
 
   Map<String, BookMetadata> _metadataById(
     List<RecordSnapshot<String, Map<String, Object?>>> records,
@@ -79,35 +130,42 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
         : PlaybackPreferences.fromJson(Map<String, dynamic>.from(playback)),
   );
 
-  Audiobook _hydrateStoredBook(
+  Audiobook? _hydrateStoredBook(
     Map<String, Object?> value,
     Map<String, BookMetadata> metadataById,
   ) {
     final metadataId = value['metadataId'] as String?;
     final metadata = metadataId == null ? null : metadataById[metadataId];
     if (metadata == null) {
-      throw StateError('Stored audiobook has no matching metadata.');
+      return null;
     }
 
     return hydrateBook(Map<String, dynamic>.from(value), metadata);
   }
 
   @override
-  Future<void> restore(BookishBackup backup) async {
-    final metadataById = _restoredMetadataById(backup);
-    _validateRestoreReferences(backup, metadataById);
+  Future<Result<bool, BackupStoreFailure>> restore(BookishBackup backup) async {
+    try {
+      final metadataById = _restoredMetadataById(backup);
+      if (!_hasValidRestoreReferences(backup, metadataById)) {
+        return const Result.failure(BackupStoreFailure.corruptedData);
+      }
 
-    await _database.transaction((transaction) async {
-      await _clearBackupStores(transaction);
+      await _database.transaction((transaction) async {
+        await _clearBackupStores(transaction);
 
-      await (
-        _restoreBooks(transaction, backup.books, metadataById),
-        _restoreMetadata(transaction, metadataById.values),
-        _restoreNotes(transaction, backup.notes),
-        _restoreSessions(transaction, backup.sessions),
-        _restoreSettings(transaction, backup.settings),
-      ).wait;
-    });
+        await (
+          _restoreBooks(transaction, backup.books, metadataById),
+          _restoreMetadata(transaction, metadataById.values),
+          _restoreNotes(transaction, backup.notes),
+          _restoreSessions(transaction, backup.sessions),
+          _restoreSettings(transaction, backup.settings),
+        ).wait;
+      });
+      return const Result.success(true);
+    } catch (_) {
+      return const Result.failure(BackupStoreFailure.persistence);
+    }
   }
 
   Map<String, BookMetadata> _restoredMetadataById(BookishBackup backup) {
@@ -122,28 +180,27 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
     return metadataById;
   }
 
-  void _validateRestoreReferences(
+  bool _hasValidRestoreReferences(
     BookishBackup backup,
     Map<String, BookMetadata> metadataById,
   ) {
     for (final note in backup.notes) {
-      _requireMetadata(metadataById, note.metadataId, 'note', note.id);
+      if (!_hasMetadata(metadataById, note.metadataId)) {
+        return false;
+      }
     }
     for (final session in backup.sessions) {
-      _requireMetadata(metadataById, session.metadataId, 'session', session.id);
+      if (!_hasMetadata(metadataById, session.metadataId)) {
+        return false;
+      }
     }
+    return true;
   }
 
-  void _requireMetadata(
+  bool _hasMetadata(
     Map<String, BookMetadata> metadataById,
     String metadataId,
-    String recordType,
-    String recordId,
-  ) {
-    if (metadataId.isEmpty || metadataById.containsKey(metadataId) == false) {
-      throw StateError('Backup $recordType $recordId has no book metadata.');
-    }
-  }
+  ) => metadataId.isNotEmpty && metadataById.containsKey(metadataId);
 
   Future<void> _clearBackupStores(Transaction transaction) async {
     await [

@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../../library/models/library_models.dart';
 import '../../notes/models/book_note.dart';
 import '../../notes/models/book_note_kind.dart';
 import '../models/playback_open_result.dart';
+import '../models/player_device_failure.dart';
 import '../models/share_origin.dart';
 import '../use_cases/playback_command_service.dart';
 import '../use_cases/player_lifecycle_use_cases.dart';
@@ -54,11 +56,7 @@ class PlayerCubit extends Cubit<PlayerState> {
       _application.cancelSleepTimer();
     }
     emit(_states.buildOpeningState(book));
-    try {
-      await _openBookAndApply(book, previousBook);
-    } catch (_) {
-      _fail(AppMessage.audiobookPlaybackFailed);
-    }
+    await _openBookAndApply(book, previousBook);
   }
 
   Future<void> openById(String bookId) async {
@@ -66,11 +64,7 @@ class PlayerCubit extends Cubit<PlayerState> {
       return;
     }
     emit(state.copyWith(status: PlayerStatus.loading));
-    try {
-      await _openBookById(bookId);
-    } catch (_) {
-      _fail(AppMessage.audiobookOpenFailed);
-    }
+    await _openBookById(bookId);
   }
 
   Future<void> togglePlayback() => _application.togglePlayback(
@@ -80,25 +74,28 @@ class PlayerCubit extends Cubit<PlayerState> {
     duration: state.duration,
   );
 
-  Future<void> pickAudioOutput() => _application.showAudioOutputPicker();
+  Future<Result<bool, PlayerDeviceFailure>> pickAudioOutput() =>
+      _application.showAudioOutputPicker();
 
   Future<void> _openBookAndApply(
     Audiobook book,
     Audiobook? previousBook,
   ) async {
-    final result = await _application.openBook(
-      book,
-      previousBook: previousBook,
-    );
-    await _applyOpened(result);
+    switch (await _application.openBook(book, previousBook: previousBook)) {
+      case ResultSuccess(:final value):
+        await _applyOpened(value);
+      case ResultFailure():
+        _fail(AppMessage.audiobookPlaybackFailed);
+    }
   }
 
   Future<void> _openBookById(String bookId) async {
-    final book = await _application.findBook(bookId);
-    if (book == null) {
-      throw StateError('missing book');
+    switch (await _application.findBook(bookId)) {
+      case ResultSuccess(:final value):
+        await open(value);
+      case ResultFailure():
+        _fail(AppMessage.audiobookOpenFailed);
     }
-    await open(book);
   }
 
   void _handlePlayBookRequest(PlaybackBookRequest request) {
@@ -119,8 +116,12 @@ class PlayerCubit extends Cubit<PlayerState> {
       await finishListeningSession();
       _application.cancelSleepTimer();
     }
-    final notes = await _application.loadNotes(result);
-    emit(_states.buildReadyState(result, notes));
+    switch (await _application.loadNotes(result)) {
+      case ResultSuccess(:final value):
+        emit(_states.buildReadyState(result, value));
+      case ResultFailure():
+        _fail(AppMessage.audiobookPlaybackFailed);
+    }
   }
 
   void _fail(AppMessage message) => emit(

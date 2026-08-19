@@ -5,9 +5,7 @@ import '../repos/selected_audio_file.dart';
 part 'import_workflow_cancellation.freezed.dart';
 
 @freezed
-abstract class ImportWorkflowCancellation
-    with _$ImportWorkflowCancellation
-    implements Exception {
+abstract class ImportWorkflowCancellation with _$ImportWorkflowCancellation {
   const factory ImportWorkflowCancellation({
     required List<SelectedAudioFile> selectedFiles,
     required int importedCount,

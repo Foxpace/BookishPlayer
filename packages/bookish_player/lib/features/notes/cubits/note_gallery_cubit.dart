@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../use_cases/note_gallery_application.dart';
 import '../models/book_note.dart';
@@ -21,22 +22,22 @@ class NoteGalleryCubit extends Cubit<NoteGalleryState> {
         message: null,
       ),
     );
-    try {
-      await _loadNotesAndEmit();
-    } catch (_) {
-      _emitNotesLoadFailure();
-    }
+    await _loadNotesAndEmit();
   }
 
   Future<void> _loadNotesAndEmit() async {
-    final content = await _application.load();
-    emit(
-      state.copyWith(
-        status: NoteGalleryStatus.ready,
-        metadata: content.metadata,
-        notes: content.notes,
-      ),
-    );
+    switch (await _application.load()) {
+      case ResultSuccess(:final value):
+        emit(
+          state.copyWith(
+            status: NoteGalleryStatus.ready,
+            metadata: value.metadata,
+            notes: value.notes,
+          ),
+        );
+      case ResultFailure():
+        _emitNotesLoadFailure();
+    }
   }
 
   void _emitNotesLoadFailure() => emit(
@@ -52,17 +53,22 @@ class NoteGalleryCubit extends Cubit<NoteGalleryState> {
     required String? title,
     required String text,
   }) async {
-    final updated = await _application.update(note, title: title, text: text);
-    if (updated == null) {
-      return;
+    switch (await _application.update(note, title: title, text: text)) {
+      case ResultSuccess(value: final updated?):
+        _emitUpdatedNote(note.id, updated);
+      case ResultSuccess(value: null):
+        return;
+      case ResultFailure():
+        _emitNotesLoadFailure();
     }
-    emit(
-      state.copyWith(
-        notes: [
-          for (final current in state.notes)
-            if (current.id == note.id) updated else current,
-        ],
-      ),
-    );
   }
+
+  void _emitUpdatedNote(String noteId, BookNote updated) => emit(
+    state.copyWith(
+      notes: [
+        for (final current in state.notes)
+          if (current.id == noteId) updated else current,
+      ],
+    ),
+  );
 }

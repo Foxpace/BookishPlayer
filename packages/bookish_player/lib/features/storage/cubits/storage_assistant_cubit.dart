@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../../../core/use_cases/app_data_reset.dart';
 import '../../../core/use_cases/app_data_reset_outcome.dart';
@@ -15,24 +16,20 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
 
   Future<void> load() async {
     emit(state.copyWith(loading: true, message: null));
-    try {
-      await _inspectStorageAndEmit();
-    } catch (_) {
-      _emitStorageInspectionFailure();
-    }
+    await _inspectStorageAndEmit();
   }
 
   Future<void> cleanOrphans() async {
-    try {
-      await _cleanOrphansAndEmit();
-    } catch (_) {
-      _emitStorageCleanupFailure();
-    }
+    await _cleanOrphansAndEmit();
   }
 
   Future<void> removeMissingBook(String id) async {
-    await _workflow.removeMissingBook(id);
-    await load();
+    switch (await _workflow.removeMissingBook(id)) {
+      case ResultSuccess():
+        await load();
+      case ResultFailure():
+        _emitStorageCleanupFailure();
+    }
   }
 
   Future<AppDataResetOutcome> clearAll() async {
@@ -43,14 +40,18 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
   }
 
   Future<void> _inspectStorageAndEmit() async {
-    final result = await _workflow.inspect();
-    emit(
-      state.copyWith(
-        loading: false,
-        books: result.books,
-        report: result.report,
-      ),
-    );
+    switch (await _workflow.inspect()) {
+      case ResultSuccess(:final value):
+        emit(
+          state.copyWith(
+            loading: false,
+            books: value.books,
+            report: value.report,
+          ),
+        );
+      case ResultFailure():
+        _emitStorageInspectionFailure();
+    }
   }
 
   void _emitStorageInspectionFailure() => emit(
@@ -62,14 +63,20 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
   );
 
   Future<void> _cleanOrphansAndEmit() async {
-    await _workflow.cleanOrphans(state.report);
-    await load();
-    emit(
-      state.copyWith(
-        message: AppMessage.unusedFilesRemoved,
-        effectRevision: state.effectRevision + 1,
-      ),
-    );
+    switch (await _workflow.cleanOrphans(state.report)) {
+      case ResultSuccess():
+        await load();
+        if (state.message != AppMessage.storageInspectFailed) {
+          emit(
+            state.copyWith(
+              message: AppMessage.unusedFilesRemoved,
+              effectRevision: state.effectRevision + 1,
+            ),
+          );
+        }
+      case ResultFailure():
+        _emitStorageCleanupFailure();
+    }
   }
 
   void _emitStorageCleanupFailure() => emit(

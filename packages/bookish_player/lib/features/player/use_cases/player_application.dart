@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../library/models/library_models.dart';
 import '../../notes/models/book_note.dart';
 import '../../notes/use_cases/player_notes_service.dart';
 import '../models/playback_open_result.dart';
+import '../models/player_open_failure.dart';
+import '../models/player_device_failure.dart';
 import '../models/share_origin.dart';
 import 'player_application_events.dart';
 import 'player_device_gateway.dart';
@@ -61,15 +64,39 @@ class PlayerApplication {
 
   bool shouldSuppressPlaybackEvents() => _runtime.suppressingPlaybackEvents;
 
-  Future<PlaybackOpenResult> openBook(
+  Future<Result<PlaybackOpenResult, PlayerOpenFailure>> openBook(
     Audiobook book, {
     Audiobook? previousBook,
-  }) => _lifecycle.openBook(book, previousBook: previousBook);
+  }) async {
+    try {
+      return Result.success(
+        await _lifecycle.openBook(book, previousBook: previousBook),
+      );
+    } catch (_) {
+      return const Result.failure(PlayerOpenFailure.playbackFailed);
+    }
+  }
 
-  Future<Audiobook?> findBook(String bookId) => _lifecycle.findBook(bookId);
+  Future<Result<Audiobook, PlayerOpenFailure>> findBook(String bookId) async {
+    try {
+      final book = await _lifecycle.findBook(bookId);
+      return book == null
+          ? const Result.failure(PlayerOpenFailure.notFound)
+          : Result.success(book);
+    } catch (_) {
+      return const Result.failure(PlayerOpenFailure.playbackFailed);
+    }
+  }
 
-  Future<List<BookNote>> loadNotes(PlaybackOpenResult result) =>
-      _lifecycle.prepareOpened(result: result);
+  Future<Result<List<BookNote>, PlayerOpenFailure>> loadNotes(
+    PlaybackOpenResult result,
+  ) async {
+    try {
+      return Result.success(await _lifecycle.prepareOpened(result: result));
+    } catch (_) {
+      return const Result.failure(PlayerOpenFailure.notesFailed);
+    }
+  }
 
   Future<void> continuePlayback() => _lifecycle.continuePlayback();
 
@@ -85,7 +112,14 @@ class PlayerApplication {
     duration: duration,
   );
 
-  Future<void> showAudioOutputPicker() => _device.showAudioOutputPicker();
+  Future<Result<bool, PlayerDeviceFailure>> showAudioOutputPicker() async {
+    try {
+      await _device.showAudioOutputPicker();
+      return const Result.success(true);
+    } catch (_) {
+      return const Result.failure(PlayerDeviceFailure.audioOutputPicker);
+    }
+  }
 
   Future<Duration> seek({
     required Audiobook? book,

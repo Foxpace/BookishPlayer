@@ -61,45 +61,38 @@ class ImportCubit extends Cubit<ImportState> {
     );
     _emitProgress(const ImportProgress(stage: ImportStage.selectingFiles));
 
-    try {
-      await _importAndEmit(finderTransfer);
-    } on ImportWorkflowCancellation catch (cancellation) {
-      _emitCancellation(cancellation);
-    } on ImportWorkflowFailure catch (failure) {
-      _captureAndEmitFailure(failure);
-    }
+    await _importAndEmit(finderTransfer);
   }
 
   Future<void> _importAndEmit(bool finderTransfer) async {
-    final result = await _application.importBooks(
+    final operation = await _application.importBooks(
       finderTransfer: finderTransfer,
       onProgress: _emitProgress,
     );
-    _emitResult(result, finderTransfer);
+    _emitOperation(operation, finderTransfer);
   }
 
   Future<void> _retryOriginalRemoval() async {
-    try {
-      await _removeOriginalsAndEmit();
-    } on ImportWorkflowFailure catch (failure) {
-      _captureAndEmitFailure(failure);
-    }
-  }
-
-  Future<void> _removeOriginalsAndEmit() async {
-    await _application.retryTransferredSourceRemoval(
+    final operation = await _application.retryTransferredSourceRemoval(
       selectedFiles: state.selectedFiles,
       onProgress: _emitProgress,
     );
-    emit(
-      state.copyWith(
-        status: ImportStatus.complete,
-        workflowFailure: null,
-        diagnostics: null,
-        progress: null,
-      ),
-    );
+    _emitOperation(operation, true);
   }
+
+  void _emitOperation(ImportOperationResult operation, bool finderTransfer) =>
+      switch (operation) {
+        ImportOperationCompleted(:final result) => _emitResult(
+          result,
+          finderTransfer,
+        ),
+        ImportOperationCancelled(:final cancellation) => _emitCancellation(
+          cancellation,
+        ),
+        ImportOperationFailed(:final failure) => _captureAndEmitFailure(
+          failure,
+        ),
+      };
 
   void _emitResult(ImportResult result, bool finderTransfer) {
     if (result.selectedFiles.isEmpty) {

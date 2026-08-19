@@ -1,0 +1,1 @@
+enum BackupStoreFailure { corruptedData, persistence }

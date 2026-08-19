@@ -1,8 +1,10 @@
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/core/presentation/app_message.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/transcription/repos/transcription_preferences.dart';
 import 'package:bookish_player/features/transcription/models/speech_model.dart';
 import 'package:bookish_player/features/transcription/models/transcription_download.dart';
+import 'package:bookish_player/features/transcription/models/transcription_failure.dart';
 import 'package:bookish_player/features/transcription/repos/transcription_repository.dart';
 import 'package:bookish_player/features/transcription/cubits/speech_models_cubit.dart';
 import 'package:bookish_player/features/transcription/cubits/transcription_cubits.dart';
@@ -143,10 +145,10 @@ class _FakeTranscription implements TranscriptionRepository {
   Future<void> reset() async {}
 
   @override
-  Future<String> transcribeRange({
+  Future<Result<String, TranscriptionFailure>> transcribeRange({
     required Audiobook book,
     required Duration start,
     required Duration end,
     required String model,
-  }) async => '';
+  }) async => const Result.success('');
 }

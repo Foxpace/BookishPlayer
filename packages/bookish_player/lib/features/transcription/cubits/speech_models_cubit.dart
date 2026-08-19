@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../models/speech_model.dart';
 import '../models/transcription_download.dart';
@@ -16,17 +17,17 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
 
   Future<void> load() async {
     emit(state.copyWith(status: SpeechModelsStatus.loading, message: null));
-    try {
-      await _loadModelsAndEmit();
-    } catch (_) {
-      _emitModelsLoadFailure();
-    }
+    await _loadModelsAndEmit();
   }
 
   Future<void> _loadModelsAndEmit() async {
-    final cached = await _application.loadCached();
-    _emitCatalog(cached);
-    await _refreshModelsAndEmit(cached);
+    switch (await _application.loadCached()) {
+      case ResultSuccess(:final value):
+        _emitCatalog(value);
+        await _refreshModelsAndEmit(value);
+      case ResultFailure():
+        _emitModelsLoadFailure();
+    }
   }
 
   void _emitCatalog(SpeechModelCatalog catalog) {
@@ -40,11 +41,16 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
   }
 
   Future<void> _refreshModelsAndEmit(SpeechModelCatalog cached) async {
-    final refreshed = await _application.refresh(cached);
-    if (isClosed || refreshed == null) {
-      return;
+    switch (await _application.refresh(cached)) {
+      case ResultSuccess(value: final refreshed?):
+        if (!isClosed) {
+          _emitCatalog(refreshed);
+        }
+      case ResultSuccess(value: null):
+        return;
+      case ResultFailure():
+        _emitModelsLoadFailure();
     }
-    _emitCatalog(refreshed);
   }
 
   void _emitModelsLoadFailure() => emit(
@@ -56,8 +62,12 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
   );
 
   Future<void> selectModel(String slug) async {
-    await _application.select(slug);
-    emit(state.copyWith(selectedModel: slug, message: null));
+    switch (await _application.select(slug)) {
+      case ResultSuccess():
+        emit(state.copyWith(selectedModel: slug, message: null));
+      case ResultFailure():
+        _emitModelsLoadFailure();
+    }
   }
 
   Future<bool> activateModel(SpeechModel model) async {
@@ -76,18 +86,18 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
         message: null,
       ),
     );
-    try {
-      await _downloadSelectedModelAndEmit();
-    } catch (_) {
-      _emitModelDownloadFailure();
-    }
+    await _downloadSelectedModelAndEmit();
   }
 
   Future<void> _downloadSelectedModelAndEmit() async {
-    await _application.download(
+    final result = await _application.download(
       state.selectedModel,
       onProgress: _emitDownloadProgress,
     );
+    if (result case ResultFailure()) {
+      _emitModelDownloadFailure();
+      return;
+    }
 
     final models = _markSelectedModelDownloaded();
     emit(

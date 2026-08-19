@@ -1,0 +1,1 @@
+enum ListeningInsightsFailure { load }

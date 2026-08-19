@@ -1,3 +1,6 @@
+import 'package:bookish_player/core/foundation/result.dart';
+import 'package:bookish_player/features/portability/models/bookish_backup.dart';
+import 'package:bookish_player/features/portability/use_cases/backup_validation_error.dart';
 import 'package:bookish_player/features/portability/use_cases/backup_validation_failure.dart';
 import 'package:bookish_player/features/portability/use_cases/bookish_backup_validator.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +15,7 @@ void main() {
       'Given a supported and internally consistent backup, When the payload is validated, Then validation completes without a failure',
       () {
         // THEN
-        expect(() => sut.validate(backupFixture()), returnsNormally);
+        expect(sut.validate(backupFixture()), isA<ResultSuccess>());
       },
     );
   });
@@ -33,12 +36,11 @@ void main() {
 
         // THEN
         expect(
-          () => sut.validate(backup),
-          throwsA(
-            isA<BackupValidationException>().having(
-              (error) => error.failure,
-              'failure',
+          sut.validate(backup),
+          const Result<BookishBackup, BackupValidationError>.failure(
+            BackupValidationError(
               BackupValidationFailure.duplicateBook,
+              recordId: 'book-1',
             ),
           ),
         );
@@ -62,12 +64,11 @@ void main() {
 
         // THEN
         expect(
-          () => sut.validate(backup),
-          throwsA(
-            isA<BackupValidationException>().having(
-              (error) => error.failure,
-              'failure',
+          sut.validate(backup),
+          const Result<BookishBackup, BackupValidationError>.failure(
+            BackupValidationError(
               BackupValidationFailure.missingReference,
+              recordId: 'note-1',
             ),
           ),
         );
@@ -81,13 +82,9 @@ void main() {
       () {
         // THEN
         expect(
-          () => sut.validate(backupFixture(schemaVersion: 4)),
-          throwsA(
-            isA<BackupValidationException>().having(
-              (error) => error.failure,
-              'failure',
-              BackupValidationFailure.unsupportedVersion,
-            ),
+          sut.validate(backupFixture(schemaVersion: 4)),
+          const Result<BookishBackup, BackupValidationError>.failure(
+            BackupValidationError(BackupValidationFailure.unsupportedVersion),
           ),
         );
       },

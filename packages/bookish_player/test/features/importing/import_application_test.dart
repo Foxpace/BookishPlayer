@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/importing/models/import_models.dart';
 import 'package:bookish_player/features/importing/repos/audiobook_metadata_extractor.dart';
 import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
+import 'package:bookish_player/features/importing/repos/file_import_failure.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:bookish_player/features/importing/use_cases/import_application.dart';
 import 'package:bookish_player/features/importing/use_cases/import_cleanup.dart';
@@ -110,25 +112,23 @@ ImportApplication _application(
 }
 
 Future<ImportWorkflowFailure> _captureFailure(
-  Future<ImportResult> import,
+  Future<ImportOperationResult> import,
 ) async {
-  try {
-    await import;
-  } on ImportWorkflowFailure catch (failure) {
-    return failure;
-  }
-  throw TestFailure('Expected import to fail.');
+  return switch (await import) {
+    ImportOperationFailed(:final failure) => failure,
+    final result => throw TestFailure('Expected failure, received $result.'),
+  };
 }
 
 Future<ImportWorkflowCancellation> _captureCancellation(
-  Future<ImportResult> import,
+  Future<ImportOperationResult> import,
 ) async {
-  try {
-    await import;
-  } on ImportWorkflowCancellation catch (cancellation) {
-    return cancellation;
-  }
-  throw TestFailure('Expected import to be cancelled.');
+  return switch (await import) {
+    ImportOperationCancelled(:final cancellation) => cancellation,
+    final result => throw TestFailure(
+      'Expected cancellation, received $result.',
+    ),
+  };
 }
 
 class _MetadataFailure implements AudiobookMetadataExtractor {
@@ -157,13 +157,15 @@ class _Files implements FileImportRepository {
   var clearCount = 0;
 
   @override
-  Future<List<SelectedAudioFile>> pickAudioFiles() async => selected;
+  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
+  pickAudioFiles() async => Result.success(selected);
 
   @override
-  Future<List<SelectedAudioFile>> findTransferredAudioFiles() async => selected;
+  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
+  findTransferredAudioFiles() async => Result.success(selected);
 
   @override
-  Future<ImportedAudioFile> importFile(
+  Future<Result<ImportedAudioFile, FileImportFailure>> importFile(
     SelectedAudioFile selected, {
     ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
@@ -173,12 +175,14 @@ class _Files implements FileImportRepository {
     if (current == pauseCopyAt) {
       copyPaused.complete();
       await cancellation?.whenCancelled;
-      throw const ImportCancelledException();
+      return const Result.failure(FileImportFailure.cancelled);
     }
     onProgress?.call(100, 100);
-    return ImportedAudioFile(
-      path: '/bookish/import-$current.m4b',
-      displayName: selected.displayName,
+    return Result.success(
+      ImportedAudioFile(
+        path: '/bookish/import-$current.m4b',
+        displayName: selected.displayName,
+      ),
     );
   }
 
@@ -189,9 +193,9 @@ class _Files implements FileImportRepository {
   Future<void> deleteImportedFile(String path) async => deletedPaths.add(path);
 
   @override
-  Future<void> removeTransferredAudioFiles(
+  Future<Result<bool, FileImportFailure>> removeTransferredAudioFiles(
     List<SelectedAudioFile> files,
-  ) async {}
+  ) async => const Result.success(true);
 
   @override
   Future<String?> pickAndImportCover(String bookId) async => null;

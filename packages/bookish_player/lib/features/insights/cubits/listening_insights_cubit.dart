@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../use_cases/load_listening_insights_use_case.dart';
 import '../models/insights_period.dart';
@@ -18,24 +19,24 @@ class ListeningInsightsCubit extends Cubit<ListeningInsightsState> {
     emit(
       state.copyWith(status: ListeningInsightsStatus.loading, message: null),
     );
-    try {
-      await _loadInsightsAndEmit();
-    } catch (_) {
-      _emitInsightsLoadFailure();
-    }
+    await _loadInsightsAndEmit();
   }
 
   Future<void> _loadInsightsAndEmit() async {
-    final result = await _loadListeningInsights();
-    emit(
-      state.copyWith(
-        status: ListeningInsightsStatus.ready,
-        activityByPeriod: result.activityByPeriod,
-        totalListening: result.totalListening,
-        completedBooks: result.completedBooks,
-        activeDays: result.activeDays,
-      ),
-    );
+    switch (await _loadListeningInsights()) {
+      case ResultSuccess(:final value):
+        emit(
+          state.copyWith(
+            status: ListeningInsightsStatus.ready,
+            activityByPeriod: value.activityByPeriod,
+            totalListening: value.totalListening,
+            completedBooks: value.completedBooks,
+            activeDays: value.activeDays,
+          ),
+        );
+      case ResultFailure():
+        _emitInsightsLoadFailure();
+    }
   }
 
   void _emitInsightsLoadFailure() {

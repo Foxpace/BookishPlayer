@@ -44,6 +44,20 @@ class _ImportRuntime {
 
   ImportWorkflowFailure buildFailure(Object error) {
     final kind = _classifyFailure(error);
+    return buildFailureKind(kind);
+  }
+
+  ImportWorkflowFailure buildFileFailure(FileImportFailure failure) =>
+      buildFailureKind(switch (failure) {
+        FileImportFailure.fileAccess => ImportFailureKind.fileAccess,
+        FileImportFailure.sourceRemoval => ImportFailureKind.sourceRemoval,
+        FileImportFailure.cancelled => ImportFailureKind.unexpected,
+      }, originalRemovalOnly: failure == FileImportFailure.sourceRemoval);
+
+  ImportWorkflowFailure buildFailureKind(
+    ImportFailureKind kind, {
+    bool originalRemovalOnly = false,
+  }) {
     final history = _completedStageHistory();
 
     return ImportWorkflowFailure(
@@ -54,12 +68,11 @@ class _ImportRuntime {
       stageHistory: history,
       diagnostics: _safeDiagnostics(kind, history),
       failedItem: _failedItem(kind),
-      originalRemovalOnly: error is SourceRemovalException,
+      originalRemovalOnly: originalRemovalOnly,
     );
   }
 
   ImportFailureKind _classifyFailure(Object error) => switch (error) {
-    SourceRemovalException() => ImportFailureKind.sourceRemoval,
     FileSystemException() => ImportFailureKind.fileAccess,
     FormatException() => ImportFailureKind.malformedMetadata,
     _ => ImportFailureKind.unexpected,

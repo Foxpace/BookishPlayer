@@ -95,23 +95,44 @@ class CactusTranscriptionRepository {
     );
   }
 
-  Future<String> transcribeRange({
+  Future<CactusTranscriptionOutcome> transcribeRange({
     required CactusAudioSource source,
     required Duration start,
     required Duration end,
     required String model,
   }) async {
     if (end <= start) {
-      throw const CactusTranscriptionException(
+      return const CactusTranscriptionOutcome.failure(
         'Choose an audio range longer than zero.',
       );
     }
+    try {
+      return await _transcribeAvailableRange(source, start, end, model);
+    } catch (error) {
+      return CactusTranscriptionOutcome.failure('$error');
+    }
+  }
+
+  Future<CactusTranscriptionOutcome> _transcribeAvailableRange(
+    CactusAudioSource source,
+    Duration start,
+    Duration end,
+    String model,
+  ) async {
     if (!await isModelDownloaded(model)) {
-      throw const CactusTranscriptionException(
+      return const CactusTranscriptionOutcome.failure(
         'Download a speech model in Settings before transcribing.',
       );
     }
+    return _transcribe(source, start, end, model);
+  }
 
+  Future<CactusTranscriptionOutcome> _transcribe(
+    CactusAudioSource source,
+    Duration start,
+    Duration end,
+    String model,
+  ) async {
     if (_initializedModel != model || !_stt.isLoaded()) {
       _stt.unload();
       await _stt.initializeModel(params: CactusInitParams(model: model));
@@ -121,13 +142,11 @@ class CactusTranscriptionRepository {
     final result = await _stt.transcribe(
       audioStream: _audio.createStream(source, start, end),
     );
-    if (!result.success) {
-      throw CactusTranscriptionException(
-        result.errorMessage ?? 'Cactus could not transcribe this audio.',
-      );
-    }
-
-    return result.text.trim();
+    return result.success
+        ? CactusTranscriptionOutcome.success(result.text.trim())
+        : CactusTranscriptionOutcome.failure(
+            result.errorMessage ?? 'Cactus could not transcribe this audio.',
+          );
   }
 
   Future<bool> _hasInternetConnection() async {
