@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 import '../../../core/foundation/result.dart';
 import '../../library/models/library_models.dart';
 import '../models/editable_book_details.dart';
-import '../models/editing_failure.dart';
 import '../repos/book_editing_repository.dart';
 
 @injectable
@@ -12,18 +11,20 @@ class EditingApplication {
 
   final BookEditingRepository _books;
 
-  Future<Result<Audiobook, EditingFailure>> loadBook(String bookId) async {
+  Future<Result<Audiobook>> loadBook(String bookId) async {
     try {
       final book = await _books.loadBook(bookId);
       return book == null
-          ? const Result.failure(EditingFailure.notFound)
+          ? const Result.failure(AppFailure.notFound('editing.book'))
           : Result.success(book);
-    } catch (_) {
-      return const Result.failure(EditingFailure.loadFailed);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('editing.load', error: error),
+      );
     }
   }
 
-  Future<Result<Audiobook, EditingFailure>> editDetails(
+  Future<Result<Audiobook>> editDetails(
     Audiobook book,
     EditableBookDetails details,
   ) => _save(
@@ -40,7 +41,7 @@ class EditingApplication {
     ),
   );
 
-  Future<Result<Audiobook, EditingFailure>> changeCover(Audiobook book) async {
+  Future<Result<Audiobook>> changeCover(Audiobook book) async {
     try {
       final path = await _books.pickCover(book.id);
       if (path == null) {
@@ -54,12 +55,14 @@ class EditingApplication {
         await _books.deleteImportedFile(oldPath);
       }
       return Result.success(updated);
-    } catch (_) {
-      return const Result.failure(EditingFailure.saveFailed);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('editing.save', error: error),
+      );
     }
   }
 
-  Future<Result<Audiobook, EditingFailure>> reorderTracks(
+  Future<Result<Audiobook>> reorderTracks(
     Audiobook book,
     int oldIndex,
     int newIndex,
@@ -77,7 +80,7 @@ class EditingApplication {
     );
   }
 
-  Future<Result<Audiobook, EditingFailure>> addChapter(
+  Future<Result<Audiobook>> addChapter(
     Audiobook book,
     String title,
     Duration position,
@@ -89,7 +92,7 @@ class EditingApplication {
     return _save(book.copyWith(chapters: chapters));
   }
 
-  Future<Result<Audiobook, EditingFailure>> deleteChapter(
+  Future<Result<Audiobook>> deleteChapter(
     Audiobook book,
     AudioChapter chapter,
   ) => _save(
@@ -103,12 +106,14 @@ class EditingApplication {
     return parsed != null && parsed >= 1000 && parsed <= 2999 ? parsed : null;
   }
 
-  Future<Result<Audiobook, EditingFailure>> _save(Audiobook book) async {
+  Future<Result<Audiobook>> _save(Audiobook book) async {
     try {
       await _books.saveBook(book);
       return Result.success(book);
-    } catch (_) {
-      return const Result.failure(EditingFailure.saveFailed);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('editing.save', error: error),
+      );
     }
   }
 }

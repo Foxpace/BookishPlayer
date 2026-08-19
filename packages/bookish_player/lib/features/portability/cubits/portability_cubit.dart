@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../core/foundation/result.dart';
-import '../use_cases/portability_failure.dart';
 import '../use_cases/backup_workflow.dart';
 import 'portability_message.dart';
 import 'portability_state.dart';
@@ -61,7 +60,7 @@ class PortabilityCubit extends Cubit<PortabilityState> {
                 )
               : state.copyWith(status: PortabilityStatus.idle, message: null),
         );
-      case ResultFailure(failure: PortabilityFailure.invalidBackup):
+      case ResultFailure(failure: AppFailure(code: AppFailureCode.invalidData)):
         _emitInvalidBackupFailure();
       case ResultFailure():
         _emitBackupRestoreFailure();

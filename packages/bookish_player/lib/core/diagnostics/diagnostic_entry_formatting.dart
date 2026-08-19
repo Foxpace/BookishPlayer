@@ -1,6 +1,6 @@
-part of 'app_error.dart';
+part of 'diagnostic_entry.dart';
 
-extension AppErrorDiagnostics on AppError {
+extension DiagnosticEntryFormatting on DiagnosticEntry {
   String toDiagnosticText({
     required String title,
     String historyTitle = 'Completed operations:',

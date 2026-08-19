@@ -19,7 +19,7 @@ extension ImportDetailLocalization on ImportState {
       ImportDetail.selectionCancelled => l10n.importSelectionCancelled,
       ImportDetail.importCancelled => l10n.importCancelledDetail(importedCount),
       ImportDetail.originalsRemain => l10n.importOriginalsRemainDetail,
-      ImportDetail.stageFailed => switch (workflowFailure?.failedItem) {
+      ImportDetail.stageFailed => switch (failureResult?.failedItem) {
         final item? => l10n.importFailureForFileAtStage(
           item.displayName,
           _localizeImportStage(l10n, failureStage),

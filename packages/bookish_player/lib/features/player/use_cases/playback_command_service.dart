@@ -8,7 +8,6 @@ import '../../library/repos/audiobook_catalog_repository.dart';
 import '../../settings/repos/settings_repository.dart';
 import '../repos/audio_player_repository.dart';
 import '../models/playback_open_result.dart';
-import '../models/player_open_failure.dart';
 
 part 'playback_book_request_completion.dart';
 
@@ -51,17 +50,17 @@ class PlaybackCommandService {
     return PlaybackOpenResult(book: book, preferences: preferences);
   }
 
-  Future<Result<PlaybackOpenResult, PlayerOpenFailure>> openById(
-    String bookId,
-  ) async {
+  Future<Result<PlaybackOpenResult>> openById(String bookId) async {
     try {
       final book = await _books.getBook(bookId);
       if (book == null) {
-        return const Result.failure(PlayerOpenFailure.notFound);
+        return const Result.failure(AppFailure.notFound('player.book'));
       }
       return Result.success(await open(book));
-    } catch (_) {
-      return const Result.failure(PlayerOpenFailure.playbackFailed);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('player.openById', error: error),
+      );
     }
   }
 

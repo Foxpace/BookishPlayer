@@ -6,7 +6,6 @@ import '../models/import_cancellation.dart';
 import '../repos/audiobook_artwork_extractor.dart';
 import '../repos/audiobook_metadata_extractor.dart';
 import '../repos/file_import_repository.dart';
-import '../repos/file_import_failure.dart';
 import '../repos/selected_audio_file.dart';
 import '../repos/m4b_chapter_parser.dart';
 import '../repos/media_probe.dart';
@@ -33,13 +32,13 @@ class ImportSourceGateway {
   final AudiobookArtworkExtractor _artwork;
   final AudiobookMetadataExtractor _metadata;
 
-  Future<Result<List<SelectedAudioFile>, FileImportFailure>> selectFiles({
+  Future<Result<List<SelectedAudioFile>>> selectFiles({
     required bool transferred,
   }) => transferred
       ? _files.findTransferredAudioFiles()
       : _files.pickAudioFiles();
 
-  Future<Result<ImportedAudioFile, FileImportFailure>> importFile(
+  Future<Result<ImportedAudioFile>> importFile(
     SelectedAudioFile selected, {
     ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
@@ -64,7 +63,7 @@ class ImportSourceGateway {
 
   Future<String?> extractArtwork(String path) => _artwork.extract(path);
 
-  Future<Result<bool, FileImportFailure>> removeTransferredFiles(
+  Future<Result<bool>> removeTransferredFiles(
     List<SelectedAudioFile> selected,
   ) => _files.removeTransferredAudioFiles(selected);
 }

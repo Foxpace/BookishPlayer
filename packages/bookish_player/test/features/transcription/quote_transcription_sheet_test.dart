@@ -6,7 +6,6 @@ import 'package:bookish_player/features/transcription/models/transcription_draft
 import 'package:bookish_player/features/transcription/repos/transcription_preferences.dart';
 import 'package:bookish_player/features/transcription/models/speech_model.dart';
 import 'package:bookish_player/features/transcription/models/transcription_download.dart';
-import 'package:bookish_player/features/transcription/models/transcription_failure.dart';
 import 'package:bookish_player/features/transcription/repos/transcription_repository.dart';
 import 'package:bookish_player/features/transcription/cubits/quote_transcription_cubit.dart';
 import 'package:bookish_player/features/transcription/cubits/transcription_cubits.dart';
@@ -180,7 +179,7 @@ class _Transcription implements TranscriptionRepository {
   final ranges = <(Duration, Duration)>[];
 
   @override
-  Future<Result<String, TranscriptionFailure>> transcribeRange({
+  Future<Result<String>> transcribeRange({
     required Audiobook book,
     required Duration start,
     required Duration end,

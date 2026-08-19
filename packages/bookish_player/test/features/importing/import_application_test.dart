@@ -4,7 +4,6 @@ import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/importing/models/import_models.dart';
 import 'package:bookish_player/features/importing/repos/audiobook_metadata_extractor.dart';
 import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
-import 'package:bookish_player/features/importing/repos/file_import_failure.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:bookish_player/features/importing/use_cases/import_application.dart';
 import 'package:bookish_player/features/importing/use_cases/import_cleanup.dart';
@@ -42,7 +41,7 @@ void main() {
         expect(books.saved.map((book) => book.title), ['First']);
         expect(failure.importedCount, 1);
         expect(failure.failedItem?.displayName, 'second-secret.m4b');
-        expect(failure.stage, ImportStage.analyzingChapters);
+        expect(failure.failureStage, ImportStage.analyzingChapters);
         expect(files.deletedPaths, ['/bookish/import-1.m4b']);
         expect(failure.diagnostics, contains('Failure kind: unexpected'));
         expect(failure.diagnostics, isNot(contains('second-secret')));
@@ -111,20 +110,24 @@ ImportApplication _application(
   );
 }
 
-Future<ImportWorkflowFailure> _captureFailure(
-  Future<ImportOperationResult> import,
+Future<ImportResult> _captureFailure(
+  Future<Result<ImportResult>> import,
 ) async {
   return switch (await import) {
-    ImportOperationFailed(:final failure) => failure,
+    ResultFailure(partialValue: final failure?) => failure,
     final result => throw TestFailure('Expected failure, received $result.'),
   };
 }
 
-Future<ImportWorkflowCancellation> _captureCancellation(
-  Future<ImportOperationResult> import,
+Future<ImportResult> _captureCancellation(
+  Future<Result<ImportResult>> import,
 ) async {
   return switch (await import) {
-    ImportOperationCancelled(:final cancellation) => cancellation,
+    ResultFailure(
+      failure: AppFailure(code: AppFailureCode.cancelled),
+      partialValue: final cancellation?,
+    ) =>
+      cancellation,
     final result => throw TestFailure(
       'Expected cancellation, received $result.',
     ),
@@ -157,15 +160,15 @@ class _Files implements FileImportRepository {
   var clearCount = 0;
 
   @override
-  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
-  pickAudioFiles() async => Result.success(selected);
+  Future<Result<List<SelectedAudioFile>>> pickAudioFiles() async =>
+      Result.success(selected);
 
   @override
-  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
-  findTransferredAudioFiles() async => Result.success(selected);
+  Future<Result<List<SelectedAudioFile>>> findTransferredAudioFiles() async =>
+      Result.success(selected);
 
   @override
-  Future<Result<ImportedAudioFile, FileImportFailure>> importFile(
+  Future<Result<ImportedAudioFile>> importFile(
     SelectedAudioFile selected, {
     ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
@@ -175,7 +178,7 @@ class _Files implements FileImportRepository {
     if (current == pauseCopyAt) {
       copyPaused.complete();
       await cancellation?.whenCancelled;
-      return const Result.failure(FileImportFailure.cancelled);
+      return const Result.failure(AppFailure.cancelled('import.cancelled'));
     }
     onProgress?.call(100, 100);
     return Result.success(
@@ -193,7 +196,7 @@ class _Files implements FileImportRepository {
   Future<void> deleteImportedFile(String path) async => deletedPaths.add(path);
 
   @override
-  Future<Result<bool, FileImportFailure>> removeTransferredAudioFiles(
+  Future<Result<bool>> removeTransferredAudioFiles(
     List<SelectedAudioFile> files,
   ) async => const Result.success(true);
 

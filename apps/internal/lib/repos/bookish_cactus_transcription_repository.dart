@@ -3,7 +3,6 @@ import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/transcription/models/speech_model.dart';
 import 'package:bookish_player/features/transcription/models/transcription_download.dart';
-import 'package:bookish_player/features/transcription/models/transcription_failure.dart';
 import 'package:bookish_player/features/transcription/repos/transcription_repository.dart';
 
 class BookishCactusTranscriptionRepository implements TranscriptionRepository {
@@ -44,7 +43,7 @@ class BookishCactusTranscriptionRepository implements TranscriptionRepository {
   );
 
   @override
-  Future<Result<String, TranscriptionFailure>> transcribeRange({
+  Future<Result<String>> transcribeRange({
     required Audiobook book,
     required Duration start,
     required Duration end,
@@ -66,8 +65,8 @@ class BookishCactusTranscriptionRepository implements TranscriptionRepository {
     );
     return switch (result) {
       CactusTranscriptionSucceeded(:final text) => Result.success(text),
-      CactusTranscriptionFailed() => const Result.failure(
-        TranscriptionFailure.transcribe,
+      CactusTranscriptionFailed(:final message) => Result.failure(
+        AppFailure.operationFailed('transcription.cactus', error: message),
       ),
     };
   }

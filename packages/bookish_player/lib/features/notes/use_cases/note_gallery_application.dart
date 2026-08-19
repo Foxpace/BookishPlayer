@@ -4,7 +4,6 @@ import '../../../core/foundation/result.dart';
 import '../../library/models/library_models.dart';
 import '../../library/repos/book_metadata_repository.dart';
 import '../models/book_note.dart';
-import '../models/note_gallery_failure.dart';
 import '../repos/book_note_repository.dart';
 
 typedef NoteGalleryContent = ({
@@ -19,19 +18,21 @@ class NoteGalleryApplication {
   final BookNoteRepository _notes;
   final BookMetadataRepository _metadata;
 
-  Future<Result<NoteGalleryContent, NoteGalleryFailure>> load() async {
+  Future<Result<NoteGalleryContent>> load() async {
     try {
       final (metadata, notes) = await (
         _metadata.getBookMetadata(),
         _notes.getAllNotes(),
       ).wait;
       return Result.success((metadata: metadata, notes: notes));
-    } catch (_) {
-      return const Result.failure(NoteGalleryFailure.load);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('notes.load', error: error),
+      );
     }
   }
 
-  Future<Result<BookNote?, NoteGalleryFailure>> update(
+  Future<Result<BookNote?>> update(
     BookNote note, {
     required String? title,
     required String text,
@@ -55,12 +56,14 @@ class NoteGalleryApplication {
     );
   }
 
-  Future<Result<BookNote?, NoteGalleryFailure>> _save(BookNote updated) async {
+  Future<Result<BookNote?>> _save(BookNote updated) async {
     try {
       await _notes.saveNote(updated);
       return Result.success(updated);
-    } catch (_) {
-      return const Result.failure(NoteGalleryFailure.save);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('notes.save', error: error),
+      );
     }
   }
 }

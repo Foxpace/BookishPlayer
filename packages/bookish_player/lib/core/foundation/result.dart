@@ -1,9 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'app_failure.dart';
+
+export 'app_failure.dart';
+
 part 'result.freezed.dart';
 
 @freezed
-sealed class Result<S, F> with _$Result<S, F> {
-  const factory Result.success(S value) = ResultSuccess<S, F>;
-  const factory Result.failure(F failure) = ResultFailure<S, F>;
+sealed class Result<T> with _$Result<T> {
+  const factory Result.success(T value) = ResultSuccess<T>;
+  const factory Result.failure(AppFailure failure, {T? partialValue}) =
+      ResultFailure<T>;
 }

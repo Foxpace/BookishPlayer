@@ -4,7 +4,6 @@ import '../../importing/repos/file_import_repository.dart';
 import '../../settings/repos/settings_repository.dart';
 import '../models/audiobook_removal_mode.dart';
 import '../models/library_load_result.dart';
-import '../models/library_failure.dart';
 import '../models/library_models.dart';
 import '../repos/audiobook_catalog_repository.dart';
 
@@ -25,7 +24,7 @@ class LibraryApplication {
   final SettingsRepository _settings;
   final PrepareBookRemoval _prepareBookRemoval;
 
-  Future<Result<LibraryLoadResult, LibraryFailure>> load() async {
+  Future<Result<LibraryLoadResult>> load() async {
     try {
       final (savedBooks, layout) = await (
         _books.getBooks(),
@@ -37,30 +36,36 @@ class LibraryApplication {
       return Result.success(
         LibraryLoadResult(books: books, layout: layout ?? 'list'),
       );
-    } catch (_) {
-      return const Result.failure(LibraryFailure.load);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('library.load', error: error),
+      );
     }
   }
 
-  Future<Result<bool, LibraryFailure>> setLayout(String layout) async {
+  Future<Result<bool>> setLayout(String layout) async {
     try {
       await _settings.setLibraryLayout(layout);
       return const Result.success(true);
-    } catch (_) {
-      return const Result.failure(LibraryFailure.save);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('library.layout.save', error: error),
+      );
     }
   }
 
-  Future<Result<Audiobook, LibraryFailure>> saveBook(Audiobook book) async {
+  Future<Result<Audiobook>> saveBook(Audiobook book) async {
     try {
       await _books.saveBook(book);
       return Result.success(book);
-    } catch (_) {
-      return const Result.failure(LibraryFailure.save);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('library.book.save', error: error),
+      );
     }
   }
 
-  Future<Result<bool, LibraryFailure>> removeBook(
+  Future<Result<bool>> removeBook(
     Audiobook book,
     AudiobookRemovalMode mode,
   ) async {
@@ -76,8 +81,10 @@ class LibraryApplication {
       };
       await [for (final path in paths) _files.deleteImportedFile(path)].wait;
       return const Result.success(true);
-    } catch (_) {
-      return const Result.failure(LibraryFailure.removal);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('library.book.remove', error: error),
+      );
     }
   }
 

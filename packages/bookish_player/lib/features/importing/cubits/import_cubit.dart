@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../models/import_models.dart';
 import '../use_cases/import_application.dart';
 import 'import_cubits.dart';
@@ -16,7 +17,7 @@ class ImportCubit extends Cubit<ImportState> {
   Future<void> startFinderTransfer() => _runImport(finderTransfer: true);
 
   Future<void> retry() async {
-    final failure = state.workflowFailure;
+    final failure = state.failureResult;
     if (failure?.originalRemovalOnly == true &&
         state.selectedFiles.isNotEmpty) {
       await _retryOriginalRemoval();
@@ -46,7 +47,7 @@ class ImportCubit extends Cubit<ImportState> {
       _ => ImportRouteStatus.cancelled,
     },
     importedCount: state.importedCount,
-    failedItem: state.workflowFailure?.failedItem,
+    failedItem: state.failureResult?.failedItem,
   );
 
   Future<void> _runImport({required bool finderTransfer}) async {
@@ -80,19 +81,29 @@ class ImportCubit extends Cubit<ImportState> {
     _emitOperation(operation, true);
   }
 
-  void _emitOperation(ImportOperationResult operation, bool finderTransfer) =>
+  void _emitOperation(Result<ImportResult> operation, bool finderTransfer) =>
       switch (operation) {
-        ImportOperationCompleted(:final result) => _emitResult(
+        ResultSuccess(value: final result) => _emitResult(
           result,
           finderTransfer,
         ),
-        ImportOperationCancelled(:final cancellation) => _emitCancellation(
-          cancellation,
-        ),
-        ImportOperationFailed(:final failure) => _captureAndEmitFailure(
-          failure,
-        ),
+        ResultFailure(
+          failure: AppFailure(code: AppFailureCode.cancelled),
+          partialValue: final result?,
+        ) =>
+          _emitCancellation(result),
+        ResultFailure(:final partialValue) => _emitFailure(partialValue),
       };
+
+  void _emitFailure(ImportResult? result) => _captureAndEmitFailure(
+    result ??
+        const ImportResult(
+          selectedFiles: [],
+          importedCount: 0,
+          failureKind: ImportFailureKind.unexpected,
+          failureStage: ImportStage.selectingFiles,
+        ),
+  );
 
   void _emitResult(ImportResult result, bool finderTransfer) {
     if (result.selectedFiles.isEmpty) {
@@ -103,7 +114,7 @@ class ImportCubit extends Cubit<ImportState> {
       state.copyWith(
         status: ImportStatus.complete,
         selectedFiles: result.selectedFiles,
-        workflowFailure: null,
+        failureResult: null,
         importedCount: result.importedCount,
         cancellationRequested: false,
         progress: null,
@@ -111,12 +122,12 @@ class ImportCubit extends Cubit<ImportState> {
     );
   }
 
-  void _emitCancellation(ImportWorkflowCancellation cancellation) {
+  void _emitCancellation(ImportResult cancellation) {
     emit(
       state.copyWith(
         status: ImportStatus.cancelled,
         selectedFiles: cancellation.selectedFiles,
-        workflowFailure: null,
+        failureResult: null,
         importedCount: cancellation.importedCount,
         heading: ImportHeading.importCancelled,
         detail: ImportDetail.importCancelled,
@@ -127,18 +138,18 @@ class ImportCubit extends Cubit<ImportState> {
     );
   }
 
-  void _captureAndEmitFailure(ImportWorkflowFailure failure) {
+  void _captureAndEmitFailure(ImportResult failure) {
     emit(
       state.copyWith(
         status: ImportStatus.failure,
         selectedFiles: failure.selectedFiles,
-        workflowFailure: failure,
+        failureResult: failure,
         importedCount: failure.importedCount,
         heading: _selectFailureHeading(failure),
         detail: failure.originalRemovalOnly
             ? ImportDetail.originalsRemain
             : ImportDetail.stageFailed,
-        failureStage: failure.stage,
+        failureStage: failure.failureStage,
         cancellationRequested: false,
         diagnostics: failure.diagnostics,
         progress: null,
@@ -212,11 +223,12 @@ class ImportCubit extends Cubit<ImportState> {
     return progress.total > 1 ? progress.index / progress.total : null;
   }
 
-  ImportHeading _selectFailureHeading(ImportWorkflowFailure failure) =>
-      switch (failure.kind) {
+  ImportHeading _selectFailureHeading(ImportResult failure) =>
+      switch (failure.failureKind) {
         ImportFailureKind.sourceRemoval => ImportHeading.originalsRemain,
         ImportFailureKind.fileAccess => ImportHeading.fileAccessFailed,
         ImportFailureKind.malformedMetadata => ImportHeading.malformedMetadata,
         ImportFailureKind.unexpected => ImportHeading.importFailed,
+        null => ImportHeading.importFailed,
       };
 }

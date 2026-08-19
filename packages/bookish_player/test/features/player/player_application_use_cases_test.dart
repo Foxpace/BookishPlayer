@@ -2,7 +2,6 @@ import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/library/repos/listening_history_repository.dart';
 import 'package:bookish_player/features/library/models/listening_session.dart';
 import 'package:bookish_player/features/player/use_cases/listening_session_tracker.dart';
-import 'package:bookish_player/features/player/models/player_open_failure.dart';
 import 'package:bookish_player/features/player/models/playback_open_result.dart';
 import 'package:bookish_player/features/player/use_cases/playback_command_service.dart';
 import 'package:bookish_player/features/player/use_cases/sleep_timer_use_case.dart';
@@ -193,8 +192,8 @@ void main() {
 
         expect(
           await sut.openById('missing'),
-          const Result<PlaybackOpenResult, PlayerOpenFailure>.failure(
-            PlayerOpenFailure.notFound,
+          const Result<PlaybackOpenResult>.failure(
+            AppFailure.notFound('player.book'),
           ),
         );
         await requestSubscription.cancel();
