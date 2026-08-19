@@ -11,15 +11,7 @@ import '../../../settings/models/playback_preferences.dart';
 import '../backup_store_repository.dart';
 import '../../models/bookish_backup.dart';
 
-typedef _StoredRecords = List<RecordSnapshot<String, Map<String, Object?>>>;
-typedef _SnapshotRecords = ({
-  _StoredRecords books,
-  _StoredRecords notes,
-  _StoredRecords metadata,
-  _StoredRecords sessions,
-  Map<String, Object?>? appearance,
-  Map<String, Object?>? playback,
-});
+part 'sembast_backup_store_records.dart';
 
 @LazySingleton(as: BackupStoreRepository)
 class SembastBackupStoreRepository implements BackupStoreRepository {
@@ -121,16 +113,6 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
       ),
   };
 
-  BackupSettings _backupSettings(
-    Map<String, Object?>? appearance,
-    Map<String, Object?>? playback,
-  ) => BackupSettings(
-    theme: appearance?['theme'] as String? ?? 'system',
-    playback: playback == null
-        ? const PlaybackPreferences()
-        : PlaybackPreferences.fromJson(Map<String, dynamic>.from(playback)),
-  );
-
   Audiobook? _hydrateStoredBook(
     Map<String, Object?> value,
     Map<String, BookMetadata> metadataById,
@@ -147,30 +129,34 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
   @override
   Future<Result<bool>> restore(BookishBackup backup) async {
     try {
-      final metadataById = _restoredMetadataById(backup);
-      if (!_hasValidRestoreReferences(backup, metadataById)) {
-        return const Result.failure(
-          AppFailure.invalidData('backup.storage.corrupted'),
-        );
-      }
-
-      await _database.transaction((transaction) async {
-        await _clearBackupStores(transaction);
-
-        await (
-          _restoreBooks(transaction, backup.books, metadataById),
-          _restoreMetadata(transaction, metadataById.values),
-          _restoreNotes(transaction, backup.notes),
-          _restoreSessions(transaction, backup.sessions),
-          _restoreSettings(transaction, backup.settings),
-        ).wait;
-      });
-      return const Result.success(true);
+      return await _restore(backup);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('backup.storage.restore', error: error),
       );
     }
+  }
+
+  Future<Result<bool>> _restore(BookishBackup backup) async {
+    final metadataById = _restoredMetadataById(backup);
+    if (!_hasValidRestoreReferences(backup, metadataById)) {
+      return const Result.failure(
+        AppFailure.invalidData('backup.storage.corrupted'),
+      );
+    }
+
+    await _database.transaction((transaction) async {
+      await _clearBackupStores(transaction);
+
+      await (
+        _restoreBooks(transaction, backup.books, metadataById),
+        _restoreMetadata(transaction, metadataById.values),
+        _restoreNotes(transaction, backup.notes),
+        _restoreSessions(transaction, backup.sessions),
+        _restoreSettings(transaction, backup.settings),
+      ).wait;
+    });
+    return const Result.success(true);
   }
 
   Map<String, BookMetadata> _restoredMetadataById(BookishBackup backup) {

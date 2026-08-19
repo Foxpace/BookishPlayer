@@ -27,18 +27,26 @@ class QuoteTranscriptionApplication {
     required Duration end,
   }) async {
     try {
-      final model = await _preferences.getSelectedModel() ?? 'whisper-tiny';
-      return _transcription.transcribeRange(
-        book: book,
-        start: start,
-        end: end,
-        model: model,
-      );
+      return await _transcribe(book: book, start: start, end: end);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('transcription.quote', error: error),
       );
     }
+  }
+
+  Future<Result<String>> _transcribe({
+    required Audiobook book,
+    required Duration start,
+    required Duration end,
+  }) async {
+    final model = await _preferences.getSelectedModel() ?? 'whisper-tiny';
+    return _transcription.transcribeRange(
+      book: book,
+      start: start,
+      end: end,
+      model: model,
+    );
   }
 
   Future<void> shareDraft(

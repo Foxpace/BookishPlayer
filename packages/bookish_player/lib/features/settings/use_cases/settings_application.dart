@@ -18,17 +18,21 @@ class SettingsApplication {
 
   Future<Result<LoadedSettings>> load() async {
     try {
-      final (theme, playback) = await (
-        _repository.getThemePreference(),
-        _repository.getPlaybackPreferences(),
-      ).wait;
-
-      return Result.success((theme: theme, playback: playback));
+      return await _load();
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('settings.load', error: error),
       );
     }
+  }
+
+  Future<Result<LoadedSettings>> _load() async {
+    final (theme, playback) = await (
+      _repository.getThemePreference(),
+      _repository.getPlaybackPreferences(),
+    ).wait;
+
+    return Result.success((theme: theme, playback: playback));
   }
 
   Future<Result<bool>> saveThemePreference(ThemePreference preference) =>
@@ -40,12 +44,16 @@ class SettingsApplication {
 
   Future<Result<bool>> _save(Future<void> Function() operation) async {
     try {
-      await operation();
-      return const Result.success(true);
+      return await _runSave(operation);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('settings.save', error: error),
       );
     }
+  }
+
+  Future<Result<bool>> _runSave(Future<void> Function() operation) async {
+    await operation();
+    return const Result.success(true);
   }
 }
