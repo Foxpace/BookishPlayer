@@ -8,9 +8,7 @@ import 'import_stage.dart';
 part 'import_workflow_failure.freezed.dart';
 
 @freezed
-abstract class ImportWorkflowFailure
-    with _$ImportWorkflowFailure
-    implements Exception {
+abstract class ImportWorkflowFailure with _$ImportWorkflowFailure {
   const factory ImportWorkflowFailure({
     required ImportFailureKind kind,
     required ImportStage stage,

@@ -4,9 +4,11 @@ import 'package:injectable/injectable.dart';
 
 import '../../../core/app_metadata.dart';
 import '../../../core/foundation/clock.dart';
+import '../../../core/foundation/result.dart';
 import '../models/import_models.dart';
 import '../repos/audiobook_metadata_extractor.dart';
 import '../repos/file_import_repository.dart';
+import '../repos/file_import_failure.dart';
 import '../repos/import_diagnostics_repository.dart';
 import '../repos/selected_audio_file.dart';
 import 'import_cleanup.dart';
@@ -41,40 +43,49 @@ class ImportApplication {
   final ImportDiagnosticsRepository _diagnostics;
   ImportCancellationSignal? _activeCancellation;
 
-  Future<ImportResult> importBooks({
+  Future<ImportOperationResult> importBooks({
     required bool finderTransfer,
     required ImportProgressCallback onProgress,
   }) async {
+    final runtime = _ImportRuntime(_clock, onProgress);
     if (_activeCancellation != null) {
-      throw StateError('An import is already active.');
+      return ImportOperationResult.failed(
+        runtime.buildFailureKind(ImportFailureKind.unexpected),
+      );
     }
 
     final cancellation = ImportCancellationSignal();
-    final runtime = _ImportRuntime(_clock, onProgress);
     _activeCancellation = cancellation;
 
     try {
-      return await _runImport(finderTransfer, runtime, cancellation);
-    } on ImportCancelledException {
-      await _cleanupCancelledImport(runtime);
+      final result = await _runImport(finderTransfer, runtime, cancellation);
+      return switch (result) {
+        ResultSuccess(:final value) => ImportOperationResult.completed(value),
+        ResultFailure(failure: FileImportFailure.cancelled) =>
+          await _cancelledResult(runtime),
+        ResultFailure(:final failure) => await _failedResult(
+          runtime,
+          runtime.buildFileFailure(failure),
+        ),
+      };
     } catch (error) {
-      await _cleanupFailedImport(runtime, error);
+      return await _failedResult(runtime, runtime.buildFailure(error));
     } finally {
       await _finishImport(finderTransfer, cancellation);
     }
   }
 
-  Future<Never> _cleanupCancelledImport(_ImportRuntime runtime) async {
+  Future<ImportOperationResult> _cancelledResult(_ImportRuntime runtime) async {
     await _cleanup.deletePendingFiles(runtime.pendingPaths);
-    throw runtime.buildCancellation();
+    return ImportOperationResult.cancelled(runtime.buildCancellation());
   }
 
-  Future<Never> _cleanupFailedImport(
+  Future<ImportOperationResult> _failedResult(
     _ImportRuntime runtime,
-    Object error,
+    ImportWorkflowFailure failure,
   ) async {
     await _cleanup.deletePendingFiles(runtime.pendingPaths);
-    throw runtime.buildFailure(error);
+    return ImportOperationResult.failed(failure);
   }
 
   Future<void> _finishImport(
@@ -91,54 +102,89 @@ class ImportApplication {
 
   void cancelImport() => _activeCancellation?.cancel();
 
-  Future<void> retryTransferredSourceRemoval({
+  Future<ImportOperationResult> retryTransferredSourceRemoval({
     required List<SelectedAudioFile> selectedFiles,
     required ImportProgressCallback onProgress,
   }) async {
-    final runtime = _ImportRuntime(_clock, onProgress)
-      ..recordSelection(selectedFiles)
-      ..recordImportedCount(selectedFiles.length)
-      ..report(
-        ImportProgress(
-          stage: ImportStage.removingOriginals,
-          total: selectedFiles.length,
-        ),
-      );
+    final runtime = _removalRuntime(selectedFiles, onProgress);
     try {
-      await _removeOriginals(selectedFiles);
+      return await _retryRemoval(selectedFiles, runtime);
     } catch (error) {
-      throw runtime.buildFailure(error);
+      return ImportOperationResult.failed(runtime.buildFailure(error));
     }
   }
+
+  _ImportRuntime _removalRuntime(
+    List<SelectedAudioFile> selectedFiles,
+    ImportProgressCallback onProgress,
+  ) => _ImportRuntime(_clock, onProgress)
+    ..recordSelection(selectedFiles)
+    ..recordImportedCount(selectedFiles.length)
+    ..report(
+      ImportProgress(
+        stage: ImportStage.removingOriginals,
+        total: selectedFiles.length,
+      ),
+    );
+
+  Future<ImportOperationResult> _retryRemoval(
+    List<SelectedAudioFile> selectedFiles,
+    _ImportRuntime runtime,
+  ) async => switch (await _removeOriginals(selectedFiles)) {
+    ResultSuccess() => ImportOperationResult.completed(
+      ImportResult(
+        selectedFiles: selectedFiles,
+        importedCount: selectedFiles.length,
+      ),
+    ),
+    ResultFailure(:final failure) => ImportOperationResult.failed(
+      runtime.buildFileFailure(failure),
+    ),
+  };
 
   Future<void> copyDiagnostics(String diagnostics) =>
       _diagnostics.copy(diagnostics);
 
-  Future<ImportResult> _runImport(
+  Future<Result<ImportResult, FileImportFailure>> _runImport(
     bool finderTransfer,
     _ImportRuntime runtime,
     ImportCancellationSignal cancellation,
   ) async {
     runtime.report(const ImportProgress(stage: ImportStage.selectingFiles));
-    final selected = await _source.selectFiles(transferred: finderTransfer);
+    final selection = await _source.selectFiles(transferred: finderTransfer);
+    if (selection case ResultFailure(:final failure)) {
+      return Result.failure(failure);
+    }
+    final selected =
+        (selection as ResultSuccess<List<SelectedAudioFile>, FileImportFailure>)
+            .value;
     runtime.recordSelection(selected);
 
     if (selected.isEmpty) {
-      return ImportResult(selectedFiles: selected, importedCount: 0);
+      return Result.success(
+        ImportResult(selectedFiles: selected, importedCount: 0),
+      );
     }
-    cancellation.throwIfCancelled();
+    if (cancellation.isCancelled) {
+      return const Result.failure(FileImportFailure.cancelled);
+    }
 
     for (var index = 0; index < selected.length; index++) {
-      await _importOne(
+      final failure = await _importOne(
         selected[index],
         index,
         selected.length,
         runtime,
         cancellation,
       );
+      if (failure != null) {
+        return Result.failure(failure);
+      }
     }
 
-    cancellation.throwIfCancelled();
+    if (cancellation.isCancelled) {
+      return const Result.failure(FileImportFailure.cancelled);
+    }
     if (finderTransfer) {
       runtime.report(
         ImportProgress(
@@ -146,16 +192,21 @@ class ImportApplication {
           total: selected.length,
         ),
       );
-      await _removeOriginals(selected);
+      final removal = await _removeOriginals(selected);
+      if (removal case ResultFailure(:final failure)) {
+        return Result.failure(failure);
+      }
     }
 
-    return ImportResult(
-      selectedFiles: selected,
-      importedCount: runtime.importedCount,
+    return Result.success(
+      ImportResult(
+        selectedFiles: selected,
+        importedCount: runtime.importedCount,
+      ),
     );
   }
 
-  Future<void> _importOne(
+  Future<FileImportFailure?> _importOne(
     SelectedAudioFile selected,
     int index,
     int total,
@@ -169,12 +220,21 @@ class ImportApplication {
       title: audiobookTitleFromFilename(selected.displayName),
     );
 
-    final imported = await _copySelectedFile(item, runtime, cancellation);
+    final copy = await _copySelectedFile(item, runtime, cancellation);
+    if (copy case ResultFailure(:final failure)) {
+      return failure;
+    }
+    final imported =
+        (copy as ResultSuccess<ImportedAudioFile, FileImportFailure>).value;
     runtime.pendingPaths.add(imported.path);
-    cancellation.throwIfCancelled();
+    if (cancellation.isCancelled) {
+      return FileImportFailure.cancelled;
+    }
 
     final details = await _readImportedDetails(imported.path, item, runtime);
-    cancellation.throwIfCancelled();
+    if (cancellation.isCancelled) {
+      return FileImportFailure.cancelled;
+    }
     item = item.withTitle(_selectImportedTitle(details.metadata, item.title));
 
     runtime.reportItem(item, ImportStage.extractingArtwork);
@@ -188,7 +248,9 @@ class ImportApplication {
       runtime,
       cancellation,
     );
-    cancellation.throwIfCancelled();
+    if (cancellation.isCancelled) {
+      return FileImportFailure.cancelled;
+    }
 
     runtime.reportItem(item, ImportStage.savingBook);
     await _bookSaver.save((
@@ -203,7 +265,7 @@ class ImportApplication {
     runtime.pendingPaths.remove(imported.path);
     runtime.pendingPaths.remove(artworkPath);
     runtime.recordImported();
-    cancellation.throwIfCancelled();
+    return cancellation.isCancelled ? FileImportFailure.cancelled : null;
   }
 
   Future<ImportedAudioDetails> _readImportedDetails(
@@ -226,7 +288,9 @@ class ImportApplication {
       author: request.metadata.author ?? '',
       duration: request.duration,
     );
-    cancellation.throwIfCancelled();
+    if (cancellation.isCancelled) {
+      return null;
+    }
 
     final artworkPath =
         archivedMetadata?.artworkPath ??
@@ -237,7 +301,7 @@ class ImportApplication {
     return artworkPath;
   }
 
-  Future<ImportedAudioFile> _copySelectedFile(
+  Future<Result<ImportedAudioFile, FileImportFailure>> _copySelectedFile(
     ImportItem item,
     _ImportRuntime runtime,
     ImportCancellationSignal cancellation,
@@ -261,13 +325,9 @@ class ImportApplication {
     );
   }
 
-  Future<void> _removeOriginals(List<SelectedAudioFile> selected) async {
-    try {
-      await _source.removeTransferredFiles(selected);
-    } catch (error) {
-      throw SourceRemovalException(error);
-    }
-  }
+  Future<Result<bool, FileImportFailure>> _removeOriginals(
+    List<SelectedAudioFile> selected,
+  ) => _source.removeTransferredFiles(selected);
 
   String _selectImportedTitle(
     ImportedAudiobookMetadata metadata,

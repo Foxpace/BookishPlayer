@@ -1,5 +1,7 @@
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/importing/models/import_cancellation.dart';
 import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
+import 'package:bookish_player/features/importing/repos/file_import_failure.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:bookish_player/features/importing/use_cases/import_cleanup.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -55,25 +57,29 @@ class _Files implements FileImportRepository {
   }
 
   @override
-  Future<List<SelectedAudioFile>> pickAudioFiles() async => const [];
+  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
+  pickAudioFiles() async => const Result.success([]);
 
   @override
-  Future<List<SelectedAudioFile>> findTransferredAudioFiles() async => const [];
+  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
+  findTransferredAudioFiles() async => const Result.success([]);
 
   @override
-  Future<ImportedAudioFile> importFile(
+  Future<Result<ImportedAudioFile, FileImportFailure>> importFile(
     SelectedAudioFile selected, {
     ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
-  }) async => ImportedAudioFile(
-    path: selected.sourcePath,
-    displayName: selected.displayName,
+  }) async => Result.success(
+    ImportedAudioFile(
+      path: selected.sourcePath,
+      displayName: selected.displayName,
+    ),
   );
 
   @override
-  Future<void> removeTransferredAudioFiles(
+  Future<Result<bool, FileImportFailure>> removeTransferredAudioFiles(
     List<SelectedAudioFile> files,
-  ) async {}
+  ) async => const Result.success(true);
 
   @override
   Future<String?> pickAndImportCover(String bookId) async => null;

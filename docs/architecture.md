@@ -115,6 +115,11 @@ portability   -> library/notes/settings repository ports
 - Each screen or workflow has one Cubit state stream.
 - Every Cubit state is Freezed. Loading, progress, success, typed failures, and
   revisioned one-time effects are explicit state.
+- Expected failures cross repository and application boundaries as typed
+  `Result` values. Cubits branch on results and must not use exceptions as
+  workflow control flow. Throws are reserved for programmer/configuration
+  invariants and SDK protocols such as stream error channels; adapters convert
+  those errors before they reach presentation.
 - Screen and retry context belongs in state, not parallel mutable Cubit fields.
   Non-rendering workflow bookkeeping and resource handles belong inside the
   application module that owns their lifecycle.

@@ -1,8 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
+import '../use_cases/portability_failure.dart';
 import '../use_cases/backup_workflow.dart';
-import '../use_cases/bookish_backup_validator.dart';
 import 'portability_message.dart';
 import 'portability_state.dart';
 import 'portability_status.dart';
@@ -15,33 +16,29 @@ class PortabilityCubit extends Cubit<PortabilityState> {
 
   Future<void> backup() async {
     emit(state.copyWith(status: PortabilityStatus.working, message: null));
-    try {
-      await _exportBackupAndEmit();
-    } catch (_) {
-      _emitBackupExportFailure();
-    }
+    await _exportBackupAndEmit();
   }
 
   Future<void> restore() async {
     emit(state.copyWith(status: PortabilityStatus.working, message: null));
-    try {
-      await _restoreBackupAndEmit();
-    } on BackupValidationException {
-      _emitInvalidBackupFailure();
-    } catch (_) {
-      _emitBackupRestoreFailure();
-    }
+    await _restoreBackupAndEmit();
   }
 
   Future<void> _exportBackupAndEmit() async {
-    final saved = await _workflow.export();
-    emit(
-      state.copyWith(
-        status: saved ? PortabilityStatus.success : PortabilityStatus.idle,
-        message: saved ? PortabilityMessage.backupExported : null,
-        effectRevision: saved ? state.effectRevision + 1 : state.effectRevision,
-      ),
-    );
+    switch (await _workflow.export()) {
+      case ResultSuccess(value: final saved):
+        emit(
+          state.copyWith(
+            status: saved ? PortabilityStatus.success : PortabilityStatus.idle,
+            message: saved ? PortabilityMessage.backupExported : null,
+            effectRevision: saved
+                ? state.effectRevision + 1
+                : state.effectRevision,
+          ),
+        );
+      case ResultFailure():
+        _emitBackupExportFailure();
+    }
   }
 
   void _emitBackupExportFailure() => emit(
@@ -53,16 +50,22 @@ class PortabilityCubit extends Cubit<PortabilityState> {
   );
 
   Future<void> _restoreBackupAndEmit() async {
-    final restored = await _workflow.restore();
-    emit(
-      restored
-          ? state.copyWith(
-              status: PortabilityStatus.success,
-              message: PortabilityMessage.backupRestored,
-              effectRevision: state.effectRevision + 1,
-            )
-          : state.copyWith(status: PortabilityStatus.idle, message: null),
-    );
+    switch (await _workflow.restore()) {
+      case ResultSuccess(value: final restored):
+        emit(
+          restored
+              ? state.copyWith(
+                  status: PortabilityStatus.success,
+                  message: PortabilityMessage.backupRestored,
+                  effectRevision: state.effectRevision + 1,
+                )
+              : state.copyWith(status: PortabilityStatus.idle, message: null),
+        );
+      case ResultFailure(failure: PortabilityFailure.invalidBackup):
+        _emitInvalidBackupFailure();
+      case ResultFailure():
+        _emitBackupRestoreFailure();
+    }
   }
 
   void _emitInvalidBackupFailure() => emit(

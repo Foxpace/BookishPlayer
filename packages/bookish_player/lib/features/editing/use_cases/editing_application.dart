@@ -1,7 +1,9 @@
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../library/models/library_models.dart';
 import '../models/editable_book_details.dart';
+import '../models/editing_failure.dart';
 import '../repos/book_editing_repository.dart';
 
 @injectable
@@ -10,45 +12,54 @@ class EditingApplication {
 
   final BookEditingRepository _books;
 
-  Future<Audiobook> loadBook(String bookId) async {
-    final book = await _books.loadBook(bookId);
-    if (book == null) {
-      throw StateError('Audiobook "$bookId" was not found.');
+  Future<Result<Audiobook, EditingFailure>> loadBook(String bookId) async {
+    try {
+      final book = await _books.loadBook(bookId);
+      return book == null
+          ? const Result.failure(EditingFailure.notFound)
+          : Result.success(book);
+    } catch (_) {
+      return const Result.failure(EditingFailure.loadFailed);
     }
-    return book;
   }
 
-  Future<Audiobook> editDetails(Audiobook book, EditableBookDetails details) =>
-      _save(
-        book.copyWith(
-          title: details.title.trim(),
-          author: details.author.trim(),
-          series: details.series.trim(),
-          seriesPosition: double.tryParse(details.seriesPosition.trim()),
-          narrator: details.narrator.trim(),
-          year: _parseYear(details.year),
-          folder: details.folder.trim().isEmpty
-              ? 'Imported'
-              : details.folder.trim(),
-        ),
-      );
+  Future<Result<Audiobook, EditingFailure>> editDetails(
+    Audiobook book,
+    EditableBookDetails details,
+  ) => _save(
+    book.copyWith(
+      title: details.title.trim(),
+      author: details.author.trim(),
+      series: details.series.trim(),
+      seriesPosition: double.tryParse(details.seriesPosition.trim()),
+      narrator: details.narrator.trim(),
+      year: _parseYear(details.year),
+      folder: details.folder.trim().isEmpty
+          ? 'Imported'
+          : details.folder.trim(),
+    ),
+  );
 
-  Future<Audiobook> changeCover(Audiobook book) async {
-    final path = await _books.pickCover(book.id);
-    if (path == null) {
-      return book;
-    }
-    final updated = book.withScannedArtwork(path);
-    await _books.saveBook(updated);
+  Future<Result<Audiobook, EditingFailure>> changeCover(Audiobook book) async {
+    try {
+      final path = await _books.pickCover(book.id);
+      if (path == null) {
+        return Result.success(book);
+      }
+      final updated = book.withScannedArtwork(path);
+      await _books.saveBook(updated);
 
-    final oldPath = book.artworkPath;
-    if (oldPath != null && oldPath != path) {
-      await _books.deleteImportedFile(oldPath);
+      final oldPath = book.artworkPath;
+      if (oldPath != null && oldPath != path) {
+        await _books.deleteImportedFile(oldPath);
+      }
+      return Result.success(updated);
+    } catch (_) {
+      return const Result.failure(EditingFailure.saveFailed);
     }
-    return updated;
   }
 
-  Future<Audiobook> reorderTracks(
+  Future<Result<Audiobook, EditingFailure>> reorderTracks(
     Audiobook book,
     int oldIndex,
     int newIndex,
@@ -66,7 +77,7 @@ class EditingApplication {
     );
   }
 
-  Future<Audiobook> addChapter(
+  Future<Result<Audiobook, EditingFailure>> addChapter(
     Audiobook book,
     String title,
     Duration position,
@@ -78,20 +89,26 @@ class EditingApplication {
     return _save(book.copyWith(chapters: chapters));
   }
 
-  Future<Audiobook> deleteChapter(Audiobook book, AudioChapter chapter) =>
-      _save(
-        book.copyWith(
-          chapters: book.chapters.where((item) => item != chapter).toList(),
-        ),
-      );
+  Future<Result<Audiobook, EditingFailure>> deleteChapter(
+    Audiobook book,
+    AudioChapter chapter,
+  ) => _save(
+    book.copyWith(
+      chapters: book.chapters.where((item) => item != chapter).toList(),
+    ),
+  );
 
   int? _parseYear(String value) {
     final parsed = int.tryParse(value.trim());
     return parsed != null && parsed >= 1000 && parsed <= 2999 ? parsed : null;
   }
 
-  Future<Audiobook> _save(Audiobook book) async {
-    await _books.saveBook(book);
-    return book;
+  Future<Result<Audiobook, EditingFailure>> _save(Audiobook book) async {
+    try {
+      await _books.saveBook(book);
+      return Result.success(book);
+    } catch (_) {
+      return const Result.failure(EditingFailure.saveFailed);
+    }
   }
 }

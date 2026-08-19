@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../models/playback_preferences.dart';
 import '../models/theme_preference.dart';
@@ -19,19 +20,14 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     }
     emit(state.copyWith(status: SettingsStatus.loading, message: null));
-    try {
-      await _loadSettingsAndEmit();
-    } catch (_) {
-      _emitSettingsLoadFailure();
-    }
+    await _loadSettingsAndEmit();
   }
 
   Future<void> setPlaybackPreferences(PlaybackPreferences preferences) async {
     final previous = state.playback;
     emit(state.copyWith(playback: preferences, message: null));
-    try {
-      await _settings.savePlaybackPreferences(preferences);
-    } catch (_) {
+    if (await _settings.savePlaybackPreferences(preferences)
+        case ResultFailure()) {
       _emitPlaybackSaveFailure(previous);
     }
   }
@@ -50,22 +46,24 @@ class SettingsCubit extends Cubit<SettingsState> {
         message: null,
       ),
     );
-    try {
-      await _settings.saveThemePreference(preference);
-    } catch (_) {
+    if (await _settings.saveThemePreference(preference) case ResultFailure()) {
       _emitThemeSaveFailure(previous);
     }
   }
 
   Future<void> _loadSettingsAndEmit() async {
-    final loaded = await _settings.load();
-    emit(
-      state.copyWith(
-        status: SettingsStatus.ready,
-        themePreference: loaded.theme,
-        playback: loaded.playback,
-      ),
-    );
+    switch (await _settings.load()) {
+      case ResultSuccess(:final value):
+        emit(
+          state.copyWith(
+            status: SettingsStatus.ready,
+            themePreference: value.theme,
+            playback: value.playback,
+          ),
+        );
+      case ResultFailure():
+        _emitSettingsLoadFailure();
+    }
   }
 
   void _emitSettingsLoadFailure() => emit(

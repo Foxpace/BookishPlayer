@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/di/injection.dart';
+import '../../core/foundation/result.dart';
 import '../../core/localization/generated/l10n.dart';
 import '../../core/navigation/app_router.dart';
 import '../../core/presentation/formatters.dart';
@@ -127,14 +128,11 @@ class _PlayerScreenRootState extends State<PlayerScreenRoot>
   }
 
   Future<void> _pickAudioOutput() async {
-    try {
-      await _cubit.pickAudioOutput();
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(S.of(context).audioOutputsOpenFailed)),
-        );
-      }
+    final result = await _cubit.pickAudioOutput();
+    if (result case ResultFailure() when mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.of(context).audioOutputsOpenFailed)),
+      );
     }
   }
 

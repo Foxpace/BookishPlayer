@@ -1,0 +1,1 @@
+enum SettingsFailure { load, save }

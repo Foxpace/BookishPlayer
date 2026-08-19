@@ -1,0 +1,1 @@
+enum PortabilityFailure { invalidBackup, operationFailed }

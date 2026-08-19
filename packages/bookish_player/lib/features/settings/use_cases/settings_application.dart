@@ -1,7 +1,9 @@
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../models/playback_preferences.dart';
 import '../models/theme_preference.dart';
+import '../models/settings_failure.dart';
 import '../repos/settings_repository.dart';
 
 typedef LoadedSettings = ({
@@ -15,18 +17,35 @@ class SettingsApplication {
 
   final SettingsRepository _repository;
 
-  Future<LoadedSettings> load() async {
-    final (theme, playback) = await (
-      _repository.getThemePreference(),
-      _repository.getPlaybackPreferences(),
-    ).wait;
+  Future<Result<LoadedSettings, SettingsFailure>> load() async {
+    try {
+      final (theme, playback) = await (
+        _repository.getThemePreference(),
+        _repository.getPlaybackPreferences(),
+      ).wait;
 
-    return (theme: theme, playback: playback);
+      return Result.success((theme: theme, playback: playback));
+    } catch (_) {
+      return const Result.failure(SettingsFailure.load);
+    }
   }
 
-  Future<void> saveThemePreference(ThemePreference preference) =>
-      _repository.setThemePreference(preference);
+  Future<Result<bool, SettingsFailure>> saveThemePreference(
+    ThemePreference preference,
+  ) => _save(() => _repository.setThemePreference(preference));
 
-  Future<void> savePlaybackPreferences(PlaybackPreferences preferences) =>
-      _repository.setPlaybackPreferences(preferences);
+  Future<Result<bool, SettingsFailure>> savePlaybackPreferences(
+    PlaybackPreferences preferences,
+  ) => _save(() => _repository.setPlaybackPreferences(preferences));
+
+  Future<Result<bool, SettingsFailure>> _save(
+    Future<void> Function() operation,
+  ) async {
+    try {
+      await operation();
+      return const Result.success(true);
+    } catch (_) {
+      return const Result.failure(SettingsFailure.save);
+    }
+  }
 }

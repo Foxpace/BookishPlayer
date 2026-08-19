@@ -1,8 +1,5 @@
 import 'dart:async';
 
-import 'import_cancelled_exception.dart';
-export 'import_cancelled_exception.dart';
-
 class ImportCancellationSignal {
   final _cancelled = Completer<void>();
 
@@ -13,12 +10,6 @@ class ImportCancellationSignal {
   void cancel() {
     if (!_cancelled.isCompleted) {
       _cancelled.complete();
-    }
-  }
-
-  void throwIfCancelled() {
-    if (isCancelled) {
-      throw const ImportCancelledException();
     }
   }
 }

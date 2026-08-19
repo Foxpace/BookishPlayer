@@ -1,0 +1,1 @@
+enum DiagnosticsFailure { export, clear }

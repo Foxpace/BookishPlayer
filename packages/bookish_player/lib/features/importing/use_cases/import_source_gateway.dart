@@ -1,10 +1,12 @@
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../models/chapter_parse_report.dart';
 import '../models/import_cancellation.dart';
 import '../repos/audiobook_artwork_extractor.dart';
 import '../repos/audiobook_metadata_extractor.dart';
 import '../repos/file_import_repository.dart';
+import '../repos/file_import_failure.dart';
 import '../repos/selected_audio_file.dart';
 import '../repos/m4b_chapter_parser.dart';
 import '../repos/media_probe.dart';
@@ -31,12 +33,13 @@ class ImportSourceGateway {
   final AudiobookArtworkExtractor _artwork;
   final AudiobookMetadataExtractor _metadata;
 
-  Future<List<SelectedAudioFile>> selectFiles({required bool transferred}) =>
-      transferred
+  Future<Result<List<SelectedAudioFile>, FileImportFailure>> selectFiles({
+    required bool transferred,
+  }) => transferred
       ? _files.findTransferredAudioFiles()
       : _files.pickAudioFiles();
 
-  Future<ImportedAudioFile> importFile(
+  Future<Result<ImportedAudioFile, FileImportFailure>> importFile(
     SelectedAudioFile selected, {
     ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
@@ -61,6 +64,7 @@ class ImportSourceGateway {
 
   Future<String?> extractArtwork(String path) => _artwork.extract(path);
 
-  Future<void> removeTransferredFiles(List<SelectedAudioFile> selected) =>
-      _files.removeTransferredAudioFiles(selected);
+  Future<Result<bool, FileImportFailure>> removeTransferredFiles(
+    List<SelectedAudioFile> selected,
+  ) => _files.removeTransferredAudioFiles(selected);
 }

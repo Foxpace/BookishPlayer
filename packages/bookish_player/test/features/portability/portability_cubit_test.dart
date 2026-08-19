@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/portability/use_cases/backup_workflow.dart';
 import 'package:bookish_player/features/portability/use_cases/bookish_backup_validator.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
@@ -7,6 +8,7 @@ import 'package:bookish_player/features/library/models/listening_session.dart';
 import 'package:bookish_player/features/notes/models/book_note.dart';
 import 'package:bookish_player/features/portability/repos/local_export_repository.dart';
 import 'package:bookish_player/features/portability/repos/backup_store_repository.dart';
+import 'package:bookish_player/features/portability/repos/backup_store_failure.dart';
 import 'package:bookish_player/features/portability/models/bookish_backup.dart';
 import 'package:bookish_player/features/portability/cubits/portability_cubit.dart';
 import 'package:bookish_player/features/portability/cubits/portability_status.dart';
@@ -124,20 +126,23 @@ class _Store implements BackupStoreRepository {
   final _Settings settings;
 
   @override
-  Future<BookishBackup> snapshot() async => BookishBackup(
-    exportedAt: DateTime.utc(2026),
-    books: books.books,
-    notes: books.notes,
-    bookMetadata: books.metadata,
-    sessions: books.sessions,
-    settings: BackupSettings(
-      theme: settings.preference.name,
-      playback: settings.playback,
-    ),
-  );
+  Future<Result<BookishBackup, BackupStoreFailure>> snapshot() async =>
+      Result.success(
+        BookishBackup(
+          exportedAt: DateTime.utc(2026),
+          books: books.books,
+          notes: books.notes,
+          bookMetadata: books.metadata,
+          sessions: books.sessions,
+          settings: BackupSettings(
+            theme: settings.preference.name,
+            playback: settings.playback,
+          ),
+        ),
+      );
 
   @override
-  Future<void> restore(BookishBackup backup) async {
+  Future<Result<bool, BackupStoreFailure>> restore(BookishBackup backup) async {
     books
       ..books = backup.books
       ..notes = backup.notes
@@ -146,6 +151,7 @@ class _Store implements BackupStoreRepository {
     settings
       ..preference = ThemePreference.fromStorage(backup.settings.theme)
       ..playback = backup.settings.playback;
+    return const Result.success(true);
   }
 }
 

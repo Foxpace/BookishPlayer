@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../../library/models/library_models.dart';
 import '../../player/models/share_origin.dart';
@@ -72,22 +73,31 @@ class QuoteTranscriptionCubit extends Cubit<QuoteTranscriptionState> {
         message: null,
       ),
     );
-    try {
-      await _transcribeRangeAndEmit(transcriptionContext, range);
-    } catch (_) {
-      _emitTranscriptionFailure();
-    }
+    await _transcribeRangeAndEmit(transcriptionContext, range);
   }
 
   Future<void> _transcribeRangeAndEmit(
     QuoteTranscriptionContext transcriptionContext,
     QuoteTimeRange range,
   ) async {
-    final text = await _application.transcribe(
+    final result = await _application.transcribe(
       book: transcriptionContext.book,
       start: transcriptionContext.chapterStart + range.start,
       end: transcriptionContext.chapterStart + range.end,
     );
+    switch (result) {
+      case ResultSuccess(:final value):
+        _emitTranscribedText(transcriptionContext, range, value);
+      case ResultFailure():
+        _emitTranscriptionFailure();
+    }
+  }
+
+  void _emitTranscribedText(
+    QuoteTranscriptionContext transcriptionContext,
+    QuoteTimeRange range,
+    String text,
+  ) {
     if (text.trim().isEmpty) {
       _emitNoSpeechFailure();
       return;

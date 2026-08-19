@@ -1,6 +1,9 @@
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/library/repos/listening_history_repository.dart';
 import 'package:bookish_player/features/library/models/listening_session.dart';
 import 'package:bookish_player/features/player/use_cases/listening_session_tracker.dart';
+import 'package:bookish_player/features/player/models/player_open_failure.dart';
+import 'package:bookish_player/features/player/models/playback_open_result.dart';
 import 'package:bookish_player/features/player/use_cases/playback_command_service.dart';
 import 'package:bookish_player/features/player/use_cases/sleep_timer_use_case.dart';
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
@@ -161,7 +164,10 @@ void main() {
         // WHEN
         final opened = await sut.openById('book-1');
         // THEN
-        expect(opened.book.id, 'book-1');
+        expect(switch (opened) {
+          ResultSuccess(:final value) => value.book.id,
+          ResultFailure() => null,
+        }, 'book-1');
         expect(audio.loadedIds, ['book-1']);
         expect(audio.skipIntervals.single, (20, 45));
         expect(audio.shortenSilenceValues, [true]);
@@ -185,7 +191,12 @@ void main() {
         await sut.reset();
         expect(audio.clearCalls, 1);
 
-        expect(() => sut.openById('missing'), throwsStateError);
+        expect(
+          await sut.openById('missing'),
+          const Result<PlaybackOpenResult, PlayerOpenFailure>.failure(
+            PlayerOpenFailure.notFound,
+          ),
+        );
         await requestSubscription.cancel();
       },
     );
