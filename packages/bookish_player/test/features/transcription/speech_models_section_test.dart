@@ -25,7 +25,7 @@ void main() {
       transcription = _Transcription();
       preferences = _Preferences()..selected = 'whisper-tiny';
       cubit = SpeechModelsCubit(
-        buildSpeechModelUseCases(
+        buildSpeechModelApplication(
           transcription: transcription,
           preferences: preferences,
         ),
@@ -94,7 +94,7 @@ void main() {
       (tester) async {
         // GIVEN
         final cubit = SpeechModelsCubit(
-          buildSpeechModelUseCases(
+          buildSpeechModelApplication(
             transcription: _Transcription()..models = const [],
             preferences: _Preferences(),
           ),

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:bookish_player/features/portability/use_cases/backup_workflow.dart';
-import 'package:bookish_player/features/portability/use_cases/portability_use_case_bundle.dart';
+import 'package:bookish_player/features/portability/use_cases/bookish_backup_validator.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/library/models/listening_session.dart';
 import 'package:bookish_player/features/notes/models/book_note.dart';
@@ -63,12 +63,7 @@ void main() {
           files,
           const BookishBackupValidator(),
         );
-        final sut = PortabilityCubit(
-          PortabilityUseCases(
-            ExportBackupUseCase(workflow),
-            RestoreBackupUseCase(workflow),
-          ),
-        );
+        final sut = PortabilityCubit(workflow);
 
         // WHEN
         await sut.backup();

@@ -1,18 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/presentation/app_message.dart';
-import '../use_cases/library_use_cases.dart';
+import '../use_cases/library_application.dart';
 import '../models/library_models.dart';
 import '../models/audiobook_removal_mode.dart';
 import 'library_cubits.dart';
 import 'library_state_projection.dart';
-import 'library_intents.dart';
 
 class LibraryCubit extends Cubit<LibraryState> {
-  LibraryCubit(this._useCases, this._prepareBookRemoval)
-    : super(const LibraryState());
+  LibraryCubit(this._application) : super(const LibraryState());
 
-  final LibraryUseCases _useCases;
-  final PrepareBookRemoval _prepareBookRemoval;
+  final LibraryApplication _application;
 
   Future<void> load() async {
     emit(state.copyWith(status: LibraryStatus.loading, message: null));
@@ -42,7 +39,7 @@ class LibraryCubit extends Cubit<LibraryState> {
   Future<void> setLayout(LibraryLayout layout) async {
     emit(state.copyWith(layout: layout));
     try {
-      await _useCases.saveLayout(layout.name);
+      await _application.setLayout(layout.name);
     } catch (_) {
       _emitLayoutSaveFailure();
     }
@@ -82,7 +79,7 @@ class LibraryCubit extends Cubit<LibraryState> {
   }
 
   Future<void> _loadLibraryAndEmit() async {
-    final result = await _useCases.loadLibrary();
+    final result = await _application.load();
     final layout = result.layout == LibraryLayout.grid.name
         ? LibraryLayout.grid
         : LibraryLayout.list;
@@ -107,8 +104,7 @@ class LibraryCubit extends Cubit<LibraryState> {
     Audiobook book,
     AudiobookRemovalMode mode,
   ) async {
-    await _prepareBookRemoval(book.id);
-    await _useCases.removeBook(book, mode);
+    await _application.removeBook(book, mode);
     _projectAndEmit(
       state.copyWith(
         books: state.books.where((item) => item.id != book.id).toList(),
@@ -136,7 +132,7 @@ class LibraryCubit extends Cubit<LibraryState> {
   );
 
   Future<void> _saveUpdatedBookAndEmit(Audiobook updated) async {
-    await _useCases.saveBook(updated);
+    await _application.saveBook(updated);
     final books = [
       for (final book in state.books)
         if (book.id == updated.id) updated else book,

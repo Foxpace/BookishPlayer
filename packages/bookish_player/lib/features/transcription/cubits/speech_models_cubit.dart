@@ -4,15 +4,15 @@ import 'package:injectable/injectable.dart';
 import '../../../core/presentation/app_message.dart';
 import '../models/speech_model.dart';
 import '../models/transcription_download.dart';
-import '../use_cases/transcription_use_case_bundle.dart';
+import '../use_cases/speech_model_application.dart';
 import 'transcription_cubits.dart';
 
 @Environment('internal')
 @injectable
 class SpeechModelsCubit extends Cubit<SpeechModelsState> {
-  SpeechModelsCubit(this._useCases) : super(const SpeechModelsState());
+  SpeechModelsCubit(this._application) : super(const SpeechModelsState());
 
-  final SpeechModelUseCases _useCases;
+  final SpeechModelApplication _application;
 
   Future<void> load() async {
     emit(state.copyWith(status: SpeechModelsStatus.loading, message: null));
@@ -24,36 +24,27 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
   }
 
   Future<void> _loadModelsAndEmit() async {
-    final selected = await _useCases.selectedModel() ?? 'whisper-tiny';
-    final cachedModels = await _useCases.loadCachedModels();
-    _emitCachedModels(cachedModels, selected);
-    await _refreshModelsAndEmit(cachedModels);
+    final cached = await _application.loadCached();
+    _emitCatalog(cached);
+    await _refreshModelsAndEmit(cached);
   }
 
-  void _emitCachedModels(List<SpeechModel> models, String selected) {
+  void _emitCatalog(SpeechModelCatalog catalog) {
     emit(
       state.copyWith(
         status: SpeechModelsStatus.ready,
-        models: models,
-        selectedModel: _selectAvailableModel(models, selected),
+        models: catalog.models,
+        selectedModel: catalog.selected,
       ),
     );
   }
 
-  Future<void> _refreshModelsAndEmit(List<SpeechModel> cachedModels) async {
-    final refreshedModels = await _useCases.refreshModels();
-    if (isClosed || _haveSameModels(refreshedModels, cachedModels)) {
+  Future<void> _refreshModelsAndEmit(SpeechModelCatalog cached) async {
+    final refreshed = await _application.refresh(cached);
+    if (isClosed || refreshed == null) {
       return;
     }
-    emit(
-      state.copyWith(
-        models: refreshedModels,
-        selectedModel: _selectAvailableModel(
-          refreshedModels,
-          state.selectedModel,
-        ),
-      ),
-    );
+    _emitCatalog(refreshed);
   }
 
   void _emitModelsLoadFailure() => emit(
@@ -64,31 +55,8 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
     ),
   );
 
-  String _selectAvailableModel(List<SpeechModel> models, String selected) {
-    if (models.any((model) => model.slug == selected)) {
-      return selected;
-    }
-    return models.isEmpty ? 'whisper-tiny' : models.first.slug;
-  }
-
-  bool _haveSameModels(List<SpeechModel> left, List<SpeechModel> right) {
-    if (left.length != right.length) {
-      return false;
-    }
-    for (var index = 0; index < left.length; index++) {
-      final leftModel = left[index];
-      final rightModel = right[index];
-      if (leftModel.slug != rightModel.slug ||
-          leftModel.sizeMb != rightModel.sizeMb ||
-          leftModel.isDownloaded != rightModel.isDownloaded) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   Future<void> selectModel(String slug) async {
-    await _useCases.selectModel(slug);
+    await _application.select(slug);
     emit(state.copyWith(selectedModel: slug, message: null));
   }
 
@@ -116,7 +84,7 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
   }
 
   Future<void> _downloadSelectedModelAndEmit() async {
-    await _useCases.downloadModel(
+    await _application.download(
       state.selectedModel,
       onProgress: _emitDownloadProgress,
     );

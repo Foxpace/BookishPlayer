@@ -18,12 +18,12 @@ void main() {
       () async {
         // GIVEN
         final sharing = _Sharing();
-        final useCases = buildQuoteTranscriptionUseCases(
+        final application = buildQuoteTranscriptionApplication(
           transcription: _Transcription(),
           preferences: _Settings(),
           sharing: sharing,
         );
-        final sut = QuoteTranscriptionCubit(useCases);
+        final sut = QuoteTranscriptionCubit(application);
         addTearDown(sut.close);
         final book = Audiobook(
           id: 'book',
@@ -52,7 +52,7 @@ void main() {
         final draft = sut.state.draft;
         expect(draft, isNotNull);
         if (draft != null) {
-          await useCases.shareDraft(
+          await application.shareDraft(
             draft,
             'edited quote',
             subject: 'Quote from Book',

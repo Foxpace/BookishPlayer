@@ -1,16 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../use_cases/portability_use_case_bundle.dart';
+import '../use_cases/backup_workflow.dart';
+import '../use_cases/bookish_backup_validator.dart';
 import 'portability_message.dart';
 import 'portability_state.dart';
 import 'portability_status.dart';
 
 @injectable
 class PortabilityCubit extends Cubit<PortabilityState> {
-  PortabilityCubit(this._useCases) : super(const PortabilityState());
+  PortabilityCubit(this._workflow) : super(const PortabilityState());
 
-  final PortabilityUseCases _useCases;
+  final BackupWorkflow _workflow;
 
   Future<void> backup() async {
     emit(state.copyWith(status: PortabilityStatus.working, message: null));
@@ -33,7 +34,7 @@ class PortabilityCubit extends Cubit<PortabilityState> {
   }
 
   Future<void> _exportBackupAndEmit() async {
-    final saved = await _useCases.exportBackup();
+    final saved = await _workflow.export();
     emit(
       state.copyWith(
         status: saved ? PortabilityStatus.success : PortabilityStatus.idle,
@@ -52,7 +53,7 @@ class PortabilityCubit extends Cubit<PortabilityState> {
   );
 
   Future<void> _restoreBackupAndEmit() async {
-    final restored = await _useCases.restoreBackup();
+    final restored = await _workflow.restore();
     emit(
       restored
           ? state.copyWith(

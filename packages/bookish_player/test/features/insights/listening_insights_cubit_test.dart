@@ -1,6 +1,5 @@
 import 'package:bookish_player/core/presentation/app_message.dart';
 import 'package:bookish_player/features/insights/use_cases/load_listening_insights_use_case.dart';
-import 'package:bookish_player/features/insights/use_cases/insights_use_cases.dart';
 import 'package:bookish_player/features/insights/cubits/listening_insights_cubit.dart';
 import 'package:bookish_player/features/insights/cubits/listening_insights_status.dart';
 import 'package:bookish_player/features/insights/repos/implementations/library_listening_insights_repository.dart';
@@ -19,14 +18,12 @@ void main() {
       () async {
         // GIVEN
         final sut = ListeningInsightsCubit(
-          InsightsUseCases(
-            loadListeningInsights: LoadListeningInsightsUseCase(
-              LibraryListeningInsightsRepository(
-                _BrokenMetadata(),
-                _EmptyHistory(),
-              ),
-              FakeClock(),
+          LoadListeningInsightsUseCase(
+            LibraryListeningInsightsRepository(
+              _BrokenMetadata(),
+              _EmptyHistory(),
             ),
+            FakeClock(),
           ),
         );
         addTearDown(sut.close);

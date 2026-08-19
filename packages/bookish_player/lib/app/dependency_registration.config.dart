@@ -34,20 +34,8 @@ import 'package:bookish_player/features/editing/repos/book_editing_repository.da
     as _i193;
 import 'package:bookish_player/features/editing/repos/implementations/library_book_editing_repository.dart'
     as _i937;
-import 'package:bookish_player/features/editing/use_cases/add_book_chapter_use_case.dart'
-    as _i278;
-import 'package:bookish_player/features/editing/use_cases/change_book_cover_use_case.dart'
-    as _i798;
-import 'package:bookish_player/features/editing/use_cases/delete_book_chapter_use_case.dart'
-    as _i997;
-import 'package:bookish_player/features/editing/use_cases/edit_book_details_use_case.dart'
-    as _i249;
-import 'package:bookish_player/features/editing/use_cases/editing_use_cases.dart'
-    as _i121;
-import 'package:bookish_player/features/editing/use_cases/editing_use_cases_barrel.dart'
-    as _i498;
-import 'package:bookish_player/features/editing/use_cases/reorder_book_tracks_use_case.dart'
-    as _i428;
+import 'package:bookish_player/features/editing/use_cases/editing_application.dart'
+    as _i990;
 import 'package:bookish_player/features/importing/cubits/import_cubit.dart'
     as _i218;
 import 'package:bookish_player/features/importing/repos/audiobook_artwork_extractor.dart'
@@ -88,8 +76,6 @@ import 'package:bookish_player/features/insights/repos/implementations/library_l
     as _i848;
 import 'package:bookish_player/features/insights/repos/listening_insights_repository.dart'
     as _i316;
-import 'package:bookish_player/features/insights/use_cases/insights_use_cases.dart'
-    as _i811;
 import 'package:bookish_player/features/insights/use_cases/load_listening_insights_use_case.dart'
     as _i517;
 import 'package:bookish_player/features/library/repos/audiobook_catalog_repository.dart'
@@ -108,14 +94,6 @@ import 'package:bookish_player/features/library/repos/listening_history_reposito
     as _i276;
 import 'package:bookish_player/features/library/repos/observable_audiobook_catalog_repository.dart'
     as _i958;
-import 'package:bookish_player/features/library/use_cases/library_use_cases.dart'
-    as _i751;
-import 'package:bookish_player/features/library/use_cases/load_library_use_case.dart'
-    as _i877;
-import 'package:bookish_player/features/library/use_cases/remove_audiobook_use_case.dart'
-    as _i983;
-import 'package:bookish_player/features/library/use_cases/save_library_book_use_case.dart'
-    as _i938;
 import 'package:bookish_player/features/notes/cubits/note_gallery_cubit.dart'
     as _i977;
 import 'package:bookish_player/features/notes/cubits/voice_note_cubit.dart'
@@ -126,18 +104,12 @@ import 'package:bookish_player/features/notes/repos/implementations/speech_to_te
     as _i291;
 import 'package:bookish_player/features/notes/repos/voice_note_transcription_repository.dart'
     as _i60;
-import 'package:bookish_player/features/notes/use_cases/note_gallery_use_cases.dart'
-    as _i134;
-import 'package:bookish_player/features/notes/use_cases/note_use_case_bundle.dart'
-    as _i152;
+import 'package:bookish_player/features/notes/use_cases/note_gallery_application.dart'
+    as _i501;
 import 'package:bookish_player/features/notes/use_cases/player_notes_service.dart'
     as _i177;
-import 'package:bookish_player/features/notes/use_cases/stop_voice_note_use_case.dart'
-    as _i510;
-import 'package:bookish_player/features/notes/use_cases/update_gallery_note_use_case.dart'
-    as _i595;
-import 'package:bookish_player/features/notes/use_cases/voice_note_use_cases.dart'
-    as _i363;
+import 'package:bookish_player/features/notes/use_cases/voice_note_application.dart'
+    as _i72;
 import 'package:bookish_player/features/player/cubits/player_cubit.dart'
     as _i948;
 import 'package:bookish_player/features/player/cubits/player_state_factory.dart'
@@ -202,12 +174,6 @@ import 'package:bookish_player/features/portability/use_cases/backup_workflow.da
     as _i981;
 import 'package:bookish_player/features/portability/use_cases/bookish_backup_validator.dart'
     as _i985;
-import 'package:bookish_player/features/portability/use_cases/portability_use_case_bundle.dart'
-    as _i186;
-import 'package:bookish_player/features/portability/use_cases/portability_use_cases.dart'
-    as _i1001;
-import 'package:bookish_player/features/portability/use_cases/restore_backup_use_case.dart'
-    as _i695;
 import 'package:bookish_player/features/settings/cubits/settings_cubit.dart'
     as _i621;
 import 'package:bookish_player/features/settings/diagnostics/cubits/diagnostics_cubit.dart'
@@ -216,10 +182,6 @@ import 'package:bookish_player/features/settings/diagnostics/repos/diagnostics_e
     as _i1071;
 import 'package:bookish_player/features/settings/diagnostics/repos/implementations/file_picker_diagnostics_export_repository.dart'
     as _i1030;
-import 'package:bookish_player/features/settings/diagnostics/use_cases/delete_diagnostics_use_case.dart'
-    as _i850;
-import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_use_cases.dart'
-    as _i1027;
 import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnostics_workflow.dart'
     as _i381;
 import 'package:bookish_player/features/settings/repos/implementations/sembast_settings_repository.dart'
@@ -238,14 +200,8 @@ import 'package:bookish_player/features/storage/repos/implementations/device_lib
     as _i700;
 import 'package:bookish_player/features/storage/repos/library_storage_repository.dart'
     as _i681;
-import 'package:bookish_player/features/storage/use_cases/clean_orphan_files_use_case.dart'
-    as _i781;
-import 'package:bookish_player/features/storage/use_cases/remove_missing_book_use_case.dart'
-    as _i12;
 import 'package:bookish_player/features/storage/use_cases/storage_assistant_workflow.dart'
     as _i1032;
-import 'package:bookish_player/features/storage/use_cases/storage_use_cases.dart'
-    as _i40;
 import 'package:bookish_player/features/transcription/cubits/quote_transcription_cubit.dart'
     as _i1063;
 import 'package:bookish_player/features/transcription/cubits/speech_models_cubit.dart'
@@ -256,29 +212,17 @@ import 'package:bookish_player/features/transcription/repos/transcription_prefer
     as _i304;
 import 'package:bookish_player/features/transcription/repos/transcription_repository.dart'
     as _i982;
-import 'package:bookish_player/features/transcription/use_cases/download_speech_model_use_case.dart'
-    as _i652;
-import 'package:bookish_player/features/transcription/use_cases/quote_transcription_use_cases.dart'
-    as _i723;
-import 'package:bookish_player/features/transcription/use_cases/read_selected_speech_model_use_case.dart'
-    as _i283;
-import 'package:bookish_player/features/transcription/use_cases/refresh_speech_models_use_case.dart'
-    as _i766;
-import 'package:bookish_player/features/transcription/use_cases/select_speech_model_use_case.dart'
-    as _i27;
-import 'package:bookish_player/features/transcription/use_cases/share_transcription_draft_use_case.dart'
-    as _i484;
-import 'package:bookish_player/features/transcription/use_cases/speech_model_use_cases.dart'
-    as _i237;
-import 'package:bookish_player/features/transcription/use_cases/transcription_use_case_bundle.dart'
-    as _i877;
+import 'package:bookish_player/features/transcription/use_cases/quote_transcription_application.dart'
+    as _i380;
+import 'package:bookish_player/features/transcription/use_cases/speech_model_application.dart'
+    as _i937;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:go_router/go_router.dart' as _i583;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:just_audio/just_audio.dart' as _i501;
 
-const String _internal = 'internal';
 const String _prod = 'prod';
+const String _internal = 'internal';
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -323,22 +267,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i993.ImportDiagnosticsRepository>(
       () => _i391.SystemImportDiagnosticsRepository(),
-    );
-    gh.factory<_i652.DownloadSpeechModelUseCase>(
-      () =>
-          _i652.DownloadSpeechModelUseCase(gh<_i982.TranscriptionRepository>()),
-      registerFor: {_internal},
-    );
-    gh.factory<_i766.RefreshSpeechModelsUseCase>(
-      () =>
-          _i766.RefreshSpeechModelsUseCase(gh<_i982.TranscriptionRepository>()),
-      registerFor: {_internal},
-    );
-    gh.factory<_i237.LoadCachedSpeechModelsUseCase>(
-      () => _i237.LoadCachedSpeechModelsUseCase(
-        gh<_i982.TranscriptionRepository>(),
-      ),
-      registerFor: {_internal},
     );
     gh.lazySingleton<_i361.AudiobookMetadataExtractor>(
       () => _i263.EmbeddedAudiobookMetadataExtractor(),
@@ -393,23 +321,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i101.AppDataResetRepository>(
       () => _i707.DeviceAppDataResetRepository(gh<_i987.BookishDatabase>()),
     );
-    gh.factory<_i850.DeleteDiagnosticsUseCase>(
-      () => _i850.DeleteDiagnosticsUseCase(gh<_i381.DiagnosticsWorkflow>()),
-    );
-    gh.factory<_i1027.ExportDiagnosticsUseCase>(
-      () => _i1027.ExportDiagnosticsUseCase(gh<_i381.DiagnosticsWorkflow>()),
+    gh.factory<_i209.DiagnosticsCubit>(
+      () => _i209.DiagnosticsCubit(gh<_i381.DiagnosticsWorkflow>()),
     );
     gh.lazySingleton<_i698.AudiobookDao>(
       () => _i698.AudiobookDao(gh<_i987.BookishDatabase>()),
     );
     gh.lazySingleton<_i754.SettingsDao>(
       () => _i754.SettingsDao(gh<_i987.BookishDatabase>()),
-    );
-    gh.factory<_i484.ShareTranscriptionDraftUseCase>(
-      () => _i484.ShareTranscriptionDraftUseCase(
-        gh<_i576.QuoteShareRepository>(),
-      ),
-      registerFor: {_internal},
     );
     gh.lazySingleton<_i276.ListeningHistoryRepository>(
       () => _i712.ListeningHistoryDao(gh<_i987.BookishDatabase>()),
@@ -431,13 +350,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i465.SembastAudiobookRepository>(
       () => _i465.SembastAudiobookRepository(gh<_i698.AudiobookDao>()),
     );
-    gh.factory<_i510.StopVoiceNoteUseCase>(
-      () => _i510.StopVoiceNoteUseCase(
-        gh<_i60.VoiceNoteTranscriptionRepository>(),
-      ),
-    );
-    gh.factory<_i363.StartVoiceNoteUseCase>(
-      () => _i363.StartVoiceNoteUseCase(
+    gh.factory<_i72.VoiceNoteApplication>(
+      () => _i72.VoiceNoteApplication(
         gh<_i60.VoiceNoteTranscriptionRepository>(),
       ),
     );
@@ -448,17 +362,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i985.BookishBackupValidator>(),
       ),
     );
-    gh.factory<_i363.VoiceNoteUseCases>(
-      () => _i363.VoiceNoteUseCases(
-        start: gh<_i363.StartVoiceNoteUseCase>(),
-        stop: gh<_i510.StopVoiceNoteUseCase>(),
-      ),
-    );
-    gh.factory<_i1027.DiagnosticsUseCases>(
-      () => _i1027.DiagnosticsUseCases(
-        gh<_i1027.ExportDiagnosticsUseCase>(),
-        gh<_i850.DeleteDiagnosticsUseCase>(),
-      ),
+    gh.factory<_i661.VoiceNoteCubit>(
+      () => _i661.VoiceNoteCubit(gh<_i72.VoiceNoteApplication>()),
     );
     gh.lazySingleton<_i852.SettingsRepository>(
       () => _i466.SembastSettingsRepository(gh<_i754.SettingsDao>()),
@@ -475,14 +380,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i621.SettingsCubit>(
       () => _i621.SettingsCubit(gh<_i847.SettingsApplication>()),
     );
-    gh.factory<_i661.VoiceNoteCubit>(
-      () => _i661.VoiceNoteCubit(gh<_i152.VoiceNoteUseCases>()),
-    );
-    gh.factory<_i1001.ExportBackupUseCase>(
-      () => _i1001.ExportBackupUseCase(gh<_i981.BackupWorkflow>()),
-    );
-    gh.factory<_i695.RestoreBackupUseCase>(
-      () => _i695.RestoreBackupUseCase(gh<_i981.BackupWorkflow>()),
+    gh.factory<_i232.PortabilityCubit>(
+      () => _i232.PortabilityCubit(gh<_i981.BackupWorkflow>()),
     );
     gh.factory<_i342.ListeningSessionTracker>(
       () => _i342.ListeningSessionTracker(
@@ -490,15 +389,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1031.Clock>(),
         gh<_i315.IdGenerator>(),
       ),
-    );
-    gh.factory<_i1001.PortabilityUseCases>(
-      () => _i1001.PortabilityUseCases(
-        gh<_i1001.ExportBackupUseCase>(),
-        gh<_i695.RestoreBackupUseCase>(),
-      ),
-    );
-    gh.factory<_i751.SaveLibraryLayoutUseCase>(
-      () => _i751.SaveLibraryLayoutUseCase(gh<_i852.SettingsRepository>()),
     );
     gh.lazySingleton<_i55.AudiobookRepository>(
       () => appModule.provideAudiobookRepository(
@@ -551,13 +441,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i315.IdGenerator>(),
       ),
     );
-    gh.factory<_i877.LoadLibraryUseCase>(
-      () => _i877.LoadLibraryUseCase(
-        gh<_i564.AudiobookCatalogRepository>(),
-        gh<_i1002.AudiobookArtworkExtractor>(),
-        gh<_i852.SettingsRepository>(),
-      ),
-    );
     gh.factory<_i177.PlayerNotesService>(
       () => _i177.PlayerNotesService(
         gh<_i355.BookNoteRepository>(),
@@ -567,23 +450,24 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i315.IdGenerator>(),
       ),
     );
-    gh.factory<_i938.SaveLibraryBookUseCase>(
-      () =>
-          _i938.SaveLibraryBookUseCase(gh<_i564.AudiobookCatalogRepository>()),
-    );
-    gh.factory<_i209.DiagnosticsCubit>(
-      () => _i209.DiagnosticsCubit(gh<_i1027.DiagnosticsUseCases>()),
-    );
-    gh.factory<_i134.LoadNoteGalleryUseCase>(
-      () => _i134.LoadNoteGalleryUseCase(
+    gh.factory<_i501.NoteGalleryApplication>(
+      () => _i501.NoteGalleryApplication(
         gh<_i355.BookNoteRepository>(),
         gh<_i167.BookMetadataRepository>(),
       ),
     );
-    gh.factory<_i723.TranscribeQuoteUseCase>(
-      () => _i723.TranscribeQuoteUseCase(
+    gh.factory<_i937.SpeechModelApplication>(
+      () => _i937.SpeechModelApplication(
         gh<_i982.TranscriptionRepository>(),
         gh<_i304.TranscriptionPreferences>(),
+      ),
+      registerFor: {_internal},
+    );
+    gh.factory<_i380.QuoteTranscriptionApplication>(
+      () => _i380.QuoteTranscriptionApplication(
+        gh<_i982.TranscriptionRepository>(),
+        gh<_i304.TranscriptionPreferences>(),
+        gh<_i576.QuoteShareRepository>(),
       ),
       registerFor: {_internal},
     );
@@ -593,12 +477,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i681.LibraryStorageRepository>(),
       ),
     );
-    gh.factory<_i723.QuoteTranscriptionUseCases>(
-      () => _i723.QuoteTranscriptionUseCases(
-        gh<_i723.TranscribeQuoteUseCase>(),
-        gh<_i484.ShareTranscriptionDraftUseCase>(),
-      ),
-      registerFor: {_internal},
+    gh.factory<_i977.NoteGalleryCubit>(
+      () => _i977.NoteGalleryCubit(gh<_i501.NoteGalleryApplication>()),
     );
     gh.lazySingleton<_i276.PlayerNoteUseCases>(
       () => _i276.PlayerNoteUseCases(gh<_i177.PlayerNotesService>()),
@@ -617,14 +497,9 @@ extension GetItInjectableX on _i174.GetIt {
       ),
       registerFor: {_prod},
     );
-    gh.factory<_i983.RemoveAudiobookUseCase>(
-      () => _i983.RemoveAudiobookUseCase(
-        gh<_i564.AudiobookCatalogRepository>(),
-        gh<_i444.FileImportRepository>(),
-      ),
-    );
-    gh.factory<_i232.PortabilityCubit>(
-      () => _i232.PortabilityCubit(gh<_i186.PortabilityUseCases>()),
+    gh.factory<_i627.SpeechModelsCubit>(
+      () => _i627.SpeechModelsCubit(gh<_i937.SpeechModelApplication>()),
+      registerFor: {_internal},
     );
     gh.lazySingleton<_i193.BookEditingRepository>(
       () => _i937.LibraryBookEditingRepository(
@@ -632,62 +507,17 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i444.FileImportRepository>(),
       ),
     );
-    gh.factory<_i595.UpdateGalleryNoteUseCase>(
-      () => _i595.UpdateGalleryNoteUseCase(gh<_i355.BookNoteRepository>()),
-    );
     gh.lazySingleton<_i316.ListeningInsightsRepository>(
       () => _i848.LibraryListeningInsightsRepository(
         gh<_i167.BookMetadataRepository>(),
         gh<_i276.ListeningHistoryRepository>(),
       ),
     );
-    gh.factory<_i283.ReadSelectedSpeechModelUseCase>(
-      () => _i283.ReadSelectedSpeechModelUseCase(
-        gh<_i304.TranscriptionPreferences>(),
-      ),
-      registerFor: {_internal},
-    );
-    gh.factory<_i27.SelectSpeechModelUseCase>(
-      () => _i27.SelectSpeechModelUseCase(gh<_i304.TranscriptionPreferences>()),
-      registerFor: {_internal},
-    );
-    gh.factory<_i781.CleanOrphanFilesUseCase>(
-      () =>
-          _i781.CleanOrphanFilesUseCase(gh<_i1032.StorageAssistantWorkflow>()),
-    );
-    gh.factory<_i12.RemoveMissingBookUseCase>(
-      () =>
-          _i12.RemoveMissingBookUseCase(gh<_i1032.StorageAssistantWorkflow>()),
-    );
-    gh.factory<_i40.InspectStorageUseCase>(
-      () => _i40.InspectStorageUseCase(gh<_i1032.StorageAssistantWorkflow>()),
-    );
-    gh.factory<_i751.LibraryUseCases>(
-      () => _i751.LibraryUseCases(
-        loadLibrary: gh<_i877.LoadLibraryUseCase>(),
-        removeBook: gh<_i983.RemoveAudiobookUseCase>(),
-        saveLayout: gh<_i751.SaveLibraryLayoutUseCase>(),
-        saveBook: gh<_i938.SaveLibraryBookUseCase>(),
-      ),
-    );
-    gh.factory<_i134.NoteGalleryUseCases>(
-      () => _i134.NoteGalleryUseCases(
-        loadGallery: gh<_i134.LoadNoteGalleryUseCase>(),
-        updateNote: gh<_i595.UpdateGalleryNoteUseCase>(),
-      ),
-    );
     gh.factory<_i1063.QuoteTranscriptionCubit>(
       () => _i1063.QuoteTranscriptionCubit(
-        gh<_i877.QuoteTranscriptionUseCases>(),
+        gh<_i380.QuoteTranscriptionApplication>(),
       ),
       registerFor: {_internal},
-    );
-    gh.factory<_i40.StorageUseCases>(
-      () => _i40.StorageUseCases(
-        inspectStorage: gh<_i40.InspectStorageUseCase>(),
-        cleanOrphanFiles: gh<_i781.CleanOrphanFilesUseCase>(),
-        removeMissingBook: gh<_i12.RemoveMissingBookUseCase>(),
-      ),
     );
     gh.lazySingleton<_i11.PlaybackCommandService>(
       () => _i11.PlaybackCommandService(
@@ -705,6 +535,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i259.MediaProbe>(
       () => _i773.AudioPlayerMediaProbe(gh<_i1014.AudioPlayerRepository>()),
     );
+    gh.factory<_i411.ListeningInsightsCubit>(
+      () => _i411.ListeningInsightsCubit(
+        gh<_i517.LoadListeningInsightsUseCase>(),
+      ),
+    );
     gh.factory<_i903.SleepTimerUseCase>(
       () => _i903.SleepTimerUseCase(gh<_i1014.AudioPlayerRepository>()),
     );
@@ -717,23 +552,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i361.AudiobookMetadataExtractor>(),
       ),
     );
-    gh.factory<_i278.AddBookChapterUseCase>(
-      () => _i278.AddBookChapterUseCase(gh<_i193.BookEditingRepository>()),
-    );
-    gh.factory<_i798.ChangeBookCoverUseCase>(
-      () => _i798.ChangeBookCoverUseCase(gh<_i193.BookEditingRepository>()),
-    );
-    gh.factory<_i997.DeleteBookChapterUseCase>(
-      () => _i997.DeleteBookChapterUseCase(gh<_i193.BookEditingRepository>()),
-    );
-    gh.factory<_i249.EditBookDetailsUseCase>(
-      () => _i249.EditBookDetailsUseCase(gh<_i193.BookEditingRepository>()),
-    );
-    gh.factory<_i121.LoadBookForEditingUseCase>(
-      () => _i121.LoadBookForEditingUseCase(gh<_i193.BookEditingRepository>()),
-    );
-    gh.factory<_i428.ReorderBookTracksUseCase>(
-      () => _i428.ReorderBookTracksUseCase(gh<_i193.BookEditingRepository>()),
+    gh.factory<_i990.EditingApplication>(
+      () => _i990.EditingApplication(gh<_i193.BookEditingRepository>()),
     );
     gh.lazySingleton<_i58.AudioServiceBootstrap>(
       () => _i129.BookishAudioServiceBootstrap(
@@ -760,25 +580,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i177.PlayerNotesService>(),
       ),
     );
-    gh.factory<_i237.SpeechModelUseCases>(
-      () => _i237.SpeechModelUseCases(
-        loadCachedModels: gh<_i237.LoadCachedSpeechModelsUseCase>(),
-        refreshModels: gh<_i766.RefreshSpeechModelsUseCase>(),
-        selectedModel: gh<_i283.ReadSelectedSpeechModelUseCase>(),
-        selectModel: gh<_i27.SelectSpeechModelUseCase>(),
-        downloadModel: gh<_i652.DownloadSpeechModelUseCase>(),
-      ),
-      registerFor: {_internal},
-    );
     gh.lazySingleton<_i945.AppBootstrapper>(
       () => _i945.AppBootstrapper(
         gh<_i58.AudioServiceBootstrap>(),
         gh<_i58.CarPlayBootstrap>(),
       ),
-    );
-    gh.factory<_i627.SpeechModelsCubit>(
-      () => _i627.SpeechModelsCubit(gh<_i877.SpeechModelUseCases>()),
-      registerFor: {_internal},
     );
     gh.factory<_i803.ImportApplication>(
       () => _i803.ImportApplication(
@@ -804,13 +610,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i479.ChapterNavigationPolicy>(),
       ),
     );
-    gh.factory<_i977.NoteGalleryCubit>(
-      () => _i977.NoteGalleryCubit(gh<_i152.NoteGalleryUseCases>()),
-    );
-    gh.factory<_i811.InsightsUseCases>(
-      () => _i811.InsightsUseCases(
-        loadListeningInsights: gh<_i517.LoadListeningInsightsUseCase>(),
-      ),
+    gh.factory<_i1000.MetadataEditorCubit>(
+      () => _i1000.MetadataEditorCubit(gh<_i990.EditingApplication>()),
     );
     gh.lazySingleton<_i246.PlayerSleepUseCases>(
       () => _i246.PlayerSleepUseCases(
@@ -819,23 +620,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1014.AudioPlayerRepository>(),
       ),
     );
-    gh.factory<_i121.EditingChapterUseCases>(
-      () => _i121.EditingChapterUseCases(
-        gh<_i278.AddBookChapterUseCase>(),
-        gh<_i997.DeleteBookChapterUseCase>(),
-      ),
-    );
     gh.factory<_i218.ImportCubit>(
       () => _i218.ImportCubit(gh<_i803.ImportApplication>()),
-    );
-    gh.factory<_i121.EditingUseCases>(
-      () => _i121.EditingUseCases(
-        loadBook: gh<_i121.LoadBookForEditingUseCase>(),
-        editDetails: gh<_i249.EditBookDetailsUseCase>(),
-        changeCover: gh<_i798.ChangeBookCoverUseCase>(),
-        reorderTracks: gh<_i428.ReorderBookTracksUseCase>(),
-        chapters: gh<_i121.EditingChapterUseCases>(),
-      ),
     );
     gh.lazySingleton<_i681.PlayerApplication>(
       () => _i681.PlayerApplication(
@@ -845,12 +631,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i369.PlayerTransportUseCases>(),
         gh<_i893.PlayerDeviceGateway>(),
       ),
-    );
-    gh.factory<_i1000.MetadataEditorCubit>(
-      () => _i1000.MetadataEditorCubit(gh<_i498.EditingUseCases>()),
-    );
-    gh.factory<_i411.ListeningInsightsCubit>(
-      () => _i411.ListeningInsightsCubit(gh<_i811.InsightsUseCases>()),
     );
     gh.lazySingleton<_i948.PlayerCubit>(
       () => _i948.PlayerCubit(

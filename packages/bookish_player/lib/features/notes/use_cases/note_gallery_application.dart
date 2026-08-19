@@ -1,14 +1,31 @@
 import 'package:injectable/injectable.dart';
+
+import '../../library/models/library_models.dart';
+import '../../library/repos/book_metadata_repository.dart';
 import '../models/book_note.dart';
 import '../repos/book_note_repository.dart';
 
+typedef NoteGalleryContent = ({
+  List<BookMetadata> metadata,
+  List<BookNote> notes,
+});
+
 @injectable
-class UpdateGalleryNoteUseCase {
-  const UpdateGalleryNoteUseCase(this._notes);
+class NoteGalleryApplication {
+  const NoteGalleryApplication(this._notes, this._metadata);
 
   final BookNoteRepository _notes;
+  final BookMetadataRepository _metadata;
 
-  Future<BookNote?> call(
+  Future<NoteGalleryContent> load() async {
+    final (metadata, notes) = await (
+      _metadata.getBookMetadata(),
+      _notes.getAllNotes(),
+    ).wait;
+    return (metadata: metadata, notes: notes);
+  }
+
+  Future<BookNote?> update(
     BookNote note, {
     required String? title,
     required String text,

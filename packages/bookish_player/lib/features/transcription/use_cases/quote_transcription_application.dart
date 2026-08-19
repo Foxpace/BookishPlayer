@@ -1,18 +1,40 @@
 import 'package:injectable/injectable.dart';
 
+import '../../library/models/library_models.dart';
 import '../../player/models/share_origin.dart';
-
 import '../../player/repos/quote_share_repository.dart';
 import '../models/transcription_draft.dart';
+import '../repos/transcription_preferences.dart';
+import '../repos/transcription_repository.dart';
 
 @Environment('internal')
 @injectable
-class ShareTranscriptionDraftUseCase {
-  const ShareTranscriptionDraftUseCase(this._sharing);
+class QuoteTranscriptionApplication {
+  const QuoteTranscriptionApplication(
+    this._transcription,
+    this._preferences,
+    this._sharing,
+  );
 
+  final TranscriptionRepository _transcription;
+  final TranscriptionPreferences _preferences;
   final QuoteShareRepository _sharing;
 
-  Future<void> call(
+  Future<String> transcribe({
+    required Audiobook book,
+    required Duration start,
+    required Duration end,
+  }) async {
+    final model = await _preferences.getSelectedModel() ?? 'whisper-tiny';
+    return _transcription.transcribeRange(
+      book: book,
+      start: start,
+      end: end,
+      model: model,
+    );
+  }
+
+  Future<void> shareDraft(
     TranscriptionDraft draft,
     String text, {
     required String subject,
@@ -21,17 +43,14 @@ class ShareTranscriptionDraftUseCase {
     if (text.trim().isEmpty) {
       return;
     }
-
     final author = draft.book.author.trim();
     final attribution = author.isEmpty
         ? draft.book.title
         : '${draft.book.title} — $author';
-
     final location = [
       ?draft.chapterTitle,
       '${_formatDuration(draft.chapterStart)}–${_formatDuration(draft.chapterEnd)}',
     ].join(' · ');
-
     await _sharing.share(
       text: '${text.trim()}\n\n$location\n— $attribution',
       subject: subject,

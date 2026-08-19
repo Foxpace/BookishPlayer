@@ -2,17 +2,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../core/presentation/app_message.dart';
-import '../use_cases/insights_use_cases.dart';
+import '../use_cases/load_listening_insights_use_case.dart';
 import '../models/insights_period.dart';
 import 'listening_insights_state.dart';
 import 'listening_insights_status.dart';
 
 @injectable
 class ListeningInsightsCubit extends Cubit<ListeningInsightsState> {
-  ListeningInsightsCubit(this._useCases)
+  ListeningInsightsCubit(this._loadListeningInsights)
     : super(const ListeningInsightsState());
 
-  final InsightsUseCases _useCases;
+  final LoadListeningInsightsUseCase _loadListeningInsights;
 
   Future<void> load() async {
     emit(
@@ -26,7 +26,7 @@ class ListeningInsightsCubit extends Cubit<ListeningInsightsState> {
   }
 
   Future<void> _loadInsightsAndEmit() async {
-    final result = await _useCases.loadListeningInsights();
+    final result = await _loadListeningInsights();
     emit(
       state.copyWith(
         status: ListeningInsightsStatus.ready,
