@@ -97,6 +97,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "allDataRemoved": MessageLookupByLibrary.simpleMessage(
       "All Bookish data was removed.",
     ),
+    "allDataRemovedSettingsReloadFailed": MessageLookupByLibrary.simpleMessage(
+      "All Bookish data was removed, but settings could not be refreshed. Restart Bookish to finish resetting the screen.",
+    ),
     "allLibraryFilesAvailable": MessageLookupByLibrary.simpleMessage(
       "Every library file is available.",
     ),

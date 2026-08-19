@@ -679,6 +679,16 @@ class S {
     );
   }
 
+  /// `All Bookish data was removed, but settings could not be refreshed. Restart Bookish to finish resetting the screen.`
+  String get allDataRemovedSettingsReloadFailed {
+    return Intl.message(
+      'All Bookish data was removed, but settings could not be refreshed. Restart Bookish to finish resetting the screen.',
+      name: 'allDataRemovedSettingsReloadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Bookish could not remove all app data.`
   String get clearDataFailed {
     return Intl.message(

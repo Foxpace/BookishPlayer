@@ -99,6 +99,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "allDataRemoved": MessageLookupByLibrary.simpleMessage(
       "Všetky dáta Bookish boli odstránené.",
     ),
+    "allDataRemovedSettingsReloadFailed": MessageLookupByLibrary.simpleMessage(
+      "Všetky dáta Bookish boli odstránené, ale nastavenia sa nepodarilo obnoviť. Reštartujte Bookish, aby sa obrazovka úplne obnovila.",
+    ),
     "allLibraryFilesAvailable": MessageLookupByLibrary.simpleMessage(
       "Všetky súbory knižnice sú dostupné.",
     ),

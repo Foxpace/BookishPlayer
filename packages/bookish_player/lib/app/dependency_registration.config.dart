@@ -252,8 +252,6 @@ import 'package:bookish_player/features/storage/repos/library_storage_repository
     as _i681;
 import 'package:bookish_player/features/storage/use_cases/clean_orphan_files_use_case.dart'
     as _i781;
-import 'package:bookish_player/features/storage/use_cases/clear_bookish_data_use_case.dart'
-    as _i652;
 import 'package:bookish_player/features/storage/use_cases/remove_missing_book_use_case.dart'
     as _i12;
 import 'package:bookish_player/features/storage/use_cases/storage_assistant_workflow.dart'
@@ -620,19 +618,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i230.SaveThemePreferenceUseCase>(),
       ),
     );
+    gh.factory<_i1032.StorageAssistantWorkflow>(
+      () => _i1032.StorageAssistantWorkflow(
+        gh<_i564.AudiobookCatalogRepository>(),
+        gh<_i681.LibraryStorageRepository>(),
+      ),
+    );
     gh.factory<_i723.QuoteTranscriptionUseCases>(
       () => _i723.QuoteTranscriptionUseCases(
         gh<_i723.TranscribeQuoteUseCase>(),
         gh<_i484.ShareTranscriptionDraftUseCase>(),
       ),
       registerFor: {_internal},
-    );
-    gh.factory<_i1032.StorageAssistantWorkflow>(
-      () => _i1032.StorageAssistantWorkflow(
-        gh<_i564.AudiobookCatalogRepository>(),
-        gh<_i681.LibraryStorageRepository>(),
-        gh<_i101.AppDataResetRepository>(),
-      ),
     );
     gh.lazySingleton<_i621.SettingsCubit>(
       () => _i621.SettingsCubit(gh<_i981.SettingsUseCases>()),
@@ -692,10 +689,6 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i781.CleanOrphanFilesUseCase(gh<_i1032.StorageAssistantWorkflow>()),
     );
-    gh.factory<_i652.ClearBookishDataUseCase>(
-      () =>
-          _i652.ClearBookishDataUseCase(gh<_i1032.StorageAssistantWorkflow>()),
-    );
     gh.factory<_i12.RemoveMissingBookUseCase>(
       () =>
           _i12.RemoveMissingBookUseCase(gh<_i1032.StorageAssistantWorkflow>()),
@@ -722,6 +715,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i877.QuoteTranscriptionUseCases>(),
       ),
       registerFor: {_internal},
+    );
+    gh.factory<_i40.StorageUseCases>(
+      () => _i40.StorageUseCases(
+        inspectStorage: gh<_i40.InspectStorageUseCase>(),
+        cleanOrphanFiles: gh<_i781.CleanOrphanFilesUseCase>(),
+        removeMissingBook: gh<_i12.RemoveMissingBookUseCase>(),
+      ),
     );
     gh.lazySingleton<_i11.PlaybackCommandService>(
       () => _i11.PlaybackCommandService(
@@ -784,14 +784,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i11.PlaybackCommandService>(),
       ),
       registerFor: {_prod},
-    );
-    gh.factory<_i40.StorageUseCases>(
-      () => _i40.StorageUseCases(
-        inspectStorage: gh<_i40.InspectStorageUseCase>(),
-        cleanOrphanFiles: gh<_i781.CleanOrphanFilesUseCase>(),
-        removeMissingBook: gh<_i12.RemoveMissingBookUseCase>(),
-        clearBookishData: gh<_i652.ClearBookishDataUseCase>(),
-      ),
     );
     gh.lazySingleton<_i1068.PlayerLifecycleUseCases>(
       () => _i1068.PlayerLifecycleUseCases(
