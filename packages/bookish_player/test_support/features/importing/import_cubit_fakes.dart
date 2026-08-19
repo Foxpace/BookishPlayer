@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
-import 'package:bookish_player/features/importing/repos/file_import_failure.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:bookish_player/features/importing/models/import_cancellation.dart';
 
@@ -16,14 +15,13 @@ class FakeImportFiles implements FileImportRepository {
   var copyCount = 0;
 
   @override
-  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
-  pickAudioFiles() async {
+  Future<Result<List<SelectedAudioFile>>> pickAudioFiles() async {
     pickCount++;
     return Result.success(selected);
   }
 
   @override
-  Future<Result<ImportedAudioFile, FileImportFailure>> importFile(
+  Future<Result<ImportedAudioFile>> importFile(
     SelectedAudioFile selected, {
     ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
@@ -33,7 +31,7 @@ class FakeImportFiles implements FileImportRepository {
     if (current == pauseCopyAt) {
       copyPaused.complete();
       await cancellation?.whenCancelled;
-      return const Result.failure(FileImportFailure.cancelled);
+      return const Result.failure(AppFailure.cancelled('import.cancelled'));
     }
     onProgress?.call(100, 100);
     return Result.success(
@@ -45,7 +43,7 @@ class FakeImportFiles implements FileImportRepository {
   }
 
   @override
-  Future<Result<bool, FileImportFailure>> removeTransferredAudioFiles(
+  Future<Result<bool>> removeTransferredAudioFiles(
     List<SelectedAudioFile> files,
   ) async {
     events?.add('remove');
@@ -57,8 +55,8 @@ class FakeImportFiles implements FileImportRepository {
   @override
   Future<void> deleteImportedFile(String path) async {}
   @override
-  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
-  findTransferredAudioFiles() async => Result.success(selected);
+  Future<Result<List<SelectedAudioFile>>> findTransferredAudioFiles() async =>
+      Result.success(selected);
   @override
   Future<String?> pickAndImportCover(String bookId) async => null;
 }

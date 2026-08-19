@@ -1,7 +1,6 @@
 import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
 import 'package:bookish_player/features/importing/models/import_cancellation.dart';
-import 'package:bookish_player/features/importing/repos/file_import_failure.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 
 class FakeLibraryFiles implements FileImportRepository {
@@ -17,11 +16,11 @@ class FakeLibraryFiles implements FileImportRepository {
   }
 
   @override
-  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
-  findTransferredAudioFiles() async => const Result.success([]);
+  Future<Result<List<SelectedAudioFile>>> findTransferredAudioFiles() async =>
+      const Result.success([]);
 
   @override
-  Future<Result<ImportedAudioFile, FileImportFailure>> importFile(
+  Future<Result<ImportedAudioFile>> importFile(
     SelectedAudioFile selected, {
     ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
@@ -36,11 +35,11 @@ class FakeLibraryFiles implements FileImportRepository {
   Future<String?> pickAndImportCover(String bookId) async => pickedCover;
 
   @override
-  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
-  pickAudioFiles() async => const Result.success([]);
+  Future<Result<List<SelectedAudioFile>>> pickAudioFiles() async =>
+      const Result.success([]);
 
   @override
-  Future<Result<bool, FileImportFailure>> removeTransferredAudioFiles(
+  Future<Result<bool>> removeTransferredAudioFiles(
     List<SelectedAudioFile> files,
   ) async => const Result.success(true);
 }

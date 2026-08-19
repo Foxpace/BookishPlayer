@@ -9,7 +9,6 @@ import '../../../library/models/listening_session.dart';
 import '../../../notes/models/book_note.dart';
 import '../../../settings/models/playback_preferences.dart';
 import '../backup_store_repository.dart';
-import '../backup_store_failure.dart';
 import '../../models/bookish_backup.dart';
 
 typedef _StoredRecords = List<RecordSnapshot<String, Map<String, Object?>>>;
@@ -35,15 +34,17 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
   final _settings = stringMapStoreFactory.store('settings');
 
   @override
-  Future<Result<BookishBackup, BackupStoreFailure>> snapshot() async {
+  Future<Result<BookishBackup>> snapshot() async {
     try {
       return await _createSnapshot();
-    } catch (_) {
-      return const Result.failure(BackupStoreFailure.persistence);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('backup.snapshot', error: error),
+      );
     }
   }
 
-  Future<Result<BookishBackup, BackupStoreFailure>> _createSnapshot() async =>
+  Future<Result<BookishBackup>> _createSnapshot() async =>
       _snapshotResult(await _readSnapshotRecords());
 
   Future<_SnapshotRecords> _readSnapshotRecords() async {
@@ -65,13 +66,13 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
     );
   }
 
-  Result<BookishBackup, BackupStoreFailure> _snapshotResult(
-    _SnapshotRecords records,
-  ) {
+  Result<BookishBackup> _snapshotResult(_SnapshotRecords records) {
     final metadataById = _metadataById(records.metadata);
     final books = _hydrateStoredBooks(records.books, metadataById);
     return books == null
-        ? const Result.failure(BackupStoreFailure.corruptedData)
+        ? const Result.failure(
+            AppFailure.invalidData('backup.storage.corrupted'),
+          )
         : Result.success(_buildBackup(records, metadataById, books));
   }
 
@@ -144,11 +145,13 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
   }
 
   @override
-  Future<Result<bool, BackupStoreFailure>> restore(BookishBackup backup) async {
+  Future<Result<bool>> restore(BookishBackup backup) async {
     try {
       final metadataById = _restoredMetadataById(backup);
       if (!_hasValidRestoreReferences(backup, metadataById)) {
-        return const Result.failure(BackupStoreFailure.corruptedData);
+        return const Result.failure(
+          AppFailure.invalidData('backup.storage.corrupted'),
+        );
       }
 
       await _database.transaction((transaction) async {
@@ -163,8 +166,10 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
         ).wait;
       });
       return const Result.success(true);
-    } catch (_) {
-      return const Result.failure(BackupStoreFailure.persistence);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('backup.storage.restore', error: error),
+      );
     }
   }
 

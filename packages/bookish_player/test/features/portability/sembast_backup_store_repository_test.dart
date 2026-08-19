@@ -1,6 +1,5 @@
 import 'package:bookish_player/core/database/bookish_database.dart';
 import 'package:bookish_player/core/foundation/result.dart';
-import 'package:bookish_player/features/portability/repos/backup_store_failure.dart';
 import 'package:bookish_player/features/notes/models/book_note.dart';
 import 'package:bookish_player/features/portability/repos/implementations/sembast_backup_store_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -55,8 +54,8 @@ void main() {
         // THEN
         expect(
           await sut.restore(invalid),
-          const Result<bool, BackupStoreFailure>.failure(
-            BackupStoreFailure.corruptedData,
+          const Result<bool>.failure(
+            AppFailure.invalidData('backup.storage.corrupted'),
           ),
         );
 
@@ -92,7 +91,7 @@ void main() {
   });
 }
 
-S _success<S, F>(Result<S, F> result) => switch (result) {
+S _success<S>(Result<S> result) => switch (result) {
   ResultSuccess(:final value) => value,
   ResultFailure(:final failure) => throw TestFailure(
     'Expected success, received $failure.',

@@ -1,7 +1,5 @@
 import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/portability/models/bookish_backup.dart';
-import 'package:bookish_player/features/portability/use_cases/backup_validation_error.dart';
-import 'package:bookish_player/features/portability/use_cases/backup_validation_failure.dart';
 import 'package:bookish_player/features/portability/use_cases/bookish_backup_validator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -37,11 +35,8 @@ void main() {
         // THEN
         expect(
           sut.validate(backup),
-          const Result<BookishBackup, BackupValidationError>.failure(
-            BackupValidationError(
-              BackupValidationFailure.duplicateBook,
-              recordId: 'book-1',
-            ),
+          const Result<BookishBackup>.failure(
+            AppFailure.invalidData('backup.book.duplicate:book-1'),
           ),
         );
       },
@@ -65,11 +60,8 @@ void main() {
         // THEN
         expect(
           sut.validate(backup),
-          const Result<BookishBackup, BackupValidationError>.failure(
-            BackupValidationError(
-              BackupValidationFailure.missingReference,
-              recordId: 'note-1',
-            ),
+          const Result<BookishBackup>.failure(
+            AppFailure.invalidData('backup.reference.missing:note-1'),
           ),
         );
       },
@@ -83,8 +75,8 @@ void main() {
         // THEN
         expect(
           sut.validate(backupFixture(schemaVersion: 4)),
-          const Result<BookishBackup, BackupValidationError>.failure(
-            BackupValidationError(BackupValidationFailure.unsupportedVersion),
+          const Result<BookishBackup>.failure(
+            AppFailure.invalidData('backup.version.unsupported'),
           ),
         );
       },

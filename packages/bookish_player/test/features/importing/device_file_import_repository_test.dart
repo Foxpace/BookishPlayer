@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/core/platform/file_picker_gateway.dart';
 import 'package:bookish_player/features/importing/models/import_cancellation.dart';
-import 'package:bookish_player/features/importing/repos/file_import_failure.dart';
 import 'package:bookish_player/features/importing/repos/implementations/device_file_import_repository.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:file_picker/file_picker.dart';
@@ -43,7 +42,7 @@ void main() {
             destination,
             onProgress: (copied, total) => progress.add((copied, total)),
           );
-          expect(result, const Result<bool, FileImportFailure>.success(true));
+          expect(result, const Result<bool>.success(true));
 
           final copied = File(destination);
           expect(await copied.length(), chunk * chunkCount);
@@ -89,8 +88,8 @@ void main() {
           // THEN
           expect(
             await copy,
-            const Result<bool, FileImportFailure>.failure(
-              FileImportFailure.cancelled,
+            const Result<bool>.failure(
+              AppFailure.cancelled('import.cancelled'),
             ),
           );
           expect(File(destination).existsSync(), isFalse);
@@ -177,8 +176,8 @@ void main() {
         // THEN
         expect(
           await sut.pickAudioFiles(),
-          const Result<List<SelectedAudioFile>, FileImportFailure>.failure(
-            FileImportFailure.fileAccess,
+          const Result<List<SelectedAudioFile>>.failure(
+            AppFailure.operationFailed('import.fileAccess'),
           ),
         );
       },
@@ -217,7 +216,7 @@ void main() {
 
         expect(
           await sut.removeTransferredAudioFiles(transferred),
-          const Result<bool, FileImportFailure>.success(true),
+          const Result<bool>.success(true),
         );
         expect(alpha.existsSync(), isFalse);
         expect(beta.existsSync(), isFalse);
@@ -255,7 +254,7 @@ void main() {
   });
 }
 
-S _success<S, F>(Result<S, F> result) => switch (result) {
+S _success<S>(Result<S> result) => switch (result) {
   ResultSuccess(:final value) => value,
   ResultFailure(:final failure) => throw TestFailure(
     'Expected success, received $failure.',

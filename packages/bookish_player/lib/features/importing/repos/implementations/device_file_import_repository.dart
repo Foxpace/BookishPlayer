@@ -10,7 +10,6 @@ import '../../../../core/foundation/id_generator.dart';
 import '../../../../core/platform/file_picker_gateway.dart';
 import '../../models/import_cancellation.dart';
 import '../file_import_repository.dart';
-import '../file_import_failure.dart';
 import '../selected_audio_file.dart';
 import 'device_file_copy_worker.dart';
 
@@ -33,8 +32,7 @@ class DeviceFileImportRepository implements FileImportRepository {
   final FilePickerGateway _picker;
 
   @override
-  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
-  pickAudioFiles() async {
+  Future<Result<List<SelectedAudioFile>>> pickAudioFiles() async {
     try {
       final result = await _picker.pickAudioFiles(_extensions);
       if (result == null) {
@@ -43,7 +41,9 @@ class DeviceFileImportRepository implements FileImportRepository {
 
       final inaccessible = result.files.any((file) => file.path == null);
       if (inaccessible) {
-        return const Result.failure(FileImportFailure.fileAccess);
+        return const Result.failure(
+          AppFailure.operationFailed('import.fileAccess'),
+        );
       }
 
       return Result.success([
@@ -55,8 +55,10 @@ class DeviceFileImportRepository implements FileImportRepository {
               sizeBytes: file.size,
             ),
       ]);
-    } catch (_) {
-      return const Result.failure(FileImportFailure.fileAccess);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.fileAccess', error: error),
+      );
     }
   }
 
@@ -69,8 +71,7 @@ class DeviceFileImportRepository implements FileImportRepository {
   }
 
   @override
-  Future<Result<List<SelectedAudioFile>, FileImportFailure>>
-  findTransferredAudioFiles() async {
+  Future<Result<List<SelectedAudioFile>>> findTransferredAudioFiles() async {
     try {
       final documents = await getApplicationDocumentsDirectory();
       final files = await documents
@@ -88,8 +89,10 @@ class DeviceFileImportRepository implements FileImportRepository {
       return Result.success(
         await Future.wait(files.map(_selectedTransferredFile)),
       );
-    } catch (_) {
-      return const Result.failure(FileImportFailure.fileAccess);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.fileAccess', error: error),
+      );
     }
   }
 
@@ -101,7 +104,7 @@ class DeviceFileImportRepository implements FileImportRepository {
       );
 
   @override
-  Future<Result<ImportedAudioFile, FileImportFailure>> importFile(
+  Future<Result<ImportedAudioFile>> importFile(
     SelectedAudioFile selected, {
     ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
@@ -127,13 +130,15 @@ class DeviceFileImportRepository implements FileImportRepository {
       return Result.success(
         ImportedAudioFile(path: destination, displayName: selected.displayName),
       );
-    } catch (_) {
-      return const Result.failure(FileImportFailure.fileAccess);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.fileAccess', error: error),
+      );
     }
   }
 
   @override
-  Future<Result<bool, FileImportFailure>> removeTransferredAudioFiles(
+  Future<Result<bool>> removeTransferredAudioFiles(
     List<SelectedAudioFile> files,
   ) async {
     try {
@@ -144,8 +149,10 @@ class DeviceFileImportRepository implements FileImportRepository {
         }
       }
       return const Result.success(true);
-    } catch (_) {
-      return const Result.failure(FileImportFailure.sourceRemoval);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.sourceRemoval', error: error),
+      );
     }
   }
 
@@ -174,7 +181,7 @@ class DeviceFileImportRepository implements FileImportRepository {
   }
 }
 
-Future<Result<bool, FileImportFailure>> copyFileInBackground(
+Future<Result<bool>> copyFileInBackground(
   String sourcePath,
   String destinationPath, {
   ImportCancellationSignal? cancellation,
@@ -202,13 +209,15 @@ class _BackgroundFileCopy {
 
   String get partialPath => '$destinationPath.part';
 
-  Future<Result<bool, FileImportFailure>> run() async {
+  Future<Result<bool>> run() async {
     Isolate? isolate;
     try {
       isolate = await _spawn();
       return await _waitForResult();
-    } catch (_) {
-      return const Result.failure(FileImportFailure.fileAccess);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.fileAccess', error: error),
+      );
     } finally {
       _finish(isolate);
     }
@@ -222,11 +231,11 @@ class _BackgroundFileCopy {
     onExit: messages.sendPort,
   );
 
-  Future<Result<bool, FileImportFailure>> _waitForResult() => Future.any([
+  Future<Result<bool>> _waitForResult() => Future.any([
     _receiveCopyMessages(messages, onProgress),
     if (cancellation case final signal?)
-      signal.whenCancelled.then<Result<bool, FileImportFailure>>(
-        (_) => const Result.failure(FileImportFailure.cancelled),
+      signal.whenCancelled.then<Result<bool>>(
+        (_) => const Result.failure(AppFailure.cancelled('import.cancelled')),
       ),
   ]);
 
@@ -266,7 +275,7 @@ void _deleteCancelledCopy(String destinationPath) {
   }
 }
 
-Future<Result<bool, FileImportFailure>> _receiveCopyMessages(
+Future<Result<bool>> _receiveCopyMessages(
   ReceivePort messages,
   FileCopyProgress? onProgress,
 ) async {
@@ -276,10 +285,10 @@ Future<Result<bool, FileImportFailure>> _receiveCopyMessages(
       return result;
     }
   }
-  return const Result.failure(FileImportFailure.fileAccess);
+  return const Result.failure(AppFailure.operationFailed('import.fileAccess'));
 }
 
-Result<bool, FileImportFailure>? _handleCopyMessage(
+Result<bool>? _handleCopyMessage(
   Object? message,
   FileCopyProgress? onProgress,
 ) {
@@ -292,5 +301,5 @@ Result<bool, FileImportFailure>? _handleCopyMessage(
   }
   return message == FileCopySignal.complete
       ? const Result.success(true)
-      : const Result.failure(FileImportFailure.fileAccess);
+      : const Result.failure(AppFailure.operationFailed('import.fileAccess'));
 }

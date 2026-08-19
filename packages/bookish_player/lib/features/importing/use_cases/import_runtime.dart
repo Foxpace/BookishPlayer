@@ -13,6 +13,8 @@ class _ImportRuntime {
   DateTime? _stageStartedAt;
   var importedCount = 0;
 
+  ImportStage get stage => _stage;
+
   void recordSelection(List<SelectedAudioFile> selectedFiles) {
     _selectedFiles = selectedFiles;
   }
@@ -37,37 +39,35 @@ class _ImportRuntime {
     _onProgress(progress);
   }
 
-  ImportWorkflowCancellation buildCancellation() => ImportWorkflowCancellation(
-    selectedFiles: _selectedFiles,
-    importedCount: importedCount,
-  );
+  ImportResult buildCancellation() =>
+      ImportResult(selectedFiles: _selectedFiles, importedCount: importedCount);
 
-  ImportWorkflowFailure buildFailure(Object error) {
+  ImportResult buildFailure(Object error) {
     final kind = _classifyFailure(error);
     return buildFailureKind(kind);
   }
 
-  ImportWorkflowFailure buildFileFailure(FileImportFailure failure) =>
-      buildFailureKind(switch (failure) {
-        FileImportFailure.fileAccess => ImportFailureKind.fileAccess,
-        FileImportFailure.sourceRemoval => ImportFailureKind.sourceRemoval,
-        FileImportFailure.cancelled => ImportFailureKind.unexpected,
-      }, originalRemovalOnly: failure == FileImportFailure.sourceRemoval);
+  ImportResult buildFileFailure(AppFailure failure) =>
+      buildFailureKind(switch (failure.detail) {
+        'import.sourceRemoval' => ImportFailureKind.sourceRemoval,
+        'import.fileAccess' => ImportFailureKind.fileAccess,
+        _ => ImportFailureKind.unexpected,
+      }, originalRemovalOnly: failure.detail == 'import.sourceRemoval');
 
-  ImportWorkflowFailure buildFailureKind(
+  ImportResult buildFailureKind(
     ImportFailureKind kind, {
     bool originalRemovalOnly = false,
   }) {
     final history = _completedStageHistory();
 
-    return ImportWorkflowFailure(
-      kind: kind,
-      stage: _stage,
+    return ImportResult(
       selectedFiles: _selectedFiles,
       importedCount: importedCount,
       stageHistory: history,
       diagnostics: _safeDiagnostics(kind, history),
       failedItem: _failedItem(kind),
+      failureKind: kind,
+      failureStage: _stage,
       originalRemovalOnly: originalRemovalOnly,
     );
   }

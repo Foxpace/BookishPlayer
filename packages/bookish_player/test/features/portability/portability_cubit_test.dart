@@ -8,7 +8,6 @@ import 'package:bookish_player/features/library/models/listening_session.dart';
 import 'package:bookish_player/features/notes/models/book_note.dart';
 import 'package:bookish_player/features/portability/repos/local_export_repository.dart';
 import 'package:bookish_player/features/portability/repos/backup_store_repository.dart';
-import 'package:bookish_player/features/portability/repos/backup_store_failure.dart';
 import 'package:bookish_player/features/portability/models/bookish_backup.dart';
 import 'package:bookish_player/features/portability/cubits/portability_cubit.dart';
 import 'package:bookish_player/features/portability/cubits/portability_status.dart';
@@ -126,23 +125,22 @@ class _Store implements BackupStoreRepository {
   final _Settings settings;
 
   @override
-  Future<Result<BookishBackup, BackupStoreFailure>> snapshot() async =>
-      Result.success(
-        BookishBackup(
-          exportedAt: DateTime.utc(2026),
-          books: books.books,
-          notes: books.notes,
-          bookMetadata: books.metadata,
-          sessions: books.sessions,
-          settings: BackupSettings(
-            theme: settings.preference.name,
-            playback: settings.playback,
-          ),
-        ),
-      );
+  Future<Result<BookishBackup>> snapshot() async => Result.success(
+    BookishBackup(
+      exportedAt: DateTime.utc(2026),
+      books: books.books,
+      notes: books.notes,
+      bookMetadata: books.metadata,
+      sessions: books.sessions,
+      settings: BackupSettings(
+        theme: settings.preference.name,
+        playback: settings.playback,
+      ),
+    ),
+  );
 
   @override
-  Future<Result<bool, BackupStoreFailure>> restore(BookishBackup backup) async {
+  Future<Result<bool>> restore(BookishBackup backup) async {
     books
       ..books = backup.books
       ..notes = backup.notes

@@ -5,7 +5,6 @@ import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../../library/models/library_models.dart';
 import '../models/editable_book_details.dart';
-import '../models/editing_failure.dart';
 import '../use_cases/editing_application.dart';
 import 'metadata_editor_state.dart';
 import 'metadata_editor_status.dart';
@@ -74,9 +73,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     await _saveBook(_application.deleteChapter(book, chapter));
   }
 
-  Future<void> _saveBook(
-    Future<Result<Audiobook, EditingFailure>> operation,
-  ) async {
+  Future<void> _saveBook(Future<Result<Audiobook>> operation) async {
     emit(state.copyWith(status: MetadataEditorStatus.saving));
     await _saveBookAndEmit(operation);
   }
@@ -106,9 +103,7 @@ class MetadataEditorCubit extends Cubit<MetadataEditorState> {
     ),
   );
 
-  Future<void> _saveBookAndEmit(
-    Future<Result<Audiobook, EditingFailure>> operation,
-  ) async {
+  Future<void> _saveBookAndEmit(Future<Result<Audiobook>> operation) async {
     switch (await operation) {
       case ResultSuccess(:final value):
         emit(state.copyWith(status: MetadataEditorStatus.saved, book: value));

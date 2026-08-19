@@ -1,1 +1,0 @@
-enum NoteGalleryFailure { load, save }

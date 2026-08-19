@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'app_error.dart';
+part of 'diagnostic_entry.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,22 +13,22 @@ part of 'app_error.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$AppError {
+mixin _$DiagnosticEntry {
 
  String get time; String get operation; String get errorType; String get stack; String get platform; String get platformVersion; String get build; String? get message; Map<String, String> get context; List<String> get history; List<String> get diagnostics;
-/// Create a copy of AppError
+/// Create a copy of DiagnosticEntry
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$AppErrorCopyWith<AppError> get copyWith => _$AppErrorCopyWithImpl<AppError>(this as AppError, _$identity);
+$DiagnosticEntryCopyWith<DiagnosticEntry> get copyWith => _$DiagnosticEntryCopyWithImpl<DiagnosticEntry>(this as DiagnosticEntry, _$identity);
 
-  /// Serializes this AppError to a JSON map.
+  /// Serializes this DiagnosticEntry to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppError&&(identical(other.time, time) || other.time == time)&&(identical(other.operation, operation) || other.operation == operation)&&(identical(other.errorType, errorType) || other.errorType == errorType)&&(identical(other.stack, stack) || other.stack == stack)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.platformVersion, platformVersion) || other.platformVersion == platformVersion)&&(identical(other.build, build) || other.build == build)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.context, context)&&const DeepCollectionEquality().equals(other.history, history)&&const DeepCollectionEquality().equals(other.diagnostics, diagnostics));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosticEntry&&(identical(other.time, time) || other.time == time)&&(identical(other.operation, operation) || other.operation == operation)&&(identical(other.errorType, errorType) || other.errorType == errorType)&&(identical(other.stack, stack) || other.stack == stack)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.platformVersion, platformVersion) || other.platformVersion == platformVersion)&&(identical(other.build, build) || other.build == build)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.context, context)&&const DeepCollectionEquality().equals(other.history, history)&&const DeepCollectionEquality().equals(other.diagnostics, diagnostics));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -37,15 +37,15 @@ int get hashCode => Object.hash(runtimeType,time,operation,errorType,stack,platf
 
 @override
 String toString() {
-  return 'AppError(time: $time, operation: $operation, errorType: $errorType, stack: $stack, platform: $platform, platformVersion: $platformVersion, build: $build, message: $message, context: $context, history: $history, diagnostics: $diagnostics)';
+  return 'DiagnosticEntry(time: $time, operation: $operation, errorType: $errorType, stack: $stack, platform: $platform, platformVersion: $platformVersion, build: $build, message: $message, context: $context, history: $history, diagnostics: $diagnostics)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $AppErrorCopyWith<$Res>  {
-  factory $AppErrorCopyWith(AppError value, $Res Function(AppError) _then) = _$AppErrorCopyWithImpl;
+abstract mixin class $DiagnosticEntryCopyWith<$Res>  {
+  factory $DiagnosticEntryCopyWith(DiagnosticEntry value, $Res Function(DiagnosticEntry) _then) = _$DiagnosticEntryCopyWithImpl;
 @useResult
 $Res call({
  String time, String operation, String errorType, String stack, String platform, String platformVersion, String build, String? message, Map<String, String> context, List<String> history, List<String> diagnostics
@@ -56,14 +56,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$AppErrorCopyWithImpl<$Res>
-    implements $AppErrorCopyWith<$Res> {
-  _$AppErrorCopyWithImpl(this._self, this._then);
+class _$DiagnosticEntryCopyWithImpl<$Res>
+    implements $DiagnosticEntryCopyWith<$Res> {
+  _$DiagnosticEntryCopyWithImpl(this._self, this._then);
 
-  final AppError _self;
-  final $Res Function(AppError) _then;
+  final DiagnosticEntry _self;
+  final $Res Function(DiagnosticEntry) _then;
 
-/// Create a copy of AppError
+/// Create a copy of DiagnosticEntry
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? time = null,Object? operation = null,Object? errorType = null,Object? stack = null,Object? platform = null,Object? platformVersion = null,Object? build = null,Object? message = freezed,Object? context = null,Object? history = null,Object? diagnostics = null,}) {
   return _then(_self.copyWith(
@@ -85,8 +85,8 @@ as List<String>,
 }
 
 
-/// Adds pattern-matching-related methods to [AppError].
-extension AppErrorPatterns on AppError {
+/// Adds pattern-matching-related methods to [DiagnosticEntry].
+extension DiagnosticEntryPatterns on DiagnosticEntry {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -99,10 +99,10 @@ extension AppErrorPatterns on AppError {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _AppError value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _DiagnosticEntry value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _AppError() when $default != null:
+case _DiagnosticEntry() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -121,10 +121,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _AppError value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _DiagnosticEntry value)  $default,){
 final _that = this;
 switch (_that) {
-case _AppError():
+case _DiagnosticEntry():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -142,10 +142,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _AppError value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _DiagnosticEntry value)?  $default,){
 final _that = this;
 switch (_that) {
-case _AppError() when $default != null:
+case _DiagnosticEntry() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -165,7 +165,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String time,  String operation,  String errorType,  String stack,  String platform,  String platformVersion,  String build,  String? message,  Map<String, String> context,  List<String> history,  List<String> diagnostics)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _AppError() when $default != null:
+case _DiagnosticEntry() when $default != null:
 return $default(_that.time,_that.operation,_that.errorType,_that.stack,_that.platform,_that.platformVersion,_that.build,_that.message,_that.context,_that.history,_that.diagnostics);case _:
   return orElse();
 
@@ -186,7 +186,7 @@ return $default(_that.time,_that.operation,_that.errorType,_that.stack,_that.pla
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String time,  String operation,  String errorType,  String stack,  String platform,  String platformVersion,  String build,  String? message,  Map<String, String> context,  List<String> history,  List<String> diagnostics)  $default,) {final _that = this;
 switch (_that) {
-case _AppError():
+case _DiagnosticEntry():
 return $default(_that.time,_that.operation,_that.errorType,_that.stack,_that.platform,_that.platformVersion,_that.build,_that.message,_that.context,_that.history,_that.diagnostics);case _:
   throw StateError('Unexpected subclass');
 
@@ -206,7 +206,7 @@ return $default(_that.time,_that.operation,_that.errorType,_that.stack,_that.pla
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String time,  String operation,  String errorType,  String stack,  String platform,  String platformVersion,  String build,  String? message,  Map<String, String> context,  List<String> history,  List<String> diagnostics)?  $default,) {final _that = this;
 switch (_that) {
-case _AppError() when $default != null:
+case _DiagnosticEntry() when $default != null:
 return $default(_that.time,_that.operation,_that.errorType,_that.stack,_that.platform,_that.platformVersion,_that.build,_that.message,_that.context,_that.history,_that.diagnostics);case _:
   return null;
 
@@ -218,9 +218,9 @@ return $default(_that.time,_that.operation,_that.errorType,_that.stack,_that.pla
 /// @nodoc
 @JsonSerializable()
 
-class _AppError extends AppError {
-  const _AppError({required this.time, required this.operation, required this.errorType, required this.stack, required this.platform, required this.platformVersion, required this.build, this.message, final  Map<String, String> context = const <String, String>{}, final  List<String> history = const <String>[], final  List<String> diagnostics = const <String>[]}): _context = context,_history = history,_diagnostics = diagnostics,super._();
-  factory _AppError.fromJson(Map<String, dynamic> json) => _$AppErrorFromJson(json);
+class _DiagnosticEntry extends DiagnosticEntry {
+  const _DiagnosticEntry({required this.time, required this.operation, required this.errorType, required this.stack, required this.platform, required this.platformVersion, required this.build, this.message, final  Map<String, String> context = const <String, String>{}, final  List<String> history = const <String>[], final  List<String> diagnostics = const <String>[]}): _context = context,_history = history,_diagnostics = diagnostics,super._();
+  factory _DiagnosticEntry.fromJson(Map<String, dynamic> json) => _$DiagnosticEntryFromJson(json);
 
 @override final  String time;
 @override final  String operation;
@@ -252,20 +252,20 @@ class _AppError extends AppError {
 }
 
 
-/// Create a copy of AppError
+/// Create a copy of DiagnosticEntry
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$AppErrorCopyWith<_AppError> get copyWith => __$AppErrorCopyWithImpl<_AppError>(this, _$identity);
+_$DiagnosticEntryCopyWith<_DiagnosticEntry> get copyWith => __$DiagnosticEntryCopyWithImpl<_DiagnosticEntry>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$AppErrorToJson(this, );
+  return _$DiagnosticEntryToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppError&&(identical(other.time, time) || other.time == time)&&(identical(other.operation, operation) || other.operation == operation)&&(identical(other.errorType, errorType) || other.errorType == errorType)&&(identical(other.stack, stack) || other.stack == stack)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.platformVersion, platformVersion) || other.platformVersion == platformVersion)&&(identical(other.build, build) || other.build == build)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._context, _context)&&const DeepCollectionEquality().equals(other._history, _history)&&const DeepCollectionEquality().equals(other._diagnostics, _diagnostics));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DiagnosticEntry&&(identical(other.time, time) || other.time == time)&&(identical(other.operation, operation) || other.operation == operation)&&(identical(other.errorType, errorType) || other.errorType == errorType)&&(identical(other.stack, stack) || other.stack == stack)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.platformVersion, platformVersion) || other.platformVersion == platformVersion)&&(identical(other.build, build) || other.build == build)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._context, _context)&&const DeepCollectionEquality().equals(other._history, _history)&&const DeepCollectionEquality().equals(other._diagnostics, _diagnostics));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -274,15 +274,15 @@ int get hashCode => Object.hash(runtimeType,time,operation,errorType,stack,platf
 
 @override
 String toString() {
-  return 'AppError(time: $time, operation: $operation, errorType: $errorType, stack: $stack, platform: $platform, platformVersion: $platformVersion, build: $build, message: $message, context: $context, history: $history, diagnostics: $diagnostics)';
+  return 'DiagnosticEntry(time: $time, operation: $operation, errorType: $errorType, stack: $stack, platform: $platform, platformVersion: $platformVersion, build: $build, message: $message, context: $context, history: $history, diagnostics: $diagnostics)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$AppErrorCopyWith<$Res> implements $AppErrorCopyWith<$Res> {
-  factory _$AppErrorCopyWith(_AppError value, $Res Function(_AppError) _then) = __$AppErrorCopyWithImpl;
+abstract mixin class _$DiagnosticEntryCopyWith<$Res> implements $DiagnosticEntryCopyWith<$Res> {
+  factory _$DiagnosticEntryCopyWith(_DiagnosticEntry value, $Res Function(_DiagnosticEntry) _then) = __$DiagnosticEntryCopyWithImpl;
 @override @useResult
 $Res call({
  String time, String operation, String errorType, String stack, String platform, String platformVersion, String build, String? message, Map<String, String> context, List<String> history, List<String> diagnostics
@@ -293,17 +293,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$AppErrorCopyWithImpl<$Res>
-    implements _$AppErrorCopyWith<$Res> {
-  __$AppErrorCopyWithImpl(this._self, this._then);
+class __$DiagnosticEntryCopyWithImpl<$Res>
+    implements _$DiagnosticEntryCopyWith<$Res> {
+  __$DiagnosticEntryCopyWithImpl(this._self, this._then);
 
-  final _AppError _self;
-  final $Res Function(_AppError) _then;
+  final _DiagnosticEntry _self;
+  final $Res Function(_DiagnosticEntry) _then;
 
-/// Create a copy of AppError
+/// Create a copy of DiagnosticEntry
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? time = null,Object? operation = null,Object? errorType = null,Object? stack = null,Object? platform = null,Object? platformVersion = null,Object? build = null,Object? message = freezed,Object? context = null,Object? history = null,Object? diagnostics = null,}) {
-  return _then(_AppError(
+  return _then(_DiagnosticEntry(
 time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,operation: null == operation ? _self.operation : operation // ignore: cast_nullable_to_non_nullable
 as String,errorType: null == errorType ? _self.errorType : errorType // ignore: cast_nullable_to_non_nullable

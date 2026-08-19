@@ -5,7 +5,6 @@ import '../../library/models/library_models.dart';
 import '../../player/models/share_origin.dart';
 import '../../player/repos/quote_share_repository.dart';
 import '../models/transcription_draft.dart';
-import '../models/transcription_failure.dart';
 import '../repos/transcription_preferences.dart';
 import '../repos/transcription_repository.dart';
 
@@ -22,7 +21,7 @@ class QuoteTranscriptionApplication {
   final TranscriptionPreferences _preferences;
   final QuoteShareRepository _sharing;
 
-  Future<Result<String, TranscriptionFailure>> transcribe({
+  Future<Result<String>> transcribe({
     required Audiobook book,
     required Duration start,
     required Duration end,
@@ -35,8 +34,10 @@ class QuoteTranscriptionApplication {
         end: end,
         model: model,
       );
-    } catch (_) {
-      return const Result.failure(TranscriptionFailure.transcribe);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('transcription.quote', error: error),
+      );
     }
   }
 

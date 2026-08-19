@@ -9,7 +9,6 @@ import '../../library/models/library_models.dart';
 import '../../notes/models/book_note.dart';
 import '../../notes/models/book_note_kind.dart';
 import '../models/playback_open_result.dart';
-import '../models/player_device_failure.dart';
 import '../models/share_origin.dart';
 import '../use_cases/playback_command_service.dart';
 import '../use_cases/player_lifecycle_use_cases.dart';
@@ -74,7 +73,7 @@ class PlayerCubit extends Cubit<PlayerState> {
     duration: state.duration,
   );
 
-  Future<Result<bool, PlayerDeviceFailure>> pickAudioOutput() =>
+  Future<Result<bool>> pickAudioOutput() =>
       _application.showAudioOutputPicker();
 
   Future<void> _openBookAndApply(

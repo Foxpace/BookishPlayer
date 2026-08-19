@@ -7,8 +7,6 @@ import '../../library/models/library_models.dart';
 import '../../notes/models/book_note.dart';
 import '../../notes/use_cases/player_notes_service.dart';
 import '../models/playback_open_result.dart';
-import '../models/player_open_failure.dart';
-import '../models/player_device_failure.dart';
 import '../models/share_origin.dart';
 import 'player_application_events.dart';
 import 'player_device_gateway.dart';
@@ -64,7 +62,7 @@ class PlayerApplication {
 
   bool shouldSuppressPlaybackEvents() => _runtime.suppressingPlaybackEvents;
 
-  Future<Result<PlaybackOpenResult, PlayerOpenFailure>> openBook(
+  Future<Result<PlaybackOpenResult>> openBook(
     Audiobook book, {
     Audiobook? previousBook,
   }) async {
@@ -72,29 +70,33 @@ class PlayerApplication {
       return Result.success(
         await _lifecycle.openBook(book, previousBook: previousBook),
       );
-    } catch (_) {
-      return const Result.failure(PlayerOpenFailure.playbackFailed);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('player.open', error: error),
+      );
     }
   }
 
-  Future<Result<Audiobook, PlayerOpenFailure>> findBook(String bookId) async {
+  Future<Result<Audiobook>> findBook(String bookId) async {
     try {
       final book = await _lifecycle.findBook(bookId);
       return book == null
-          ? const Result.failure(PlayerOpenFailure.notFound)
+          ? const Result.failure(AppFailure.notFound('player.book'))
           : Result.success(book);
-    } catch (_) {
-      return const Result.failure(PlayerOpenFailure.playbackFailed);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('player.book.find', error: error),
+      );
     }
   }
 
-  Future<Result<List<BookNote>, PlayerOpenFailure>> loadNotes(
-    PlaybackOpenResult result,
-  ) async {
+  Future<Result<List<BookNote>>> loadNotes(PlaybackOpenResult result) async {
     try {
       return Result.success(await _lifecycle.prepareOpened(result: result));
-    } catch (_) {
-      return const Result.failure(PlayerOpenFailure.notesFailed);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('player.notes.load', error: error),
+      );
     }
   }
 
@@ -112,12 +114,14 @@ class PlayerApplication {
     duration: duration,
   );
 
-  Future<Result<bool, PlayerDeviceFailure>> showAudioOutputPicker() async {
+  Future<Result<bool>> showAudioOutputPicker() async {
     try {
       await _device.showAudioOutputPicker();
       return const Result.success(true);
-    } catch (_) {
-      return const Result.failure(PlayerDeviceFailure.audioOutputPicker);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('player.audioOutput.pick', error: error),
+      );
     }
   }
 
