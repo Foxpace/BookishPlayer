@@ -13,15 +13,19 @@ class EditingApplication {
 
   Future<Result<Audiobook>> loadBook(String bookId) async {
     try {
-      final book = await _books.loadBook(bookId);
-      return book == null
-          ? const Result.failure(AppFailure.notFound('editing.book'))
-          : Result.success(book);
+      return await _loadBook(bookId);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('editing.load', error: error),
       );
     }
+  }
+
+  Future<Result<Audiobook>> _loadBook(String bookId) async {
+    final book = await _books.loadBook(bookId);
+    return book == null
+        ? const Result.failure(AppFailure.notFound('editing.book'))
+        : Result.success(book);
   }
 
   Future<Result<Audiobook>> editDetails(
@@ -43,23 +47,27 @@ class EditingApplication {
 
   Future<Result<Audiobook>> changeCover(Audiobook book) async {
     try {
-      final path = await _books.pickCover(book.id);
-      if (path == null) {
-        return Result.success(book);
-      }
-      final updated = book.withScannedArtwork(path);
-      await _books.saveBook(updated);
-
-      final oldPath = book.artworkPath;
-      if (oldPath != null && oldPath != path) {
-        await _books.deleteImportedFile(oldPath);
-      }
-      return Result.success(updated);
+      return await _changeCover(book);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('editing.save', error: error),
       );
     }
+  }
+
+  Future<Result<Audiobook>> _changeCover(Audiobook book) async {
+    final path = await _books.pickCover(book.id);
+    if (path == null) {
+      return Result.success(book);
+    }
+    final updated = book.withScannedArtwork(path);
+    await _books.saveBook(updated);
+
+    final oldPath = book.artworkPath;
+    if (oldPath != null && oldPath != path) {
+      await _books.deleteImportedFile(oldPath);
+    }
+    return Result.success(updated);
   }
 
   Future<Result<Audiobook>> reorderTracks(
@@ -108,12 +116,16 @@ class EditingApplication {
 
   Future<Result<Audiobook>> _save(Audiobook book) async {
     try {
-      await _books.saveBook(book);
-      return Result.success(book);
+      return await _saveBook(book);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('editing.save', error: error),
       );
     }
+  }
+
+  Future<Result<Audiobook>> _saveBook(Audiobook book) async {
+    await _books.saveBook(book);
+    return Result.success(book);
   }
 }

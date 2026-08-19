@@ -1,8 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'app_failure.freezed.dart';
+import 'app_failure_code.dart';
 
-enum AppFailureCode { cancelled, notFound, invalidData, operationFailed }
+export 'app_failure_code.dart';
+
+part 'app_failure.freezed.dart';
 
 @freezed
 sealed class AppFailure with _$AppFailure {

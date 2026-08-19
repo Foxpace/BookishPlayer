@@ -52,16 +52,20 @@ class PlaybackCommandService {
 
   Future<Result<PlaybackOpenResult>> openById(String bookId) async {
     try {
-      final book = await _books.getBook(bookId);
-      if (book == null) {
-        return const Result.failure(AppFailure.notFound('player.book'));
-      }
-      return Result.success(await open(book));
+      return await _openById(bookId);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('player.openById', error: error),
       );
     }
+  }
+
+  Future<Result<PlaybackOpenResult>> _openById(String bookId) async {
+    final book = await _books.getBook(bookId);
+    if (book == null) {
+      return const Result.failure(AppFailure.notFound('player.book'));
+    }
+    return Result.success(await open(book));
   }
 
   Future<void> playBook(String bookId) {

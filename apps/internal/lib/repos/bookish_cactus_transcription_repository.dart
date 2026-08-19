@@ -50,24 +50,30 @@ class BookishCactusTranscriptionRepository implements TranscriptionRepository {
     required String model,
   }) async {
     final result = await _cactus.transcribeRange(
-      source: CactusAudioSource(
-        tracks: [
-          for (final track in book.playableTracks)
-            CactusAudioTrack(
-              filePath: track.filePath,
-              durationMs: track.durationMs,
-            ),
-        ],
-      ),
+      source: _audioSource(book),
       start: start,
       end: end,
       model: model,
     );
-    return switch (result) {
-      CactusTranscriptionSucceeded(:final text) => Result.success(text),
-      CactusTranscriptionFailed(:final message) => Result.failure(
-        AppFailure.operationFailed('transcription.cactus', error: message),
-      ),
-    };
+
+    return _resultFrom(result);
   }
+
+  CactusAudioSource _audioSource(Audiobook book) => CactusAudioSource(
+    tracks: [
+      for (final track in book.playableTracks)
+        CactusAudioTrack(
+          filePath: track.filePath,
+          durationMs: track.durationMs,
+        ),
+    ],
+  );
+
+  Result<String> _resultFrom(CactusTranscriptionOutcome outcome) =>
+      switch (outcome) {
+        CactusTranscriptionSucceeded(:final text) => Result.success(text),
+        CactusTranscriptionFailed(:final message) => Result.failure(
+          AppFailure.operationFailed('transcription.cactus', error: message),
+        ),
+      };
 }

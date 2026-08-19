@@ -20,16 +20,20 @@ class NoteGalleryApplication {
 
   Future<Result<NoteGalleryContent>> load() async {
     try {
-      final (metadata, notes) = await (
-        _metadata.getBookMetadata(),
-        _notes.getAllNotes(),
-      ).wait;
-      return Result.success((metadata: metadata, notes: notes));
+      return await _load();
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('notes.load', error: error),
       );
     }
+  }
+
+  Future<Result<NoteGalleryContent>> _load() async {
+    final (metadata, notes) = await (
+      _metadata.getBookMetadata(),
+      _notes.getAllNotes(),
+    ).wait;
+    return Result.success((metadata: metadata, notes: notes));
   }
 
   Future<Result<BookNote?>> update(
@@ -58,12 +62,16 @@ class NoteGalleryApplication {
 
   Future<Result<BookNote?>> _save(BookNote updated) async {
     try {
-      await _notes.saveNote(updated);
-      return Result.success(updated);
+      return await _saveNote(updated);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('notes.save', error: error),
       );
     }
+  }
+
+  Future<Result<BookNote?>> _saveNote(BookNote updated) async {
+    await _notes.saveNote(updated);
+    return Result.success(updated);
   }
 }

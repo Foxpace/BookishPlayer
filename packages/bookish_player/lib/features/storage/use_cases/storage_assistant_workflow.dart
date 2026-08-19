@@ -17,11 +17,7 @@ class StorageAssistantWorkflow {
 
   Future<Result<StorageInspection>> inspect() async {
     try {
-      final books = await _books.getBooks();
-      return Result.success((
-        books: books,
-        report: await _storage.inspect(books),
-      ));
+      return await _inspect();
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('storage.inspect', error: error),
@@ -29,10 +25,17 @@ class StorageAssistantWorkflow {
     }
   }
 
+  Future<Result<StorageInspection>> _inspect() async {
+    final books = await _books.getBooks();
+    return Result.success((
+      books: books,
+      report: await _storage.inspect(books),
+    ));
+  }
+
   Future<Result<bool>> cleanOrphans(StorageReport report) async {
     try {
-      await _storage.deleteOrphans(report.orphanPaths);
-      return const Result.success(true);
+      return await _cleanOrphans(report);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('storage.cleanup', error: error),
@@ -40,14 +43,23 @@ class StorageAssistantWorkflow {
     }
   }
 
+  Future<Result<bool>> _cleanOrphans(StorageReport report) async {
+    await _storage.deleteOrphans(report.orphanPaths);
+    return const Result.success(true);
+  }
+
   Future<Result<bool>> removeMissingBook(String id) async {
     try {
-      await _books.deleteBook(id);
-      return const Result.success(true);
+      return await _removeMissingBook(id);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('storage.remove', error: error),
       );
     }
+  }
+
+  Future<Result<bool>> _removeMissingBook(String id) async {
+    await _books.deleteBook(id);
+    return const Result.success(true);
   }
 }

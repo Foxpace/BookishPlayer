@@ -18,14 +18,7 @@ class SpeechModelApplication {
 
   Future<Result<SpeechModelCatalog>> loadCached() async {
     try {
-      final (selected, models) = await (
-        _preferences.getSelectedModel(),
-        _repository.getModels(refresh: false),
-      ).wait;
-      return Result.success((
-        models: models,
-        selected: _selectAvailable(models, selected ?? 'whisper-tiny'),
-      ));
+      return await _loadCached();
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('transcription.models.load', error: error),
@@ -33,20 +26,22 @@ class SpeechModelApplication {
     }
   }
 
+  Future<Result<SpeechModelCatalog>> _loadCached() async {
+    final (selected, models) = await (
+      _preferences.getSelectedModel(),
+      _repository.getModels(refresh: false),
+    ).wait;
+    return Result.success((
+      models: models,
+      selected: _selectAvailable(models, selected ?? 'whisper-tiny'),
+    ));
+  }
+
   Future<Result<SpeechModelCatalog?>> refresh(
     SpeechModelCatalog current,
   ) async {
     try {
-      final models = await _repository.getModels();
-
-      if (_haveSameModels(models, current.models)) {
-        return const Result.success(null);
-      }
-
-      return Result.success((
-        models: models,
-        selected: _selectAvailable(models, current.selected),
-      ));
+      return await _refresh(current);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed(
@@ -57,10 +52,24 @@ class SpeechModelApplication {
     }
   }
 
+  Future<Result<SpeechModelCatalog?>> _refresh(
+    SpeechModelCatalog current,
+  ) async {
+    final models = await _repository.getModels();
+
+    if (_haveSameModels(models, current.models)) {
+      return const Result.success(null);
+    }
+
+    return Result.success((
+      models: models,
+      selected: _selectAvailable(models, current.selected),
+    ));
+  }
+
   Future<Result<bool>> select(String slug) async {
     try {
-      await _preferences.setSelectedModel(slug);
-      return const Result.success(true);
+      return await _select(slug);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('transcription.model.select', error: error),
@@ -68,13 +77,17 @@ class SpeechModelApplication {
     }
   }
 
+  Future<Result<bool>> _select(String slug) async {
+    await _preferences.setSelectedModel(slug);
+    return const Result.success(true);
+  }
+
   Future<Result<bool>> download(
     String slug, {
     TranscriptionDownloadProgress? onProgress,
   }) async {
     try {
-      await _repository.downloadModel(slug, onProgress: onProgress);
-      return const Result.success(true);
+      return await _download(slug, onProgress);
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed(
@@ -83,6 +96,14 @@ class SpeechModelApplication {
         ),
       );
     }
+  }
+
+  Future<Result<bool>> _download(
+    String slug,
+    TranscriptionDownloadProgress? onProgress,
+  ) async {
+    await _repository.downloadModel(slug, onProgress: onProgress);
+    return const Result.success(true);
   }
 
   String _selectAvailable(List<SpeechModel> models, String selected) {
