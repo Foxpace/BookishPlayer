@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/presentation/app_message.dart';
 import '../../../core/use_cases/app_data_reset.dart';
 import '../../../core/use_cases/app_data_reset_outcome.dart';
-import '../use_cases/storage_use_case_bundle.dart';
+import '../use_cases/storage_assistant_workflow.dart';
 import 'storage_assistant_state.dart';
 
 class StorageAssistantCubit extends Cubit<StorageAssistantState> {
-  StorageAssistantCubit(this._useCases, this._appDataReset)
+  StorageAssistantCubit(this._workflow, this._appDataReset)
     : super(const StorageAssistantState());
 
-  final StorageUseCases _useCases;
+  final StorageAssistantWorkflow _workflow;
   final AppDataReset _appDataReset;
 
   Future<void> load() async {
@@ -31,7 +31,7 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
   }
 
   Future<void> removeMissingBook(String id) async {
-    await _useCases.removeMissingBook(id);
+    await _workflow.removeMissingBook(id);
     await load();
   }
 
@@ -43,7 +43,7 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
   }
 
   Future<void> _inspectStorageAndEmit() async {
-    final result = await _useCases.inspectStorage();
+    final result = await _workflow.inspect();
     emit(
       state.copyWith(
         loading: false,
@@ -62,7 +62,7 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
   );
 
   Future<void> _cleanOrphansAndEmit() async {
-    await _useCases.cleanOrphanFiles(state.report);
+    await _workflow.cleanOrphans(state.report);
     await load();
     emit(
       state.copyWith(

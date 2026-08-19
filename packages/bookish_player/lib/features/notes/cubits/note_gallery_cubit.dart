@@ -2,15 +2,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../core/presentation/app_message.dart';
-import '../use_cases/note_use_case_bundle.dart';
+import '../use_cases/note_gallery_application.dart';
 import '../models/book_note.dart';
 import 'notes_cubits.dart';
 
 @injectable
 class NoteGalleryCubit extends Cubit<NoteGalleryState> {
-  NoteGalleryCubit(this._useCases) : super(const NoteGalleryState());
+  NoteGalleryCubit(this._application) : super(const NoteGalleryState());
 
-  final NoteGalleryUseCases _useCases;
+  final NoteGalleryApplication _application;
 
   Future<void> load() async {
     emit(
@@ -29,7 +29,7 @@ class NoteGalleryCubit extends Cubit<NoteGalleryState> {
   }
 
   Future<void> _loadNotesAndEmit() async {
-    final content = await _useCases.loadGallery();
+    final content = await _application.load();
     emit(
       state.copyWith(
         status: NoteGalleryStatus.ready,
@@ -52,7 +52,7 @@ class NoteGalleryCubit extends Cubit<NoteGalleryState> {
     required String? title,
     required String text,
   }) async {
-    final updated = await _useCases.updateNote(note, title: title, text: text);
+    final updated = await _application.update(note, title: title, text: text);
     if (updated == null) {
       return;
     }

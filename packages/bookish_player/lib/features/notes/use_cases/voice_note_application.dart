@@ -1,12 +1,14 @@
-part of 'voice_note_use_cases.dart';
+import 'package:injectable/injectable.dart';
+
+import '../repos/voice_note_transcription_repository.dart';
 
 @injectable
-class StartVoiceNoteUseCase {
-  const StartVoiceNoteUseCase(this._speech);
+class VoiceNoteApplication {
+  const VoiceNoteApplication(this._speech);
 
   final VoiceNoteTranscriptionRepository _speech;
 
-  Future<bool> call({
+  Future<bool> start({
     required void Function(Object error) onError,
     required void Function() onDone,
     required void Function(String text) onText,
@@ -20,4 +22,6 @@ class StartVoiceNoteUseCase {
     }
     return available;
   }
+
+  Future<void> stop() => _speech.stop();
 }

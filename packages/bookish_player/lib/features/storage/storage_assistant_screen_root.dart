@@ -13,7 +13,7 @@ import 'repos/app_data_reset_repository.dart';
 import 'cubits/storage_assistant_cubit.dart';
 import 'cubits/storage_assistant_state.dart';
 import 'ui/storage_assistant_screen.dart';
-import 'use_cases/storage_use_case_bundle.dart';
+import 'use_cases/storage_assistant_workflow.dart';
 
 class StorageAssistantScreenRoot extends StatelessWidget {
   const StorageAssistantScreenRoot({super.key});
@@ -22,7 +22,7 @@ class StorageAssistantScreenRoot extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<StorageAssistantCubit>(
       create: (_) => StorageAssistantCubit(
-        getIt<StorageUseCases>(),
+        getIt<StorageAssistantWorkflow>(),
         AppDataResetCoordinator(
           resetPlayback: getIt<PlayerCubit>().resetForAppDataRemoval,
           deletePersistentData: getIt<AppDataResetRepository>().clearAll,

@@ -20,7 +20,7 @@ void main() {
       transcription = _FakeTranscription();
       preferences = _FakePreferences();
       sut = SpeechModelsCubit(
-        buildSpeechModelUseCases(
+        buildSpeechModelApplication(
           transcription: transcription,
           preferences: preferences,
         ),

@@ -25,7 +25,7 @@ void main() {
     setUp(() {
       transcription = _Transcription();
       cubit = QuoteTranscriptionCubit(
-        buildQuoteTranscriptionUseCases(
+        buildQuoteTranscriptionApplication(
           transcription: transcription,
           preferences: _Preferences(),
           sharing: _Sharing(),

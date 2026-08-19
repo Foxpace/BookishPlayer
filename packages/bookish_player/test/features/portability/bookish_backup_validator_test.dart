@@ -1,4 +1,5 @@
-import 'package:bookish_player/features/portability/use_cases/portability_use_case_bundle.dart';
+import 'package:bookish_player/features/portability/use_cases/backup_validation_failure.dart';
+import 'package:bookish_player/features/portability/use_cases/bookish_backup_validator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../test_support/support/fixtures.dart';

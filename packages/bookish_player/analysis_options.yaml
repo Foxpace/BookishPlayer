@@ -4,6 +4,8 @@ plugins:
   lintel:
     version: 0.1.6
     diagnostics:
+      application_module_hides_collaborators: true
+      avoid_trivial_application_modules: true
       bloc_fields_must_be_private: true
       bloc_state_must_use_state_suffix: true
       completer_errors_need_stack_trace: true

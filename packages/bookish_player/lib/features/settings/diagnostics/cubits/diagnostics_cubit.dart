@@ -1,17 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-
-import '../use_cases/diagnostics_use_cases.dart';
+import '../use_cases/diagnostics_workflow.dart';
 import 'diagnostics_message.dart';
 import 'diagnostics_state.dart';
 import 'diagnostics_status.dart';
 
 @injectable
 class DiagnosticsCubit extends Cubit<DiagnosticsState> {
-  DiagnosticsCubit(this._useCases) : super(const DiagnosticsState());
+  DiagnosticsCubit(this._workflow) : super(const DiagnosticsState());
 
-  final DiagnosticsUseCases _useCases;
+  final DiagnosticsWorkflow _workflow;
 
   Future<void> export() async {
     emit(state.copyWith(status: DiagnosticsStatus.working, message: null));
@@ -32,7 +31,7 @@ class DiagnosticsCubit extends Cubit<DiagnosticsState> {
   }
 
   Future<void> _exportDiagnosticsAndEmit() async {
-    final exported = await _useCases.exportDiagnostics();
+    final exported = await _workflow.export();
     emit(
       state.copyWith(
         status: exported ? DiagnosticsStatus.success : DiagnosticsStatus.idle,
@@ -53,7 +52,7 @@ class DiagnosticsCubit extends Cubit<DiagnosticsState> {
   );
 
   Future<void> _clearDiagnosticsAndEmit() async {
-    await _useCases.deleteDiagnostics();
+    await _workflow.clear();
     emit(
       state.copyWith(
         status: DiagnosticsStatus.success,
