@@ -1,22 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../../library/models/library_models.dart';
 import '../../player/models/share_origin.dart';
 import '../models/quote_transcription_context.dart';
 import '../models/quote_time_range.dart';
 import '../models/transcription_draft.dart';
-import '../use_cases/transcription_use_case_bundle.dart';
+import '../use_cases/quote_transcription_application.dart';
 import 'transcription_cubits.dart';
 
 @Environment('internal')
 @injectable
 class QuoteTranscriptionCubit extends Cubit<QuoteTranscriptionState> {
-  QuoteTranscriptionCubit(this._useCases)
+  QuoteTranscriptionCubit(this._application)
     : super(const QuoteTranscriptionState());
 
-  final QuoteTranscriptionUseCases _useCases;
+  final QuoteTranscriptionApplication _application;
 
   void prepare({
     required Audiobook book,
@@ -72,22 +73,31 @@ class QuoteTranscriptionCubit extends Cubit<QuoteTranscriptionState> {
         message: null,
       ),
     );
-    try {
-      await _transcribeRangeAndEmit(transcriptionContext, range);
-    } catch (_) {
-      _emitTranscriptionFailure();
-    }
+    await _transcribeRangeAndEmit(transcriptionContext, range);
   }
 
   Future<void> _transcribeRangeAndEmit(
     QuoteTranscriptionContext transcriptionContext,
     QuoteTimeRange range,
   ) async {
-    final text = await _useCases.transcribe(
+    final result = await _application.transcribe(
       book: transcriptionContext.book,
       start: transcriptionContext.chapterStart + range.start,
       end: transcriptionContext.chapterStart + range.end,
     );
+    switch (result) {
+      case ResultSuccess(:final value):
+        _emitTranscribedText(transcriptionContext, range, value);
+      case ResultFailure():
+        _emitTranscriptionFailure();
+    }
+  }
+
+  void _emitTranscribedText(
+    QuoteTranscriptionContext transcriptionContext,
+    QuoteTimeRange range,
+    String text,
+  ) {
     if (text.trim().isEmpty) {
       _emitNoSpeechFailure();
       return;
@@ -136,5 +146,5 @@ class QuoteTranscriptionCubit extends Cubit<QuoteTranscriptionState> {
     String text, {
     required String subject,
     ShareOrigin? origin,
-  }) => _useCases.shareDraft(draft, text, subject: subject, origin: origin);
+  }) => _application.shareDraft(draft, text, subject: subject, origin: origin);
 }

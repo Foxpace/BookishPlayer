@@ -7,22 +7,21 @@ import 'package:bookish_player/features/player/use_cases/chapter_navigation_poli
 import 'package:bookish_player/features/player/use_cases/listening_session_tracker.dart';
 import 'package:bookish_player/features/player/use_cases/playback_command_service.dart';
 import 'package:bookish_player/features/player/use_cases/playback_resume_policy.dart';
+import 'package:bookish_player/features/player/use_cases/player_application.dart';
+import 'package:bookish_player/features/player/use_cases/player_device_gateway.dart';
 import 'package:bookish_player/features/player/use_cases/player_lifecycle_policies.dart';
 import 'package:bookish_player/features/player/use_cases/player_lifecycle_use_cases.dart';
 import 'package:bookish_player/features/player/use_cases/player_note_use_cases.dart';
 import 'package:bookish_player/features/player/use_cases/player_progress_saver.dart';
 import 'package:bookish_player/features/player/use_cases/player_sleep_use_cases.dart';
 import 'package:bookish_player/features/player/use_cases/player_transport_use_cases.dart';
-import 'package:bookish_player/features/player/use_cases/player_use_cases.dart';
 import 'package:bookish_player/features/player/use_cases/series_continuation_policy.dart';
-import 'package:bookish_player/features/player/use_cases/show_audio_output_picker_use_case.dart';
 import 'package:bookish_player/features/player/use_cases/sleep_timer_use_case.dart';
 import 'package:bookish_player/features/player/repos/audio_player_repository.dart';
 import 'package:bookish_player/features/player/models/share_origin.dart';
 import 'package:bookish_player/features/player/repos/quote_share_repository.dart';
 import 'package:bookish_player/features/player/repos/audio_output_picker.dart';
 import 'package:bookish_player/features/player/cubits/player_cubit.dart';
-import 'package:bookish_player/features/player/cubits/player_playback_streams.dart';
 import 'package:bookish_player/features/player/cubits/player_state_factory.dart';
 import 'package:bookish_player/features/portability/repos/local_export_repository.dart';
 import 'package:bookish_player/features/settings/repos/settings_repository.dart';
@@ -80,19 +79,14 @@ PlayerCubitHarness createPlayerCubitHarness(
     ),
     notes,
   );
-  final sut = PlayerCubit(
-    PlayerUseCases(
-      lifecycle: lifecycle,
-      notes: PlayerNoteUseCases(notes),
-      sleep: sleep,
-      transport: PlayerTransportUseCases(audio, books, commands, chapters),
-      showAudioOutputPicker: const ShowAudioOutputPickerUseCase(
-        _FakeAudioOutputPicker(),
-      ),
-    ),
-    states,
-    PlayerPlaybackStreams(audio, commands),
+  final application = PlayerApplication(
+    lifecycle,
+    PlayerNoteUseCases(notes),
+    sleep,
+    PlayerTransportUseCases(audio, books, commands, chapters),
+    PlayerDeviceGateway(audio, commands, const _FakeAudioOutputPicker()),
   );
+  final sut = PlayerCubit(application, states);
 
   return (sut: sut, commands: commands);
 }

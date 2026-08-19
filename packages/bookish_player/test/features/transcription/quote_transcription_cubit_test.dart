@@ -1,3 +1,4 @@
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/player/models/share_origin.dart';
 import 'package:bookish_player/features/player/repos/quote_share_repository.dart';
@@ -18,12 +19,12 @@ void main() {
       () async {
         // GIVEN
         final sharing = _Sharing();
-        final useCases = buildQuoteTranscriptionUseCases(
+        final application = buildQuoteTranscriptionApplication(
           transcription: _Transcription(),
           preferences: _Settings(),
           sharing: sharing,
         );
-        final sut = QuoteTranscriptionCubit(useCases);
+        final sut = QuoteTranscriptionCubit(application);
         addTearDown(sut.close);
         final book = Audiobook(
           id: 'book',
@@ -52,7 +53,7 @@ void main() {
         final draft = sut.state.draft;
         expect(draft, isNotNull);
         if (draft != null) {
-          await useCases.shareDraft(
+          await application.shareDraft(
             draft,
             'edited quote',
             subject: 'Quote from Book',
@@ -82,12 +83,12 @@ class _Transcription implements TranscriptionRepository {
   Future<void> reset() async {}
 
   @override
-  Future<String> transcribeRange({
+  Future<Result<String>> transcribeRange({
     required Audiobook book,
     required Duration start,
     required Duration end,
     required String model,
-  }) async => 'local quote';
+  }) async => const Result.success('local quote');
 }
 
 class _Sharing implements QuoteShareRepository {

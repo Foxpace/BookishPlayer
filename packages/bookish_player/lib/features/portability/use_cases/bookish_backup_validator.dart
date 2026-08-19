@@ -1,14 +1,10 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../library/models/library_models.dart';
 import '../../library/models/listening_session.dart';
 import '../../notes/models/book_note.dart';
 import '../models/bookish_backup.dart';
-
-import 'backup_validation_failure.dart';
-part 'bookish_backup_validator.freezed.dart';
-part 'backup_validation_exception.dart';
 
 extension _BackupBookValidation on Audiobook {
   bool get hasValidBackupValues =>
@@ -55,46 +51,44 @@ class BookishBackupValidator {
   static const currentVersion = 3;
   static const _themes = {'system', 'light', 'dark'};
 
-  void validate(BookishBackup backup) {
-    _validateBackupVersion(backup);
-    _validateUniqueIds(backup);
-    _validateRecords(backup);
+  Result<BookishBackup> validate(BookishBackup backup) {
+    final error =
+        _validateBackupVersion(backup) ??
+        _validateUniqueIds(backup) ??
+        _validateRecords(backup);
+    return error == null ? Result.success(backup) : Result.failure(error);
   }
 
-  void _validateBackupVersion(BookishBackup backup) {
+  AppFailure? _validateBackupVersion(BookishBackup backup) {
     if (backup.schemaVersion < oldestSupportedVersion ||
         backup.schemaVersion > currentVersion) {
-      throw const BackupValidationException(
-        BackupValidationFailure.unsupportedVersion,
-      );
+      return const AppFailure.invalidData('backup.version.unsupported');
     }
     if (_themes.contains(backup.settings.theme) == false) {
-      throw const BackupValidationException(
-        BackupValidationFailure.invalidTheme,
-      );
+      return const AppFailure.invalidData('backup.theme.invalid');
     }
+    return null;
   }
 
-  void _validateUniqueIds(BookishBackup backup) {
-    _requireUnique(
-      backup.books.map((book) => book.id),
-      BackupValidationFailure.duplicateBook,
-    );
-    _requireUnique(
-      backup.bookMetadata.map((metadata) => metadata.id),
-      BackupValidationFailure.duplicateMetadata,
-    );
-    _requireUnique(
-      backup.notes.map((note) => note.id),
-      BackupValidationFailure.duplicateNote,
-    );
-    _requireUnique(
-      backup.sessions.map((session) => session.id),
-      BackupValidationFailure.duplicateSession,
-    );
-  }
+  AppFailure? _validateUniqueIds(BookishBackup backup) =>
+      _requireUnique(
+        backup.books.map((book) => book.id),
+        'backup.book.duplicate',
+      ) ??
+      _requireUnique(
+        backup.bookMetadata.map((metadata) => metadata.id),
+        'backup.metadata.duplicate',
+      ) ??
+      _requireUnique(
+        backup.notes.map((note) => note.id),
+        'backup.note.duplicate',
+      ) ??
+      _requireUnique(
+        backup.sessions.map((session) => session.id),
+        'backup.session.duplicate',
+      );
 
-  void _validateRecords(BookishBackup backup) {
+  AppFailure? _validateRecords(BookishBackup backup) {
     final bookIds = backup.books.map((book) => book.id).toSet();
     final metadataIds = backup.bookMetadata
         .map((metadata) => metadata.id)
@@ -104,82 +98,89 @@ class BookishBackupValidator {
         (book) => book.metadataId.isEmpty ? book.id : book.metadataId,
       ),
     );
-    _validateBooks(backup.books);
-    _validateMetadata(backup.bookMetadata, bookIds);
-    _validateNotes(backup.notes, metadataIds);
-    _validateSessions(backup.sessions, metadataIds);
+    return _validateBooks(backup.books) ??
+        _validateMetadata(backup.bookMetadata, bookIds) ??
+        _validateNotes(backup.notes, metadataIds) ??
+        _validateSessions(backup.sessions, metadataIds);
   }
 
-  void _validateBooks(Iterable<Audiobook> books) {
+  AppFailure? _validateBooks(Iterable<Audiobook> books) {
     for (final book in books) {
       if (book.hasValidBackupValues == false) {
-        throw BackupValidationException(
-          BackupValidationFailure.invalidBook,
-          recordId: book.id,
-        );
+        return AppFailure.invalidData('backup.book.invalid:${book.id}');
       }
     }
+    return null;
   }
 
-  void _validateMetadata(
+  AppFailure? _validateMetadata(
     Iterable<BookMetadata> metadataRecords,
     Set<String> bookIds,
   ) {
     for (final metadata in metadataRecords) {
       if (metadata.hasValidBackupValues(bookIds) == false) {
-        throw BackupValidationException(
-          BackupValidationFailure.missingReference,
-          recordId: metadata.id,
+        return AppFailure.invalidData(
+          'backup.reference.missing:${metadata.id}',
         );
       }
     }
+    return null;
   }
 
-  void _validateNotes(Iterable<BookNote> notes, Set<String> metadataIds) {
+  AppFailure? _validateNotes(
+    Iterable<BookNote> notes,
+    Set<String> metadataIds,
+  ) {
     for (final note in notes) {
-      if (note.hasValidBackupValues == false) {
-        throw BackupValidationException(
-          BackupValidationFailure.invalidNote,
-          recordId: note.id,
-        );
+      if (_validateNote(note, metadataIds) case final error?) {
+        return error;
       }
-      _requireReference(metadataIds, note.metadataId, note.id);
     }
+    return null;
   }
 
-  void _validateSessions(
+  AppFailure? _validateNote(BookNote note, Set<String> metadataIds) =>
+      note.hasValidBackupValues
+      ? _requireReference(metadataIds, note.metadataId, note.id)
+      : AppFailure.invalidData('backup.note.invalid:${note.id}');
+
+  AppFailure? _validateSessions(
     Iterable<ListeningSession> sessions,
     Set<String> metadataIds,
   ) {
     for (final session in sessions) {
-      if (session.hasValidBackupValues == false) {
-        throw BackupValidationException(
-          BackupValidationFailure.invalidSession,
-          recordId: session.id,
-        );
+      if (_validateSession(session, metadataIds) case final error?) {
+        return error;
       }
-      _requireReference(metadataIds, session.metadataId, session.id);
     }
+    return null;
   }
 
-  void _requireUnique(
-    Iterable<String> values,
-    BackupValidationFailure failure,
-  ) {
+  AppFailure? _validateSession(
+    ListeningSession session,
+    Set<String> metadataIds,
+  ) => session.hasValidBackupValues
+      ? _requireReference(metadataIds, session.metadataId, session.id)
+      : AppFailure.invalidData('backup.session.invalid:${session.id}');
+
+  AppFailure? _requireUnique(Iterable<String> values, String detail) {
     final seen = <String>{};
     for (final value in values) {
       if (seen.add(value) == false) {
-        throw BackupValidationException(failure, recordId: value);
+        return AppFailure.invalidData('$detail:$value');
       }
     }
+    return null;
   }
 
-  void _requireReference(Set<String> ids, String target, String recordId) {
+  AppFailure? _requireReference(
+    Set<String> ids,
+    String target,
+    String recordId,
+  ) {
     if (target.isEmpty || ids.contains(target) == false) {
-      throw BackupValidationException(
-        BackupValidationFailure.missingReference,
-        recordId: recordId,
-      );
+      return AppFailure.invalidData('backup.reference.missing:$recordId');
     }
+    return null;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bookish_cactus_transcription/bookish_cactus_transcription.dart';
+import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/transcription/models/speech_model.dart';
 import 'package:bookish_player/features/transcription/models/transcription_download.dart';
@@ -42,23 +43,31 @@ class BookishCactusTranscriptionRepository implements TranscriptionRepository {
   );
 
   @override
-  Future<String> transcribeRange({
+  Future<Result<String>> transcribeRange({
     required Audiobook book,
     required Duration start,
     required Duration end,
     required String model,
-  }) => _cactus.transcribeRange(
-    source: CactusAudioSource(
-      tracks: [
-        for (final track in book.playableTracks)
-          CactusAudioTrack(
-            filePath: track.filePath,
-            durationMs: track.durationMs,
-          ),
-      ],
-    ),
-    start: start,
-    end: end,
-    model: model,
-  );
+  }) async {
+    final result = await _cactus.transcribeRange(
+      source: CactusAudioSource(
+        tracks: [
+          for (final track in book.playableTracks)
+            CactusAudioTrack(
+              filePath: track.filePath,
+              durationMs: track.durationMs,
+            ),
+        ],
+      ),
+      start: start,
+      end: end,
+      model: model,
+    );
+    return switch (result) {
+      CactusTranscriptionSucceeded(:final text) => Result.success(text),
+      CactusTranscriptionFailed(:final message) => Result.failure(
+        AppFailure.operationFailed('transcription.cactus', error: message),
+      ),
+    };
+  }
 }

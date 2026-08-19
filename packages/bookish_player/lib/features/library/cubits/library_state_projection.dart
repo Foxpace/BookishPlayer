@@ -91,29 +91,25 @@ extension LibraryStateProjection on LibraryState {
     ];
   }
 
-  _SectionKey _sectionKey(Audiobook book, LibraryGrouping value) {
-    if (value == LibraryGrouping.none) {
-      return (label: null, title: '');
-    }
-    if (value == LibraryGrouping.listeningStatus) {
-      return _listeningStatusKey(book.listeningStatus);
-    }
-
-    final (text, emptyLabel) = switch (value) {
-      LibraryGrouping.author => (
-        book.author,
-        LibrarySectionLabel.unknownAuthor,
-      ),
-      LibraryGrouping.series => (book.series, LibrarySectionLabel.noSeries),
-      LibraryGrouping.folder => (book.folder, LibrarySectionLabel.imported),
-      LibraryGrouping.none ||
-      LibraryGrouping.listeningStatus => throw StateError(
-        'The grouping was handled before text-key projection.',
-      ),
-    };
-
-    return _textKey(text, emptyLabel);
-  }
+  _SectionKey _sectionKey(Audiobook book, LibraryGrouping value) =>
+      switch (value) {
+        LibraryGrouping.none => (label: null, title: ''),
+        LibraryGrouping.listeningStatus => _listeningStatusKey(
+          book.listeningStatus,
+        ),
+        LibraryGrouping.author => _textKey(
+          book.author,
+          LibrarySectionLabel.unknownAuthor,
+        ),
+        LibraryGrouping.series => _textKey(
+          book.series,
+          LibrarySectionLabel.noSeries,
+        ),
+        LibraryGrouping.folder => _textKey(
+          book.folder,
+          LibrarySectionLabel.imported,
+        ),
+      };
 
   _SectionKey _listeningStatusKey(ListeningStatus status) => switch (status) {
     ListeningStatus.wantToListen => (

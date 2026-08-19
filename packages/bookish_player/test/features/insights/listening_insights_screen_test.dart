@@ -1,5 +1,4 @@
 import 'package:bookish_player/features/insights/use_cases/load_listening_insights_use_case.dart';
-import 'package:bookish_player/features/insights/use_cases/insights_use_cases.dart';
 import 'package:bookish_player/features/insights/cubits/listening_insights_cubit.dart';
 import 'package:bookish_player/features/insights/cubits/listening_insights_state.dart';
 import 'package:bookish_player/features/insights/repos/implementations/library_listening_insights_repository.dart';
@@ -143,15 +142,13 @@ Widget _insightsScreen(ListeningInsightsCubit cubit) {
   );
 }
 
-InsightsUseCases _useCases(
+LoadListeningInsightsUseCase _useCases(
   BookMetadataRepository metadata,
   ListeningHistoryRepository history,
   FakeClock clock,
-) => InsightsUseCases(
-  loadListeningInsights: LoadListeningInsightsUseCase(
-    LibraryListeningInsightsRepository(metadata, history),
-    clock,
-  ),
+) => LoadListeningInsightsUseCase(
+  LibraryListeningInsightsRepository(metadata, history),
+  clock,
 );
 
 class _Metadata implements BookMetadataRepository {

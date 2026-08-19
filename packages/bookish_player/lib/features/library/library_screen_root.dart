@@ -8,17 +8,22 @@ import '../../core/navigation/app_router.dart';
 import '../../core/navigation/import_source.dart';
 import '../../core/navigation/focus_navigation.dart';
 import '../../core/presentation/app_message.dart';
+import '../importing/models/import_route_result.dart';
+import '../importing/repos/audiobook_artwork_extractor.dart';
+import '../importing/repos/file_import_repository.dart';
 import '../player/cubits/player_cubit.dart';
+import '../settings/repos/settings_repository.dart';
 import 'cubits/library_cubit.dart';
 import 'cubits/library_intents.dart';
 import 'cubits/library_cubits.dart';
 import 'models/library_models.dart';
+import 'repos/audiobook_catalog_repository.dart';
 import 'ui/library_screen.dart';
 import 'ui/widgets/audiobook_removal_dialog.dart';
 import 'ui/widgets/full_title_dialog.dart';
 import 'ui/widgets/library_controls.dart';
 import 'ui/widgets/library_view_sheet.dart';
-import 'use_cases/library_use_cases.dart';
+import 'use_cases/library_application.dart';
 
 /// Composition boundary for the library feature.
 class LibraryScreenRoot extends StatelessWidget {
@@ -28,8 +33,13 @@ class LibraryScreenRoot extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<LibraryCubit>(
       create: (_) => LibraryCubit(
-        getIt<LibraryUseCases>(),
-        getIt<PlayerCubit>().removeBook,
+        LibraryApplication(
+          getIt<AudiobookCatalogRepository>(),
+          getIt<AudiobookArtworkExtractor>(),
+          getIt<FileImportRepository>(),
+          getIt<SettingsRepository>(),
+          getIt<PlayerCubit>().removeBook,
+        ),
       )..load(),
       child: BlocConsumer<LibraryCubit, LibraryState>(
         listenWhen: (previous, current) =>
@@ -75,11 +85,11 @@ class LibraryScreenRoot extends StatelessWidget {
     LibraryCubit cubit,
     ImportSource source,
   ) async {
-    final imported = await context.pushNamed<bool>(
+    final result = await context.pushNamed<ImportRouteResult>(
       AppRoutes.import,
       extra: source,
     );
-    if (imported == true && context.mounted) {
+    if ((result?.importedCount ?? 0) > 0 && context.mounted) {
       await cubit.load();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -43,5 +43,7 @@ final class StorageAssistantRobot extends WidgetRobot {
 
   void expectEraseFailure(String message) => expectTextContaining(message);
 
+  void expectResetWarning(String message) => expectTextContaining(message);
+
   void expectLibraryDestination(String label) => expectText(label);
 }

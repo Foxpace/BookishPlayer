@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 import '../app_metadata.dart';
 import '../foundation/clock.dart';
 import 'app_diagnostics.dart';
-import 'app_error.dart';
+import 'diagnostic_entry.dart';
 import 'diagnostics_file_provider.dart';
 
 @LazySingleton(as: AppDiagnostics)
@@ -29,7 +29,7 @@ class LocalAppDiagnostics implements AppDiagnostics {
     StackTrace stackTrace, {
     required String operation,
   }) {
-    final entry = AppError(
+    final entry = DiagnosticEntry(
       time: _clock.now().toUtc().toIso8601String(),
       operation: operation,
       errorType: error.runtimeType.toString(),
@@ -58,7 +58,7 @@ class LocalAppDiagnostics implements AppDiagnostics {
     }
   }
 
-  Future<void> _append(AppError entry) async {
+  Future<void> _append(DiagnosticEntry entry) async {
     final file = await _files.diagnosticsFile();
     final existing = file.existsSync()
         ? file.readAsLinesSync()

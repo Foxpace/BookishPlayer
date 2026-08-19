@@ -2,14 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../core/presentation/app_message.dart';
-import '../use_cases/note_use_case_bundle.dart';
+import '../use_cases/voice_note_application.dart';
 import 'notes_cubits.dart';
 
 @injectable
 class VoiceNoteCubit extends Cubit<VoiceNoteState> {
-  VoiceNoteCubit(this._useCases) : super(const VoiceNoteState());
+  VoiceNoteCubit(this._application) : super(const VoiceNoteState());
 
-  final VoiceNoteUseCases _useCases;
+  final VoiceNoteApplication _application;
 
   Future<void> toggle() async {
     if (state.status == VoiceNoteStatus.listening) {
@@ -17,7 +17,7 @@ class VoiceNoteCubit extends Cubit<VoiceNoteState> {
       return;
     }
 
-    final available = await _useCases.start(
+    final available = await _application.start(
       onError: _handleRecognitionError,
       onDone: _handleRecognitionDone,
       onText: _handleRecognizedText,
@@ -56,13 +56,13 @@ class VoiceNoteCubit extends Cubit<VoiceNoteState> {
   }
 
   Future<void> stop() async {
-    await _useCases.stop();
+    await _application.stop();
     emit(state.copyWith(status: VoiceNoteStatus.idle));
   }
 
   @override
   Future<void> close() async {
-    await _useCases.stop();
+    await _application.stop();
     return super.close();
   }
 }

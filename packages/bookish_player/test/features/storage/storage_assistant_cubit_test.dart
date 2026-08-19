@@ -23,7 +23,10 @@ void main() {
       books = _Books([audiobookFixture()]);
       storage = _Storage();
       reset = _Reset();
-      sut = createStorageCubit(StorageAssistantWorkflow(books, storage, reset));
+      sut = createStorageCubit(
+        StorageAssistantWorkflow(books, storage),
+        deletePersistentData: reset.clearAll,
+      );
     });
 
     tearDown(() => sut.close());
@@ -51,10 +54,10 @@ void main() {
       'Given local library storage, When all application data is erased, Then persistent data is cleared',
       () async {
         // WHEN
-        final cleared = await sut.clearAll();
+        final outcome = await sut.clearAll();
 
         // THEN
-        expect(cleared, isTrue);
+        expect(outcome.dataRemoved, isTrue);
         expect(reset.clearCalls, 1);
         expect(sut.state.message, AppMessage.allDataRemoved);
       },
@@ -73,7 +76,7 @@ void main() {
 
         storage.failure = null;
         reset.failure = Exception('clear');
-        expect(await sut.clearAll(), isFalse);
+        expect((await sut.clearAll()).dataRemoved, isFalse);
         expect(sut.state.message, AppMessage.clearDataFailed);
         expect(sut.state.effectRevision, 2);
       },

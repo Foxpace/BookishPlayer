@@ -5,8 +5,10 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/foundation/result.dart';
 import '../../../../core/foundation/id_generator.dart';
 import '../../../../core/platform/file_picker_gateway.dart';
+import '../../models/import_cancellation.dart';
 import '../file_import_repository.dart';
 import '../selected_audio_file.dart';
 import 'device_file_copy_worker.dart';
@@ -30,32 +32,34 @@ class DeviceFileImportRepository implements FileImportRepository {
   final FilePickerGateway _picker;
 
   @override
-  Future<List<SelectedAudioFile>> pickAudioFiles() async {
-    final result = await _picker.pickAudioFiles(_extensions);
-    if (result == null) {
-      return const [];
-    }
+  Future<Result<List<SelectedAudioFile>>> pickAudioFiles() async {
+    try {
+      final result = await _picker.pickAudioFiles(_extensions);
+      if (result == null) {
+        return const Result.success([]);
+      }
 
-    final inaccessible = result.files
-        .where((file) => file.path == null)
-        .map((file) => file.name)
-        .toList();
-    if (inaccessible.isNotEmpty) {
-      throw FileSystemException(
-        'The document provider did not expose a readable local copy for: '
-        '${inaccessible.join(', ')}',
+      final inaccessible = result.files.any((file) => file.path == null);
+      if (inaccessible) {
+        return const Result.failure(
+          AppFailure.operationFailed('import.fileAccess'),
+        );
+      }
+
+      return Result.success([
+        for (final file in result.files)
+          if (file.path case final path?)
+            SelectedAudioFile(
+              sourcePath: path,
+              displayName: file.name,
+              sizeBytes: file.size,
+            ),
+      ]);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.fileAccess', error: error),
       );
     }
-
-    return [
-      for (final file in result.files)
-        if (file.path case final path?)
-          SelectedAudioFile(
-            sourcePath: path,
-            displayName: file.name,
-            sizeBytes: file.size,
-          ),
-    ];
   }
 
   @override
@@ -67,21 +71,29 @@ class DeviceFileImportRepository implements FileImportRepository {
   }
 
   @override
-  Future<List<SelectedAudioFile>> findTransferredAudioFiles() async {
-    final documents = await getApplicationDocumentsDirectory();
-    final files = await documents
-        .list(recursive: true, followLinks: false)
-        .where((entity) => entity is File)
-        .cast<File>()
-        .where(
-          (file) => _extensions.contains(
-            p.extension(file.path).substring(1).toLowerCase(),
-          ),
-        )
-        .toList();
-    files.sort((a, b) => a.path.compareTo(b.path));
+  Future<Result<List<SelectedAudioFile>>> findTransferredAudioFiles() async {
+    try {
+      final documents = await getApplicationDocumentsDirectory();
+      final files = await documents
+          .list(recursive: true, followLinks: false)
+          .where((entity) => entity is File)
+          .cast<File>()
+          .where(
+            (file) => _extensions.contains(
+              p.extension(file.path).substring(1).toLowerCase(),
+            ),
+          )
+          .toList();
+      files.sort((a, b) => a.path.compareTo(b.path));
 
-    return Future.wait(files.map(_selectedTransferredFile));
+      return Result.success(
+        await Future.wait(files.map(_selectedTransferredFile)),
+      );
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.fileAccess', error: error),
+      );
+    }
   }
 
   Future<SelectedAudioFile> _selectedTransferredFile(File file) async =>
@@ -92,38 +104,55 @@ class DeviceFileImportRepository implements FileImportRepository {
       );
 
   @override
-  Future<ImportedAudioFile> importFile(
+  Future<Result<ImportedAudioFile>> importFile(
     SelectedAudioFile selected, {
+    ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
   }) async {
-    final support = await getApplicationSupportDirectory();
-    final library = Directory(p.join(support.path, 'audiobooks'));
-    await library.create(recursive: true);
+    try {
+      final support = await getApplicationSupportDirectory();
+      final library = Directory(p.join(support.path, 'audiobooks'));
+      await library.create(recursive: true);
 
-    final extension = p.extension(selected.displayName).toLowerCase();
-    final destination = p.join(library.path, '${_ids.generate()}$extension');
+      final extension = p.extension(selected.displayName).toLowerCase();
+      final destination = p.join(library.path, '${_ids.generate()}$extension');
 
-    await copyFileInBackground(
-      selected.sourcePath,
-      destination,
-      onProgress: onProgress,
-    );
-
-    return ImportedAudioFile(
-      path: destination,
-      displayName: selected.displayName,
-    );
+      final copy = await copyFileInBackground(
+        selected.sourcePath,
+        destination,
+        cancellation: cancellation,
+        onProgress: onProgress,
+      );
+      if (copy case ResultFailure(:final failure)) {
+        await deleteImportedFile(destination);
+        return Result.failure(failure);
+      }
+      return Result.success(
+        ImportedAudioFile(path: destination, displayName: selected.displayName),
+      );
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.fileAccess', error: error),
+      );
+    }
   }
 
   @override
-  Future<void> removeTransferredAudioFiles(
+  Future<Result<bool>> removeTransferredAudioFiles(
     List<SelectedAudioFile> files,
   ) async {
-    for (final selected in files) {
-      final file = File(selected.sourcePath);
-      if (file.existsSync()) {
-        await file.delete();
+    try {
+      for (final selected in files) {
+        final file = File(selected.sourcePath);
+        if (file.existsSync()) {
+          await file.delete();
+        }
       }
+      return const Result.success(true);
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.sourceRemoval', error: error),
+      );
     }
   }
 
@@ -152,14 +181,49 @@ class DeviceFileImportRepository implements FileImportRepository {
   }
 }
 
-Future<void> copyFileInBackground(
+Future<Result<bool>> copyFileInBackground(
   String sourcePath,
   String destinationPath, {
+  ImportCancellationSignal? cancellation,
   FileCopyProgress? onProgress,
-}) async {
-  final partialPath = '$destinationPath.part';
+}) => _BackgroundFileCopy(
+  sourcePath: sourcePath,
+  destinationPath: destinationPath,
+  cancellation: cancellation,
+  onProgress: onProgress,
+).run();
+
+class _BackgroundFileCopy {
+  _BackgroundFileCopy({
+    required this.sourcePath,
+    required this.destinationPath,
+    required this.cancellation,
+    required this.onProgress,
+  });
+
+  final String sourcePath;
+  final String destinationPath;
+  final ImportCancellationSignal? cancellation;
+  final FileCopyProgress? onProgress;
   final messages = ReceivePort();
-  final isolate = await Isolate.spawn(
+
+  String get partialPath => '$destinationPath.part';
+
+  Future<Result<bool>> run() async {
+    Isolate? isolate;
+    try {
+      isolate = await _spawn();
+      return await _waitForResult();
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('import.fileAccess', error: error),
+      );
+    } finally {
+      _finish(isolate);
+    }
+  }
+
+  Future<Isolate> _spawn() => Isolate.spawn(
     copyFileWorker,
     _copyRequest(sourcePath, destinationPath, partialPath, messages.sendPort),
     debugName: 'bookish-file-copy',
@@ -167,12 +231,21 @@ Future<void> copyFileInBackground(
     onExit: messages.sendPort,
   );
 
-  try {
-    await _receiveCopyMessages(messages, sourcePath, onProgress);
-  } finally {
+  Future<Result<bool>> _waitForResult() => Future.any([
+    _receiveCopyMessages(messages, onProgress),
+    if (cancellation case final signal?)
+      signal.whenCancelled.then<Result<bool>>(
+        (_) => const Result.failure(AppFailure.cancelled('import.cancelled')),
+      ),
+  ]);
+
+  void _finish(Isolate? isolate) {
     messages.close();
-    isolate.kill(priority: Isolate.immediate);
+    isolate?.kill(priority: Isolate.immediate);
     _deletePartialCopy(partialPath);
+    if (cancellation?.isCancelled ?? false) {
+      _deleteCancelledCopy(destinationPath);
+    }
   }
 }
 
@@ -195,27 +268,28 @@ void _deletePartialCopy(String partialPath) {
   }
 }
 
-Future<void> _receiveCopyMessages(
+void _deleteCancelledCopy(String destinationPath) {
+  final destination = File(destinationPath);
+  if (destination.existsSync()) {
+    destination.deleteSync();
+  }
+}
+
+Future<Result<bool>> _receiveCopyMessages(
   ReceivePort messages,
-  String sourcePath,
   FileCopyProgress? onProgress,
 ) async {
   await for (final message in messages) {
-    final complete = _handleCopyMessage(message, sourcePath, onProgress);
-    if (complete) {
-      return;
+    final result = _handleCopyMessage(message, onProgress);
+    if (result != null) {
+      return result;
     }
   }
-
-  throw FileSystemException(
-    'The background copy stopped unexpectedly.',
-    sourcePath,
-  );
+  return const Result.failure(AppFailure.operationFailed('import.fileAccess'));
 }
 
-bool _handleCopyMessage(
+Result<bool>? _handleCopyMessage(
   Object? message,
-  String sourcePath,
   FileCopyProgress? onProgress,
 ) {
   if (message case (
@@ -223,27 +297,9 @@ bool _handleCopyMessage(
     totalBytes: final int totalBytes,
   )) {
     onProgress?.call(copiedBytes, totalBytes);
-    return false;
+    return null;
   }
-
-  if (message == FileCopySignal.complete) {
-    return true;
-  }
-  if (message case final String errorMessage) {
-    throw FileSystemException(errorMessage, sourcePath);
-  }
-  if (message is List && message.isNotEmpty) {
-    throw FileSystemException(
-      'The background copy isolate failed: ${message.first}',
-      sourcePath,
-    );
-  }
-  if (message == null) {
-    throw FileSystemException(
-      'The background copy stopped unexpectedly.',
-      sourcePath,
-    );
-  }
-
-  return false;
+  return message == FileCopySignal.complete
+      ? const Result.success(true)
+      : const Result.failure(AppFailure.operationFailed('import.fileAccess'));
 }

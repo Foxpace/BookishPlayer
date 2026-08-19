@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../library/models/library_models.dart';
 import '../../library/repos/audiobook_catalog_repository.dart';
 import '../../settings/repos/settings_repository.dart';
@@ -22,14 +23,6 @@ class PlaybackCommandService {
   final _playRequests = StreamController<PlaybackBookRequest>();
 
   Stream<PlaybackBookRequest> get playRequests => _playRequests.stream;
-
-  Future<PlaybackOpenResult> openById(String bookId) async {
-    final book = await _books.getBook(bookId);
-    if (book == null) {
-      throw StateError('Audiobook $bookId is no longer in the library.');
-    }
-    return open(book);
-  }
 
   Future<PlaybackOpenResult> open(
     Audiobook book, {
@@ -55,6 +48,20 @@ class PlaybackCommandService {
     await _audio.setVoiceBoost(enabled: preferences.voiceBoost);
 
     return PlaybackOpenResult(book: book, preferences: preferences);
+  }
+
+  Future<Result<PlaybackOpenResult>> openById(String bookId) async {
+    try {
+      final book = await _books.getBook(bookId);
+      if (book == null) {
+        return const Result.failure(AppFailure.notFound('player.book'));
+      }
+      return Result.success(await open(book));
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('player.openById', error: error),
+      );
+    }
   }
 
   Future<void> playBook(String bookId) {

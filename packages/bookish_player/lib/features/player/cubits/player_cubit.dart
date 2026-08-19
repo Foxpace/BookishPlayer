@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
 import '../../library/models/library_models.dart';
 import '../../notes/models/book_note.dart';
@@ -11,10 +12,8 @@ import '../models/playback_open_result.dart';
 import '../models/share_origin.dart';
 import '../use_cases/playback_command_service.dart';
 import '../use_cases/player_lifecycle_use_cases.dart';
-import '../use_cases/player_use_cases.dart';
+import '../use_cases/player_application.dart';
 import 'player_duration_clamp.dart';
-import 'player_playback_streams.dart';
-import 'player_runtime_state.dart';
 import 'player_cubits.dart';
 import 'player_state_factory.dart';
 import 'player_state_timeline.dart';
@@ -25,26 +24,27 @@ part 'player_cubit_progress.dart';
 
 @lazySingleton
 class PlayerCubit extends Cubit<PlayerState> {
-  PlayerCubit(this._useCases, this._states, PlayerPlaybackStreams streams)
-    : _runtime = const PlayerRuntimeState(),
-      super(const PlayerState()) {
-    _subscriptions.addAll(
-      streams.listen((
-        onPlayBookRequested: _handlePlayBookRequest,
-        onPosition: handlePosition,
-        onBufferedPosition: _handleBufferedPosition,
-        onDuration: _handleDuration,
-        onPlaying: _handlePlaying,
-        onCompleted: _handleCompletedSignal,
-      )),
-    );
+  PlayerCubit(this._application, this._states) : super(const PlayerState()) {
+    _application.connect((
+      playBookRequested: _handlePlayBookRequest,
+      positionChanged: handlePosition,
+      bufferedPositionChanged: _handleBufferedPosition,
+      durationChanged: _handleDuration,
+      playingChanged: _handlePlaying,
+      completedChanged: _handleCompletedSignal,
+    ));
   }
 
-  final PlayerUseCases _useCases;
+  final PlayerApplication _application;
   final PlayerStateFactory _states;
-  final List<StreamSubscription<Object?>> _subscriptions = [];
-  Timer? _sleepTimer;
-  PlayerRuntimeState _runtime;
+
+  PlayerPlaybackContext get _playbackContext => (
+    book: state.book,
+    position: state.position,
+    duration: state.duration,
+    chapterStart: state.chapterStart,
+    speed: state.speed,
+  );
 
   void _emit(PlayerState nextState) => emit(nextState);
 
@@ -52,14 +52,10 @@ class PlayerCubit extends Cubit<PlayerState> {
     final previousBook = state.book;
     if (previousBook != null && previousBook.id != book.id) {
       await finishListeningSession();
-      _cancelSleepTimer();
+      _application.cancelSleepTimer();
     }
     emit(_states.buildOpeningState(book));
-    try {
-      await _openBookAndApply(book, previousBook);
-    } catch (_) {
-      _fail(AppMessage.audiobookPlaybackFailed);
-    }
+    await _openBookAndApply(book, previousBook);
   }
 
   Future<void> openById(String bookId) async {
@@ -67,39 +63,38 @@ class PlayerCubit extends Cubit<PlayerState> {
       return;
     }
     emit(state.copyWith(status: PlayerStatus.loading));
-    try {
-      await _openBookById(bookId);
-    } catch (_) {
-      _fail(AppMessage.audiobookOpenFailed);
-    }
+    await _openBookById(bookId);
   }
 
-  Future<void> togglePlayback() => _useCases.transport.toggle(
+  Future<void> togglePlayback() => _application.togglePlayback(
     ready: state.status == PlayerStatus.ready,
     book: state.book,
     position: state.position,
     duration: state.duration,
   );
 
-  Future<void> pickAudioOutput() => _useCases.showAudioOutputPicker();
+  Future<Result<bool>> pickAudioOutput() =>
+      _application.showAudioOutputPicker();
 
   Future<void> _openBookAndApply(
     Audiobook book,
     Audiobook? previousBook,
   ) async {
-    final result = await _useCases.lifecycle.openBook(
-      book,
-      previousBook: previousBook,
-    );
-    await _applyOpened(result);
+    switch (await _application.openBook(book, previousBook: previousBook)) {
+      case ResultSuccess(:final value):
+        await _applyOpened(value);
+      case ResultFailure():
+        _fail(AppMessage.audiobookPlaybackFailed);
+    }
   }
 
   Future<void> _openBookById(String bookId) async {
-    final book = await _useCases.lifecycle.findBook(bookId);
-    if (book == null) {
-      throw StateError('missing book');
+    switch (await _application.findBook(bookId)) {
+      case ResultSuccess(:final value):
+        await open(value);
+      case ResultFailure():
+        _fail(AppMessage.audiobookOpenFailed);
     }
-    await open(book);
   }
 
   void _handlePlayBookRequest(PlaybackBookRequest request) {
@@ -110,7 +105,7 @@ class PlayerCubit extends Cubit<PlayerState> {
     await openById(bookId);
 
     if (state.status == PlayerStatus.ready && state.book?.id == bookId) {
-      await _useCases.lifecycle.continuePlayback();
+      await _application.continuePlayback();
     }
   }
 
@@ -118,10 +113,14 @@ class PlayerCubit extends Cubit<PlayerState> {
     final previous = state;
     if (previous.book != null && previous.book?.id != result.book.id) {
       await finishListeningSession();
-      _cancelSleepTimer();
+      _application.cancelSleepTimer();
     }
-    final notes = await _useCases.lifecycle.prepareOpened(result: result);
-    emit(_states.buildReadyState(result, notes));
+    switch (await _application.loadNotes(result)) {
+      case ResultSuccess(:final value):
+        emit(_states.buildReadyState(result, value));
+      case ResultFailure():
+        _fail(AppMessage.audiobookPlaybackFailed);
+    }
   }
 
   void _fail(AppMessage message) => emit(
@@ -133,14 +132,10 @@ class PlayerCubit extends Cubit<PlayerState> {
   );
 
   Future<void> seek(Duration value) => _applySeek(
-    _useCases.transport.seek(
-      book: state.book,
-      value: value,
-      duration: state.duration,
-    ),
+    _application.seek(book: state.book, value: value, duration: state.duration),
   );
   Future<void> seekWithinChapter(Duration value) => _applySeek(
-    _useCases.transport.seekWithinChapter(
+    _application.seekWithinChapter(
       book: state.book,
       value: value,
       duration: state.duration,
@@ -150,7 +145,7 @@ class PlayerCubit extends Cubit<PlayerState> {
   );
   Future<void> skipBy(Duration delta) => seek(state.position + delta);
   Future<void> previousChapter() => _applySeek(
-    _useCases.transport.previousChapter(
+    _application.seekToPreviousChapter(
       book: state.book,
       duration: state.duration,
       index: state.currentChapterIndex,
@@ -159,7 +154,7 @@ class PlayerCubit extends Cubit<PlayerState> {
     ),
   );
   Future<void> nextChapter() => _applySeek(
-    _useCases.transport.nextChapter(
+    _application.seekToNextChapter(
       book: state.book,
       duration: state.duration,
       index: state.currentChapterIndex,
@@ -175,53 +170,27 @@ class PlayerCubit extends Cubit<PlayerState> {
   }
 
   Future<void> changeSpeed(double speed) async {
-    final book = await _useCases.transport.changeSpeed(state.book, speed);
+    final book = await _application.changeSpeed(state.book, speed);
     emit(state.copyWith(speed: speed, book: book ?? state.book));
   }
 
   Future<void> resetForAppDataRemoval() async {
-    _runtime = _runtime.copyWith(suppressingPlaybackEvents: true);
-    try {
-      await _resetAndEmit();
-    } finally {
-      _runtime = _runtime.copyWith(suppressingPlaybackEvents: false);
-    }
-  }
-
-  Future<void> _resetAndEmit() async {
-    _cancelSleepTimer();
-    await finishListeningSession();
-    await _useCases.lifecycle.resetForAppDataRemoval();
-    _runtime = _runtime.clearPlaybackLifecycle();
+    await _application.resetForAppDataRemoval(_playbackContext);
     emit(PlayerState(effectRevision: state.effectRevision));
   }
 
   Future<void> removeBook(String bookId) async {
-    _runtime = _runtime.copyWith(suppressingPlaybackEvents: true);
-    try {
-      await _removeBookAndEmit(bookId);
-    } finally {
-      _runtime = _runtime.copyWith(suppressingPlaybackEvents: false);
-    }
-  }
-
-  Future<void> _removeBookAndEmit(String bookId) async {
-    if (state.book?.id == bookId) {
-      _cancelSleepTimer();
-      await finishListeningSession();
-    }
-    final removed = await _useCases.lifecycle.removeBook(
-      currentBook: state.book,
+    final removed = await _application.removeBook(
       bookId: bookId,
+      context: _playbackContext,
     );
     if (removed) {
-      _runtime = _runtime.clearPlaybackLifecycle();
       emit(PlayerState(effectRevision: state.effectRevision));
     }
   }
 
   Future<void> handleCompleted() async {
-    final result = await _useCases.lifecycle.complete(
+    final result = await _application.complete(
       currentBook: state.book,
       duration: state.duration,
       continueSeries: state.playback.continueSeries,
@@ -239,18 +208,13 @@ class PlayerCubit extends Cubit<PlayerState> {
     final nextBook = result.nextBook;
     if (nextBook != null) {
       await open(nextBook);
-      await _useCases.lifecycle.continuePlayback();
+      await _application.continuePlayback();
     }
   }
 
   @override
   Future<void> close() async {
-    _cancelSleepTimer();
-    await finishListeningSession();
-    await saveProgress();
-    for (final subscription in _subscriptions) {
-      await subscription.cancel();
-    }
+    await _application.disconnect(_playbackContext);
     return super.close();
   }
 }
