@@ -4,15 +4,15 @@ import 'package:injectable/injectable.dart';
 import '../../../core/presentation/app_message.dart';
 import '../models/playback_preferences.dart';
 import '../models/theme_preference.dart';
-import '../use_cases/settings_use_cases.dart';
+import '../use_cases/settings_application.dart';
 import 'settings_state.dart';
 import 'settings_status.dart';
 
 @lazySingleton
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit(this._useCases) : super(const SettingsState());
+  SettingsCubit(this._settings) : super(const SettingsState());
 
-  final SettingsUseCases _useCases;
+  final SettingsApplication _settings;
 
   Future<void> load() async {
     if (state.status == SettingsStatus.ready) {
@@ -30,7 +30,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     final previous = state.playback;
     emit(state.copyWith(playback: preferences, message: null));
     try {
-      await _useCases.savePlayback(preferences);
+      await _settings.savePlaybackPreferences(preferences);
     } catch (_) {
       _emitPlaybackSaveFailure(previous);
     }
@@ -51,14 +51,14 @@ class SettingsCubit extends Cubit<SettingsState> {
       ),
     );
     try {
-      await _useCases.saveTheme(preference);
+      await _settings.saveThemePreference(preference);
     } catch (_) {
       _emitThemeSaveFailure(previous);
     }
   }
 
   Future<void> _loadSettingsAndEmit() async {
-    final loaded = await _useCases.load();
+    final loaded = await _settings.load();
     emit(
       state.copyWith(
         status: SettingsStatus.ready,

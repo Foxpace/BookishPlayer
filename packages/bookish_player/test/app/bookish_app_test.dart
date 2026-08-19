@@ -4,7 +4,7 @@ import 'package:bookish_player/features/settings/cubits/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../test_support/features/player/player_test_support.dart';
-import '../../test_support/features/settings/settings_test_use_cases.dart';
+import '../../test_support/features/settings/settings_test_application.dart';
 import '../../test_support/support/fixtures.dart';
 
 void main() {
@@ -13,7 +13,7 @@ void main() {
     (tester) async {
       // GIVEN
       final player = await PlayerCubitTestHarness.opened(audiobookFixture());
-      final settings = SettingsCubit(buildSettingsUseCases(FakeSettings()));
+      final settings = SettingsCubit(buildSettingsApplication(FakeSettings()));
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -49,7 +49,7 @@ void main() {
     (tester) async {
       // GIVEN
       final player = await PlayerCubitTestHarness.opened(audiobookFixture());
-      final settings = SettingsCubit(buildSettingsUseCases(FakeSettings()));
+      final settings = SettingsCubit(buildSettingsApplication(FakeSettings()));
       final router = GoRouter(
         routes: [
           GoRoute(

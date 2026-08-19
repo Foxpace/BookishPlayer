@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 
 import '../test_support/features/library/library_test_builder.dart';
 import '../test_support/features/player/player_test_support.dart';
-import '../test_support/features/settings/settings_test_use_cases.dart';
+import '../test_support/features/settings/settings_test_application.dart';
 import '../test_support/support/fakes/fake_library_test_support.dart';
 import '../test_support/support/pump_bookish_app.dart';
 
@@ -130,7 +130,9 @@ void main() {
     'Given deterministic preferences, When settings are rendered, Then it generates the README screenshot',
     (tester) async {
       // GIVEN
-      final cubit = SettingsCubit(buildSettingsUseCases(FakeLibrarySettings()));
+      final cubit = SettingsCubit(
+        buildSettingsApplication(FakeLibrarySettings()),
+      );
       addTearDown(cubit.close);
       await cubit.load();
 

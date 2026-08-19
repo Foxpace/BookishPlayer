@@ -5,7 +5,7 @@ import 'package:bookish_player/features/settings/cubits/settings_cubit.dart';
 import 'package:bookish_player/features/settings/cubits/settings_status.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../test_support/features/settings/settings_test_use_cases.dart';
+import '../../../test_support/features/settings/settings_test_application.dart';
 
 void main() {
   group('Settings cubit', () {
@@ -14,7 +14,7 @@ void main() {
       () async {
         // GIVEN
         final repository = _FakeSettingsStore(ThemePreference.dark);
-        final sut = SettingsCubit(buildSettingsUseCases(repository));
+        final sut = SettingsCubit(buildSettingsApplication(repository));
         addTearDown(sut.close);
 
         // WHEN
