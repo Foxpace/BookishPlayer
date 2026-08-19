@@ -1,4 +1,5 @@
 import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
+import 'package:bookish_player/features/importing/models/import_cancellation.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:bookish_player/features/library/use_cases/remove_audiobook_use_case.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
@@ -96,6 +97,7 @@ class _Files implements FileImportRepository {
   @override
   Future<ImportedAudioFile> importFile(
     SelectedAudioFile selected, {
+    ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
   }) async => ImportedAudioFile(
     path: selected.sourcePath,

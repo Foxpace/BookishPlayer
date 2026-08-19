@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../../../core/presentation/bookish_scaffold.dart';
-import '../../../../core/presentation/diagnostic_failure_view.dart';
 import 'import_failure_view.dart';
 import '../../cubits/import_cubits.dart';
+import '../../models/import_stage.dart';
 import 'import_state_localization.dart';
 
 typedef ImportViewActions = ({
   VoidCallback retry,
+  VoidCallback cancel,
   Future<void> Function() copyDiagnostics,
   VoidCallback back,
 });
@@ -41,16 +42,12 @@ class _ImportContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.status == ImportStatus.failure) {
-      return DiagnosticFailureView(
-        title: state.heading.localize(context),
-        details: state.diagnostics ?? state.localizeDetail(context),
-        onRetry: actions.retry,
+      return ImportFailureView(
+        state: state,
         actions: (
-          retryLabel: null,
-          secondary: TextButton(
-            onPressed: actions.back,
-            child: Text(S.of(context).backToLibrary),
-          ),
+          retry: actions.retry,
+          copyDiagnostics: actions.copyDiagnostics,
+          back: actions.back,
         ),
       );
     }
@@ -89,6 +86,15 @@ class _ImportContent extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
+        if (state.status.isActive &&
+            state.stage != ImportStage.removingOriginals) ...[
+          const SizedBox(height: 20),
+          TextButton.icon(
+            onPressed: state.cancellationRequested ? null : actions.cancel,
+            icon: const Icon(Icons.close_rounded),
+            label: Text(S.of(context).cancel),
+          ),
+        ],
       ],
     );
   }

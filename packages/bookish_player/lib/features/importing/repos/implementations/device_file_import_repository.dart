@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/foundation/id_generator.dart';
 import '../../../../core/platform/file_picker_gateway.dart';
+import '../../models/import_cancellation.dart';
 import '../file_import_repository.dart';
 import '../selected_audio_file.dart';
 import 'device_file_copy_worker.dart';
@@ -94,6 +95,7 @@ class DeviceFileImportRepository implements FileImportRepository {
   @override
   Future<ImportedAudioFile> importFile(
     SelectedAudioFile selected, {
+    ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
   }) async {
     final support = await getApplicationSupportDirectory();
@@ -103,16 +105,41 @@ class DeviceFileImportRepository implements FileImportRepository {
     final extension = p.extension(selected.displayName).toLowerCase();
     final destination = p.join(library.path, '${_ids.generate()}$extension');
 
-    await copyFileInBackground(
-      selected.sourcePath,
-      destination,
-      onProgress: onProgress,
-    );
+    try {
+      await _copySelectedToDestination(
+        selected,
+        destination,
+        cancellation,
+        onProgress,
+      );
+    } on ImportCancelledException {
+      await _removeCancelledDestination(destination);
+    }
 
     return ImportedAudioFile(
       path: destination,
       displayName: selected.displayName,
     );
+  }
+
+  Future<void> _copySelectedToDestination(
+    SelectedAudioFile selected,
+    String destination,
+    ImportCancellationSignal? cancellation,
+    FileCopyProgress? onProgress,
+  ) async {
+    await copyFileInBackground(
+      selected.sourcePath,
+      destination,
+      cancellation: cancellation,
+      onProgress: onProgress,
+    );
+    cancellation?.throwIfCancelled();
+  }
+
+  Future<Never> _removeCancelledDestination(String destination) async {
+    await deleteImportedFile(destination);
+    throw const ImportCancelledException();
   }
 
   @override
@@ -155,6 +182,7 @@ class DeviceFileImportRepository implements FileImportRepository {
 Future<void> copyFileInBackground(
   String sourcePath,
   String destinationPath, {
+  ImportCancellationSignal? cancellation,
   FileCopyProgress? onProgress,
 }) async {
   final partialPath = '$destinationPath.part';
@@ -168,11 +196,20 @@ Future<void> copyFileInBackground(
   );
 
   try {
-    await _receiveCopyMessages(messages, sourcePath, onProgress);
+    await Future.any([
+      _receiveCopyMessages(messages, sourcePath, onProgress),
+      if (cancellation case final signal?)
+        signal.whenCancelled.then<void>(
+          (_) => throw const ImportCancelledException(),
+        ),
+    ]);
   } finally {
     messages.close();
     isolate.kill(priority: Isolate.immediate);
     _deletePartialCopy(partialPath);
+    if (cancellation?.isCancelled == true) {
+      _deleteCancelledCopy(destinationPath);
+    }
   }
 }
 
@@ -192,6 +229,13 @@ void _deletePartialCopy(String partialPath) {
   final partial = File(partialPath);
   if (partial.existsSync()) {
     partial.deleteSync();
+  }
+}
+
+void _deleteCancelledCopy(String destinationPath) {
+  final destination = File(destinationPath);
+  if (destination.existsSync()) {
+    destination.deleteSync();
   }
 }
 

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ImportState {
 
- ImportStatus get status; bool get finderTransfer; List<SelectedAudioFile> get selectedFiles; ImportWorkflowFailure? get workflowFailure; ImportStage get stage; int get importedCount; int get totalFiles; String? get currentTitle; ImportHeading get heading; ImportDetail get detail; ImportStage? get failureStage; int? get copiedBytes; int? get totalBytes; double? get progress; String? get diagnostics;
+ ImportStatus get status; bool get cancellationRequested; bool get finderTransfer; List<SelectedAudioFile> get selectedFiles; ImportWorkflowFailure? get workflowFailure; ImportStage get stage; int get importedCount; int get totalFiles; String? get currentTitle; ImportHeading get heading; ImportDetail get detail; ImportStage? get failureStage; int? get copiedBytes; int? get totalBytes; double? get progress; String? get diagnostics;
 /// Create a copy of ImportState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ImportStateCopyWith<ImportState> get copyWith => _$ImportStateCopyWithImpl<Impo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportState&&(identical(other.status, status) || other.status == status)&&(identical(other.finderTransfer, finderTransfer) || other.finderTransfer == finderTransfer)&&const DeepCollectionEquality().equals(other.selectedFiles, selectedFiles)&&(identical(other.workflowFailure, workflowFailure) || other.workflowFailure == workflowFailure)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.totalFiles, totalFiles) || other.totalFiles == totalFiles)&&(identical(other.currentTitle, currentTitle) || other.currentTitle == currentTitle)&&(identical(other.heading, heading) || other.heading == heading)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportState&&(identical(other.status, status) || other.status == status)&&(identical(other.cancellationRequested, cancellationRequested) || other.cancellationRequested == cancellationRequested)&&(identical(other.finderTransfer, finderTransfer) || other.finderTransfer == finderTransfer)&&const DeepCollectionEquality().equals(other.selectedFiles, selectedFiles)&&(identical(other.workflowFailure, workflowFailure) || other.workflowFailure == workflowFailure)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.totalFiles, totalFiles) || other.totalFiles == totalFiles)&&(identical(other.currentTitle, currentTitle) || other.currentTitle == currentTitle)&&(identical(other.heading, heading) || other.heading == heading)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,finderTransfer,const DeepCollectionEquality().hash(selectedFiles),workflowFailure,stage,importedCount,totalFiles,currentTitle,heading,detail,failureStage,copiedBytes,totalBytes,progress,diagnostics);
+int get hashCode => Object.hash(runtimeType,status,cancellationRequested,finderTransfer,const DeepCollectionEquality().hash(selectedFiles),workflowFailure,stage,importedCount,totalFiles,currentTitle,heading,detail,failureStage,copiedBytes,totalBytes,progress,diagnostics);
 
 @override
 String toString() {
-  return 'ImportState(status: $status, finderTransfer: $finderTransfer, selectedFiles: $selectedFiles, workflowFailure: $workflowFailure, stage: $stage, importedCount: $importedCount, totalFiles: $totalFiles, currentTitle: $currentTitle, heading: $heading, detail: $detail, failureStage: $failureStage, copiedBytes: $copiedBytes, totalBytes: $totalBytes, progress: $progress, diagnostics: $diagnostics)';
+  return 'ImportState(status: $status, cancellationRequested: $cancellationRequested, finderTransfer: $finderTransfer, selectedFiles: $selectedFiles, workflowFailure: $workflowFailure, stage: $stage, importedCount: $importedCount, totalFiles: $totalFiles, currentTitle: $currentTitle, heading: $heading, detail: $detail, failureStage: $failureStage, copiedBytes: $copiedBytes, totalBytes: $totalBytes, progress: $progress, diagnostics: $diagnostics)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ImportStateCopyWith<$Res>  {
   factory $ImportStateCopyWith(ImportState value, $Res Function(ImportState) _then) = _$ImportStateCopyWithImpl;
 @useResult
 $Res call({
- ImportStatus status, bool finderTransfer, List<SelectedAudioFile> selectedFiles, ImportWorkflowFailure? workflowFailure, ImportStage stage, int importedCount, int totalFiles, String? currentTitle, ImportHeading heading, ImportDetail detail, ImportStage? failureStage, int? copiedBytes, int? totalBytes, double? progress, String? diagnostics
+ ImportStatus status, bool cancellationRequested, bool finderTransfer, List<SelectedAudioFile> selectedFiles, ImportWorkflowFailure? workflowFailure, ImportStage stage, int importedCount, int totalFiles, String? currentTitle, ImportHeading heading, ImportDetail detail, ImportStage? failureStage, int? copiedBytes, int? totalBytes, double? progress, String? diagnostics
 });
 
 
@@ -62,10 +62,11 @@ class _$ImportStateCopyWithImpl<$Res>
 
 /// Create a copy of ImportState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? finderTransfer = null,Object? selectedFiles = null,Object? workflowFailure = freezed,Object? stage = null,Object? importedCount = null,Object? totalFiles = null,Object? currentTitle = freezed,Object? heading = null,Object? detail = null,Object? failureStage = freezed,Object? copiedBytes = freezed,Object? totalBytes = freezed,Object? progress = freezed,Object? diagnostics = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? cancellationRequested = null,Object? finderTransfer = null,Object? selectedFiles = null,Object? workflowFailure = freezed,Object? stage = null,Object? importedCount = null,Object? totalFiles = null,Object? currentTitle = freezed,Object? heading = null,Object? detail = null,Object? failureStage = freezed,Object? copiedBytes = freezed,Object? totalBytes = freezed,Object? progress = freezed,Object? diagnostics = freezed,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as ImportStatus,finderTransfer: null == finderTransfer ? _self.finderTransfer : finderTransfer // ignore: cast_nullable_to_non_nullable
+as ImportStatus,cancellationRequested: null == cancellationRequested ? _self.cancellationRequested : cancellationRequested // ignore: cast_nullable_to_non_nullable
+as bool,finderTransfer: null == finderTransfer ? _self.finderTransfer : finderTransfer // ignore: cast_nullable_to_non_nullable
 as bool,selectedFiles: null == selectedFiles ? _self.selectedFiles : selectedFiles // ignore: cast_nullable_to_non_nullable
 as List<SelectedAudioFile>,workflowFailure: freezed == workflowFailure ? _self.workflowFailure : workflowFailure // ignore: cast_nullable_to_non_nullable
 as ImportWorkflowFailure?,stage: null == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable
@@ -176,10 +177,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ImportStatus status,  bool finderTransfer,  List<SelectedAudioFile> selectedFiles,  ImportWorkflowFailure? workflowFailure,  ImportStage stage,  int importedCount,  int totalFiles,  String? currentTitle,  ImportHeading heading,  ImportDetail detail,  ImportStage? failureStage,  int? copiedBytes,  int? totalBytes,  double? progress,  String? diagnostics)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ImportStatus status,  bool cancellationRequested,  bool finderTransfer,  List<SelectedAudioFile> selectedFiles,  ImportWorkflowFailure? workflowFailure,  ImportStage stage,  int importedCount,  int totalFiles,  String? currentTitle,  ImportHeading heading,  ImportDetail detail,  ImportStage? failureStage,  int? copiedBytes,  int? totalBytes,  double? progress,  String? diagnostics)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ImportState() when $default != null:
-return $default(_that.status,_that.finderTransfer,_that.selectedFiles,_that.workflowFailure,_that.stage,_that.importedCount,_that.totalFiles,_that.currentTitle,_that.heading,_that.detail,_that.failureStage,_that.copiedBytes,_that.totalBytes,_that.progress,_that.diagnostics);case _:
+return $default(_that.status,_that.cancellationRequested,_that.finderTransfer,_that.selectedFiles,_that.workflowFailure,_that.stage,_that.importedCount,_that.totalFiles,_that.currentTitle,_that.heading,_that.detail,_that.failureStage,_that.copiedBytes,_that.totalBytes,_that.progress,_that.diagnostics);case _:
   return orElse();
 
 }
@@ -197,10 +198,10 @@ return $default(_that.status,_that.finderTransfer,_that.selectedFiles,_that.work
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ImportStatus status,  bool finderTransfer,  List<SelectedAudioFile> selectedFiles,  ImportWorkflowFailure? workflowFailure,  ImportStage stage,  int importedCount,  int totalFiles,  String? currentTitle,  ImportHeading heading,  ImportDetail detail,  ImportStage? failureStage,  int? copiedBytes,  int? totalBytes,  double? progress,  String? diagnostics)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ImportStatus status,  bool cancellationRequested,  bool finderTransfer,  List<SelectedAudioFile> selectedFiles,  ImportWorkflowFailure? workflowFailure,  ImportStage stage,  int importedCount,  int totalFiles,  String? currentTitle,  ImportHeading heading,  ImportDetail detail,  ImportStage? failureStage,  int? copiedBytes,  int? totalBytes,  double? progress,  String? diagnostics)  $default,) {final _that = this;
 switch (_that) {
 case _ImportState():
-return $default(_that.status,_that.finderTransfer,_that.selectedFiles,_that.workflowFailure,_that.stage,_that.importedCount,_that.totalFiles,_that.currentTitle,_that.heading,_that.detail,_that.failureStage,_that.copiedBytes,_that.totalBytes,_that.progress,_that.diagnostics);case _:
+return $default(_that.status,_that.cancellationRequested,_that.finderTransfer,_that.selectedFiles,_that.workflowFailure,_that.stage,_that.importedCount,_that.totalFiles,_that.currentTitle,_that.heading,_that.detail,_that.failureStage,_that.copiedBytes,_that.totalBytes,_that.progress,_that.diagnostics);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -217,10 +218,10 @@ return $default(_that.status,_that.finderTransfer,_that.selectedFiles,_that.work
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ImportStatus status,  bool finderTransfer,  List<SelectedAudioFile> selectedFiles,  ImportWorkflowFailure? workflowFailure,  ImportStage stage,  int importedCount,  int totalFiles,  String? currentTitle,  ImportHeading heading,  ImportDetail detail,  ImportStage? failureStage,  int? copiedBytes,  int? totalBytes,  double? progress,  String? diagnostics)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ImportStatus status,  bool cancellationRequested,  bool finderTransfer,  List<SelectedAudioFile> selectedFiles,  ImportWorkflowFailure? workflowFailure,  ImportStage stage,  int importedCount,  int totalFiles,  String? currentTitle,  ImportHeading heading,  ImportDetail detail,  ImportStage? failureStage,  int? copiedBytes,  int? totalBytes,  double? progress,  String? diagnostics)?  $default,) {final _that = this;
 switch (_that) {
 case _ImportState() when $default != null:
-return $default(_that.status,_that.finderTransfer,_that.selectedFiles,_that.workflowFailure,_that.stage,_that.importedCount,_that.totalFiles,_that.currentTitle,_that.heading,_that.detail,_that.failureStage,_that.copiedBytes,_that.totalBytes,_that.progress,_that.diagnostics);case _:
+return $default(_that.status,_that.cancellationRequested,_that.finderTransfer,_that.selectedFiles,_that.workflowFailure,_that.stage,_that.importedCount,_that.totalFiles,_that.currentTitle,_that.heading,_that.detail,_that.failureStage,_that.copiedBytes,_that.totalBytes,_that.progress,_that.diagnostics);case _:
   return null;
 
 }
@@ -232,10 +233,11 @@ return $default(_that.status,_that.finderTransfer,_that.selectedFiles,_that.work
 
 
 class _ImportState implements ImportState {
-  const _ImportState({this.status = ImportStatus.picking, this.finderTransfer = false, final  List<SelectedAudioFile> selectedFiles = const <SelectedAudioFile>[], this.workflowFailure, this.stage = ImportStage.selectingFiles, this.importedCount = 0, this.totalFiles = 0, this.currentTitle, this.heading = ImportHeading.openingFileBrowser, this.detail = ImportDetail.chooseFiles, this.failureStage, this.copiedBytes, this.totalBytes, this.progress, this.diagnostics}): _selectedFiles = selectedFiles;
+  const _ImportState({this.status = ImportStatus.idle, this.cancellationRequested = false, this.finderTransfer = false, final  List<SelectedAudioFile> selectedFiles = const <SelectedAudioFile>[], this.workflowFailure, this.stage = ImportStage.selectingFiles, this.importedCount = 0, this.totalFiles = 0, this.currentTitle, this.heading = ImportHeading.openingFileBrowser, this.detail = ImportDetail.chooseFiles, this.failureStage, this.copiedBytes, this.totalBytes, this.progress, this.diagnostics}): _selectedFiles = selectedFiles;
   
 
 @override@JsonKey() final  ImportStatus status;
+@override@JsonKey() final  bool cancellationRequested;
 @override@JsonKey() final  bool finderTransfer;
  final  List<SelectedAudioFile> _selectedFiles;
 @override@JsonKey() List<SelectedAudioFile> get selectedFiles {
@@ -267,16 +269,16 @@ _$ImportStateCopyWith<_ImportState> get copyWith => __$ImportStateCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportState&&(identical(other.status, status) || other.status == status)&&(identical(other.finderTransfer, finderTransfer) || other.finderTransfer == finderTransfer)&&const DeepCollectionEquality().equals(other._selectedFiles, _selectedFiles)&&(identical(other.workflowFailure, workflowFailure) || other.workflowFailure == workflowFailure)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.totalFiles, totalFiles) || other.totalFiles == totalFiles)&&(identical(other.currentTitle, currentTitle) || other.currentTitle == currentTitle)&&(identical(other.heading, heading) || other.heading == heading)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportState&&(identical(other.status, status) || other.status == status)&&(identical(other.cancellationRequested, cancellationRequested) || other.cancellationRequested == cancellationRequested)&&(identical(other.finderTransfer, finderTransfer) || other.finderTransfer == finderTransfer)&&const DeepCollectionEquality().equals(other._selectedFiles, _selectedFiles)&&(identical(other.workflowFailure, workflowFailure) || other.workflowFailure == workflowFailure)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.totalFiles, totalFiles) || other.totalFiles == totalFiles)&&(identical(other.currentTitle, currentTitle) || other.currentTitle == currentTitle)&&(identical(other.heading, heading) || other.heading == heading)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,finderTransfer,const DeepCollectionEquality().hash(_selectedFiles),workflowFailure,stage,importedCount,totalFiles,currentTitle,heading,detail,failureStage,copiedBytes,totalBytes,progress,diagnostics);
+int get hashCode => Object.hash(runtimeType,status,cancellationRequested,finderTransfer,const DeepCollectionEquality().hash(_selectedFiles),workflowFailure,stage,importedCount,totalFiles,currentTitle,heading,detail,failureStage,copiedBytes,totalBytes,progress,diagnostics);
 
 @override
 String toString() {
-  return 'ImportState(status: $status, finderTransfer: $finderTransfer, selectedFiles: $selectedFiles, workflowFailure: $workflowFailure, stage: $stage, importedCount: $importedCount, totalFiles: $totalFiles, currentTitle: $currentTitle, heading: $heading, detail: $detail, failureStage: $failureStage, copiedBytes: $copiedBytes, totalBytes: $totalBytes, progress: $progress, diagnostics: $diagnostics)';
+  return 'ImportState(status: $status, cancellationRequested: $cancellationRequested, finderTransfer: $finderTransfer, selectedFiles: $selectedFiles, workflowFailure: $workflowFailure, stage: $stage, importedCount: $importedCount, totalFiles: $totalFiles, currentTitle: $currentTitle, heading: $heading, detail: $detail, failureStage: $failureStage, copiedBytes: $copiedBytes, totalBytes: $totalBytes, progress: $progress, diagnostics: $diagnostics)';
 }
 
 
@@ -287,7 +289,7 @@ abstract mixin class _$ImportStateCopyWith<$Res> implements $ImportStateCopyWith
   factory _$ImportStateCopyWith(_ImportState value, $Res Function(_ImportState) _then) = __$ImportStateCopyWithImpl;
 @override @useResult
 $Res call({
- ImportStatus status, bool finderTransfer, List<SelectedAudioFile> selectedFiles, ImportWorkflowFailure? workflowFailure, ImportStage stage, int importedCount, int totalFiles, String? currentTitle, ImportHeading heading, ImportDetail detail, ImportStage? failureStage, int? copiedBytes, int? totalBytes, double? progress, String? diagnostics
+ ImportStatus status, bool cancellationRequested, bool finderTransfer, List<SelectedAudioFile> selectedFiles, ImportWorkflowFailure? workflowFailure, ImportStage stage, int importedCount, int totalFiles, String? currentTitle, ImportHeading heading, ImportDetail detail, ImportStage? failureStage, int? copiedBytes, int? totalBytes, double? progress, String? diagnostics
 });
 
 
@@ -304,10 +306,11 @@ class __$ImportStateCopyWithImpl<$Res>
 
 /// Create a copy of ImportState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? finderTransfer = null,Object? selectedFiles = null,Object? workflowFailure = freezed,Object? stage = null,Object? importedCount = null,Object? totalFiles = null,Object? currentTitle = freezed,Object? heading = null,Object? detail = null,Object? failureStage = freezed,Object? copiedBytes = freezed,Object? totalBytes = freezed,Object? progress = freezed,Object? diagnostics = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? cancellationRequested = null,Object? finderTransfer = null,Object? selectedFiles = null,Object? workflowFailure = freezed,Object? stage = null,Object? importedCount = null,Object? totalFiles = null,Object? currentTitle = freezed,Object? heading = null,Object? detail = null,Object? failureStage = freezed,Object? copiedBytes = freezed,Object? totalBytes = freezed,Object? progress = freezed,Object? diagnostics = freezed,}) {
   return _then(_ImportState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as ImportStatus,finderTransfer: null == finderTransfer ? _self.finderTransfer : finderTransfer // ignore: cast_nullable_to_non_nullable
+as ImportStatus,cancellationRequested: null == cancellationRequested ? _self.cancellationRequested : cancellationRequested // ignore: cast_nullable_to_non_nullable
+as bool,finderTransfer: null == finderTransfer ? _self.finderTransfer : finderTransfer // ignore: cast_nullable_to_non_nullable
 as bool,selectedFiles: null == selectedFiles ? _self._selectedFiles : selectedFiles // ignore: cast_nullable_to_non_nullable
 as List<SelectedAudioFile>,workflowFailure: freezed == workflowFailure ? _self.workflowFailure : workflowFailure // ignore: cast_nullable_to_non_nullable
 as ImportWorkflowFailure?,stage: null == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable

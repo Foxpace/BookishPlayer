@@ -75,6 +75,16 @@ feature/
 - Keep numbered audiobook files as separate import inputs.
 - Treat grouping and ordering as explicit user actions, not persistence or
   folder-name conventions.
+- Run imports on their own route and return a structured result containing the
+  final status, committed count, and failed item. The library reloads whenever
+  at least one book was committed, even if a later item failed or was cancelled.
+- Block ambient back navigation while import work is active. Explicit
+  cancellation interrupts file copying, waits for parsing and persistence to
+  reach a safe boundary, removes only pending files, and preserves completed
+  books.
+- Keep failed item names in ephemeral presentation state. Copyable diagnostics
+  contain classified stages and timings but omit book names, titles, paths, raw
+  exceptions, and stack traces.
 
 ## Dependency direction
 

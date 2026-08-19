@@ -26,6 +26,7 @@ void main() {
             ),
             actions: (
               retry: _ignore,
+              cancel: _ignore,
               copyDiagnostics: _ignoreAsync,
               back: _ignore,
             ),
@@ -62,6 +63,7 @@ void main() {
             ),
             actions: (
               retry: _ignore,
+              cancel: _ignore,
               copyDiagnostics: _ignoreAsync,
               back: _ignore,
             ),

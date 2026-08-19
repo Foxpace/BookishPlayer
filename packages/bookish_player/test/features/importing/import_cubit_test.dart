@@ -1,14 +1,12 @@
-import 'package:bookish_player/features/importing/use_cases/audiobook_import_workflow.dart';
+import 'package:bookish_player/features/importing/use_cases/import_application.dart';
 import 'package:bookish_player/features/importing/use_cases/import_cleanup.dart';
 import 'package:bookish_player/features/importing/use_cases/import_source_gateway.dart';
 import 'package:bookish_player/features/importing/use_cases/imported_book_saver.dart';
-import 'package:bookish_player/features/importing/use_cases/copy_import_diagnostics_use_case.dart';
-import 'package:bookish_player/features/importing/use_cases/import_use_cases.dart';
-import 'package:bookish_player/features/importing/use_cases/remove_transferred_sources_use_case.dart';
 import 'package:bookish_player/features/importing/repos/audiobook_metadata_extractor.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
 import 'package:bookish_player/features/importing/cubits/import_cubit.dart';
 import 'package:bookish_player/features/importing/cubits/import_cubits.dart';
+import 'package:bookish_player/features/importing/models/import_route_result.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../test_support/support/fakes/fake_clock.dart';
@@ -161,6 +159,39 @@ void main() {
         expect(book.year, 1968);
       },
     );
+
+    test(
+      'Given one completed book and another copying, When the user cancels, Then the cubit preserves partial success in its route result',
+      () async {
+        // GIVEN
+        final books = FakeImportBooks(<String>[]);
+        final files = FakeImportFiles(const [
+          SelectedAudioFile(
+            sourcePath: '/picker-cache/first.m4b',
+            displayName: 'First.m4b',
+          ),
+          SelectedAudioFile(
+            sourcePath: '/picker-cache/second.m4b',
+            displayName: 'Second.m4b',
+          ),
+        ], pauseCopyAt: 1);
+        sut = _cubit(files, books: books);
+        final importing = sut.start();
+        await files.copyPaused.future;
+
+        // WHEN
+        sut.cancel();
+        expect(sut.state.cancellationRequested, isTrue);
+        await importing;
+
+        // THEN
+        expect(sut.state.status, ImportStatus.cancelled);
+        expect(sut.state.importedCount, 1);
+        expect(books.saved, hasLength(1));
+        expect(sut.routeResult.status, ImportRouteStatus.cancelled);
+        expect(sut.routeResult.importedCount, 1);
+      },
+    );
   });
 }
 
@@ -172,7 +203,7 @@ ImportCubit _cubit(
 }) {
   final repository = books ?? FakeImportBooks(events ?? <String>[]);
   final clock = FakeClock();
-  final workflow = AudiobookImportWorkflow(
+  final application = ImportApplication(
     ImportSourceGateway(
       files,
       FakeImportMediaProbe(),
@@ -183,12 +214,7 @@ ImportCubit _cubit(
     ImportedBookSaver(repository, repository, clock, FakeIdGenerator()),
     clock,
     ImportCleanup(files, FakeAppDiagnostics()),
+    FakeImportDiagnostics(),
   );
-  return ImportCubit(
-    ImportUseCases(
-      importBook: ImportBookUseCase(workflow),
-      removeTransferredSources: RemoveTransferredSourcesUseCase(workflow),
-      copyDiagnostics: CopyImportDiagnosticsUseCase(FakeImportDiagnostics()),
-    ),
-  );
+  return ImportCubit(application);
 }

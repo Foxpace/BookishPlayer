@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bookish_player/core/platform/file_picker_gateway.dart';
+import 'package:bookish_player/features/importing/models/import_cancellation.dart';
 import 'package:bookish_player/features/importing/repos/implementations/device_file_import_repository.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -54,6 +55,37 @@ void main() {
                 ),
             bytes,
           );
+        } finally {
+          await temporary.delete(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'Given an active background copy, When intentional cancellation is requested, Then the worker stops and removes partial and destination files',
+      () async {
+        // GIVEN
+        final temporary = await Directory.systemTemp.createTemp(
+          'bookish_cancelled_copy_test_',
+        );
+        final source = File('${temporary.path}/source.m4b');
+        final destination = '${temporary.path}/destination.m4b';
+        source.writeAsBytesSync(List<int>.filled(8 * 1024 * 1024, 7));
+        final cancellation = ImportCancellationSignal();
+
+        // WHEN
+        try {
+          final copy = copyFileInBackground(
+            source.path,
+            destination,
+            cancellation: cancellation,
+            onProgress: (_, _) => cancellation.cancel(),
+          );
+
+          // THEN
+          await expectLater(copy, throwsA(isA<ImportCancelledException>()));
+          expect(File(destination).existsSync(), isFalse);
+          expect(File('$destination.part').existsSync(), isFalse);
         } finally {
           await temporary.delete(recursive: true);
         }

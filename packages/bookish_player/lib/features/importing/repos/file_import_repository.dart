@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../models/import_cancellation.dart';
 import 'selected_audio_file.dart';
 part 'file_import_repository.freezed.dart';
 part 'imported_audio_file.dart';
@@ -11,6 +12,7 @@ abstract interface class FileImportRepository {
   Future<List<SelectedAudioFile>> findTransferredAudioFiles();
   Future<ImportedAudioFile> importFile(
     SelectedAudioFile selected, {
+    ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
   });
   Future<void> clearTemporaryFiles();

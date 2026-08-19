@@ -5,6 +5,7 @@ enum ImportDetail {
   removingOriginals,
   finderInstructions,
   selectionCancelled,
+  importCancelled,
   originalsRemain,
   stageFailed,
 }

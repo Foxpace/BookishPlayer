@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import '../models/chapter_parse_report.dart';
+import '../models/import_cancellation.dart';
 import '../repos/audiobook_artwork_extractor.dart';
 import '../repos/audiobook_metadata_extractor.dart';
 import '../repos/file_import_repository.dart';
@@ -37,8 +38,13 @@ class ImportSourceGateway {
 
   Future<ImportedAudioFile> importFile(
     SelectedAudioFile selected, {
+    ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
-  }) => _files.importFile(selected, onProgress: onProgress);
+  }) => _files.importFile(
+    selected,
+    cancellation: cancellation,
+    onProgress: onProgress,
+  );
 
   Future<ImportedAudioDetails> readDetails(String path) async {
     final (duration, chapterReport, metadata) = await (
