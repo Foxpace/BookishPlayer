@@ -1,19 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/presentation/app_message.dart';
+import '../../../core/use_cases/app_data_reset.dart';
+import '../../../core/use_cases/app_data_reset_outcome.dart';
 import '../use_cases/storage_use_case_bundle.dart';
 import 'storage_assistant_state.dart';
 
-typedef StorageScreenTools = ({
-  Future<void> Function() resetPlayback,
-  Future<void> Function() reloadSettings,
-});
-
 class StorageAssistantCubit extends Cubit<StorageAssistantState> {
-  StorageAssistantCubit(this._useCases, this._tools)
+  StorageAssistantCubit(this._useCases, this._appDataReset)
     : super(const StorageAssistantState());
 
   final StorageUseCases _useCases;
-  final StorageScreenTools _tools;
+  final AppDataReset _appDataReset;
 
   Future<void> load() async {
     emit(state.copyWith(loading: true, message: null));
@@ -37,13 +35,11 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
     await load();
   }
 
-  Future<bool> clearAll() async {
+  Future<AppDataResetOutcome> clearAll() async {
     emit(state.copyWith(loading: true, message: null));
-    try {
-      return await _clearAllDataAndEmit();
-    } catch (_) {
-      return _emitClearAllFailure();
-    }
+    final outcome = await _appDataReset.reset();
+    _emitResetOutcome(outcome);
+    return outcome;
   }
 
   Future<void> _inspectStorageAndEmit() async {
@@ -84,28 +80,21 @@ class StorageAssistantCubit extends Cubit<StorageAssistantState> {
     ),
   );
 
-  Future<bool> _clearAllDataAndEmit() async {
-    await _tools.resetPlayback();
-    await _useCases.clearBookishData();
-    await _tools.reloadSettings();
+  void _emitResetOutcome(AppDataResetOutcome outcome) {
+    final message = switch (outcome) {
+      AppDataResetOutcome.completed => AppMessage.allDataRemoved,
+      AppDataResetOutcome.completedWithSettingsReloadWarning =>
+        AppMessage.allDataRemovedSettingsReloadFailed,
+      AppDataResetOutcome.playbackResetFailed ||
+      AppDataResetOutcome.persistentDeletionFailed =>
+        AppMessage.clearDataFailed,
+    };
     emit(
       state.copyWith(
         loading: false,
-        message: AppMessage.allDataRemoved,
+        message: message,
         effectRevision: state.effectRevision + 1,
       ),
     );
-    return true;
-  }
-
-  bool _emitClearAllFailure() {
-    emit(
-      state.copyWith(
-        loading: false,
-        message: AppMessage.clearDataFailed,
-        effectRevision: state.effectRevision + 1,
-      ),
-    );
-    return false;
   }
 }

@@ -9,6 +9,8 @@ extension AppMessageLocalization on AppMessage {
       AppMessage.storageInspectFailed => l10n.storageInspectFailed,
       AppMessage.unusedFilesRemoved => l10n.unusedFilesRemoved,
       AppMessage.allDataRemoved => l10n.allDataRemoved,
+      AppMessage.allDataRemovedSettingsReloadFailed =>
+        l10n.allDataRemovedSettingsReloadFailed,
       AppMessage.clearDataFailed => l10n.clearDataFailed,
       AppMessage.metadataEditorLoadFailed => l10n.metadataEditorLoadFailed,
       AppMessage.metadataSaveFailed => l10n.metadataSaveFailed,

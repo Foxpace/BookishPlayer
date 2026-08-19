@@ -78,6 +78,7 @@
   "storageInspectFailed": "Storage could not be inspected.",
   "unusedFilesRemoved": "Unused files removed.",
   "allDataRemoved": "All Bookish data was removed.",
+  "allDataRemovedSettingsReloadFailed": "All Bookish data was removed, but settings could not be refreshed. Restart Bookish to finish resetting the screen.",
   "clearDataFailed": "Bookish could not remove all app data.",
   "metadataEditorLoadFailed": "The audiobook editor could not be opened.",
   "metadataSaveFailed": "Could not save audiobook metadata.",

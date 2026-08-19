@@ -68,6 +68,7 @@
   "storageInspectFailed": "Úložisko sa nepodarilo skontrolovať.",
   "unusedFilesRemoved": "Nepoužívané súbory boli odstránené.",
   "allDataRemoved": "Všetky dáta Bookish boli odstránené.",
+  "allDataRemovedSettingsReloadFailed": "Všetky dáta Bookish boli odstránené, ale nastavenia sa nepodarilo obnoviť. Reštartujte Bookish, aby sa obrazovka úplne obnovila.",
   "clearDataFailed": "Bookish nedokázal odstrániť všetky dáta aplikácie.",
   "metadataEditorLoadFailed": "Editor audioknihy sa nepodarilo otvoriť.",
   "metadataSaveFailed": "Metadáta audioknihy sa nepodarilo uložiť.",
