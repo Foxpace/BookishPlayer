@@ -9,6 +9,7 @@ enum ImportHeading {
   removingOriginals,
   noTransferredAudiobooks,
   noFilesSelected,
+  importCancelled,
   originalsRemain,
   fileAccessFailed,
   malformedMetadata,

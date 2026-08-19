@@ -17,10 +17,17 @@ extension ImportDetailLocalization on ImportState {
       ImportDetail.removingOriginals => l10n.importRemovingOriginalsDetail,
       ImportDetail.finderInstructions => l10n.importFinderInstructions,
       ImportDetail.selectionCancelled => l10n.importSelectionCancelled,
+      ImportDetail.importCancelled => l10n.importCancelledDetail(importedCount),
       ImportDetail.originalsRemain => l10n.importOriginalsRemainDetail,
-      ImportDetail.stageFailed => l10n.importFailureAtStage(
-        _localizeImportStage(l10n, failureStage),
-      ),
+      ImportDetail.stageFailed => switch (workflowFailure?.failedItem) {
+        final item? => l10n.importFailureForFileAtStage(
+          item.displayName,
+          _localizeImportStage(l10n, failureStage),
+        ),
+        null => l10n.importFailureAtStage(
+          _localizeImportStage(l10n, failureStage),
+        ),
+      },
     };
   }
 }

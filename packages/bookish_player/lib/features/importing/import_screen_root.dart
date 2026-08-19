@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/di/injection.dart';
 import 'cubits/import_cubit.dart';
 import 'cubits/import_cubits.dart';
+import 'models/import_route_result.dart';
 import 'ui/import_screen.dart';
 
 /// Composition boundary for picking, copying, inspecting and saving imports.
@@ -50,14 +51,17 @@ class _ImportScreenRootState extends State<ImportScreenRoot> {
         listenWhen: (previous, current) => previous.status != current.status,
         listener: (context, state) {
           if (state.status == ImportStatus.complete) {
-            context.pop(true);
+            context.pop(_cubit.routeResult);
           }
         },
         builder: (context, state) => ImportScreen(
           state: state,
-          onRetry: _cubit.retry,
-          onCopyDiagnostics: _cubit.copyDiagnostics,
-          onBack: () => context.pop(false),
+          actions: (
+            retry: _cubit.retry,
+            cancel: _cubit.cancel,
+            copyDiagnostics: _cubit.copyDiagnostics,
+            back: () => context.pop<ImportRouteResult>(_cubit.routeResult),
+          ),
         ),
       ),
     );

@@ -1,1 +1,1 @@
-enum ImportStatus { picking, importing, complete, cancelled, failure }
+enum ImportStatus { idle, importing, complete, cancelled, failure }

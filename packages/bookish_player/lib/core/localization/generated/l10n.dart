@@ -999,6 +999,16 @@ class S {
     );
   }
 
+  /// `Import cancelled`
+  String get importCancelled {
+    return Intl.message(
+      'Import cancelled',
+      name: 'importCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `The book was copied, but the originals remain`
   String get importOriginalsRemain {
     return Intl.message(
@@ -1109,6 +1119,29 @@ class S {
     );
   }
 
+  /// `{count, plural, =0{No audiobooks were added.} =1{1 completed audiobook remains in your library.} other{{count} completed audiobooks remain in your library.}}`
+  String importCancelledDetail(int count) {
+    return Intl.plural(
+      count,
+      zero: 'No audiobooks were added.',
+      one: '1 completed audiobook remains in your library.',
+      other: '$count completed audiobooks remain in your library.',
+      name: 'importCancelledDetail',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Book names, file paths, and raw errors are omitted.`
+  String get importDiagnosticPrivacy {
+    return Intl.message(
+      'Book names, file paths, and raw errors are omitted.',
+      name: 'importDiagnosticPrivacy',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `The document provider did not allow Bookish to delete one or more originals. Your imported copy is safe. You can retry deletion or remove the originals in the Files app.`
   String get importOriginalsRemainDetail {
     return Intl.message(
@@ -1119,13 +1152,23 @@ class S {
     );
   }
 
-  /// `The failure happened while {stage}. The full diagnostic below can be copied when reporting the problem.`
+  /// `The failure happened while {stage}. The privacy-safe diagnostic below can be copied when reporting the problem.`
   String importFailureAtStage(String stage) {
     return Intl.message(
-      'The failure happened while $stage. The full diagnostic below can be copied when reporting the problem.',
+      'The failure happened while $stage. The privacy-safe diagnostic below can be copied when reporting the problem.',
       name: 'importFailureAtStage',
       desc: '',
       args: [stage],
+    );
+  }
+
+  /// `{file} failed while {stage}. Completed audiobooks remain in your library. The privacy-safe diagnostic below can be copied when reporting the problem.`
+  String importFailureForFileAtStage(String file, String stage) {
+    return Intl.message(
+      '$file failed while $stage. Completed audiobooks remain in your library. The privacy-safe diagnostic below can be copied when reporting the problem.',
+      name: 'importFailureForFileAtStage',
+      desc: '',
+      args: [file, stage],
     );
   }
 

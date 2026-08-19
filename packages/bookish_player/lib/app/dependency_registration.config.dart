@@ -74,20 +74,14 @@ import 'package:bookish_player/features/importing/repos/m4b_chapter_parser.dart'
     as _i454;
 import 'package:bookish_player/features/importing/repos/media_probe.dart'
     as _i259;
-import 'package:bookish_player/features/importing/use_cases/audiobook_import_workflow.dart'
-    as _i160;
-import 'package:bookish_player/features/importing/use_cases/copy_import_diagnostics_use_case.dart'
-    as _i106;
+import 'package:bookish_player/features/importing/use_cases/import_application.dart'
+    as _i803;
 import 'package:bookish_player/features/importing/use_cases/import_cleanup.dart'
     as _i158;
 import 'package:bookish_player/features/importing/use_cases/import_source_gateway.dart'
     as _i1063;
-import 'package:bookish_player/features/importing/use_cases/import_use_cases.dart'
-    as _i309;
 import 'package:bookish_player/features/importing/use_cases/imported_book_saver.dart'
     as _i703;
-import 'package:bookish_player/features/importing/use_cases/remove_transferred_sources_use_case.dart'
-    as _i233;
 import 'package:bookish_player/features/insights/cubits/listening_insights_cubit.dart'
     as _i411;
 import 'package:bookish_player/features/insights/repos/implementations/library_listening_insights_repository.dart'
@@ -424,11 +418,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i276.ListeningHistoryRepository>(
       () => _i712.ListeningHistoryDao(gh<_i987.BookishDatabase>()),
-    );
-    gh.factory<_i106.CopyImportDiagnosticsUseCase>(
-      () => _i106.CopyImportDiagnosticsUseCase(
-        gh<_i993.ImportDiagnosticsRepository>(),
-      ),
     );
     gh.lazySingleton<_i623.LocalExportRepository>(
       () =>
@@ -796,6 +785,15 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i627.SpeechModelsCubit(gh<_i877.SpeechModelUseCases>()),
       registerFor: {_internal},
     );
+    gh.factory<_i803.ImportApplication>(
+      () => _i803.ImportApplication(
+        gh<_i1063.ImportSourceGateway>(),
+        gh<_i703.ImportedBookSaver>(),
+        gh<_i1031.Clock>(),
+        gh<_i158.ImportCleanup>(),
+        gh<_i993.ImportDiagnosticsRepository>(),
+      ),
+    );
     gh.lazySingleton<_i163.PlayerPlaybackStreams>(
       () => _i163.PlayerPlaybackStreams(
         gh<_i1014.AudioPlayerRepository>(),
@@ -831,13 +829,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i997.DeleteBookChapterUseCase>(),
       ),
     );
-    gh.factory<_i160.AudiobookImportWorkflow>(
-      () => _i160.AudiobookImportWorkflow(
-        gh<_i1063.ImportSourceGateway>(),
-        gh<_i703.ImportedBookSaver>(),
-        gh<_i1031.Clock>(),
-        gh<_i158.ImportCleanup>(),
-      ),
+    gh.factory<_i218.ImportCubit>(
+      () => _i218.ImportCubit(gh<_i803.ImportApplication>()),
     );
     gh.factory<_i121.EditingUseCases>(
       () => _i121.EditingUseCases(
@@ -862,24 +855,6 @@ extension GetItInjectableX on _i174.GetIt {
         transport: gh<_i369.PlayerTransportUseCases>(),
         showAudioOutputPicker: gh<_i579.ShowAudioOutputPickerUseCase>(),
       ),
-    );
-    gh.factory<_i309.ImportBookUseCase>(
-      () => _i309.ImportBookUseCase(gh<_i160.AudiobookImportWorkflow>()),
-    );
-    gh.factory<_i233.RemoveTransferredSourcesUseCase>(
-      () => _i233.RemoveTransferredSourcesUseCase(
-        gh<_i160.AudiobookImportWorkflow>(),
-      ),
-    );
-    gh.factory<_i309.ImportUseCases>(
-      () => _i309.ImportUseCases(
-        importBook: gh<_i309.ImportBookUseCase>(),
-        removeTransferredSources: gh<_i233.RemoveTransferredSourcesUseCase>(),
-        copyDiagnostics: gh<_i106.CopyImportDiagnosticsUseCase>(),
-      ),
-    );
-    gh.factory<_i218.ImportCubit>(
-      () => _i218.ImportCubit(gh<_i309.ImportUseCases>()),
     );
     gh.lazySingleton<_i948.PlayerCubit>(
       () => _i948.PlayerCubit(

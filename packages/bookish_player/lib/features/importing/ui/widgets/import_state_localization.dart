@@ -22,6 +22,7 @@ extension ImportHeadingLocalization on ImportHeading {
       ImportHeading.noTransferredAudiobooks =>
         l10n.importNoTransferredAudiobooks,
       ImportHeading.noFilesSelected => l10n.importNoFilesSelected,
+      ImportHeading.importCancelled => l10n.importCancelled,
       ImportHeading.originalsRemain => l10n.importOriginalsRemain,
       ImportHeading.fileAccessFailed => l10n.importFileAccessFailed,
       ImportHeading.malformedMetadata => l10n.importMalformedMetadata,

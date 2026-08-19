@@ -1,33 +1,19 @@
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../core/app_metadata.dart';
-import '../../../core/diagnostics/app_error.dart';
-import '../use_cases/import_use_cases.dart';
 import '../models/import_models.dart';
+import '../use_cases/import_application.dart';
 import 'import_cubits.dart';
 
 @injectable
 class ImportCubit extends Cubit<ImportState> {
-  ImportCubit(this._useCases) : super(const ImportState());
+  ImportCubit(this._application) : super(const ImportState());
 
-  final ImportUseCases _useCases;
+  final ImportApplication _application;
 
   Future<void> start() => _runImport(finderTransfer: false);
 
   Future<void> startFinderTransfer() => _runImport(finderTransfer: true);
-
-  Future<void> _runImport({required bool finderTransfer}) async {
-    emit(state.copyWith(finderTransfer: finderTransfer, workflowFailure: null));
-    _emitProgress(const ImportProgress(stage: ImportStage.selectingFiles));
-    try {
-      await _runWorkflowAndEmit(finderTransfer);
-    } on ImportWorkflowFailure catch (failure) {
-      _captureAndEmitFailure(failure);
-    }
-  }
 
   Future<void> retry() async {
     final failure = state.workflowFailure;
@@ -39,19 +25,83 @@ class ImportCubit extends Cubit<ImportState> {
     await _runImport(finderTransfer: state.finderTransfer);
   }
 
-  Future<void> _retryOriginalRemoval() async {
-    try {
-      await _retryOriginalRemovalAndEmit();
-    } catch (error, stackTrace) {
-      _captureOriginalRemovalFailure(error, stackTrace);
+  void cancel() {
+    if (!state.status.isActive || state.cancellationRequested) {
+      return;
+    }
+    emit(state.copyWith(cancellationRequested: true));
+    _application.cancelImport();
+  }
+
+  Future<void> copyDiagnostics() async {
+    if (state.diagnostics case final diagnostics?) {
+      await _application.copyDiagnostics(diagnostics);
     }
   }
 
-  Future<void> _runWorkflowAndEmit(bool finderTransfer) async {
-    final result = await _useCases.importBook(
+  ImportRouteResult get routeResult => ImportRouteResult(
+    status: switch (state.status) {
+      ImportStatus.complete => ImportRouteStatus.completed,
+      ImportStatus.failure => ImportRouteStatus.failed,
+      _ => ImportRouteStatus.cancelled,
+    },
+    importedCount: state.importedCount,
+    failedItem: state.workflowFailure?.failedItem,
+  );
+
+  Future<void> _runImport({required bool finderTransfer}) async {
+    if (state.status.isActive) {
+      return;
+    }
+    emit(
+      ImportState(
+        finderTransfer: finderTransfer,
+        status: ImportStatus.importing,
+      ),
+    );
+    _emitProgress(const ImportProgress(stage: ImportStage.selectingFiles));
+
+    try {
+      await _importAndEmit(finderTransfer);
+    } on ImportWorkflowCancellation catch (cancellation) {
+      _emitCancellation(cancellation);
+    } on ImportWorkflowFailure catch (failure) {
+      _captureAndEmitFailure(failure);
+    }
+  }
+
+  Future<void> _importAndEmit(bool finderTransfer) async {
+    final result = await _application.importBooks(
       finderTransfer: finderTransfer,
       onProgress: _emitProgress,
     );
+    _emitResult(result, finderTransfer);
+  }
+
+  Future<void> _retryOriginalRemoval() async {
+    try {
+      await _removeOriginalsAndEmit();
+    } on ImportWorkflowFailure catch (failure) {
+      _captureAndEmitFailure(failure);
+    }
+  }
+
+  Future<void> _removeOriginalsAndEmit() async {
+    await _application.retryTransferredSourceRemoval(
+      selectedFiles: state.selectedFiles,
+      onProgress: _emitProgress,
+    );
+    emit(
+      state.copyWith(
+        status: ImportStatus.complete,
+        workflowFailure: null,
+        diagnostics: null,
+        progress: null,
+      ),
+    );
+  }
+
+  void _emitResult(ImportResult result, bool finderTransfer) {
     if (result.selectedFiles.isEmpty) {
       _emitEmptySelection(finderTransfer);
       return;
@@ -62,6 +112,23 @@ class ImportCubit extends Cubit<ImportState> {
         selectedFiles: result.selectedFiles,
         workflowFailure: null,
         importedCount: result.importedCount,
+        cancellationRequested: false,
+        progress: null,
+      ),
+    );
+  }
+
+  void _emitCancellation(ImportWorkflowCancellation cancellation) {
+    emit(
+      state.copyWith(
+        status: ImportStatus.cancelled,
+        selectedFiles: cancellation.selectedFiles,
+        workflowFailure: null,
+        importedCount: cancellation.importedCount,
+        heading: ImportHeading.importCancelled,
+        detail: ImportDetail.importCancelled,
+        cancellationRequested: false,
+        diagnostics: null,
         progress: null,
       ),
     );
@@ -71,38 +138,19 @@ class ImportCubit extends Cubit<ImportState> {
     emit(
       state.copyWith(
         status: ImportStatus.failure,
+        selectedFiles: failure.selectedFiles,
         workflowFailure: failure,
+        importedCount: failure.importedCount,
         heading: _selectFailureHeading(failure),
-        detail: _selectFailureDetail(failure),
+        detail: failure.originalRemovalOnly
+            ? ImportDetail.originalsRemain
+            : ImportDetail.stageFailed,
         failureStage: failure.stage,
-        diagnostics: _buildDiagnostics(failure),
+        cancellationRequested: false,
+        diagnostics: failure.diagnostics,
         progress: null,
       ),
     );
-  }
-
-  Future<void> _retryOriginalRemovalAndEmit() async {
-    await _useCases.removeTransferredSources(state.selectedFiles);
-    emit(state.copyWith(status: ImportStatus.complete, workflowFailure: null));
-  }
-
-  void _captureOriginalRemovalFailure(Object error, StackTrace stackTrace) {
-    _captureAndEmitFailure(
-      ImportWorkflowFailure(
-        error: error,
-        stackTrace: stackTrace,
-        stage: ImportStage.removingOriginals,
-        stageHistory: const [],
-        originalRemovalOnly: true,
-      ),
-    );
-  }
-
-  Future<void> copyDiagnostics() async {
-    final value = state.diagnostics;
-    if (value != null) {
-      await _useCases.copyDiagnostics(value);
-    }
   }
 
   void _emitEmptySelection(bool finderTransfer) {
@@ -116,6 +164,7 @@ class ImportCubit extends Cubit<ImportState> {
         detail: finderTransfer
             ? ImportDetail.finderInstructions
             : ImportDetail.selectionCancelled,
+        cancellationRequested: false,
         diagnostics: null,
         progress: null,
       ),
@@ -123,9 +172,7 @@ class ImportCubit extends Cubit<ImportState> {
   }
 
   void _emitProgress(ImportProgress progress) {
-    final heading = _progressHeading(progress.stage);
     final fileText = progress.selected?.displayName ?? progress.title;
-
     emit(
       state.copyWith(
         status: ImportStatus.importing,
@@ -133,7 +180,7 @@ class ImportCubit extends Cubit<ImportState> {
         importedCount: progress.index,
         totalFiles: progress.total,
         currentTitle: progress.title ?? fileText,
-        heading: heading,
+        heading: _progressHeading(progress.stage),
         detail: _selectProgressDetail(progress),
         copiedBytes: progress.copiedBytes,
         totalBytes: progress.totalBytes,
@@ -172,42 +219,11 @@ class ImportCubit extends Cubit<ImportState> {
     return progress.total > 1 ? progress.index / progress.total : null;
   }
 
-  ImportHeading _selectFailureHeading(ImportWorkflowFailure failure) {
-    if (failure.originalRemovalOnly) {
-      return ImportHeading.originalsRemain;
-    }
-    if (failure.error is FileSystemException) {
-      return ImportHeading.fileAccessFailed;
-    }
-    if (failure.error is FormatException) {
-      return ImportHeading.malformedMetadata;
-    }
-    return ImportHeading.importFailed;
-  }
-
-  ImportDetail _selectFailureDetail(ImportWorkflowFailure failure) {
-    if (failure.originalRemovalOnly) {
-      return ImportDetail.originalsRemain;
-    }
-    return ImportDetail.stageFailed;
-  }
-
-  String _buildDiagnostics(ImportWorkflowFailure failure) =>
-      AppError(
-        time: DateTime.now().toIso8601String(),
-        operation: 'import.${failure.stage.name}',
-        errorType: failure.error.runtimeType.toString(),
-        message: '${failure.error}',
-        stack: '${failure.stackTrace}',
-        platform: Platform.operatingSystem,
-        platformVersion: Platform.operatingSystemVersion,
-        build: appVersion,
-        context: {'Stage': failure.stage.name, 'File': ?failure.activeFile},
-        history: failure.stageHistory,
-        diagnostics: failure.parserDiagnostics,
-      ).toDiagnosticText(
-        title: 'Bookish import diagnostic',
-        historyTitle: 'Completed stage timings:',
-        diagnosticsTitle: 'Latest chapter-parser analysis:',
-      );
+  ImportHeading _selectFailureHeading(ImportWorkflowFailure failure) =>
+      switch (failure.kind) {
+        ImportFailureKind.sourceRemoval => ImportHeading.originalsRemain,
+        ImportFailureKind.fileAccess => ImportHeading.fileAccessFailed,
+        ImportFailureKind.malformedMetadata => ImportHeading.malformedMetadata,
+        ImportFailureKind.unexpected => ImportHeading.importFailed,
+      };
 }

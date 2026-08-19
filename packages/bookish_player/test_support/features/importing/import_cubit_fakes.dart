@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import 'package:bookish_player/features/importing/repos/file_import_repository.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
+import 'package:bookish_player/features/importing/models/import_cancellation.dart';
 
 class FakeImportFiles implements FileImportRepository {
-  FakeImportFiles(this.selected, {this.events});
+  FakeImportFiles(this.selected, {this.events, this.pauseCopyAt});
   final List<SelectedAudioFile> selected;
   final List<String>? events;
+  final int? pauseCopyAt;
+  final copyPaused = Completer<void>();
   var pickCount = 0;
+  var copyCount = 0;
 
   @override
   Future<List<SelectedAudioFile>> pickAudioFiles() async {
@@ -16,13 +22,20 @@ class FakeImportFiles implements FileImportRepository {
   @override
   Future<ImportedAudioFile> importFile(
     SelectedAudioFile selected, {
+    ImportCancellationSignal? cancellation,
     FileCopyProgress? onProgress,
   }) async {
+    final current = copyCount++;
     events?.add('copy');
+    if (current == pauseCopyAt) {
+      copyPaused.complete();
+      await cancellation?.whenCancelled;
+      throw const ImportCancelledException();
+    }
     onProgress?.call(100, 100);
-    return const ImportedAudioFile(
-      path: '/bookish/book.m4b',
-      displayName: 'book.m4b',
+    return ImportedAudioFile(
+      path: '/bookish/book-$current.m4b',
+      displayName: selected.displayName,
     );
   }
 

@@ -8,6 +8,7 @@ import '../../core/navigation/app_router.dart';
 import '../../core/navigation/import_source.dart';
 import '../../core/navigation/focus_navigation.dart';
 import '../../core/presentation/app_message.dart';
+import '../importing/models/import_route_result.dart';
 import '../player/cubits/player_cubit.dart';
 import 'cubits/library_cubit.dart';
 import 'cubits/library_intents.dart';
@@ -75,11 +76,11 @@ class LibraryScreenRoot extends StatelessWidget {
     LibraryCubit cubit,
     ImportSource source,
   ) async {
-    final imported = await context.pushNamed<bool>(
+    final result = await context.pushNamed<ImportRouteResult>(
       AppRoutes.import,
       extra: source,
     );
-    if (imported == true && context.mounted) {
+    if ((result?.importedCount ?? 0) > 0 && context.mounted) {
       await cubit.load();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -26,55 +26,61 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(position) => "Od ${position}";
 
-  static String m3(file, copied, total) =>
+  static String m3(count) =>
+      "${Intl.plural(count, zero: 'Neboli pridané žiadne audioknihy.', one: '1 dokončená audiokniha zostáva vo vašej knižnici.', other: '${count} dokončených audiokníh zostáva vo vašej knižnici.')}";
+
+  static String m4(file, copied, total) =>
       "${file}\nSkopírované ${copied} z ${total}";
 
-  static String m4(stage) =>
-      "Zlyhanie nastalo počas činnosti: ${stage}. Úplnú diagnostiku nižšie môžete skopírovať pri nahlasovaní problému.";
+  static String m5(stage) =>
+      "Zlyhanie nastalo počas činnosti: ${stage}. Bezpečnú diagnostiku nižšie môžete skopírovať pri nahlasovaní problému.";
 
-  static String m5(file) => "${file}\nPonechajte Bookish chvíľu otvorený.";
+  static String m6(file, stage) =>
+      "Import súboru ${file} zlyhal počas činnosti: ${stage}. Dokončené audioknihy zostávajú vo vašej knižnici. Pri hlásení problému môžete skopírovať bezpečnú diagnostiku nižšie.";
 
-  static String m6(duration) => "Posunie prehrávanie o ${duration} dozadu.";
+  static String m7(file) => "${file}\nPonechajte Bookish chvíľu otvorený.";
 
-  static String m7(duration) => "Posunie prehrávanie o ${duration} dopredu.";
+  static String m8(duration) => "Posunie prehrávanie o ${duration} dozadu.";
 
-  static String m8(count) => "Posledných ${count} min";
+  static String m9(duration) => "Posunie prehrávanie o ${duration} dopredu.";
 
-  static String m9(count) => "Posledných ${count} s";
+  static String m10(count) => "Posledných ${count} min";
 
-  static String m10(size) => "Spravované: ${size}";
+  static String m11(count) => "Posledných ${count} s";
 
-  static String m11(count) => "Zostáva približne ${count} minút";
+  static String m12(size) => "Spravované: ${size}";
 
-  static String m12(count) => "${count} min";
+  static String m13(count) => "Zostáva približne ${count} minút";
 
-  static String m13(size) => "${size} MB";
+  static String m14(count) => "${count} min";
 
-  static String m14(position) => "Poznámka na pozícii ${position}";
+  static String m15(size) => "${size} MB";
 
-  static String m15(count) =>
+  static String m16(position) => "Poznámka na pozícii ${position}";
+
+  static String m17(count) =>
       "${Intl.plural(count, one: '1 poznámka', few: '${count} poznámky', other: '${count} poznámok')}";
 
-  static String m16(title) => "Citát z knihy ${title}";
+  static String m18(title) => "Citát z knihy ${title}";
 
-  static String m17(start, end) => "${start} až ${end}";
+  static String m19(start, end) => "${start} až ${end}";
 
-  static String m18(start, end) => "${start} – ${end} v kapitole";
+  static String m20(start, end) => "${start} – ${end} v kapitole";
 
-  static String m19(size) => "Bezpečne možno uvoľniť ${size}";
+  static String m21(size) => "Bezpečne možno uvoľniť ${size}";
 
-  static String m20(title) => "Odstrániť „${title}“?";
+  static String m22(title) => "Odstrániť „${title}“?";
 
-  static String m21(title) =>
+  static String m23(title) =>
       "„${title}“ bude odstránená z knižnice, pretože jej zvuk už nie je dostupný.";
 
-  static String m22(count) => "o ${count} s skôr";
+  static String m24(count) => "o ${count} s skôr";
 
-  static String m23(count) => "o ${count} s neskôr";
+  static String m25(count) => "o ${count} s neskôr";
 
-  static String m24(count) => "${count} s";
+  static String m26(count) => "${count} s";
 
-  static String m25(position) => "Do ${position}";
+  static String m27(position) => "Do ${position}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -318,12 +324,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "importAudiobooks": MessageLookupByLibrary.simpleMessage(
       "Importovať audioknihy",
     ),
+    "importCancelled": MessageLookupByLibrary.simpleMessage(
+      "Import bol zrušený",
+    ),
+    "importCancelledDetail": m3,
     "importChooseFiles": MessageLookupByLibrary.simpleMessage(
       "Vyberte jeden alebo viac súborov audiokníh.",
     ),
-    "importCopyProgress": m3,
+    "importCopyProgress": m4,
     "importCopyingAudiobook": MessageLookupByLibrary.simpleMessage(
       "Kopírovanie audioknihy",
+    ),
+    "importDiagnosticPrivacy": MessageLookupByLibrary.simpleMessage(
+      "Názvy kníh, cesty k súborom a nespracované chyby sú vynechané.",
     ),
     "importExtractingArtwork": MessageLookupByLibrary.simpleMessage(
       "Extrahovanie obálky",
@@ -331,7 +344,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "importFailed": MessageLookupByLibrary.simpleMessage(
       "Audioknihu sa nepodarilo importovať",
     ),
-    "importFailureAtStage": m4,
+    "importFailureAtStage": m5,
+    "importFailureForFileAtStage": m6,
     "importFileAccessFailed": MessageLookupByLibrary.simpleMessage(
       "Bookish nemohol pristúpiť k súboru",
     ),
@@ -341,7 +355,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "importKeepOpen": MessageLookupByLibrary.simpleMessage(
       "Ponechajte Bookish chvíľu otvorený.",
     ),
-    "importKeepOpenWithFile": m5,
+    "importKeepOpenWithFile": m7,
     "importMalformedMetadata": MessageLookupByLibrary.simpleMessage(
       "Metadáta audioknihy sú poškodené",
     ),
@@ -416,10 +430,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "keepUserDataDescription": MessageLookupByLibrary.simpleMessage(
       "Ponechá poznámky, údaje knihy, obal a históriu počúvania.",
     ),
-    "largeSeekBackward": m6,
-    "largeSeekForward": m7,
-    "lastMinutes": m8,
-    "lastSeconds": m9,
+    "largeSeekBackward": m8,
+    "largeSeekForward": m9,
+    "lastMinutes": m10,
+    "lastSeconds": m11,
     "lastSevenDays": MessageLookupByLibrary.simpleMessage("Posledných 7 dní"),
     "lastThirtyDays": MessageLookupByLibrary.simpleMessage("Posledných 30 dní"),
     "lastTwelveMonths": MessageLookupByLibrary.simpleMessage(
@@ -465,7 +479,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "localTranscriptionTitle": MessageLookupByLibrary.simpleMessage(
       "Lokálny prepis",
     ),
-    "managedStorage": m10,
+    "managedStorage": m12,
     "markFinished": MessageLookupByLibrary.simpleMessage(
       "Označiť ako dokončené",
     ),
@@ -478,8 +492,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "metadataSaveFailed": MessageLookupByLibrary.simpleMessage(
       "Metadáta audioknihy sa nepodarilo uložiť.",
     ),
-    "minutesRemaining": m11,
-    "minutesShort": m12,
+    "minutesRemaining": m13,
+    "minutesShort": m14,
     "missingAudioDescription": MessageLookupByLibrary.simpleMessage(
       "Jeho zvukový súbor už nie je dostupný.",
     ),
@@ -490,7 +504,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "modelDownloaded": MessageLookupByLibrary.simpleMessage("Stiahnutý"),
     "modelNotDownloaded": MessageLookupByLibrary.simpleMessage("Nestiahnutý"),
     "modelSelected": MessageLookupByLibrary.simpleMessage("Vybraný"),
-    "modelSize": m13,
+    "modelSize": m15,
     "month": MessageLookupByLibrary.simpleMessage("Mesiac"),
     "moveFromFinderDescription": MessageLookupByLibrary.simpleMessage(
       "Skopírovať do Bookish a potom odstrániť prenesené originály",
@@ -521,8 +535,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "none": MessageLookupByLibrary.simpleMessage("Žiadne"),
     "notStarted": MessageLookupByLibrary.simpleMessage("Nezačaté"),
-    "noteAtPosition": m14,
-    "noteCount": m15,
+    "noteAtPosition": m16,
+    "noteCount": m17,
     "noteThoughtHint": MessageLookupByLibrary.simpleMessage(
       "Myšlienka, ku ktorej sa oplatí vrátiť…",
     ),
@@ -595,21 +609,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "quoteSavedToNotes": MessageLookupByLibrary.simpleMessage(
       "Citát bol uložený do poznámok.",
     ),
-    "quoteShareSubject": m16,
+    "quoteShareSubject": m18,
     "quoteTimeRange": MessageLookupByLibrary.simpleMessage(
       "Časový rozsah citátu",
     ),
     "quoteTranscriptionFailed": MessageLookupByLibrary.simpleMessage(
       "Citát sa nepodarilo prepísať.",
     ),
-    "rangeAccessibilityValue": m17,
-    "rangeInChapter": m18,
+    "rangeAccessibilityValue": m19,
+    "rangeInChapter": m20,
     "recentlyAdded": MessageLookupByLibrary.simpleMessage("Nedávno pridané"),
-    "reclaimableStorage": m19,
+    "reclaimableStorage": m21,
     "removeAudioOnly": MessageLookupByLibrary.simpleMessage(
       "Odstrániť iba zvuk",
     ),
-    "removeBookQuestion": m20,
+    "removeBookQuestion": m22,
     "removeEntry": MessageLookupByLibrary.simpleMessage("Odstrániť záznam"),
     "removeFavorite": MessageLookupByLibrary.simpleMessage(
       "Odobrať z obľúbených",
@@ -617,7 +631,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeFromDevice": MessageLookupByLibrary.simpleMessage(
       "Odstrániť zo zariadenia",
     ),
-    "removeMissingBookDescription": m21,
+    "removeMissingBookDescription": m23,
     "removeMissingEntryQuestion": MessageLookupByLibrary.simpleMessage(
       "Odstrániť chýbajúci záznam?",
     ),
@@ -654,9 +668,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveVoiceNote": MessageLookupByLibrary.simpleMessage(
       "Uložiť hlasovú poznámku",
     ),
-    "secondsEarlier": m22,
-    "secondsLater": m23,
-    "secondsShort": m24,
+    "secondsEarlier": m24,
+    "secondsLater": m25,
+    "secondsShort": m26,
     "seriesField": MessageLookupByLibrary.simpleMessage("Séria"),
     "settingsLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Nastavenia vzhľadu sa nepodarilo načítať.",
@@ -738,7 +752,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timer": MessageLookupByLibrary.simpleMessage("Časovač"),
     "timerActive": MessageLookupByLibrary.simpleMessage("Časovač je aktívny"),
     "titleField": MessageLookupByLibrary.simpleMessage("Názov"),
-    "toPosition": m25,
+    "toPosition": m27,
     "trackOrder": MessageLookupByLibrary.simpleMessage("Poradie stôp"),
     "transcribeQuote": MessageLookupByLibrary.simpleMessage("Prepísať citát"),
     "transcribeRange": MessageLookupByLibrary.simpleMessage("Prepísať rozsah"),
