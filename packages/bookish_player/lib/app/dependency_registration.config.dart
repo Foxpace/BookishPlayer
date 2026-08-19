@@ -236,12 +236,8 @@ import 'package:bookish_player/features/settings/repos/implementations/settings_
     as _i754;
 import 'package:bookish_player/features/settings/repos/settings_repository.dart'
     as _i852;
-import 'package:bookish_player/features/settings/use_cases/save_playback_preferences_use_case.dart'
-    as _i946;
-import 'package:bookish_player/features/settings/use_cases/save_theme_preference_use_case.dart'
-    as _i230;
-import 'package:bookish_player/features/settings/use_cases/settings_use_cases.dart'
-    as _i981;
+import 'package:bookish_player/features/settings/use_cases/settings_application.dart'
+    as _i847;
 import 'package:bookish_player/features/storage/repos/app_data_reset_repository.dart'
     as _i101;
 import 'package:bookish_player/features/storage/repos/implementations/device_app_data_reset_repository.dart'
@@ -483,21 +479,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i852.SettingsRepository>(
       () => _i466.SembastSettingsRepository(gh<_i754.SettingsDao>()),
     );
-    gh.factory<_i946.SavePlaybackPreferencesUseCase>(
-      () =>
-          _i946.SavePlaybackPreferencesUseCase(gh<_i852.SettingsRepository>()),
-    );
-    gh.factory<_i230.SaveThemePreferenceUseCase>(
-      () => _i230.SaveThemePreferenceUseCase(gh<_i852.SettingsRepository>()),
-    );
-    gh.factory<_i981.LoadSettingsUseCase>(
-      () => _i981.LoadSettingsUseCase(gh<_i852.SettingsRepository>()),
+    gh.factory<_i847.SettingsApplication>(
+      () => _i847.SettingsApplication(gh<_i852.SettingsRepository>()),
     );
     gh.factory<_i158.ImportCleanup>(
       () => _i158.ImportCleanup(
         gh<_i444.FileImportRepository>(),
         gh<_i29.AppDiagnostics>(),
       ),
+    );
+    gh.lazySingleton<_i621.SettingsCubit>(
+      () => _i621.SettingsCubit(gh<_i847.SettingsApplication>()),
     );
     gh.factory<_i661.VoiceNoteCubit>(
       () => _i661.VoiceNoteCubit(gh<_i152.VoiceNoteUseCases>()),
@@ -611,13 +603,6 @@ extension GetItInjectableX on _i174.GetIt {
       ),
       registerFor: {_internal},
     );
-    gh.factory<_i981.SettingsUseCases>(
-      () => _i981.SettingsUseCases(
-        gh<_i981.LoadSettingsUseCase>(),
-        gh<_i946.SavePlaybackPreferencesUseCase>(),
-        gh<_i230.SaveThemePreferenceUseCase>(),
-      ),
-    );
     gh.factory<_i1032.StorageAssistantWorkflow>(
       () => _i1032.StorageAssistantWorkflow(
         gh<_i564.AudiobookCatalogRepository>(),
@@ -630,9 +615,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i484.ShareTranscriptionDraftUseCase>(),
       ),
       registerFor: {_internal},
-    );
-    gh.lazySingleton<_i621.SettingsCubit>(
-      () => _i621.SettingsCubit(gh<_i981.SettingsUseCases>()),
     );
     gh.lazySingleton<_i276.PlayerNoteUseCases>(
       () => _i276.PlayerNoteUseCases(gh<_i177.PlayerNotesService>()),

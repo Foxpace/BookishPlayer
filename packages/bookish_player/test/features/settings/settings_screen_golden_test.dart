@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../../test_support/support/fakes/fake_library_test_support.dart';
 import '../../../test_support/support/pump_bookish_app.dart';
-import '../../../test_support/features/settings/settings_test_use_cases.dart';
+import '../../../test_support/features/settings/settings_test_application.dart';
 
 void main() {
   group('Cohesive settings presentation', () {
@@ -61,7 +61,7 @@ void main() {
 }
 
 Future<SettingsCubit> _buildCubit() async {
-  final cubit = SettingsCubit(buildSettingsUseCases(FakeLibrarySettings()));
+  final cubit = SettingsCubit(buildSettingsApplication(FakeLibrarySettings()));
   await cubit.load();
   return cubit;
 }
