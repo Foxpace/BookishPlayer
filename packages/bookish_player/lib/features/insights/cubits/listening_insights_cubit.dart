@@ -32,6 +32,7 @@ class ListeningInsightsCubit extends Cubit<ListeningInsightsState> {
             totalListening: value.totalListening,
             completedBooks: value.completedBooks,
             activeDays: value.activeDays,
+            streakDays: value.streakDays,
           ),
         );
       case ResultFailure():

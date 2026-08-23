@@ -40,6 +40,39 @@ Map<InsightsPeriod, ListeningActivityRange> aggregateListeningActivity(
   };
 }
 
+int calculateCurrentListeningStreak(
+  Iterable<ListeningSession> sessions, {
+  required DateTime now,
+}) {
+  final today = _dateOnly(now.toLocal());
+  final activeDates =
+      sessions
+          .map((session) => _dateOnly(session.startedAt.toLocal()))
+          .where((date) => date.isAfter(today) == false)
+          .toSet()
+          .toList()
+        ..sort((left, right) => right.compareTo(left));
+  if (activeDates.isEmpty) {
+    return 0;
+  }
+
+  final yesterday = _previousDay(today);
+  var expectedDate = activeDates.first == today ? today : yesterday;
+  if (activeDates.first != expectedDate) {
+    return 0;
+  }
+
+  var streakDays = 0;
+  for (final activeDate in activeDates) {
+    if (activeDate != expectedDate) {
+      break;
+    }
+    streakDays += 1;
+    expectedDate = _previousDay(expectedDate);
+  }
+  return streakDays;
+}
+
 ListeningActivityRange _aggregateRange(
   List<({DateTime date, int listenedMs})> sessions,
   List<(DateTime, DateTime)> bounds,
@@ -113,3 +146,6 @@ List<(DateTime, DateTime)> _monthlyBounds(
 }
 
 DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
+
+DateTime _previousDay(DateTime date) =>
+    DateTime(date.year, date.month, date.day - 1);

@@ -50,6 +50,64 @@ void main() {
       },
     );
   });
+
+  group('Current listening streak', () {
+    test(
+      'Given listening on consecutive days including today, When the streak is calculated, Then each distinct day is counted once',
+      () {
+        // GIVEN
+        final now = DateTime(2026, 8, 6, 18);
+        final sessions = [
+          _session('today-1', DateTime(2026, 8, 6, 8), 10),
+          _session('today-2', DateTime(2026, 8, 6, 12), 20),
+          _session('yesterday', DateTime(2026, 8, 5, 9), 15),
+          _session('two-days-ago', DateTime(2026, 8, 4, 9), 10),
+        ];
+
+        // WHEN
+        final streak = calculateCurrentListeningStreak(sessions, now: now);
+
+        // THEN
+        expect(streak, 3);
+      },
+    );
+
+    test(
+      'Given consecutive listening ending yesterday, When the streak is calculated, Then the current streak remains active',
+      () {
+        // GIVEN
+        final now = DateTime(2026, 8, 6, 18);
+        final sessions = [
+          _session('yesterday', DateTime(2026, 8, 5, 9), 15),
+          _session('two-days-ago', DateTime(2026, 8, 4, 9), 10),
+        ];
+
+        // WHEN
+        final streak = calculateCurrentListeningStreak(sessions, now: now);
+
+        // THEN
+        expect(streak, 2);
+      },
+    );
+
+    test(
+      'Given listening stopped before yesterday, When the streak is calculated, Then the current streak is zero',
+      () {
+        // GIVEN
+        final now = DateTime(2026, 8, 6, 18);
+        final sessions = [
+          _session('two-days-ago', DateTime(2026, 8, 4, 9), 10),
+          _session('three-days-ago', DateTime(2026, 8, 3, 9), 10),
+        ];
+
+        // WHEN
+        final streak = calculateCurrentListeningStreak(sessions, now: now);
+
+        // THEN
+        expect(streak, 0);
+      },
+    );
+  });
 }
 
 ListeningSession _session(String id, DateTime startedAt, int minutes) {

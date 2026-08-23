@@ -72,6 +72,7 @@
   "year": "Rok",
   "booksCompleted": "Dopočúvané knihy",
   "activeDays": "Aktívne dni",
+  "streakDays": "Dni v rade",
   "emptyListeningHistory": "História počúvania sa zobrazí tu.",
   "finishedBook": "Dopočúvaná kniha",
   "storageInspectFailed": "Úložisko sa nepodarilo skontrolovať.",

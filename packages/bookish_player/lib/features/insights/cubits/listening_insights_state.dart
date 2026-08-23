@@ -17,6 +17,7 @@ abstract class ListeningInsightsState with _$ListeningInsightsState {
     @Default(Duration.zero) Duration totalListening,
     @Default(0) int completedBooks,
     @Default(0) int activeDays,
+    @Default(0) int streakDays,
     AppMessage? message,
     @Default(0) int effectRevision,
   }) = _ListeningInsightsState;
