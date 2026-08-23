@@ -10,6 +10,7 @@ class AllTimeListeningSummary extends StatelessWidget {
     required this.totalListening,
     required this.completedBooks,
     required this.activeDays,
+    required this.streakDays,
     required this.locale,
     super.key,
   });
@@ -17,6 +18,7 @@ class AllTimeListeningSummary extends StatelessWidget {
   final Duration totalListening;
   final int completedBooks;
   final int activeDays;
+  final int streakDays;
   final String locale;
 
   @override
@@ -51,6 +53,11 @@ class AllTimeListeningSummary extends StatelessWidget {
               label: l10n.activeDays,
               value: numberFormat.format(activeDays),
               icon: Icons.local_fire_department_outlined,
+            ),
+            InsightCard(
+              label: l10n.streakDays,
+              value: numberFormat.format(streakDays),
+              icon: Icons.bolt_rounded,
             ),
           ],
         ),

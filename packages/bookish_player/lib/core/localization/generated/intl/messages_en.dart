@@ -709,6 +709,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "storageInspectFailed": MessageLookupByLibrary.simpleMessage(
       "Storage could not be inspected.",
     ),
+    "streakDays": MessageLookupByLibrary.simpleMessage("Streak days"),
     "systemColorsDescription": MessageLookupByLibrary.simpleMessage(
       "Match colors to your wallpaper on Android 12 and newer",
     ),

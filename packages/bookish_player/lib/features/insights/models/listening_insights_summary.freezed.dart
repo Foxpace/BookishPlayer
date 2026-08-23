@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ListeningInsightsSummary {
 
- Map<InsightsPeriod, ListeningActivityRange> get activityByPeriod; Duration get totalListening; int get completedBooks; int get activeDays;
+ Map<InsightsPeriod, ListeningActivityRange> get activityByPeriod; Duration get totalListening; int get completedBooks; int get activeDays; int get streakDays;
 /// Create a copy of ListeningInsightsSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ListeningInsightsSummaryCopyWith<ListeningInsightsSummary> get copyWith => _$Li
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningInsightsSummary&&const DeepCollectionEquality().equals(other.activityByPeriod, activityByPeriod)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningInsightsSummary&&const DeepCollectionEquality().equals(other.activityByPeriod, activityByPeriod)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(activityByPeriod),totalListening,completedBooks,activeDays);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(activityByPeriod),totalListening,completedBooks,activeDays,streakDays);
 
 @override
 String toString() {
-  return 'ListeningInsightsSummary(activityByPeriod: $activityByPeriod, totalListening: $totalListening, completedBooks: $completedBooks, activeDays: $activeDays)';
+  return 'ListeningInsightsSummary(activityByPeriod: $activityByPeriod, totalListening: $totalListening, completedBooks: $completedBooks, activeDays: $activeDays, streakDays: $streakDays)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ListeningInsightsSummaryCopyWith<$Res>  {
   factory $ListeningInsightsSummaryCopyWith(ListeningInsightsSummary value, $Res Function(ListeningInsightsSummary) _then) = _$ListeningInsightsSummaryCopyWithImpl;
 @useResult
 $Res call({
- Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, Duration totalListening, int completedBooks, int activeDays
+ Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, Duration totalListening, int completedBooks, int activeDays, int streakDays
 });
 
 
@@ -62,12 +62,13 @@ class _$ListeningInsightsSummaryCopyWithImpl<$Res>
 
 /// Create a copy of ListeningInsightsSummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? activityByPeriod = null,Object? totalListening = null,Object? completedBooks = null,Object? activeDays = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? activityByPeriod = null,Object? totalListening = null,Object? completedBooks = null,Object? activeDays = null,Object? streakDays = null,}) {
   return _then(_self.copyWith(
 activityByPeriod: null == activityByPeriod ? _self.activityByPeriod : activityByPeriod // ignore: cast_nullable_to_non_nullable
 as Map<InsightsPeriod, ListeningActivityRange>,totalListening: null == totalListening ? _self.totalListening : totalListening // ignore: cast_nullable_to_non_nullable
 as Duration,completedBooks: null == completedBooks ? _self.completedBooks : completedBooks // ignore: cast_nullable_to_non_nullable
 as int,activeDays: null == activeDays ? _self.activeDays : activeDays // ignore: cast_nullable_to_non_nullable
+as int,streakDays: null == streakDays ? _self.streakDays : streakDays // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -153,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Map<InsightsPeriod, ListeningActivityRange> activityByPeriod,  Duration totalListening,  int completedBooks,  int activeDays)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Map<InsightsPeriod, ListeningActivityRange> activityByPeriod,  Duration totalListening,  int completedBooks,  int activeDays,  int streakDays)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ListeningInsightsSummary() when $default != null:
-return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks,_that.activeDays);case _:
+return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks,_that.activeDays,_that.streakDays);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Map<InsightsPeriod, ListeningActivityRange> activityByPeriod,  Duration totalListening,  int completedBooks,  int activeDays)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Map<InsightsPeriod, ListeningActivityRange> activityByPeriod,  Duration totalListening,  int completedBooks,  int activeDays,  int streakDays)  $default,) {final _that = this;
 switch (_that) {
 case _ListeningInsightsSummary():
-return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks,_that.activeDays);case _:
+return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks,_that.activeDays,_that.streakDays);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +195,10 @@ return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Map<InsightsPeriod, ListeningActivityRange> activityByPeriod,  Duration totalListening,  int completedBooks,  int activeDays)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Map<InsightsPeriod, ListeningActivityRange> activityByPeriod,  Duration totalListening,  int completedBooks,  int activeDays,  int streakDays)?  $default,) {final _that = this;
 switch (_that) {
 case _ListeningInsightsSummary() when $default != null:
-return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks,_that.activeDays);case _:
+return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks,_that.activeDays,_that.streakDays);case _:
   return null;
 
 }
@@ -209,7 +210,7 @@ return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks
 
 
 class _ListeningInsightsSummary implements ListeningInsightsSummary {
-  const _ListeningInsightsSummary({required final  Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, required this.totalListening, required this.completedBooks, required this.activeDays}): _activityByPeriod = activityByPeriod;
+  const _ListeningInsightsSummary({required final  Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, required this.totalListening, required this.completedBooks, required this.activeDays, required this.streakDays}): _activityByPeriod = activityByPeriod;
   
 
  final  Map<InsightsPeriod, ListeningActivityRange> _activityByPeriod;
@@ -222,6 +223,7 @@ class _ListeningInsightsSummary implements ListeningInsightsSummary {
 @override final  Duration totalListening;
 @override final  int completedBooks;
 @override final  int activeDays;
+@override final  int streakDays;
 
 /// Create a copy of ListeningInsightsSummary
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +235,16 @@ _$ListeningInsightsSummaryCopyWith<_ListeningInsightsSummary> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningInsightsSummary&&const DeepCollectionEquality().equals(other._activityByPeriod, _activityByPeriod)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningInsightsSummary&&const DeepCollectionEquality().equals(other._activityByPeriod, _activityByPeriod)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_activityByPeriod),totalListening,completedBooks,activeDays);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_activityByPeriod),totalListening,completedBooks,activeDays,streakDays);
 
 @override
 String toString() {
-  return 'ListeningInsightsSummary(activityByPeriod: $activityByPeriod, totalListening: $totalListening, completedBooks: $completedBooks, activeDays: $activeDays)';
+  return 'ListeningInsightsSummary(activityByPeriod: $activityByPeriod, totalListening: $totalListening, completedBooks: $completedBooks, activeDays: $activeDays, streakDays: $streakDays)';
 }
 
 
@@ -253,7 +255,7 @@ abstract mixin class _$ListeningInsightsSummaryCopyWith<$Res> implements $Listen
   factory _$ListeningInsightsSummaryCopyWith(_ListeningInsightsSummary value, $Res Function(_ListeningInsightsSummary) _then) = __$ListeningInsightsSummaryCopyWithImpl;
 @override @useResult
 $Res call({
- Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, Duration totalListening, int completedBooks, int activeDays
+ Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, Duration totalListening, int completedBooks, int activeDays, int streakDays
 });
 
 
@@ -270,12 +272,13 @@ class __$ListeningInsightsSummaryCopyWithImpl<$Res>
 
 /// Create a copy of ListeningInsightsSummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? activityByPeriod = null,Object? totalListening = null,Object? completedBooks = null,Object? activeDays = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? activityByPeriod = null,Object? totalListening = null,Object? completedBooks = null,Object? activeDays = null,Object? streakDays = null,}) {
   return _then(_ListeningInsightsSummary(
 activityByPeriod: null == activityByPeriod ? _self._activityByPeriod : activityByPeriod // ignore: cast_nullable_to_non_nullable
 as Map<InsightsPeriod, ListeningActivityRange>,totalListening: null == totalListening ? _self.totalListening : totalListening // ignore: cast_nullable_to_non_nullable
 as Duration,completedBooks: null == completedBooks ? _self.completedBooks : completedBooks // ignore: cast_nullable_to_non_nullable
 as int,activeDays: null == activeDays ? _self.activeDays : activeDays // ignore: cast_nullable_to_non_nullable
+as int,streakDays: null == streakDays ? _self.streakDays : streakDays // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }

@@ -67,10 +67,12 @@ void main() {
         robot.expectPopulatedSummary(const [
           'All-time listening',
           'Listening activity',
+          'Streak days',
           '1',
-          '2',
           'Last 7 days',
         ]);
+        expect(find.text('2'), findsNWidgets(2));
+        expect(cubit.state.streakDays, 2);
 
         await robot.selectPeriod('Month');
         expect(cubit.state.selectedPeriod.name, 'month');

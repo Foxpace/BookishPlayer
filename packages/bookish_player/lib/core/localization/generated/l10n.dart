@@ -709,6 +709,11 @@ class S {
     return Intl.message('Active days', name: 'activeDays', desc: '', args: []);
   }
 
+  /// `Streak days`
+  String get streakDays {
+    return Intl.message('Streak days', name: 'streakDays', desc: '', args: []);
+  }
+
   /// `Your listening history will appear here.`
   String get emptyListeningHistory {
     return Intl.message(

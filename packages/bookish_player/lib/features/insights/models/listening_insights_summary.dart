@@ -13,5 +13,6 @@ abstract class ListeningInsightsSummary with _$ListeningInsightsSummary {
     required Duration totalListening,
     required int completedBooks,
     required int activeDays,
+    required int streakDays,
   }) = _ListeningInsightsSummary;
 }

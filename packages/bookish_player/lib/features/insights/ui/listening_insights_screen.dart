@@ -44,6 +44,7 @@ class ListeningInsightsScreen extends StatelessWidget {
               totalListening: state.totalListening,
               completedBooks: state.completedBooks,
               activeDays: state.activeDays,
+              streakDays: state.streakDays,
               locale: locale,
             ),
             const SizedBox(height: 28),

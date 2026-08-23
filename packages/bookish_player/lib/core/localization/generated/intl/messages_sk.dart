@@ -743,6 +743,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "storageInspectFailed": MessageLookupByLibrary.simpleMessage(
       "Úložisko sa nepodarilo skontrolovať.",
     ),
+    "streakDays": MessageLookupByLibrary.simpleMessage("Dni v rade"),
     "systemColorsDescription": MessageLookupByLibrary.simpleMessage(
       "Prispôsobiť farby tapete v Androide 12 a novšom",
     ),

@@ -82,6 +82,7 @@
   "year": "Year",
   "booksCompleted": "Books completed",
   "activeDays": "Active days",
+  "streakDays": "Streak days",
   "emptyListeningHistory": "Your listening history will appear here.",
   "finishedBook": "Finished book",
   "storageInspectFailed": "Storage could not be inspected.",

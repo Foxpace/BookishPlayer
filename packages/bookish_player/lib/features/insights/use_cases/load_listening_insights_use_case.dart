@@ -36,11 +36,13 @@ class LoadListeningInsightsUseCase {
         .map((item) => item.startedAt.toLocal())
         .map((date) => DateTime(date.year, date.month, date.day))
         .toSet();
+    final now = _clock.now();
     return ListeningInsightsSummary(
-      activityByPeriod: aggregateListeningActivity(sessions, now: _clock.now()),
+      activityByPeriod: aggregateListeningActivity(sessions, now: now),
       totalListening: Duration(milliseconds: totalMs),
       completedBooks: metadata.where((item) => item.completedAt != null).length,
       activeDays: activeDates.length,
+      streakDays: calculateCurrentListeningStreak(sessions, now: now),
     );
   }
 }
