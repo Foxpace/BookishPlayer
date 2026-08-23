@@ -3,6 +3,7 @@ import 'package:sembast/sembast.dart';
 
 import '../../../../core/database/bookish_database.dart';
 import '../../../../core/foundation/result.dart';
+import '../../../../core/theme/bookish_theme_seed.dart';
 import '../../../library/repos/implementations/book_storage_codec.dart';
 import '../../../library/models/library_models.dart';
 import '../../../library/models/listening_session.dart';
@@ -287,6 +288,8 @@ class SembastBackupStoreRepository implements BackupStoreRepository {
     await (
       _settings.record('appearance').put(transaction, {
         'theme': settings.theme,
+        'useSystemColors': settings.useSystemColors,
+        'primaryColor': settings.primaryColor,
       }),
       _settings.record('playback').put(transaction, settings.playback.toJson()),
     ).wait;

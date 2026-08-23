@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
+import '../../../../core/presentation/bookish_switch_list_tile.dart';
 import '../../models/playback_preferences.dart';
 
 class PlaybackSettingsSection extends StatelessWidget {
@@ -235,10 +236,8 @@ class _PlaybackSwitchTile extends StatelessWidget {
   final ValueChanged<bool> onChanged;
 
   @override
-  Widget build(BuildContext context) => SwitchListTile(
-    secondary: Icon(icon),
-    title: Text(title),
-    subtitle: Text(description),
+  Widget build(BuildContext context) => BookishSwitchListTile(
+    content: (icon: icon, title: Text(title), subtitle: Text(description)),
     value: value,
     onChanged: onChanged,
   );

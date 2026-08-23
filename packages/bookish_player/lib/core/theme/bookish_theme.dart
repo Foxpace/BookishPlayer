@@ -1,32 +1,47 @@
 import 'package:flutter/material.dart';
 
+import 'bookish_theme_seed.dart';
+
 part 'bookish_text_styles.dart';
 
 abstract final class BookishTheme {
   static const _bodyFontFamily = 'serif';
   static const _diagnosticFontFamily = 'monospace';
-  static const _ochre = Color(0xFFBD6C3B);
   static const _lightPaper = Color(0xFFF7F3EA);
   static const _lightInk = Color(0xFF26241F);
   static const _darkPaper = Color(0xFF171612);
   static const _darkInk = Color(0xFFF4EEE4);
 
-  static ThemeData get light => _build(
+  static ThemeData get light => lightFrom();
+
+  static ThemeData get dark => darkFrom();
+
+  static ThemeData lightFrom({
+    Color seedColor = const Color(defaultBookishSeedColorValue),
+    ColorScheme? systemColorScheme,
+  }) => _build(
     brightness: Brightness.light,
-    background: _lightPaper,
-    foreground: _lightInk,
-    palette: const (
+    seedColor: seedColor,
+    systemColorScheme: systemColorScheme,
+    fallbackPalette: const (
+      background: _lightPaper,
+      foreground: _lightInk,
       surface: Color(0xFFFFFCF6),
       border: Color(0xFFE8E0D2),
       field: Color(0xFFFFFCF6),
     ),
   );
 
-  static ThemeData get dark => _build(
+  static ThemeData darkFrom({
+    Color seedColor = const Color(defaultBookishSeedColorValue),
+    ColorScheme? systemColorScheme,
+  }) => _build(
     brightness: Brightness.dark,
-    background: _darkPaper,
-    foreground: _darkInk,
-    palette: const (
+    seedColor: seedColor,
+    systemColorScheme: systemColorScheme,
+    fallbackPalette: const (
+      background: _darkPaper,
+      foreground: _darkInk,
       surface: Color(0xFF211F1A),
       border: Color(0xFF3B382F),
       field: Color(0xFF292720),
@@ -35,17 +50,35 @@ abstract final class BookishTheme {
 
   static ThemeData _build({
     required Brightness brightness,
-    required Color background,
-    required Color foreground,
-    required ({Color surface, Color border, Color field}) palette,
+    required Color seedColor,
+    required ColorScheme? systemColorScheme,
+    required ({
+      Color background,
+      Color foreground,
+      Color surface,
+      Color border,
+      Color field,
+    })
+    fallbackPalette,
   }) {
-    final (:surface, :border, :field) = palette;
-    final scheme = ColorScheme.fromSeed(
-      seedColor: _ochre,
-      brightness: brightness,
-      surface: surface,
-      onSurface: foreground,
-    );
+    final scheme =
+        systemColorScheme ??
+        ColorScheme.fromSeed(
+          seedColor: seedColor,
+          brightness: brightness,
+          surface: fallbackPalette.surface,
+          onSurface: fallbackPalette.foreground,
+        );
+    final palette = systemColorScheme == null
+        ? fallbackPalette
+        : (
+            background: scheme.surface,
+            foreground: scheme.onSurface,
+            surface: scheme.surfaceContainerLow,
+            border: scheme.outlineVariant,
+            field: scheme.surfaceContainerHighest,
+          );
+    final (:background, :foreground, :surface, :border, :field) = palette;
     final base = ThemeData(
       useMaterial3: true,
       brightness: brightness,

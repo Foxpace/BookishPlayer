@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -42,8 +43,13 @@ class SettingsScreenRoot extends StatelessWidget {
         },
         builder: (context, state) => SettingsScreen(
           state: state,
+          supportsSystemColors:
+              !kIsWeb && defaultTargetPlatform == TargetPlatform.android,
           actions: (
             onThemeChanged: settingsCubit.setThemePreference,
+            onSystemColorsChanged: (enabled) =>
+                settingsCubit.setUseSystemColors(enabled: enabled),
+            onPrimaryColorChanged: settingsCubit.setPrimaryColor,
             onPlaybackChanged: settingsCubit.setPlaybackPreferences,
             onNavigate: (intent) => _navigate(context, intent),
           ),

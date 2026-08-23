@@ -2,7 +2,7 @@ include: package:flutter_lints/flutter.yaml
 
 plugins:
   lintel:
-    version: 0.1.6
+    version: 0.1.7
     diagnostics:
       application_module_hides_collaborators: true
       avoid_trivial_application_modules: true

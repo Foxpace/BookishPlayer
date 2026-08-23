@@ -144,6 +144,86 @@ class S {
     );
   }
 
+  /// `Use Android system colors`
+  String get systemColorsTitle {
+    return Intl.message(
+      'Use Android system colors',
+      name: 'systemColorsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Match colors to your wallpaper on Android 12 and newer`
+  String get systemColorsDescription {
+    return Intl.message(
+      'Match colors to your wallpaper on Android 12 and newer',
+      name: 'systemColorsDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App color`
+  String get appColorTitle {
+    return Intl.message('App color', name: 'appColorTitle', desc: '', args: []);
+  }
+
+  /// `Used when system colors are off or unavailable`
+  String get appColorDescription {
+    return Intl.message(
+      'Used when system colors are off or unavailable',
+      name: 'appColorDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose app color`
+  String get chooseAppColorTitle {
+    return Intl.message(
+      'Choose app color',
+      name: 'chooseAppColorTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Default color`
+  String get defaultColor {
+    return Intl.message(
+      'Default color',
+      name: 'defaultColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hue`
+  String get colorHue {
+    return Intl.message('Hue', name: 'colorHue', desc: '', args: []);
+  }
+
+  /// `Saturation`
+  String get colorSaturation {
+    return Intl.message(
+      'Saturation',
+      name: 'colorSaturation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Brightness`
+  String get colorBrightness {
+    return Intl.message(
+      'Brightness',
+      name: 'colorBrightness',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Local transcription`
   String get localTranscriptionTitle {
     return Intl.message(

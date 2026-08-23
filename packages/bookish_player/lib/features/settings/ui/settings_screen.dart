@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/generated/l10n.dart';
+import '../../../core/presentation/bookish_control_metrics.dart';
 import '../../../core/presentation/bookish_scaffold.dart';
 import '../cubits/settings_intents.dart';
 import '../cubits/settings_state.dart';
@@ -17,13 +18,17 @@ class SettingsScreen extends StatelessWidget {
     required this.state,
     required this.sections,
     required this.actions,
+    this.supportsSystemColors = false,
     super.key,
   });
 
   final SettingsState state;
+  final bool supportsSystemColors;
   final ({Widget? transcription, Widget localData}) sections;
   final ({
     ValueChanged<ThemePreference> onThemeChanged,
+    ValueChanged<bool> onSystemColorsChanged,
+    ValueChanged<int> onPrimaryColorChanged,
     ValueChanged<PlaybackPreferences> onPlaybackChanged,
     ValueChanged<SettingsNavigationIntent> onNavigate,
   })
@@ -33,29 +38,37 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BookishScaffold(
       appBar: AppBar(title: Text(S.of(context).settingsTitle)),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-        children: [
-          LibrarySettingsSection(onNavigate: actions.onNavigate),
-          const SizedBox(height: 32),
-          AppearanceSettingsSection(
-            preference: state.themePreference,
-            onChanged: actions.onThemeChanged,
-          ),
-          const SizedBox(height: 32),
-          PlaybackSettingsSection(
-            playback: state.playback,
-            onChanged: actions.onPlaybackChanged,
-          ),
-          if (sections.transcription case final transcription?) ...[
+      body: IconTheme.merge(
+        data: const IconThemeData(size: BookishControlMetrics.iconSize),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+          children: [
+            LibrarySettingsSection(onNavigate: actions.onNavigate),
             const SizedBox(height: 32),
-            TranscriptionSettingsSection(child: transcription),
+            AppearanceSettingsSection(
+              preferences: state.appearance,
+              supportsSystemColors: supportsSystemColors,
+              actions: (
+                onThemeChanged: actions.onThemeChanged,
+                onSystemColorsChanged: actions.onSystemColorsChanged,
+                onPrimaryColorChanged: actions.onPrimaryColorChanged,
+              ),
+            ),
+            const SizedBox(height: 32),
+            PlaybackSettingsSection(
+              playback: state.playback,
+              onChanged: actions.onPlaybackChanged,
+            ),
+            if (sections.transcription case final transcription?) ...[
+              const SizedBox(height: 32),
+              TranscriptionSettingsSection(child: transcription),
+            ],
+            const SizedBox(height: 32),
+            sections.localData,
+            const SizedBox(height: 32),
+            AboutSection(onNavigate: actions.onNavigate),
           ],
-          const SizedBox(height: 32),
-          sections.localData,
-          const SizedBox(height: 32),
-          AboutSection(onNavigate: actions.onNavigate),
-        ],
+        ),
       ),
     );
   }

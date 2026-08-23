@@ -63,6 +63,8 @@ const settingsFixture = PlaybackPreferences(
 BookishBackup backupFixture({
   int schemaVersion = 3,
   String theme = 'system',
+  bool useSystemColors = true,
+  int primaryColor = 0xFFBD6C3B,
   ({
     List<Audiobook>? books,
     List<BookMetadata>? metadata,
@@ -73,7 +75,12 @@ BookishBackup backupFixture({
 }) => BookishBackup(
   exportedAt: fixtureTime,
   schemaVersion: schemaVersion,
-  settings: BackupSettings(theme: theme, playback: settingsFixture),
+  settings: BackupSettings(
+    theme: theme,
+    useSystemColors: useSystemColors,
+    primaryColor: primaryColor,
+    playback: settingsFixture,
+  ),
   books: content?.books ?? [audiobookFixture()],
   bookMetadata: content?.metadata ?? [bookMetadataFixture()],
   notes: content?.notes ?? [bookNoteFixture()],

@@ -338,7 +338,7 @@ $BackupSettingsCopyWith<$Res> get settings {
 /// @nodoc
 mixin _$BackupSettings {
 
- String get theme; PlaybackPreferences get playback;
+ String get theme; bool get useSystemColors; int get primaryColor; PlaybackPreferences get playback;
 /// Create a copy of BackupSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -351,16 +351,16 @@ $BackupSettingsCopyWith<BackupSettings> get copyWith => _$BackupSettingsCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BackupSettings&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.playback, playback) || other.playback == playback));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BackupSettings&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.useSystemColors, useSystemColors) || other.useSystemColors == useSystemColors)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&(identical(other.playback, playback) || other.playback == playback));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,theme,playback);
+int get hashCode => Object.hash(runtimeType,theme,useSystemColors,primaryColor,playback);
 
 @override
 String toString() {
-  return 'BackupSettings(theme: $theme, playback: $playback)';
+  return 'BackupSettings(theme: $theme, useSystemColors: $useSystemColors, primaryColor: $primaryColor, playback: $playback)';
 }
 
 
@@ -371,7 +371,7 @@ abstract mixin class $BackupSettingsCopyWith<$Res>  {
   factory $BackupSettingsCopyWith(BackupSettings value, $Res Function(BackupSettings) _then) = _$BackupSettingsCopyWithImpl;
 @useResult
 $Res call({
- String theme, PlaybackPreferences playback
+ String theme, bool useSystemColors, int primaryColor, PlaybackPreferences playback
 });
 
 
@@ -388,10 +388,12 @@ class _$BackupSettingsCopyWithImpl<$Res>
 
 /// Create a copy of BackupSettings
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? theme = null,Object? playback = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? theme = null,Object? useSystemColors = null,Object? primaryColor = null,Object? playback = null,}) {
   return _then(_self.copyWith(
 theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
-as String,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
+as String,useSystemColors: null == useSystemColors ? _self.useSystemColors : useSystemColors // ignore: cast_nullable_to_non_nullable
+as bool,primaryColor: null == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
+as int,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
 as PlaybackPreferences,
   ));
 }
@@ -486,10 +488,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String theme,  PlaybackPreferences playback)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String theme,  bool useSystemColors,  int primaryColor,  PlaybackPreferences playback)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BackupSettings() when $default != null:
-return $default(_that.theme,_that.playback);case _:
+return $default(_that.theme,_that.useSystemColors,_that.primaryColor,_that.playback);case _:
   return orElse();
 
 }
@@ -507,10 +509,10 @@ return $default(_that.theme,_that.playback);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String theme,  PlaybackPreferences playback)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String theme,  bool useSystemColors,  int primaryColor,  PlaybackPreferences playback)  $default,) {final _that = this;
 switch (_that) {
 case _BackupSettings():
-return $default(_that.theme,_that.playback);case _:
+return $default(_that.theme,_that.useSystemColors,_that.primaryColor,_that.playback);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -527,10 +529,10 @@ return $default(_that.theme,_that.playback);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String theme,  PlaybackPreferences playback)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String theme,  bool useSystemColors,  int primaryColor,  PlaybackPreferences playback)?  $default,) {final _that = this;
 switch (_that) {
 case _BackupSettings() when $default != null:
-return $default(_that.theme,_that.playback);case _:
+return $default(_that.theme,_that.useSystemColors,_that.primaryColor,_that.playback);case _:
   return null;
 
 }
@@ -542,10 +544,12 @@ return $default(_that.theme,_that.playback);case _:
 @JsonSerializable()
 
 class _BackupSettings implements BackupSettings {
-  const _BackupSettings({required this.theme, this.playback = const PlaybackPreferences()});
+  const _BackupSettings({required this.theme, this.useSystemColors = true, this.primaryColor = defaultBookishSeedColorValue, this.playback = const PlaybackPreferences()});
   factory _BackupSettings.fromJson(Map<String, dynamic> json) => _$BackupSettingsFromJson(json);
 
 @override final  String theme;
+@override@JsonKey() final  bool useSystemColors;
+@override@JsonKey() final  int primaryColor;
 @override@JsonKey() final  PlaybackPreferences playback;
 
 /// Create a copy of BackupSettings
@@ -561,16 +565,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BackupSettings&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.playback, playback) || other.playback == playback));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BackupSettings&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.useSystemColors, useSystemColors) || other.useSystemColors == useSystemColors)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&(identical(other.playback, playback) || other.playback == playback));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,theme,playback);
+int get hashCode => Object.hash(runtimeType,theme,useSystemColors,primaryColor,playback);
 
 @override
 String toString() {
-  return 'BackupSettings(theme: $theme, playback: $playback)';
+  return 'BackupSettings(theme: $theme, useSystemColors: $useSystemColors, primaryColor: $primaryColor, playback: $playback)';
 }
 
 
@@ -581,7 +585,7 @@ abstract mixin class _$BackupSettingsCopyWith<$Res> implements $BackupSettingsCo
   factory _$BackupSettingsCopyWith(_BackupSettings value, $Res Function(_BackupSettings) _then) = __$BackupSettingsCopyWithImpl;
 @override @useResult
 $Res call({
- String theme, PlaybackPreferences playback
+ String theme, bool useSystemColors, int primaryColor, PlaybackPreferences playback
 });
 
 
@@ -598,10 +602,12 @@ class __$BackupSettingsCopyWithImpl<$Res>
 
 /// Create a copy of BackupSettings
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? theme = null,Object? playback = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? theme = null,Object? useSystemColors = null,Object? primaryColor = null,Object? playback = null,}) {
   return _then(_BackupSettings(
 theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
-as String,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
+as String,useSystemColors: null == useSystemColors ? _self.useSystemColors : useSystemColors // ignore: cast_nullable_to_non_nullable
+as bool,primaryColor: null == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
+as int,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
 as PlaybackPreferences,
   ));
 }

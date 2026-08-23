@@ -112,6 +112,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "allTimeListening": MessageLookupByLibrary.simpleMessage(
       "All-time listening",
     ),
+    "appColorDescription": MessageLookupByLibrary.simpleMessage(
+      "Used when system colors are off or unavailable",
+    ),
+    "appColorTitle": MessageLookupByLibrary.simpleMessage("App color"),
     "appDescription": MessageLookupByLibrary.simpleMessage(
       "A quiet, offline-first audiobook player.",
     ),
@@ -179,6 +183,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chapters": MessageLookupByLibrary.simpleMessage("Chapters"),
     "chaptersTitle": MessageLookupByLibrary.simpleMessage("Chapters"),
+    "chooseAppColorTitle": MessageLookupByLibrary.simpleMessage(
+      "Choose app color",
+    ),
     "chooseAudioOutput": MessageLookupByLibrary.simpleMessage(
       "Choose audio output",
     ),
@@ -196,6 +203,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bookish could not remove all app data.",
     ),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
+    "colorBrightness": MessageLookupByLibrary.simpleMessage("Brightness"),
+    "colorHue": MessageLookupByLibrary.simpleMessage("Hue"),
+    "colorSaturation": MessageLookupByLibrary.simpleMessage("Saturation"),
     "continueSeries": MessageLookupByLibrary.simpleMessage("Continue series"),
     "continueSeriesDescription": MessageLookupByLibrary.simpleMessage(
       "Start the next unfinished volume automatically",
@@ -215,6 +225,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Could not load notes.",
     ),
     "dateAdded": MessageLookupByLibrary.simpleMessage("Date added"),
+    "defaultColor": MessageLookupByLibrary.simpleMessage("Default color"),
     "deleteAllUserDataDescription": MessageLookupByLibrary.simpleMessage(
       "Also delete notes, book details, cover, and listening history.",
     ),
@@ -697,6 +708,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "storageInspectFailed": MessageLookupByLibrary.simpleMessage(
       "Storage could not be inspected.",
+    ),
+    "systemColorsDescription": MessageLookupByLibrary.simpleMessage(
+      "Match colors to your wallpaper on Android 12 and newer",
+    ),
+    "systemColorsTitle": MessageLookupByLibrary.simpleMessage(
+      "Use Android system colors",
     ),
     "technicalDetails": MessageLookupByLibrary.simpleMessage(
       "Technical details",

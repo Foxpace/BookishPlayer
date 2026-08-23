@@ -1,3 +1,5 @@
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +15,7 @@ import '../features/player/cubits/player_cubits.dart';
 import '../features/player/ui/now_playing_shell.dart';
 import '../features/settings/cubits/settings_cubit.dart';
 import '../features/settings/cubits/settings_state.dart';
+import '../features/settings/models/appearance_preferences.dart';
 import '../features/settings/models/theme_preference.dart';
 
 class BookishApp extends StatelessWidget {
@@ -22,39 +25,19 @@ class BookishApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      buildWhen: (previous, current) =>
-          previous.themePreference != current.themePreference,
-      builder: (context, state) => MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        onGenerateTitle: (context) => S.of(context).appTitle,
-        localizationsDelegates: const [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        theme: BookishTheme.light,
-        darkTheme: BookishTheme.dark,
-        themeMode: _themeMode(state.themePreference),
-        routerConfig: router,
-        builder: (context, child) => Overlay.wrap(
-          child: _RouterAwareNowPlayingShell(
-            router: router,
-            onOpenPlayer: _openMiniPlayer,
-            child: child ?? const SizedBox.shrink(),
-          ),
-        ),
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return _BookishMaterialApp(router: router, onOpenPlayer: _openMiniPlayer);
+    }
+
+    return DynamicColorBuilder(
+      builder: (light, dark) => _BookishMaterialApp(
+        router: router,
+        onOpenPlayer: _openMiniPlayer,
+        lightSystemColorScheme: light,
+        darkSystemColorScheme: dark,
       ),
     );
   }
-
-  ThemeMode _themeMode(ThemePreference preference) => switch (preference) {
-    ThemePreference.system => ThemeMode.system,
-    ThemePreference.light => ThemeMode.light,
-    ThemePreference.dark => ThemeMode.dark,
-  };
 
   Future<void> _openMiniPlayer(String? bookId) async {
     if (bookId == null) {
@@ -66,6 +49,82 @@ class BookishApp extends StatelessWidget {
     );
     dismissRestoredRouteFocus();
   }
+}
+
+class _BookishMaterialApp extends StatelessWidget {
+  const _BookishMaterialApp({
+    required this.router,
+    required this.onOpenPlayer,
+    this.lightSystemColorScheme,
+    this.darkSystemColorScheme,
+  });
+
+  final GoRouter router;
+  final ValueChanged<String?> onOpenPlayer;
+  final ColorScheme? lightSystemColorScheme;
+  final ColorScheme? darkSystemColorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      buildWhen: (previous, current) =>
+          previous.appearance != current.appearance,
+      builder: (context, state) {
+        final appearance = state.appearance;
+
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          onGenerateTitle: (context) => S.of(context).appTitle,
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+
+          theme: _theme(appearance, Brightness.light, lightSystemColorScheme),
+          darkTheme: _theme(appearance, Brightness.dark, darkSystemColorScheme),
+          themeMode: _themeMode(appearance.theme),
+
+          routerConfig: router,
+          builder: (context, child) => Overlay.wrap(
+            child: _RouterAwareNowPlayingShell(
+              router: router,
+              onOpenPlayer: onOpenPlayer,
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  ThemeData _theme(
+    AppearancePreferences appearance,
+    Brightness brightness,
+    ColorScheme? systemColorScheme,
+  ) {
+    final selectedSystemScheme = appearance.useSystemColors
+        ? systemColorScheme
+        : null;
+    final seedColor = Color(appearance.primaryColor);
+    return brightness == Brightness.light
+        ? BookishTheme.lightFrom(
+            seedColor: seedColor,
+            systemColorScheme: selectedSystemScheme,
+          )
+        : BookishTheme.darkFrom(
+            seedColor: seedColor,
+            systemColorScheme: selectedSystemScheme,
+          );
+  }
+
+  ThemeMode _themeMode(ThemePreference preference) => switch (preference) {
+    ThemePreference.system => ThemeMode.system,
+    ThemePreference.light => ThemeMode.light,
+    ThemePreference.dark => ThemeMode.dark,
+  };
 }
 
 class _RouterAwareNowPlayingShell extends StatefulWidget {

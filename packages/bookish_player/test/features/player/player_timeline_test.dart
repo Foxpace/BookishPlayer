@@ -29,24 +29,26 @@ void main() {
         slider = tester.widget<Slider>(find.byType(Slider));
         slider.onChanged?.call(20000);
         await tester.pump();
+        final firstDraggedLabelWasShown = find
+            .text('0:20')
+            .evaluate()
+            .isNotEmpty;
 
-        // THEN
-        expect(pauseCount, 1);
-        expect(find.text('0:20'), findsOneWidget);
-
-        // WHEN
         slider = tester.widget<Slider>(find.byType(Slider));
         slider.onChanged?.call(15000);
         await tester.pump();
+        final secondDraggedLabelWasShown = find
+            .text('0:15')
+            .evaluate()
+            .isNotEmpty;
 
-        // THEN
-        expect(find.text('0:15'), findsOneWidget);
-
-        // WHEN
         slider = tester.widget<Slider>(find.byType(Slider));
         slider.onChangeEnd?.call(15000);
 
         // THEN
+        expect(pauseCount, 1);
+        expect(firstDraggedLabelWasShown, isTrue);
+        expect(secondDraggedLabelWasShown, isTrue);
         expect(sought, const Duration(seconds: 15));
       },
     );

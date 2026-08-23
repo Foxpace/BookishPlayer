@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
+import '../models/appearance_preferences.dart';
 import '../models/playback_preferences.dart';
 import '../models/theme_preference.dart';
 import '../use_cases/settings_application.dart';
@@ -38,16 +39,23 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   Future<void> setThemePreference(ThemePreference preference) async {
-    final previous = state.themePreference;
-    emit(
-      state.copyWith(
-        status: SettingsStatus.ready,
-        themePreference: preference,
-        message: null,
-      ),
-    );
-    if (await _settings.saveThemePreference(preference) case ResultFailure()) {
-      _emitThemeSaveFailure(previous);
+    await _setAppearance(state.appearance.copyWith(theme: preference));
+  }
+
+  Future<void> setUseSystemColors({required bool enabled}) async {
+    await _setAppearance(state.appearance.copyWith(useSystemColors: enabled));
+  }
+
+  Future<void> setPrimaryColor(int color) async {
+    await _setAppearance(state.appearance.copyWith(primaryColor: color));
+  }
+
+  Future<void> _setAppearance(AppearancePreferences appearance) async {
+    final previous = state.appearance;
+    emit(state.copyWith(status: SettingsStatus.ready, appearance: appearance));
+    if (await _settings.saveAppearancePreferences(appearance)
+        case ResultFailure()) {
+      _emitAppearanceSaveFailure(previous);
     }
   }
 
@@ -57,7 +65,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         emit(
           state.copyWith(
             status: SettingsStatus.ready,
-            themePreference: value.theme,
+            appearance: value.appearance,
             playback: value.playback,
           ),
         );
@@ -82,10 +90,10 @@ class SettingsCubit extends Cubit<SettingsState> {
     ),
   );
 
-  void _emitThemeSaveFailure(ThemePreference previous) => emit(
+  void _emitAppearanceSaveFailure(AppearancePreferences previous) => emit(
     state.copyWith(
       status: SettingsStatus.failure,
-      themePreference: previous,
+      appearance: previous,
       message: AppMessage.appearanceSettingsSaveFailed,
       effectRevision: state.effectRevision + 1,
     ),

@@ -114,6 +114,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "allTimeListening": MessageLookupByLibrary.simpleMessage(
       "Celkový čas počúvania",
     ),
+    "appColorDescription": MessageLookupByLibrary.simpleMessage(
+      "Použije sa, keď sú systémové farby vypnuté alebo nedostupné",
+    ),
+    "appColorTitle": MessageLookupByLibrary.simpleMessage("Farba aplikácie"),
     "appDescription": MessageLookupByLibrary.simpleMessage(
       "Pokojný offline prehrávač audiokníh.",
     ),
@@ -183,6 +187,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chapters": MessageLookupByLibrary.simpleMessage("Kapitoly"),
     "chaptersTitle": MessageLookupByLibrary.simpleMessage("Kapitoly"),
+    "chooseAppColorTitle": MessageLookupByLibrary.simpleMessage(
+      "Vyberte farbu aplikácie",
+    ),
     "chooseAudioOutput": MessageLookupByLibrary.simpleMessage(
       "Vybrať zvukový výstup",
     ),
@@ -200,6 +207,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bookish nedokázal odstrániť všetky dáta aplikácie.",
     ),
     "close": MessageLookupByLibrary.simpleMessage("Zavrieť"),
+    "colorBrightness": MessageLookupByLibrary.simpleMessage("Jas"),
+    "colorHue": MessageLookupByLibrary.simpleMessage("Odtieň"),
+    "colorSaturation": MessageLookupByLibrary.simpleMessage("Sýtosť"),
     "continueSeries": MessageLookupByLibrary.simpleMessage(
       "Pokračovať v sérii",
     ),
@@ -225,6 +235,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Poznámky sa nepodarilo načítať.",
     ),
     "dateAdded": MessageLookupByLibrary.simpleMessage("Dátum pridania"),
+    "defaultColor": MessageLookupByLibrary.simpleMessage("Predvolená farba"),
     "deleteAllUserDataDescription": MessageLookupByLibrary.simpleMessage(
       "Odstráni aj poznámky, údaje knihy, obal a históriu počúvania.",
     ),
@@ -731,6 +742,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "storageInspectFailed": MessageLookupByLibrary.simpleMessage(
       "Úložisko sa nepodarilo skontrolovať.",
+    ),
+    "systemColorsDescription": MessageLookupByLibrary.simpleMessage(
+      "Prispôsobiť farby tapete v Androide 12 a novšom",
+    ),
+    "systemColorsTitle": MessageLookupByLibrary.simpleMessage(
+      "Použiť systémové farby Androidu",
     ),
     "technicalDetails": MessageLookupByLibrary.simpleMessage(
       "Technické podrobnosti",
