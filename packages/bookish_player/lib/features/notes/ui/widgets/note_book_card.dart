@@ -100,15 +100,19 @@ class _NoteCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
+      key: const ValueKey('note-count-badge'),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondaryContainer,
+        color: colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
         '$count ${count == 1 ? 'note' : 'notes'}',
-        style: Theme.of(context).textTheme.labelLarge,
+        style: Theme.of(
+          context,
+        ).textTheme.labelLarge?.copyWith(color: colorScheme.onPrimaryContainer),
       ),
     );
   }

@@ -20,6 +20,38 @@ void registerPlayerControlWidgetTests() {
       _expectEvenControlSpacing(tester);
     },
   );
+
+  testWidgets(
+    'Given a light theme, When chapter controls render, Then they use the theme foreground color',
+    (tester) async {
+      // WHEN
+      await harness.pump(tester);
+
+      // THEN
+      final context = tester.element(find.byIcon(Icons.skip_previous_rounded));
+      final expectedColor = Theme.of(context).colorScheme.onSurface;
+      final chapterButtons = [
+        tester.widget<IconButton>(
+          find.ancestor(
+            of: find.byIcon(Icons.skip_previous_rounded),
+            matching: find.byType(IconButton),
+          ),
+        ),
+        tester.widget<IconButton>(
+          find.ancestor(
+            of: find.byIcon(Icons.skip_next_rounded),
+            matching: find.byType(IconButton),
+          ),
+        ),
+      ];
+
+      expect(expectedColor, isNot(Colors.white));
+      expect(
+        chapterButtons.map((button) => button.color),
+        everyElement(expectedColor),
+      );
+    },
+  );
 }
 
 void _expectReadableSkipLabels(WidgetTester tester) {
@@ -101,6 +133,7 @@ final _book = Audiobook(
   filePath: '/book.mp3',
   durationMs: 60000,
   addedAt: DateTime(2026),
+  chapters: const [AudioChapter(title: 'Chapter', startMs: 0)],
 );
 
 const _controlKeys = [

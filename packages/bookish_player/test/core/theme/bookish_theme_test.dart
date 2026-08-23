@@ -36,6 +36,21 @@ void main() {
     );
 
     test(
+      'Given the app theme changes, When the status bar renders, Then its text brightness follows the theme',
+      () {
+        // GIVEN
+        final lightStyle = BookishTheme.light.appBarTheme.systemOverlayStyle;
+        final darkStyle = BookishTheme.dark.appBarTheme.systemOverlayStyle;
+
+        // THEN
+        expect(lightStyle?.statusBarBrightness, Brightness.light);
+        expect(lightStyle?.statusBarIconBrightness, Brightness.dark);
+        expect(darkStyle?.statusBarBrightness, Brightness.dark);
+        expect(darkStyle?.statusBarIconBrightness, Brightness.light);
+      },
+    );
+
+    test(
       'Given an Android system color scheme, When the theme is built, Then system surfaces and primary colors are used',
       () {
         // GIVEN

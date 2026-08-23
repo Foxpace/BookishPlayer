@@ -28,7 +28,7 @@ class PlayerTransport extends StatelessWidget {
             onPressed: state.book?.chapters.isNotEmpty == true
                 ? intents.previousChapter
                 : null,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onSurface,
             icon: const Icon(Icons.skip_previous_rounded, size: 38),
           ),
         ),
@@ -65,7 +65,7 @@ class PlayerTransport extends StatelessWidget {
             onPressed: state.book?.chapters.isNotEmpty == true
                 ? intents.nextChapter
                 : null,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onSurface,
             icon: const Icon(Icons.skip_next_rounded, size: 38),
           ),
         ),
