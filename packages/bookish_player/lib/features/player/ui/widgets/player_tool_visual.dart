@@ -16,6 +16,7 @@ class PlayerToolVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -23,6 +24,8 @@ class PlayerToolVisual extends StatelessWidget {
         children: [
           Badge(
             isLabelVisible: showBadge || badgeLabel != null,
+            backgroundColor: colorScheme.primary,
+            textColor: colorScheme.onPrimary,
             label: switch (badgeLabel) {
               final label? => Text(label),
               null => null,

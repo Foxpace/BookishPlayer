@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'bookish_theme_seed.dart';
 
@@ -95,6 +96,13 @@ abstract final class BookishTheme {
         backgroundColor: Colors.transparent,
         foregroundColor: foreground,
         surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarBrightness: brightness,
+          statusBarIconBrightness: brightness == Brightness.light
+              ? Brightness.dark
+              : Brightness.light,
+        ),
       ),
       cardTheme: CardThemeData(
         elevation: 0,

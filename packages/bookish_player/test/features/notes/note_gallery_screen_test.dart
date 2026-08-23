@@ -56,6 +56,18 @@ void main() {
 
         // THEN
         robot.expectGallerySummary(const ['2 notes across 1 book', '2 notes']);
+        final badgeFinder = find.byKey(const ValueKey('note-count-badge'));
+        final badge = tester.widget<Container>(badgeFinder);
+        final badgeContext = tester.element(badgeFinder);
+        final colorScheme = Theme.of(badgeContext).colorScheme;
+        expect(
+          (badge.decoration as BoxDecoration).color,
+          colorScheme.primaryContainer,
+        );
+        expect(
+          tester.widget<Text>(find.text('2 notes')).style?.color,
+          colorScheme.onPrimaryContainer,
+        );
 
         await robot.openBook('The Test Book');
 
