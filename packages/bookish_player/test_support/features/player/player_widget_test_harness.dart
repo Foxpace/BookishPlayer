@@ -26,6 +26,7 @@ class PlayerTestScreenHarness extends StatefulWidget {
 
 class _PlayerTestScreenHarnessState extends State<PlayerTestScreenHarness> {
   PlayerPlaybackIntents get _intents => (
+    pausePlayback: widget.cubit.pausePlayback,
     togglePlayback: widget.cubit.togglePlayback,
     previousChapter: widget.cubit.previousChapter,
     nextChapter: widget.cubit.nextChapter,

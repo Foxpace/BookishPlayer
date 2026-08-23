@@ -172,6 +172,24 @@ void main() {
           expect(harness.audio.currentPosition, const Duration(seconds: 12));
         },
       );
+
+      test(
+        'Given active playback, When playback is paused explicitly, Then audio stops without toggling it back on',
+        () async {
+          // GIVEN
+          final book = _book(id: 'book', title: 'Book');
+          harness = _PlayerHarness([book]);
+          final sut = await harness.open(book, playing: true);
+
+          // WHEN
+          await sut.pausePlayback();
+          await sut.pausePlayback();
+
+          // THEN
+          expect(harness.audio.playing, isFalse);
+          expect(harness.audio.pauseCount, 2);
+        },
+      );
     });
   });
 }

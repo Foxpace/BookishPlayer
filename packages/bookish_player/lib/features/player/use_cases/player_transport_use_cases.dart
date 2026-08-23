@@ -20,6 +20,8 @@ class PlayerTransportUseCases {
   final PlaybackCommandService _commands;
   final ChapterNavigationPolicy _chapters;
 
+  Future<void> pause() => _audio.pause();
+
   Future<void> toggle({
     required bool ready,
     required Audiobook? book,

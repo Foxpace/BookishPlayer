@@ -7,6 +7,7 @@ typedef OpenPlayerNote =
     Future<void> Function(BuildContext context, BookNote note);
 
 typedef PlayerPlaybackIntents = ({
+  Future<void> Function() pausePlayback,
   Future<void> Function() togglePlayback,
   Future<void> Function() previousChapter,
   Future<void> Function() nextChapter,

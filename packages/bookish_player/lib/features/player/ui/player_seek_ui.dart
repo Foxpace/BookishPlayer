@@ -30,8 +30,13 @@ extension PlayerSeekUi on BuildContext {
   }
 
   void showSeekUndo(VoidCallback onUndo) {
-    ScaffoldMessenger.of(this).showSnackBar(
+    final messenger = ScaffoldMessenger.of(this);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
       SnackBar(
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        persist: false,
         content: Text(S.of(this).playbackPositionChanged),
         action: SnackBarAction(label: S.of(this).undo, onPressed: onUndo),
       ),

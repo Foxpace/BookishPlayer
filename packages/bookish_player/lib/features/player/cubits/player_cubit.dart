@@ -73,6 +73,8 @@ class PlayerCubit extends Cubit<PlayerState> {
     duration: state.duration,
   );
 
+  Future<void> pausePlayback() => _application.pausePlayback();
+
   Future<Result<bool>> pickAudioOutput() =>
       _application.showAudioOutputPicker();
 

@@ -4,9 +4,15 @@ import '../../../../core/presentation/formatters.dart';
 import '../../cubits/player_cubits.dart';
 
 class PlayerTimeline extends StatefulWidget {
-  const PlayerTimeline({required this.state, required this.onSeek, super.key});
+  const PlayerTimeline({
+    required this.state,
+    required this.onRewindStart,
+    required this.onSeek,
+    super.key,
+  });
 
   final PlayerState state;
+  final VoidCallback onRewindStart;
   final ValueChanged<Duration> onSeek;
 
   @override
@@ -15,6 +21,8 @@ class PlayerTimeline extends StatefulWidget {
 
 class _TimelineState extends State<PlayerTimeline> {
   double? _dragValue;
+  double? _dragStartValue;
+  var _pausedForRewind = false;
 
   @override
   void didUpdateWidget(covariant PlayerTimeline oldWidget) {
@@ -23,6 +31,8 @@ class _TimelineState extends State<PlayerTimeline> {
             widget.state.currentChapterIndex ||
         oldWidget.state.chapterDuration != widget.state.chapterDuration) {
       _dragValue = null;
+      _dragStartValue = null;
+      _pausedForRewind = false;
     }
   }
 
@@ -54,20 +64,37 @@ class _TimelineState extends State<PlayerTimeline> {
           secondaryTrackValue: state.chapterBufferedPosition.inMilliseconds
               .toDouble()
               .clamp(0.0, max),
-          onChangeStart: (next) => setState(() => _dragValue = next),
-          onChanged: (next) => setState(() => _dragValue = next),
+          onChangeStart: (next) {
+            _dragStartValue = state.chapterPosition.inMilliseconds.toDouble();
+            _pausedForRewind = false;
+            setState(() => _dragValue = next);
+            _pauseForRewind(next);
+          },
+          onChanged: (next) {
+            setState(() => _dragValue = next);
+            _pauseForRewind(next);
+          },
           onChangeEnd: (next) async {
             setState(() => _dragValue = null);
+            _dragStartValue = null;
+            _pausedForRewind = false;
             widget.onSeek(Duration(milliseconds: next.round()));
           },
         ),
         _TimelinePositionLabels(
-          position: state.chapterPosition,
+          position: Duration(milliseconds: value.round()),
           duration: state.chapterDuration,
           speed: state.speed,
         ),
       ],
     );
+  }
+
+  void _pauseForRewind(double value) {
+    if (!_pausedForRewind && value < (_dragStartValue ?? value)) {
+      _pausedForRewind = true;
+      widget.onRewindStart();
+    }
   }
 }
 
