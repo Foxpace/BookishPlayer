@@ -1,8 +1,21 @@
-# Bookish
+<p align="center">
+  <img src="apps/store/assets/icon/bookish_app_icon.png" width="132" alt="Bookish logo">
+</p>
 
-Bookish is a quiet, offline-first audiobook player for iOS and Android. It keeps
-your books, playback history, notes, and preferences on your device and is built
-for both single-file audiobooks and multi-file collections.
+<h1 align="center">Bookish</h1>
+
+<p align="center">
+  A quiet, offline-first audiobook player for iOS and Android.
+</p>
+
+<p align="center">
+  <img alt="Android 10+" src="https://img.shields.io/badge/Android-10%2B-3DDC84?logo=android&logoColor=white">
+  <img alt="iOS 16+" src="https://img.shields.io/badge/iOS-16%2B-000000?logo=apple&logoColor=white">
+  <img alt="Flutter" src="https://img.shields.io/badge/UI-Flutter-02569B?logo=flutter&logoColor=white">
+</p>
+
+Bookish keeps your books, playback history, notes, and preferences on your
+device. It supports both single-file audiobooks and multi-file collections.
 
 ## Screenshots
 
