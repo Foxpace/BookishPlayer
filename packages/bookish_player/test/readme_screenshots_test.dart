@@ -127,39 +127,62 @@ void main() {
   );
 
   testWidgets(
-    'Given deterministic preferences, When settings are rendered, Then it generates the README screenshot',
+    'Given deterministic iOS preferences, When settings are rendered, Then it generates the iOS README screenshot',
     (tester) async {
-      // GIVEN
-      final cubit = SettingsCubit(
-        buildSettingsApplication(FakeLibrarySettings()),
-      );
-      addTearDown(cubit.close);
-      await cubit.load();
-
       // WHEN
-      debugDisableShadows = false;
-      await tester.pumpBookishApp(
-        display: _display,
-        child: SettingsScreen(
-          state: cubit.state,
-          actions: (
-            onThemeChanged: cubit.setThemePreference,
-            onPlaybackChanged: cubit.setPlaybackPreferences,
-            onNavigate: _ignoreValue,
-          ),
-          sections: (transcription: null, localData: const SizedBox.shrink()),
-        ),
-      );
-      await tester.pumpAndSettle();
+      await _pumpSettingsScreenshot(tester, supportsSystemColors: false);
 
       // THEN
       await expectLater(
         find.byType(SettingsScreen),
-        matchesGoldenFile('$_goldenDirectory/settings.png'),
+        matchesGoldenFile('$_goldenDirectory/settings-ios.png'),
       );
       debugDisableShadows = true;
     },
   );
+
+  testWidgets(
+    'Given deterministic Android preferences, When settings are rendered, Then it generates the Android README screenshot',
+    (tester) async {
+      // WHEN
+      await _pumpSettingsScreenshot(tester, supportsSystemColors: true);
+
+      // THEN
+      await expectLater(
+        find.byType(SettingsScreen),
+        matchesGoldenFile('$_goldenDirectory/settings-android.png'),
+      );
+      debugDisableShadows = true;
+    },
+  );
+}
+
+Future<void> _pumpSettingsScreenshot(
+  WidgetTester tester, {
+  required bool supportsSystemColors,
+}) async {
+  final cubit = SettingsCubit(buildSettingsApplication(FakeLibrarySettings()));
+  addTearDown(cubit.close);
+  await cubit.load();
+
+  debugDisableShadows = false;
+  await tester.pumpBookishApp(
+    display: _display,
+    child: SettingsScreen(
+      state: cubit.state,
+      supportsSystemColors: supportsSystemColors,
+      actions: (
+        onThemeChanged: cubit.setThemePreference,
+        onSystemColorsChanged: (enabled) =>
+            cubit.setUseSystemColors(enabled: enabled),
+        onPrimaryColorChanged: cubit.setPrimaryColor,
+        onPlaybackChanged: cubit.setPlaybackPreferences,
+        onNavigate: _ignoreValue,
+      ),
+      sections: (transcription: null, localData: const SizedBox.shrink()),
+    ),
+  );
+  await tester.pumpAndSettle();
 }
 
 void _ignore() {}

@@ -44,6 +44,8 @@ void main() {
           sections: (transcription: null, localData: const SizedBox.shrink()),
           actions: (
             onThemeChanged: (_) {},
+            onSystemColorsChanged: (_) {},
+            onPrimaryColorChanged: (_) {},
             onPlaybackChanged: (_) {},
             onNavigate: (_) {},
           ),

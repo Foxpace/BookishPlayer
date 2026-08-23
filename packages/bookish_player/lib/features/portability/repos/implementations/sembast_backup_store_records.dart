@@ -16,6 +16,9 @@ extension on SembastBackupStoreRepository {
     Map<String, Object?>? playback,
   ) => BackupSettings(
     theme: appearance?['theme'] as String? ?? 'system',
+    useSystemColors: appearance?['useSystemColors'] as bool? ?? true,
+    primaryColor:
+        appearance?['primaryColor'] as int? ?? defaultBookishSeedColorValue,
     playback: playback == null
         ? const PlaybackPreferences()
         : PlaybackPreferences.fromJson(Map<String, dynamic>.from(playback)),

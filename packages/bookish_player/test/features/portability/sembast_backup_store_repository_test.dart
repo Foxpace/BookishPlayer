@@ -21,7 +21,13 @@ void main() {
       'Given an empty local Bookish database, When a compatible backup is restored and snapshotted, Then normalized books, notes, sessions, and settings round-trip',
       () async {
         // GIVEN
-        await sut.restore(backupFixture(theme: 'dark'));
+        await sut.restore(
+          backupFixture(
+            theme: 'dark',
+            useSystemColors: false,
+            primaryColor: 0xFF336699,
+          ),
+        );
 
         // WHEN
         final snapshot = _success(await sut.snapshot());
@@ -32,6 +38,8 @@ void main() {
         expect(snapshot.notes.single.id, 'note-1');
         expect(snapshot.sessions.single.id, 'session-1');
         expect(snapshot.settings.theme, 'dark');
+        expect(snapshot.settings.useSystemColors, isFalse);
+        expect(snapshot.settings.primaryColor, 0xFF336699);
         expect(snapshot.settings.playback, settingsFixture);
       },
     );

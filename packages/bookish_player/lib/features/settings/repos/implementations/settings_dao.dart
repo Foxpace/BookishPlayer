@@ -10,14 +10,13 @@ class SettingsDao {
   final Database _database;
   final _settings = stringMapStoreFactory.store('settings');
 
-  Future<String?> getThemePreference() async {
+  Future<Map<String, Object?>?> getAppearancePreferences() async {
     final value = await _settings.record('appearance').get(_database);
-    return value?['theme'] as String?;
+    return value == null ? null : Map<String, Object?>.from(value);
   }
 
-  Future<void> setThemePreference(String preference) {
-    return _settings.record('appearance').put(_database, {'theme': preference});
-  }
+  Future<void> setAppearancePreferences(Map<String, Object?> preferences) =>
+      _settings.record('appearance').put(_database, preferences);
 
   Future<String?> getLibraryLayout() async {
     final value = await _settings.record('library').get(_database);

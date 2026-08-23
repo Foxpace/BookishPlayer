@@ -22,5 +22,36 @@ void main() {
         );
       },
     );
+
+    test(
+      'Given manual app colors, When different primary colors are selected, Then each theme derives a distinct Material color scheme',
+      () {
+        // WHEN
+        final blue = BookishTheme.lightFrom(seedColor: Colors.blue);
+        final green = BookishTheme.lightFrom(seedColor: Colors.green);
+
+        // THEN
+        expect(blue.colorScheme.primary, isNot(green.colorScheme.primary));
+      },
+    );
+
+    test(
+      'Given an Android system color scheme, When the theme is built, Then system surfaces and primary colors are used',
+      () {
+        // GIVEN
+        final system = ColorScheme.fromSeed(
+          seedColor: Colors.purple,
+          brightness: Brightness.light,
+        );
+
+        // WHEN
+        final theme = BookishTheme.lightFrom(systemColorScheme: system);
+
+        // THEN
+        expect(theme.colorScheme.primary, system.primary);
+        expect(theme.scaffoldBackgroundColor, system.surface);
+        expect(theme.cardTheme.color, system.surfaceContainerLow);
+      },
+    );
   });
 }

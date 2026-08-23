@@ -4,6 +4,7 @@ import '../../library/models/library_models.dart';
 import '../../library/models/listening_session.dart';
 import '../../notes/models/book_note.dart';
 import '../../settings/models/playback_preferences.dart';
+import '../../../core/theme/bookish_theme_seed.dart';
 
 part 'bookish_backup.freezed.dart';
 part 'bookish_backup.g.dart';

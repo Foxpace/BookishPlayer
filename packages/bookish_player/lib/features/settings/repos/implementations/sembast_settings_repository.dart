@@ -2,6 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import '../settings_repository.dart';
 import '../../models/playback_preferences.dart';
+import '../../models/appearance_preferences.dart';
 import '../../models/theme_preference.dart';
 import 'settings_dao.dart';
 
@@ -12,14 +13,24 @@ class SembastSettingsRepository implements SettingsRepository {
   final SettingsDao _dao;
 
   @override
-  Future<ThemePreference> getThemePreference() async {
-    return ThemePreference.fromStorage(await _dao.getThemePreference());
+  Future<AppearancePreferences> getAppearancePreferences() async {
+    final stored = await _dao.getAppearancePreferences();
+    return AppearancePreferences(
+      theme: ThemePreference.fromStorage(stored?['theme'] as String?),
+      useSystemColors: stored?['useSystemColors'] as bool? ?? true,
+      primaryColor:
+          stored?['primaryColor'] as int? ??
+          const AppearancePreferences().primaryColor,
+    );
   }
 
   @override
-  Future<void> setThemePreference(ThemePreference preference) {
-    return _dao.setThemePreference(preference.name);
-  }
+  Future<void> setAppearancePreferences(AppearancePreferences preferences) =>
+      _dao.setAppearancePreferences({
+        'theme': preferences.theme.name,
+        'useSystemColors': preferences.useSystemColors,
+        'primaryColor': preferences.primaryColor,
+      });
 
   @override
   Future<String?> getLibraryLayout() => _dao.getLibraryLayout();

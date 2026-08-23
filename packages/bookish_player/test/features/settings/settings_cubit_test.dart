@@ -1,4 +1,5 @@
 import 'package:bookish_player/features/settings/repos/settings_repository.dart';
+import 'package:bookish_player/features/settings/models/appearance_preferences.dart';
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 import 'package:bookish_player/features/settings/models/theme_preference.dart';
 import 'package:bookish_player/features/settings/cubits/settings_cubit.dart';
@@ -13,7 +14,9 @@ void main() {
       'Given the settings cubit, When its behavior is exercised, Then loads and persists an independent theme preference',
       () async {
         // GIVEN
-        final repository = _FakeSettingsStore(ThemePreference.dark);
+        final repository = _FakeSettingsStore(
+          const AppearancePreferences(theme: ThemePreference.dark),
+        );
         final sut = SettingsCubit(buildSettingsApplication(repository));
         addTearDown(sut.close);
 
@@ -22,12 +25,21 @@ void main() {
 
         // THEN
         expect(sut.state.status, SettingsStatus.ready);
-        expect(sut.state.themePreference, ThemePreference.dark);
+        expect(sut.state.appearance.theme, ThemePreference.dark);
 
         await sut.setThemePreference(ThemePreference.light);
+        await sut.setUseSystemColors(enabled: false);
+        await sut.setPrimaryColor(0xFF336699);
 
-        expect(sut.state.themePreference, ThemePreference.light);
-        expect(repository.savedPreference, ThemePreference.light);
+        expect(
+          sut.state.appearance,
+          const AppearancePreferences(
+            theme: ThemePreference.light,
+            useSystemColors: false,
+            primaryColor: 0xFF336699,
+          ),
+        );
+        expect(repository.savedPreference, sut.state.appearance);
       },
     );
   });
@@ -36,14 +48,16 @@ void main() {
 class _FakeSettingsStore implements SettingsRepository {
   _FakeSettingsStore(this.preference);
 
-  ThemePreference preference;
-  ThemePreference? savedPreference;
+  AppearancePreferences preference;
+  AppearancePreferences? savedPreference;
 
   @override
-  Future<ThemePreference> getThemePreference() async => preference;
+  Future<AppearancePreferences> getAppearancePreferences() async => preference;
 
   @override
-  Future<void> setThemePreference(ThemePreference preference) async {
+  Future<void> setAppearancePreferences(
+    AppearancePreferences preference,
+  ) async {
     this.preference = preference;
     savedPreference = preference;
   }

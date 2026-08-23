@@ -1,12 +1,12 @@
 import 'package:injectable/injectable.dart';
 
 import '../../../core/foundation/result.dart';
+import '../models/appearance_preferences.dart';
 import '../models/playback_preferences.dart';
-import '../models/theme_preference.dart';
 import '../repos/settings_repository.dart';
 
 typedef LoadedSettings = ({
-  ThemePreference theme,
+  AppearancePreferences appearance,
   PlaybackPreferences playback,
 });
 
@@ -27,16 +27,17 @@ class SettingsApplication {
   }
 
   Future<Result<LoadedSettings>> _load() async {
-    final (theme, playback) = await (
-      _repository.getThemePreference(),
+    final (appearance, playback) = await (
+      _repository.getAppearancePreferences(),
       _repository.getPlaybackPreferences(),
     ).wait;
 
-    return Result.success((theme: theme, playback: playback));
+    return Result.success((appearance: appearance, playback: playback));
   }
 
-  Future<Result<bool>> saveThemePreference(ThemePreference preference) =>
-      _save(() => _repository.setThemePreference(preference));
+  Future<Result<bool>> saveAppearancePreferences(
+    AppearancePreferences preferences,
+  ) => _save(() => _repository.setAppearancePreferences(preferences));
 
   Future<Result<bool>> savePlaybackPreferences(
     PlaybackPreferences preferences,

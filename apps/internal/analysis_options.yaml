@@ -2,7 +2,7 @@ include: package:flutter_lints/flutter.yaml
 
 plugins:
   lintel:
-    version: 0.1.5
+    version: 0.1.7
     diagnostics:
       bloc_fields_must_be_private: true
       bloc_state_must_use_state_suffix: true

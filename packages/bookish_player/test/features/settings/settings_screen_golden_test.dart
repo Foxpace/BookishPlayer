@@ -68,8 +68,12 @@ Future<SettingsCubit> _buildCubit() async {
 
 SettingsScreen _screen(SettingsCubit cubit) => SettingsScreen(
   state: cubit.state,
+  supportsSystemColors: true,
   actions: (
     onThemeChanged: cubit.setThemePreference,
+    onSystemColorsChanged: (enabled) =>
+        cubit.setUseSystemColors(enabled: enabled),
+    onPrimaryColorChanged: cubit.setPrimaryColor,
     onPlaybackChanged: cubit.setPlaybackPreferences,
     onNavigate: (_) {},
   ),

@@ -32,7 +32,7 @@ fi
 icon_source="$repo_dir/apps/store/assets/icon/bookish_app_icon.png"
 library_source="$repo_dir/docs/screenshots/library.png"
 player_source="$repo_dir/docs/screenshots/player.png"
-settings_source="$repo_dir/docs/screenshots/settings.png"
+settings_source="$repo_dir/docs/screenshots/settings-android.png"
 
 for source in "$icon_source" "$library_source" "$player_source" "$settings_source"; do
   if [ ! -f "$source" ]; then

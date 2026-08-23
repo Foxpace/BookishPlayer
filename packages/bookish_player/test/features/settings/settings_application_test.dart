@@ -1,4 +1,5 @@
 import 'package:bookish_player/core/foundation/result.dart';
+import 'package:bookish_player/features/settings/models/appearance_preferences.dart';
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 import 'package:bookish_player/features/settings/models/theme_preference.dart';
 import 'package:bookish_player/features/settings/use_cases/settings_application.dart';
@@ -23,11 +24,13 @@ void main() {
             'Expected settings to load, received $failure.',
           ),
         };
-        await sut.saveThemePreference(ThemePreference.light);
+        await sut.saveAppearancePreferences(
+          const AppearancePreferences(theme: ThemePreference.light),
+        );
         const playback = PlaybackPreferences(forwardSeconds: 30);
         await sut.savePlaybackPreferences(playback);
         // THEN
-        expect(loaded.theme, ThemePreference.dark);
+        expect(loaded.appearance.theme, ThemePreference.dark);
         expect(loaded.playback.rewindSeconds, 30);
         expect(repository.savedThemes, [ThemePreference.light]);
         expect(repository.savedPlayback, [playback]);

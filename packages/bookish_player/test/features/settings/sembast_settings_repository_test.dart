@@ -1,6 +1,7 @@
 import 'package:bookish_player/core/database/bookish_database.dart';
 import 'package:bookish_player/features/settings/repos/implementations/sembast_settings_repository.dart';
 import 'package:bookish_player/features/settings/repos/implementations/settings_dao.dart';
+import 'package:bookish_player/features/settings/models/appearance_preferences.dart';
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 import 'package:bookish_player/features/settings/models/theme_preference.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,7 +25,10 @@ void main() {
       'Given an empty Sembast settings store, When defaults are read, Then safe production defaults are returned',
       () async {
         // THEN
-        expect(await sut.getThemePreference(), ThemePreference.system);
+        expect(
+          await sut.getAppearancePreferences(),
+          const AppearancePreferences(),
+        );
         expect(await sut.getLibraryLayout(), isNull);
         expect(await sut.getSpeechModel(), isNull);
         expect(await sut.getPlaybackPreferences(), const PlaybackPreferences());
@@ -43,14 +47,19 @@ void main() {
           chapterFallbackMinutes: 30,
         );
 
-        await sut.setThemePreference(ThemePreference.dark);
+        const appearance = AppearancePreferences(
+          theme: ThemePreference.dark,
+          useSystemColors: false,
+          primaryColor: 0xFF336699,
+        );
+        await sut.setAppearancePreferences(appearance);
         await sut.setLibraryLayout('grid');
         await sut.setSpeechModel('whisper-small');
         // WHEN
         await sut.setPlaybackPreferences(playback);
 
         // THEN
-        expect(await sut.getThemePreference(), ThemePreference.dark);
+        expect(await sut.getAppearancePreferences(), appearance);
         expect(await sut.getLibraryLayout(), 'grid');
         expect(await sut.getSpeechModel(), 'whisper-small');
         expect(await sut.getPlaybackPreferences(), playback);
@@ -61,10 +70,15 @@ void main() {
       'Given an empty Sembast settings store, When an unknown legacy theme value is read, Then it migrates behaviorally to the system preference',
       () async {
         // WHEN
-        await SettingsDao(database).setThemePreference('legacy-sepia');
+        await SettingsDao(
+          database,
+        ).setAppearancePreferences({'theme': 'legacy-sepia'});
 
         // THEN
-        expect(await sut.getThemePreference(), ThemePreference.system);
+        expect(
+          (await sut.getAppearancePreferences()).theme,
+          ThemePreference.system,
+        );
       },
     );
   });

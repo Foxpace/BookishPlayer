@@ -1,3 +1,4 @@
+import 'package:bookish_player/features/settings/models/appearance_preferences.dart';
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 import 'package:bookish_player/features/settings/repos/settings_repository.dart';
 import 'package:bookish_player/features/settings/models/theme_preference.dart';
@@ -5,12 +6,18 @@ import 'package:bookish_player/features/settings/models/theme_preference.dart';
 class FakeLibrarySettings implements SettingsRepository {
   String? layout;
   String? speechModel;
-  var theme = ThemePreference.system;
+  var appearance = const AppearancePreferences();
   var playback = const PlaybackPreferences();
   Exception? readFailure;
   Exception? writeFailure;
   final savedPlayback = <PlaybackPreferences>[];
   final savedThemes = <ThemePreference>[];
+
+  ThemePreference get theme => appearance.theme;
+
+  set theme(ThemePreference value) {
+    appearance = appearance.copyWith(theme: value);
+  }
 
   @override
   Future<String?> getLibraryLayout() async => layout;
@@ -21,20 +28,22 @@ class FakeLibrarySettings implements SettingsRepository {
   }
 
   @override
-  Future<ThemePreference> getThemePreference() async {
+  Future<AppearancePreferences> getAppearancePreferences() async {
     if (readFailure case final failure?) {
       throw failure;
     }
-    return theme;
+    return appearance;
   }
 
   @override
-  Future<void> setThemePreference(ThemePreference preference) async {
+  Future<void> setAppearancePreferences(
+    AppearancePreferences preferences,
+  ) async {
     if (writeFailure case final failure?) {
       throw failure;
     }
-    theme = preference;
-    savedThemes.add(preference);
+    appearance = preferences;
+    savedThemes.add(preferences.theme);
   }
 
   @override

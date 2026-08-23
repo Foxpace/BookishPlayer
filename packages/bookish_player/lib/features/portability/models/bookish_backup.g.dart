@@ -46,18 +46,22 @@ Map<String, dynamic> _$BookishBackupToJson(_BookishBackup instance) =>
       'sessions': instance.sessions.map((e) => e.toJson()).toList(),
     };
 
-_BackupSettings _$BackupSettingsFromJson(Map<String, dynamic> json) =>
-    _BackupSettings(
-      theme: json['theme'] as String,
-      playback: json['playback'] == null
-          ? const PlaybackPreferences()
-          : PlaybackPreferences.fromJson(
-              json['playback'] as Map<String, dynamic>,
-            ),
-    );
+_BackupSettings _$BackupSettingsFromJson(
+  Map<String, dynamic> json,
+) => _BackupSettings(
+  theme: json['theme'] as String,
+  useSystemColors: json['useSystemColors'] as bool? ?? true,
+  primaryColor:
+      (json['primaryColor'] as num?)?.toInt() ?? defaultBookishSeedColorValue,
+  playback: json['playback'] == null
+      ? const PlaybackPreferences()
+      : PlaybackPreferences.fromJson(json['playback'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$BackupSettingsToJson(_BackupSettings instance) =>
     <String, dynamic>{
       'theme': instance.theme,
+      'useSystemColors': instance.useSystemColors,
+      'primaryColor': instance.primaryColor,
       'playback': instance.playback.toJson(),
     };
