@@ -93,6 +93,7 @@ class _PlayerScreenRootState extends State<PlayerScreenRoot>
   }
 
   PlayerPlaybackIntents get _playbackIntents => (
+    pausePlayback: _cubit.pausePlayback,
     togglePlayback: _cubit.togglePlayback,
     previousChapter: _cubit.previousChapter,
     nextChapter: _cubit.nextChapter,
@@ -107,6 +108,9 @@ class _PlayerScreenRootState extends State<PlayerScreenRoot>
     PlayerState state,
     Duration relative,
   ) async {
+    if (relative == state.chapterPosition) {
+      return;
+    }
     final previous = state.position;
     final distance = state.chapterSeekDistance(relative);
     if (state.requiresSeekConfirmation(distance) &&

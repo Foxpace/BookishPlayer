@@ -46,7 +46,11 @@ class PlayerDetails extends StatelessWidget {
           ),
         ),
         SizedBox(height: compact ? 18 : 26),
-        PlayerTimeline(state: state, onSeek: actions.onTimelineSeek),
+        PlayerTimeline(
+          state: state,
+          onRewindStart: intents.pausePlayback,
+          onSeek: actions.onTimelineSeek,
+        ),
         SizedBox(height: compact ? 12 : 18),
         PlayerTransport(state: state, intents: intents),
         SizedBox(height: compact ? 10 : 18),

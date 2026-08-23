@@ -111,6 +111,8 @@ class PlayerApplication {
 
   Future<void> continuePlayback() => _lifecycle.continuePlayback();
 
+  Future<void> pausePlayback() => _transport.pause();
+
   Future<void> togglePlayback({
     required bool ready,
     required Audiobook? book,
