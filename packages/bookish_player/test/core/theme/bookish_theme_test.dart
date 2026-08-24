@@ -20,6 +20,18 @@ void main() {
           BookishTheme.light.textTheme.diagnostics?.fontFamily,
           'monospace',
         );
+        expect(
+          BookishTheme.light.dropdownMenuTheme.textStyle?.fontFamily,
+          'Roboto',
+        );
+        expect(
+          BookishTheme.light.popupMenuTheme.textStyle?.fontFamily,
+          'Roboto',
+        );
+        expect(
+          BookishTheme.light.dialogTheme.contentTextStyle?.fontFamily,
+          'Roboto',
+        );
       },
     );
 

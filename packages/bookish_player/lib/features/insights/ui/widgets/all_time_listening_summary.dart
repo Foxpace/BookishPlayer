@@ -11,7 +11,6 @@ class AllTimeListeningSummary extends StatelessWidget {
     required this.completedBooks,
     required this.activeDays,
     required this.streakDays,
-    required this.locale,
     super.key,
   });
 
@@ -19,11 +18,11 @@ class AllTimeListeningSummary extends StatelessWidget {
   final int completedBooks;
   final int activeDays;
   final int streakDays;
-  final String locale;
 
   @override
   Widget build(BuildContext context) {
     final l10n = S.of(context);
+    final locale = Localizations.localeOf(context).toString();
     final numberFormat = NumberFormat.decimalPattern(locale);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

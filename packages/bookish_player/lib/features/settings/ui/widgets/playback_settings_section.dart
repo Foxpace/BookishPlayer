@@ -168,6 +168,7 @@ class _SkipIntervalTile extends StatelessWidget {
       title: Text(title),
       trailing: DropdownButton<int>(
         value: value,
+        style: Theme.of(context).dropdownMenuTheme.textStyle,
         items: [
           for (final seconds in options)
             DropdownMenuItem(
@@ -200,6 +201,7 @@ class _ChapterFallbackTile extends StatelessWidget {
     subtitle: Text(S.of(context).chapterFallbackDescription),
     trailing: DropdownButton<int>(
       value: value,
+      style: Theme.of(context).dropdownMenuTheme.textStyle,
       items: [
         for (final minutes in {..._options, value}.toList()..sort())
           DropdownMenuItem(
