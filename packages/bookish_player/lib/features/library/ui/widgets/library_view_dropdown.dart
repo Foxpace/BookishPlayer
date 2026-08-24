@@ -19,6 +19,7 @@ class LibraryViewDropdown<T> extends StatelessWidget {
     return DropdownButtonFormField<T>(
       key: ValueKey(value),
       initialValue: value,
+      style: Theme.of(context).dropdownMenuTheme.textStyle,
       decoration: InputDecoration(labelText: label),
       items: [
         for (final option in values)
