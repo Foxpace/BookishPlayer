@@ -145,7 +145,17 @@ class PlayerCubit extends Cubit<PlayerState> {
       chapterDuration: state.chapterDuration,
     ),
   );
-  Future<void> skipBy(Duration delta) => seek(state.position + delta);
+  Future<void> skipBy(Duration delta) async {
+    final target = state.chapterPosition + delta;
+    final reachesChapterEnd =
+        state.chapterDuration > Duration.zero &&
+        target >= state.chapterDuration;
+    if (state.isPlaying && reachesChapterEnd) {
+      await pausePlayback();
+    }
+    await seekWithinChapter(target);
+  }
+
   Future<void> previousChapter() => _applySeek(
     _application.seekToPreviousChapter(
       book: state.book,

@@ -133,6 +133,51 @@ void main() {
       );
 
       test(
+        'Given a chapter boundary, When skip controls cross it, Then playback stays in the current chapter',
+        () async {
+          // GIVEN
+          final book = _book(
+            id: 'book',
+            title: 'Book',
+            details: (
+              durationMs: 90000,
+              series: '',
+              seriesPosition: null,
+              addedAt: null,
+              chapters: const [
+                AudioChapter(title: 'One', startMs: 0),
+                AudioChapter(title: 'Two', startMs: 30000),
+                AudioChapter(title: 'Three', startMs: 60000),
+              ],
+            ),
+          );
+          harness = _PlayerHarness([book]);
+          final sut = await harness.open(book, playing: true);
+          await sut.seekWithinChapter(const Duration(seconds: 20));
+
+          // WHEN
+          await sut.skipBy(const Duration(seconds: 15));
+
+          // THEN
+          expect(
+            harness.audio.currentPosition,
+            const Duration(milliseconds: 29999),
+          );
+          expect(sut.state.currentChapter?.title, 'One');
+          expect(harness.audio.playing, isFalse);
+
+          await sut.seekWithinChapter(const Duration(seconds: 10));
+
+          // WHEN
+          await sut.skipBy(const Duration(seconds: -15));
+
+          // THEN
+          expect(harness.audio.currentPosition, Duration.zero);
+          expect(sut.state.currentChapter?.title, 'One');
+        },
+      );
+
+      test(
         'Given the player cubit, When its behavior is exercised, Then stops a paused current book before switching queues',
         () async {
           // GIVEN
