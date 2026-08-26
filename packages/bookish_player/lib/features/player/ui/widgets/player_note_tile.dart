@@ -28,14 +28,6 @@ class PlayerNoteTile extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         onTap: actions.onOpen,
-        leading: SizedBox(
-          width: 52,
-          child: Text(
-            formatDuration(note.position),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-        ),
         title: Text(
           note.displayText,
           maxLines: note.hasDisplayTitle ? 1 : 2,
