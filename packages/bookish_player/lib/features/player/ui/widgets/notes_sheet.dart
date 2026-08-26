@@ -17,7 +17,6 @@ class NotesSheet extends StatelessWidget {
     VoidCallback onAddVoiceNote,
     VoidCallback onExport,
     ValueChanged<BookNote> onOpenNote,
-    ValueChanged<BookNote> onSeekToNote,
     ValueChanged<BookNote> onDeleteNote,
   })
   actions;
@@ -55,7 +54,6 @@ class NotesSheet extends StatelessWidget {
                             chapters: state.chapterTimeline,
                             actions: (
                               onOpen: () => actions.onOpenNote(note),
-                              onSeek: () => actions.onSeekToNote(note),
                               onDelete: () => actions.onDeleteNote(note),
                             ),
                           );

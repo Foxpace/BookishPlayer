@@ -157,21 +157,16 @@ void main() {
 
           // WHEN
           await sut.skipBy(const Duration(seconds: 15));
-
-          // THEN
-          expect(
-            harness.audio.currentPosition,
-            const Duration(milliseconds: 29999),
-          );
-          expect(sut.state.currentChapter?.title, 'One');
-          expect(harness.audio.playing, isFalse);
-
+          final forwardPosition = harness.audio.currentPosition;
+          final forwardChapter = sut.state.currentChapter?.title;
+          final wasPlayingAfterForwardSkip = harness.audio.playing;
           await sut.seekWithinChapter(const Duration(seconds: 10));
-
-          // WHEN
           await sut.skipBy(const Duration(seconds: -15));
 
           // THEN
+          expect(forwardPosition, const Duration(milliseconds: 29999));
+          expect(forwardChapter, 'One');
+          expect(wasPlayingAfterForwardSkip, isFalse);
           expect(harness.audio.currentPosition, Duration.zero);
           expect(sut.state.currentChapter?.title, 'One');
         },

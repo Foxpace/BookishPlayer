@@ -180,6 +180,7 @@
   "notesExported": "Notes exported.",
   "jumpToNote": "Jump to note",
   "deleteNote": "Delete note",
+  "openNote": "Open note",
   "endOfChapter": "End of chapter",
   "endOfChapterDescription": "Stop at the next chapter boundary",
   "turnOffTimer": "Turn off timer",

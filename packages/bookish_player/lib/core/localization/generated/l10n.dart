@@ -1557,6 +1557,11 @@ class S {
     return Intl.message('Delete note', name: 'deleteNote', desc: '', args: []);
   }
 
+  /// `Open note`
+  String get openNote {
+    return Intl.message('Open note', name: 'openNote', desc: '', args: []);
+  }
+
   /// `End of chapter`
   String get endOfChapter {
     return Intl.message(

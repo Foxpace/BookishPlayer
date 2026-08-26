@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/localization/generated/l10n.dart';
 import '../../../../core/presentation/formatters.dart';
 import '../../../notes/models/book_note.dart';
-import '../../../notes/models/book_note_kind.dart';
 import '../../cubits/player_cubits.dart';
+
+enum _PlayerNoteAction { delete }
 
 class PlayerNoteTile extends StatelessWidget {
   const PlayerNoteTile({
@@ -16,42 +17,67 @@ class PlayerNoteTile extends StatelessWidget {
 
   final BookNote note;
   final List<PlayerChapter> chapters;
-  final ({VoidCallback onOpen, VoidCallback onSeek, VoidCallback onDelete})
-  actions;
+  final ({VoidCallback onOpen, VoidCallback onDelete}) actions;
 
   @override
   Widget build(BuildContext context) {
     final projection = _projectNote(note, chapters);
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      onTap: actions.onOpen,
-      leading: IconButton.filledTonal(
-        tooltip: S.of(context).jumpToNote,
-        onPressed: actions.onSeek,
-        icon: Icon(switch (note.kind) {
-          BookNoteKind.bookmark => Icons.bookmark_rounded,
-          BookNoteKind.voice => Icons.mic_rounded,
-          BookNoteKind.note => Icons.play_arrow_rounded,
-        }),
-      ),
-      title: Text(
-        note.displayText,
-        maxLines: note.hasDisplayTitle ? 1 : 2,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: _PlayerNoteSubtitle(
-        note: note,
-        chapter: projection.chapter,
-        relativeStart: projection.relativeStart,
-        relativeEnd: projection.relativeEnd,
-        hasTitle: note.hasDisplayTitle,
-      ),
-      trailing: IconButton(
-        tooltip: S.of(context).deleteNote,
-        onPressed: actions.onDelete,
-        icon: const Icon(Icons.delete_outline_rounded),
+    return GestureDetector(
+      onLongPressStart: (details) =>
+          _showActions(context, details.globalPosition),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        onTap: actions.onOpen,
+        leading: SizedBox(
+          width: 52,
+          child: Text(
+            formatDuration(note.position),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
+        ),
+        title: Text(
+          note.displayText,
+          maxLines: note.hasDisplayTitle ? 1 : 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: _PlayerNoteSubtitle(
+          note: note,
+          chapter: projection.chapter,
+          relativeStart: projection.relativeStart,
+          relativeEnd: projection.relativeEnd,
+          hasTitle: note.hasDisplayTitle,
+        ),
+        trailing: IconButton(
+          tooltip: S.of(context).openNote,
+          onPressed: actions.onOpen,
+          icon: const Icon(Icons.chevron_right_rounded),
+        ),
       ),
     );
+  }
+
+  Future<void> _showActions(BuildContext context, Offset position) async {
+    final action = await showMenu<_PlayerNoteAction>(
+      context: context,
+      position: RelativeRect.fromLTRB(position.dx, position.dy, 0, 0),
+      items: [
+        PopupMenuItem(
+          value: _PlayerNoteAction.delete,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.delete_outline_rounded),
+              const SizedBox(width: 12),
+              Text(S.of(context).deleteNote),
+            ],
+          ),
+        ),
+      ],
+    );
+    if (action == _PlayerNoteAction.delete) {
+      actions.onDelete();
+    }
   }
 }
 
