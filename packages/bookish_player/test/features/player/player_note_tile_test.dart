@@ -35,7 +35,7 @@ void main() {
       );
 
       // THEN
-      expect(find.text('1:05'), findsOneWidget);
+      expect(tester.widget<ListTile>(find.byType(ListTile)).leading, isNull);
       expect(find.byIcon(Icons.play_arrow_rounded), findsNothing);
       expect(find.byIcon(Icons.delete_outline_rounded), findsNothing);
       expect(find.byIcon(Icons.chevron_right_rounded), findsOneWidget);
