@@ -555,6 +555,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "openFileBrowserAgain": MessageLookupByLibrary.simpleMessage(
       "Open file browser again",
     ),
+    "openNote": MessageLookupByLibrary.simpleMessage("Open note"),
     "openSourceLicenses": MessageLookupByLibrary.simpleMessage(
       "Open-source licenses",
     ),

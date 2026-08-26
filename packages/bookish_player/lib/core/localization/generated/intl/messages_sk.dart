@@ -575,6 +575,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "openFileBrowserAgain": MessageLookupByLibrary.simpleMessage(
       "Znova otvoriť prehliadač súborov",
     ),
+    "openNote": MessageLookupByLibrary.simpleMessage("Otvoriť poznámku"),
     "openSourceLicenses": MessageLookupByLibrary.simpleMessage(
       "Licencie otvoreného softvéru",
     ),

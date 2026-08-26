@@ -80,10 +80,6 @@ class _PlayerTestScreenHarnessState extends State<PlayerTestScreenHarness> {
             onAddVoiceNote: () {},
             onExport: widget.cubit.exportNotes,
             onOpenNote: (note) => _openNote(sheetContext, note),
-            onSeekToNote: (note) {
-              widget.cubit.seek(Duration(milliseconds: note.positionMs));
-              Navigator.pop(sheetContext);
-            },
             onDeleteNote: widget.cubit.deleteNote,
           ),
         ),

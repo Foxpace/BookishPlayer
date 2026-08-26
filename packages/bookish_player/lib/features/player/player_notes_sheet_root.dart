@@ -34,7 +34,6 @@ class PlayerNotesSheetRoot extends StatelessWidget {
             onAddVoiceNote: onAddVoiceNote,
             onExport: () => _exportNotes(context),
             onOpenNote: onOpenNote,
-            onSeekToNote: (note) => _seekToNote(context, note),
             onDeleteNote: cubit.deleteNote,
           ),
         ),
@@ -58,10 +57,5 @@ class PlayerNotesSheetRoot extends StatelessWidget {
         context,
       ).showSnackBar(SnackBar(content: Text(S.of(context).notesExported)));
     }
-  }
-
-  void _seekToNote(BuildContext context, BookNote note) {
-    cubit.seek(Duration(milliseconds: note.positionMs));
-    Navigator.pop(context);
   }
 }
