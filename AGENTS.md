@@ -13,7 +13,8 @@ Shared application code lives in `packages/bookish_player/lib/`. Shared navigati
 
 The app has two versions:
 
-- public one - store platform projects are in `apps/store/android/` and `apps/store/ios/`; internal platform projects are in `apps/internal/`. - repo only - optional Cactus adapter lives in `packages/bookish_cactus_transcription/` and must never become a dependency of `apps/store`. See `docs/architecture.md` before changing boundaries.
+- public one - store platform projects are in `apps/store/android/` and `apps/store/ios/`; internal platform projects are in `apps/internal/`.
+- repo only - optional Cactus adapter lives in `packages/bookish_cactus_transcription/` and must never become a dependency of `apps/store`. See `docs/architecture.md` before changing boundaries.
 
 ## Build, Test, and Development Commands
 
