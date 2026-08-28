@@ -326,6 +326,8 @@
   "shortenSilenceDescription": "Na podporovaných zariadeniach jemne preskakuje tiché úseky",
   "voiceBoostDescription": "Na podporovaných zariadeniach zvýrazní rozprávanie",
   "continueSeriesDescription": "Automaticky spustí ďalší nedokončený diel",
+  "continueListeningQuestion": "Pokračovať v počúvaní knihy {title}?",
+  "@continueListeningQuestion": {"placeholders": {"title": {"type": "String"}}},
   "libraryView": "Zobrazenie knižnice",
   "show": "Zobraziť",
   "groupBy": "Zoskupiť podľa",

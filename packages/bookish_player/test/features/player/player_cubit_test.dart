@@ -1,5 +1,6 @@
 import '../../../test_support/features/player/player_test_support.dart';
 import '../../../test_support/features/player/player_cubit_note_tests.dart';
+import '../../../test_support/features/player/player_cubit_continue_listening_tests.dart';
 import '../../../test_support/features/player/player_cubit_playback_flow_tests.dart';
 import '../../../test_support/features/player/player_cubit_widget_tests.dart';
 import '../../../test_support/features/player/player_screen_layout_tests.dart';
@@ -10,9 +11,9 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     registerPlayerCubitWidgetTests();
     registerPlayerCubitNoteTests();
+    registerPlayerCubitContinueListeningTests();
     registerPlayerCubitPlaybackFlowTests();
     registerPlayerScreenLayoutTests();
-
     group('Player intents', () {
       late _PlayerHarness harness;
 

@@ -99,6 +99,19 @@ class PlayerApplication {
         : Result.success(book);
   }
 
+  Future<Result<Audiobook?>> findLastListenedBook() async {
+    try {
+      return Result.success(await _lifecycle.findLastListenedBook());
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed(
+          'player.book.findLastListened',
+          error: error,
+        ),
+      );
+    }
+  }
+
   Future<Result<List<BookNote>>> loadNotes(PlaybackOpenResult result) async {
     try {
       return Result.success(await _lifecycle.prepareOpened(result: result));

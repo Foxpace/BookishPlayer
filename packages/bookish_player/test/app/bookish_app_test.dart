@@ -94,4 +94,63 @@ void main() {
       await navigation;
     },
   );
+
+  testWidgets(
+    'Given a last listened book, When the app opens, Then a two-action continuation sheet is shown',
+    (tester) async {
+      // GIVEN
+      final book = audiobookFixture().copyWith(
+        positionMs: 42000,
+        lastPlayedAt: fixtureTime,
+        artworkPath: '/missing-cover.jpg',
+      );
+      final audio = FakeAudioPlayer();
+      final player = createPlayerCubit(
+        audio,
+        FakeBooks(book),
+        FakeExports(),
+        FakeSettings(),
+      );
+      final settings = SettingsCubit(buildSettingsApplication(FakeSettings()));
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('Library')),
+          ),
+        ],
+      );
+      addTearDown(player.close);
+      addTearDown(audio.close);
+      addTearDown(settings.close);
+      addTearDown(router.dispose);
+
+      // WHEN
+      await tester.pumpWidget(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<SettingsCubit>.value(value: settings),
+            BlocProvider<PlayerCubit>.value(value: player),
+          ],
+          child: BookishApp(router: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // THEN
+      expect(
+        find.text('Continue listening to A Test Audiobook?'),
+        findsOneWidget,
+      );
+      expect(find.byType(BookCover), findsOneWidget);
+      expect(find.widgetWithText(OutlinedButton, 'Cancel'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Play'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.widgetWithText(OutlinedButton, 'Cancel')).dy,
+        lessThan(
+          tester.getTopLeft(find.widgetWithText(FilledButton, 'Play')).dy,
+        ),
+      );
+    },
+  );
 }

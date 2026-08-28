@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import '../core/theme/bookish_theme.dart';
 import '../features/player/cubits/player_cubit.dart';
 import '../features/player/cubits/player_cubits.dart';
 import '../features/player/ui/now_playing_shell.dart';
+import '../features/player/ui/widgets/continue_listening_sheet.dart';
 import '../features/settings/cubits/settings_cubit.dart';
 import '../features/settings/cubits/settings_state.dart';
 import '../features/settings/models/appearance_preferences.dart';
@@ -151,6 +154,11 @@ class _RouterAwareNowPlayingShellState
   void initState() {
     super.initState();
     widget.router.routerDelegate.addListener(_handleRouteChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<PlayerCubit>().offerContinueListening();
+      }
+    });
   }
 
   @override
@@ -189,15 +197,48 @@ class _RouterAwareNowPlayingShellState
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlayerCubit, PlayerState>(
-      builder: (context, playerState) => NowPlayingShell(
-        state: playerState,
-        behavior: (
-          showMiniPlayer: shouldShowMiniPlayer(_activeRouteUri(widget.router)),
-          onOpenPlayer: () => widget.onOpenPlayer(playerState.book?.id),
-          onTogglePlayback: context.read<PlayerCubit>().togglePlayback,
+    return BlocListener<PlayerCubit, PlayerState>(
+      listenWhen: (previous, current) =>
+          previous.continueListeningBook?.id !=
+              current.continueListeningBook?.id &&
+          current.continueListeningBook != null,
+      listener: _showContinueListening,
+      child: BlocBuilder<PlayerCubit, PlayerState>(
+        builder: (context, playerState) => NowPlayingShell(
+          state: playerState,
+          behavior: (
+            showMiniPlayer: shouldShowMiniPlayer(
+              _activeRouteUri(widget.router),
+            ),
+            onOpenPlayer: () => widget.onOpenPlayer(playerState.book?.id),
+            onTogglePlayback: context.read<PlayerCubit>().togglePlayback,
+          ),
+          child: widget.child,
         ),
-        child: widget.child,
+      ),
+    );
+  }
+
+  void _showContinueListening(BuildContext context, PlayerState state) {
+    final book = state.continueListeningBook;
+    if (book == null) {
+      return;
+    }
+
+    final navigatorContext =
+        widget.router.routerDelegate.navigatorKey.currentContext;
+    if (navigatorContext == null) {
+      return;
+    }
+    final player = context.read<PlayerCubit>();
+    unawaited(
+      showContinueListeningSheet(
+        navigatorContext,
+        book: book,
+        intents: (
+          continueBook: player.continueListening,
+          cancel: player.cancelContinueListening,
+        ),
       ),
     );
   }

@@ -2759,6 +2759,16 @@ class S {
     );
   }
 
+  /// `Continue listening to {title}?`
+  String continueListeningQuestion(String title) {
+    return Intl.message(
+      'Continue listening to $title?',
+      name: 'continueListeningQuestion',
+      desc: '',
+      args: [title],
+    );
+  }
+
   /// `Library view`
   String get libraryView {
     return Intl.message(

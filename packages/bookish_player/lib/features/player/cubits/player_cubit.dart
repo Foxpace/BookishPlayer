@@ -75,6 +75,36 @@ class PlayerCubit extends Cubit<PlayerState> {
 
   Future<void> pausePlayback() => _application.pausePlayback();
 
+  Future<void> offerContinueListening() async {
+    if (state.continueListeningChecked || state.book != null) {
+      return;
+    }
+    emit(state.copyWith(continueListeningChecked: true));
+
+    switch (await _application.findLastListenedBook()) {
+      case ResultSuccess(:final value):
+        if (value != null && state.book == null) {
+          emit(state.copyWith(continueListeningBook: value));
+        }
+      case ResultFailure():
+        return;
+    }
+  }
+
+  void cancelContinueListening() {
+    emit(state.copyWith(continueListeningBook: null));
+  }
+
+  Future<void> continueListening() async {
+    final book = state.continueListeningBook;
+    if (book == null) {
+      return;
+    }
+
+    emit(state.copyWith(continueListeningBook: null));
+    await _playRequestedBook(book.id);
+  }
+
   Future<Result<bool>> pickAudioOutput() =>
       _application.showAudioOutputPicker();
 
