@@ -33,6 +33,9 @@ abstract class PlayerState with _$PlayerState {
     @Default(1.0) double speed,
     @Default(PlaybackPreferences()) PlaybackPreferences playback,
 
+    @Default(false) bool continueListeningChecked,
+    Audiobook? continueListeningBook,
+
     SleepTimerType? sleepTimerType,
     int? sleepRemainingMinutes,
     int? sleepChapterEndMs,

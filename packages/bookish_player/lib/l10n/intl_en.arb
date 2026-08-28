@@ -336,6 +336,8 @@
   "shortenSilenceDescription": "Gently skips quiet gaps on supported devices",
   "voiceBoostDescription": "Emphasizes narration on supported devices",
   "continueSeriesDescription": "Start the next unfinished volume automatically",
+  "continueListeningQuestion": "Continue listening to {title}?",
+  "@continueListeningQuestion": {"placeholders": {"title": {"type": "String"}}},
   "libraryView": "Library view",
   "show": "Show",
   "groupBy": "Group by",

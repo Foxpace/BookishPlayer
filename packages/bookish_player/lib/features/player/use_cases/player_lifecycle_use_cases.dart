@@ -48,6 +48,25 @@ class PlayerLifecycleUseCases {
   /// Resolves a route or external intent into a library audiobook.
   Future<Audiobook?> findBook(String bookId) => _books.getBook(bookId);
 
+  Future<Audiobook?> findLastListenedBook() async {
+    Audiobook? lastListenedBook;
+
+    for (final book in await _books.getBooks()) {
+      final playedAt = book.lastPlayedAt;
+      if (playedAt == null ||
+          book.listeningStatus != ListeningStatus.inProgress) {
+        continue;
+      }
+
+      final lastPlayedAt = lastListenedBook?.lastPlayedAt;
+      if (lastPlayedAt == null || playedAt.isAfter(lastPlayedAt)) {
+        lastListenedBook = book;
+      }
+    }
+
+    return lastListenedBook;
+  }
+
   /// Starts playback after automatic continuation selected another book.
   Future<void> continuePlayback() => _audio.play();
 
