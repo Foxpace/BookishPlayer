@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../core/app_metadata.dart';
 import '../../app/app_capabilities.dart';
@@ -84,9 +85,12 @@ class SettingsScreenRoot extends StatelessWidget {
   }
 
   Future<void> _showAbout(BuildContext context) async {
+    final packageInfo = getIt<PackageInfo>();
     final action = await showDialog<BookishAboutDialogAction>(
       context: context,
       builder: (dialogContext) => BookishAboutDialog(
+        versionName: packageInfo.version,
+        buildNumber: packageInfo.buildNumber,
         onAction: (action) => Navigator.pop(dialogContext, action),
       ),
     );
@@ -96,10 +100,11 @@ class SettingsScreenRoot extends StatelessWidget {
   }
 
   void _showLicenses(BuildContext context) {
+    final packageInfo = getIt<PackageInfo>();
     showLicensePage(
       context: context,
       applicationName: appName,
-      applicationVersion: appVersion,
+      applicationVersion: '${packageInfo.version} (${packageInfo.buildNumber})',
       applicationLegalese: S.of(context).applicationLegalese,
     );
   }

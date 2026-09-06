@@ -4,46 +4,60 @@ import 'package:file_picker/file_picker.dart';
 import 'package:injectable/injectable.dart';
 
 import 'file_picker_gateway.dart';
+import 'picked_local_file.dart';
+
+extension _PlatformFilePickedLocalFile on PlatformFile {
+  PickedLocalFile get pickedLocalFile => PickedLocalFile(
+    name: name,
+    path: path,
+    sizeBytes: lengthSync(),
+  );
+}
 
 @LazySingleton(as: FilePickerGateway)
 class PlatformFilePickerGateway implements FilePickerGateway {
   @override
-  Future<FilePickerResult?> pickAudioFiles(List<String> extensions) =>
-      FilePicker.platform.pickFiles(
-        allowMultiple: true,
-        type: FileType.custom,
-        allowedExtensions: extensions,
-        withData: false,
-      );
+  Future<List<PickedLocalFile>> pickAudioFiles(List<String> extensions) async {
+    final files = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: extensions,
+    );
+    return files.map((file) => file.pickedLocalFile).toList(growable: false);
+  }
 
   @override
-  Future<FilePickerResult?> pickImage() => FilePicker.platform.pickFiles(
-    type: FileType.image,
-    allowMultiple: false,
-    withData: false,
-  );
+  Future<PickedLocalFile?> pickImage() async {
+    final file = await FilePicker.pickFile(type: FileType.image);
+    return file?.pickedLocalFile;
+  }
 
   @override
-  Future<FilePickerResult?> pickJson() => FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowedExtensions: const ['json'],
-    allowMultiple: false,
-    withData: true,
-  );
+  Future<Uint8List?> pickJsonBytes() async {
+    final file = await FilePicker.pickFile(
+      type: FileType.custom,
+      allowedExtensions: const ['json'],
+    );
+    if (file == null) {
+      return null;
+    }
+    return file.readAsBytes();
+  }
 
   @override
-  Future<String?> saveFile({
+  Future<bool> saveFile({
     required String filename,
     required List<String> extensions,
     required Uint8List bytes,
-  }) => FilePicker.platform.saveFile(
-    fileName: filename,
-    type: FileType.custom,
-    allowedExtensions: extensions,
-    bytes: bytes,
-  );
+  }) async {
+    final savedFile = await FilePicker.saveFile(
+      fileName: filename,
+      type: FileType.custom,
+      allowedExtensions: extensions,
+      bytes: bytes,
+    );
+    return savedFile != null;
+  }
 
   @override
-  Future<bool?> clearTemporaryFiles() =>
-      FilePicker.platform.clearTemporaryFiles();
+  Future<void> clearTemporaryFiles() => FilePicker.clearTemporaryFiles();
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../core/diagnostics/app_error_handler.dart';
 import '../core/di/injection.dart';
@@ -37,6 +38,8 @@ Future<void> runBookish({
 
   final errorHandler = getIt<AppErrorHandler>()..install();
   await runZonedGuarded(() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    getIt.registerSingleton<PackageInfo>(packageInfo);
     await getIt<AppBootstrapper>().initialize();
     runApp(_createAppRoot());
   }, errorHandler.recordUncaught);

@@ -66,6 +66,12 @@
       "version": {"type": "String"}
     }
   },
+  "appBuildNumber": "Build {buildNumber}",
+  "@appBuildNumber": {
+    "placeholders": {
+      "buildNumber": {"type": "String"}
+    }
+  },
   "openSourceLicenses": "Open-source licenses",
   "openSourceLicensesDescription": "Licenses for Flutter and every package used by Bookish",
   "applicationLegalese": "Copyright © 2026 Bookish contributors",

@@ -56,6 +56,7 @@
   "aboutDescription": "Informácie o aplikácii, verzia a oznámenia o otvorenom softvéri.",
   "aboutBookish": "O aplikácii Bookish",
   "appVersion": "Verzia {version}",
+  "appBuildNumber": "Zostava {buildNumber}",
   "openSourceLicenses": "Licencie otvoreného softvéru",
   "openSourceLicensesDescription": "Licencie Fluttera a všetkých balíkov použitých v Bookish",
   "applicationLegalese": "Autorské práva © 2026 prispievatelia Bookish",

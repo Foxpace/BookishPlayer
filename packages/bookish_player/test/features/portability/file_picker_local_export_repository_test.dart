@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bookish_player/core/platform/file_picker_gateway.dart';
+import 'package:bookish_player/core/platform/picked_local_file.dart';
 import 'package:bookish_player/features/portability/repos/implementations/file_picker_local_export_repository.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../test_support/support/fixtures.dart';
@@ -50,7 +50,7 @@ void main() {
         expect(markdown, contains('## 1:01:01'));
         expect(markdown, contains('Second note'));
 
-        picker.savePath = null;
+        picker.shouldSave = false;
         expect(await sut.exportNotes(audiobookFixture(), const []), isFalse);
       },
     );
@@ -72,18 +72,12 @@ void main() {
         final payload = jsonDecode(utf8.decode(savedBytes)) as Map;
         expect(payload['schemaVersion'], 3);
 
-        picker.pickedResult = FilePickerResult([
-          PlatformFile(
-            name: 'bookish-backup.json',
-            size: savedBytes.length,
-            bytes: savedBytes,
-          ),
-        ]);
+        picker.pickedJsonBytes = savedBytes;
         final restored = await sut.pickBackup();
         expect(restored?.schemaVersion, 3);
         expect(restored?.books.single.id, 'book-1');
 
-        picker.pickedResult = null;
+        picker.pickedJsonBytes = null;
         expect(await sut.pickBackup(), isNull);
       },
     );
@@ -91,14 +85,14 @@ void main() {
 }
 
 class _FilePicker implements FilePickerGateway {
-  String? savePath = '/exports/bookish';
+  var shouldSave = true;
   String? savedFilename;
   List<String>? savedExtensions;
   Uint8List? savedBytes;
-  FilePickerResult? pickedResult;
+  Uint8List? pickedJsonBytes;
 
   @override
-  Future<String?> saveFile({
+  Future<bool> saveFile({
     required String filename,
     required List<String> extensions,
     required Uint8List bytes,
@@ -106,19 +100,19 @@ class _FilePicker implements FilePickerGateway {
     savedFilename = filename;
     savedExtensions = extensions;
     savedBytes = bytes;
-    return savePath;
+    return shouldSave;
   }
 
   @override
-  Future<FilePickerResult?> pickJson() async => pickedResult;
+  Future<Uint8List?> pickJsonBytes() async => pickedJsonBytes;
 
   @override
-  Future<FilePickerResult?> pickAudioFiles(List<String> extensions) async =>
-      pickedResult;
+  Future<List<PickedLocalFile>> pickAudioFiles(List<String> extensions) async =>
+      const [];
 
   @override
-  Future<FilePickerResult?> pickImage() async => pickedResult;
+  Future<PickedLocalFile?> pickImage() async => null;
 
   @override
-  Future<bool?> clearTemporaryFiles() async => true;
+  Future<void> clearTemporaryFiles() async {}
 }

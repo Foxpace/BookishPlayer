@@ -37,7 +37,7 @@ class DeviceAppDataResetRepository implements AppDataResetRepository {
 
   Future<void> _clearPickerCache() async {
     try {
-      await FilePicker.platform.clearTemporaryFiles();
+      await FilePicker.clearTemporaryFiles();
     } catch (_) {
       // The platform picker cache is best-effort and may not exist.
     }

@@ -45,8 +45,7 @@ class FilePickerLocalExportRepository implements LocalExportRepository {
 
   @override
   Future<BookishBackup?> pickBackup() async {
-    final result = await _picker.pickJson();
-    final bytes = result?.files.single.bytes;
+    final bytes = await _picker.pickJsonBytes();
     if (bytes == null) {
       return null;
     }
@@ -60,12 +59,11 @@ class FilePickerLocalExportRepository implements LocalExportRepository {
     required String contents,
     required List<String> extensions,
   }) async {
-    final path = await _picker.saveFile(
+    return _picker.saveFile(
       filename: filename,
       extensions: extensions,
       bytes: Uint8List.fromList(utf8.encode(contents)),
     );
-    return path != null;
   }
 
   String _formatTimestamp(int milliseconds) {

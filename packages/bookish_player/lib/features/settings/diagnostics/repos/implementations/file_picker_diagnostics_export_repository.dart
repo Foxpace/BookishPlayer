@@ -14,12 +14,12 @@ class FilePickerDiagnosticsExportRepository
     if (!source.existsSync()) {
       return false;
     }
-    final path = await FilePicker.platform.saveFile(
+    final savedFile = await FilePicker.saveFile(
       fileName: 'bookish-diagnostics.jsonl',
       type: FileType.custom,
       allowedExtensions: const ['jsonl'],
       bytes: source.readAsBytesSync(),
     );
-    return path != null;
+    return savedFile != null;
   }
 }

@@ -44,11 +44,7 @@ class DeviceFileImportRepository implements FileImportRepository {
 
   Future<Result<List<SelectedAudioFile>>> _pickAudioFiles() async {
     final result = await _picker.pickAudioFiles(_extensions);
-    if (result == null) {
-      return const Result.success([]);
-    }
-
-    final inaccessible = result.files.any((file) => file.path == null);
+    final inaccessible = result.any((file) => file.path == null);
     if (inaccessible) {
       return const Result.failure(
         AppFailure.operationFailed('import.fileAccess'),
@@ -56,12 +52,12 @@ class DeviceFileImportRepository implements FileImportRepository {
     }
 
     return Result.success([
-      for (final file in result.files)
+      for (final file in result)
         if (file.path case final path?)
           SelectedAudioFile(
             sourcePath: path,
             displayName: file.name,
-            sizeBytes: file.size,
+            sizeBytes: file.sizeBytes,
           ),
     ]);
   }
@@ -180,7 +176,7 @@ class DeviceFileImportRepository implements FileImportRepository {
   @override
   Future<String?> pickAndImportCover(String bookId) async {
     final result = await _picker.pickImage();
-    final sourcePath = result?.files.single.path;
+    final sourcePath = result?.path;
     if (sourcePath == null) {
       return null;
     }

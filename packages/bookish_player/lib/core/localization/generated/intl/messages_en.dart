@@ -20,69 +20,71 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(version) => "Version ${version}";
+  static String m0(buildNumber) => "Build ${buildNumber}";
 
-  static String m1(chapter, position) => "${chapter} · ${position}";
+  static String m1(version) => "Version ${version}";
 
-  static String m2(title) => "Continue listening to ${title}?";
+  static String m2(chapter, position) => "${chapter} · ${position}";
 
-  static String m3(position) => "From ${position}";
+  static String m3(title) => "Continue listening to ${title}?";
 
-  static String m4(count) =>
+  static String m4(position) => "From ${position}";
+
+  static String m5(count) =>
       "${Intl.plural(count, zero: 'No audiobooks were added.', one: '1 completed audiobook remains in your library.', other: '${count} completed audiobooks remain in your library.')}";
 
-  static String m5(file, copied, total) =>
+  static String m6(file, copied, total) =>
       "${file}\n${copied} of ${total} copied";
 
-  static String m6(stage) =>
+  static String m7(stage) =>
       "The failure happened while ${stage}. The privacy-safe diagnostic below can be copied when reporting the problem.";
 
-  static String m7(file, stage) =>
+  static String m8(file, stage) =>
       "${file} failed while ${stage}. Completed audiobooks remain in your library. The privacy-safe diagnostic below can be copied when reporting the problem.";
 
-  static String m8(file) => "${file}\nPlease keep Bookish open for a moment.";
+  static String m9(file) => "${file}\nPlease keep Bookish open for a moment.";
 
-  static String m9(duration) => "This moves ${duration} back.";
+  static String m10(duration) => "This moves ${duration} back.";
 
-  static String m10(duration) => "This moves ${duration} forward.";
+  static String m11(duration) => "This moves ${duration} forward.";
 
-  static String m11(count) => "Last ${count} min";
+  static String m12(count) => "Last ${count} min";
 
-  static String m12(count) => "Last ${count} sec";
+  static String m13(count) => "Last ${count} sec";
 
-  static String m13(size) => "${size} managed";
+  static String m14(size) => "${size} managed";
 
-  static String m14(count) => "About ${count} minutes remaining";
+  static String m15(count) => "About ${count} minutes remaining";
 
-  static String m15(count) => "${count} min";
+  static String m16(count) => "${count} min";
 
-  static String m16(size) => "${size} MB";
+  static String m17(size) => "${size} MB";
 
-  static String m17(position) => "Note at ${position}";
+  static String m18(position) => "Note at ${position}";
 
-  static String m18(count) =>
+  static String m19(count) =>
       "${Intl.plural(count, one: '1 note', other: '${count} notes')}";
 
-  static String m19(title) => "Quote from ${title}";
+  static String m20(title) => "Quote from ${title}";
 
-  static String m20(start, end) => "${start} to ${end}";
+  static String m21(start, end) => "${start} to ${end}";
 
-  static String m21(start, end) => "${start} – ${end} in chapter";
+  static String m22(start, end) => "${start} – ${end} in chapter";
 
-  static String m22(size) => "${size} can be reclaimed safely";
+  static String m23(size) => "${size} can be reclaimed safely";
 
-  static String m23(title) => "Remove “${title}”?";
+  static String m24(title) => "Remove “${title}”?";
 
-  static String m24(title) =>
+  static String m25(title) =>
       "“${title}” will be removed from the library because its audio is no longer available.";
 
-  static String m25(count) => "${count} sec earlier";
+  static String m26(count) => "${count} sec earlier";
 
-  static String m26(count) => "${count} sec later";
+  static String m27(count) => "${count} sec later";
 
-  static String m27(count) => "${count} sec";
+  static String m28(count) => "${count} sec";
 
-  static String m28(position) => "To ${position}";
+  static String m29(position) => "To ${position}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -114,6 +116,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "allTimeListening": MessageLookupByLibrary.simpleMessage(
       "All-time listening",
     ),
+    "appBuildNumber": m0,
     "appColorDescription": MessageLookupByLibrary.simpleMessage(
       "Used when system colors are off or unavailable",
     ),
@@ -122,7 +125,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "A quiet, offline-first audiobook player.",
     ),
     "appTitle": MessageLookupByLibrary.simpleMessage("Bookish"),
-    "appVersion": m0,
+    "appVersion": m1,
     "appearanceDescription": MessageLookupByLibrary.simpleMessage(
       "Choose how Bookish looks on this device.",
     ),
@@ -176,7 +179,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "booksCompleted": MessageLookupByLibrary.simpleMessage("Books completed"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "changeCover": MessageLookupByLibrary.simpleMessage("Change cover"),
-    "chapterAtPosition": m1,
+    "chapterAtPosition": m2,
     "chapterFallbackDescription": MessageLookupByLibrary.simpleMessage(
       "Stops even if a chapter boundary is missing",
     ),
@@ -208,7 +211,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "colorBrightness": MessageLookupByLibrary.simpleMessage("Brightness"),
     "colorHue": MessageLookupByLibrary.simpleMessage("Hue"),
     "colorSaturation": MessageLookupByLibrary.simpleMessage("Saturation"),
-    "continueListeningQuestion": m2,
+    "continueListeningQuestion": m3,
     "continueSeries": MessageLookupByLibrary.simpleMessage("Continue series"),
     "continueSeriesDescription": MessageLookupByLibrary.simpleMessage(
       "Start the next unfinished volume automatically",
@@ -316,7 +319,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "finishedBook": MessageLookupByLibrary.simpleMessage("Finished book"),
     "folderField": MessageLookupByLibrary.simpleMessage("Folder"),
     "forwardInterval": MessageLookupByLibrary.simpleMessage("Forward interval"),
-    "fromPosition": m3,
+    "fromPosition": m4,
     "fullTitle": MessageLookupByLibrary.simpleMessage("Full title"),
     "gridLayout": MessageLookupByLibrary.simpleMessage("Grid"),
     "groupBy": MessageLookupByLibrary.simpleMessage("Group by"),
@@ -327,11 +330,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Import audiobooks",
     ),
     "importCancelled": MessageLookupByLibrary.simpleMessage("Import cancelled"),
-    "importCancelledDetail": m4,
+    "importCancelledDetail": m5,
     "importChooseFiles": MessageLookupByLibrary.simpleMessage(
       "Choose one or more audiobook files.",
     ),
-    "importCopyProgress": m5,
+    "importCopyProgress": m6,
     "importCopyingAudiobook": MessageLookupByLibrary.simpleMessage(
       "Copying audiobook",
     ),
@@ -344,8 +347,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "importFailed": MessageLookupByLibrary.simpleMessage(
       "The audiobook could not be imported",
     ),
-    "importFailureAtStage": m6,
-    "importFailureForFileAtStage": m7,
+    "importFailureAtStage": m7,
+    "importFailureForFileAtStage": m8,
     "importFileAccessFailed": MessageLookupByLibrary.simpleMessage(
       "Bookish could not access that file",
     ),
@@ -355,7 +358,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "importKeepOpen": MessageLookupByLibrary.simpleMessage(
       "Please keep Bookish open for a moment.",
     ),
-    "importKeepOpenWithFile": m8,
+    "importKeepOpenWithFile": m9,
     "importMalformedMetadata": MessageLookupByLibrary.simpleMessage(
       "The audiobook metadata is malformed",
     ),
@@ -430,10 +433,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "keepUserDataDescription": MessageLookupByLibrary.simpleMessage(
       "Keep notes, book details, cover, and listening history.",
     ),
-    "largeSeekBackward": m9,
-    "largeSeekForward": m10,
-    "lastMinutes": m11,
-    "lastSeconds": m12,
+    "largeSeekBackward": m10,
+    "largeSeekForward": m11,
+    "lastMinutes": m12,
+    "lastSeconds": m13,
     "lastSevenDays": MessageLookupByLibrary.simpleMessage("Last 7 days"),
     "lastThirtyDays": MessageLookupByLibrary.simpleMessage("Last 30 days"),
     "lastTwelveMonths": MessageLookupByLibrary.simpleMessage("Last 12 months"),
@@ -477,7 +480,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "localTranscriptionTitle": MessageLookupByLibrary.simpleMessage(
       "Local transcription",
     ),
-    "managedStorage": m13,
+    "managedStorage": m14,
     "markFinished": MessageLookupByLibrary.simpleMessage("Mark finished"),
     "markUnfinished": MessageLookupByLibrary.simpleMessage("Mark unfinished"),
     "metadataEditorLoadFailed": MessageLookupByLibrary.simpleMessage(
@@ -486,8 +489,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "metadataSaveFailed": MessageLookupByLibrary.simpleMessage(
       "Could not save audiobook metadata.",
     ),
-    "minutesRemaining": m14,
-    "minutesShort": m15,
+    "minutesRemaining": m15,
+    "minutesShort": m16,
     "missingAudioDescription": MessageLookupByLibrary.simpleMessage(
       "Its audio file is no longer available.",
     ),
@@ -500,7 +503,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Not downloaded",
     ),
     "modelSelected": MessageLookupByLibrary.simpleMessage("Selected"),
-    "modelSize": m16,
+    "modelSize": m17,
     "month": MessageLookupByLibrary.simpleMessage("Month"),
     "moveFromFinderDescription": MessageLookupByLibrary.simpleMessage(
       "Copy into Bookish, then remove the transferred originals",
@@ -531,8 +534,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "none": MessageLookupByLibrary.simpleMessage("None"),
     "notStarted": MessageLookupByLibrary.simpleMessage("Not started"),
-    "noteAtPosition": m17,
-    "noteCount": m18,
+    "noteAtPosition": m18,
+    "noteCount": m19,
     "noteThoughtHint": MessageLookupByLibrary.simpleMessage(
       "A thought worth returning to…",
     ),
@@ -600,25 +603,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "quoteSavedToNotes": MessageLookupByLibrary.simpleMessage(
       "Quote saved to notes.",
     ),
-    "quoteShareSubject": m19,
+    "quoteShareSubject": m20,
     "quoteTimeRange": MessageLookupByLibrary.simpleMessage("Quote time range"),
     "quoteTranscriptionFailed": MessageLookupByLibrary.simpleMessage(
       "The quote could not be transcribed.",
     ),
-    "rangeAccessibilityValue": m20,
-    "rangeInChapter": m21,
+    "rangeAccessibilityValue": m21,
+    "rangeInChapter": m22,
     "recentlyAdded": MessageLookupByLibrary.simpleMessage("Recently added"),
-    "reclaimableStorage": m22,
+    "reclaimableStorage": m23,
     "removeAudioOnly": MessageLookupByLibrary.simpleMessage(
       "Remove audio only",
     ),
-    "removeBookQuestion": m23,
+    "removeBookQuestion": m24,
     "removeEntry": MessageLookupByLibrary.simpleMessage("Remove entry"),
     "removeFavorite": MessageLookupByLibrary.simpleMessage("Remove favorite"),
     "removeFromDevice": MessageLookupByLibrary.simpleMessage(
       "Remove from device",
     ),
-    "removeMissingBookDescription": m24,
+    "removeMissingBookDescription": m25,
     "removeMissingEntryQuestion": MessageLookupByLibrary.simpleMessage(
       "Remove missing entry?",
     ),
@@ -649,9 +652,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveNote": MessageLookupByLibrary.simpleMessage("Save note"),
     "saveToNotes": MessageLookupByLibrary.simpleMessage("Save to notes"),
     "saveVoiceNote": MessageLookupByLibrary.simpleMessage("Save voice note"),
-    "secondsEarlier": m25,
-    "secondsLater": m26,
-    "secondsShort": m27,
+    "secondsEarlier": m26,
+    "secondsLater": m27,
+    "secondsShort": m28,
     "seriesField": MessageLookupByLibrary.simpleMessage("Series"),
     "settingsLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Could not load appearance settings.",
@@ -740,7 +743,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timer": MessageLookupByLibrary.simpleMessage("Timer"),
     "timerActive": MessageLookupByLibrary.simpleMessage("Timer active"),
     "titleField": MessageLookupByLibrary.simpleMessage("Title"),
-    "toPosition": m28,
+    "toPosition": m29,
     "trackOrder": MessageLookupByLibrary.simpleMessage("Track order"),
     "transcribeQuote": MessageLookupByLibrary.simpleMessage(
       "Transcribe a quote",

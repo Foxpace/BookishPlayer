@@ -1,19 +1,19 @@
 import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
+import 'picked_local_file.dart';
 
 abstract interface class FilePickerGateway {
-  Future<FilePickerResult?> pickAudioFiles(List<String> extensions);
+  Future<List<PickedLocalFile>> pickAudioFiles(List<String> extensions);
 
-  Future<FilePickerResult?> pickImage();
+  Future<PickedLocalFile?> pickImage();
 
-  Future<FilePickerResult?> pickJson();
+  Future<Uint8List?> pickJsonBytes();
 
-  Future<String?> saveFile({
+  Future<bool> saveFile({
     required String filename,
     required List<String> extensions,
     required Uint8List bytes,
   });
 
-  Future<bool?> clearTemporaryFiles();
+  Future<void> clearTemporaryFiles();
 }

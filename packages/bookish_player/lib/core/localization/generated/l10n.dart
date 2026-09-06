@@ -569,6 +569,16 @@ class S {
     );
   }
 
+  /// `Build {buildNumber}`
+  String appBuildNumber(String buildNumber) {
+    return Intl.message(
+      'Build $buildNumber',
+      name: 'appBuildNumber',
+      desc: '',
+      args: [buildNumber],
+    );
+  }
+
   /// `Open-source licenses`
   String get openSourceLicenses {
     return Intl.message(

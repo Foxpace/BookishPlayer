@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:bookish_player/core/foundation/result.dart';
 import 'package:bookish_player/core/platform/file_picker_gateway.dart';
+import 'package:bookish_player/core/platform/picked_local_file.dart';
 import 'package:bookish_player/features/importing/models/import_cancellation.dart';
 import 'package:bookish_player/features/importing/repos/implementations/device_file_import_repository.dart';
 import 'package:bookish_player/features/importing/repos/selected_audio_file.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -143,10 +143,10 @@ void main() {
           ..writeAsStringSync('one');
         final second = File('${temporary.path}/second.mp3')
           ..writeAsStringSync('two');
-        picker.result = FilePickerResult([
-          PlatformFile(name: 'first.m4b', size: 3, path: first.path),
-          PlatformFile(name: 'second.mp3', size: 3, path: second.path),
-        ]);
+        picker.result = [
+          PickedLocalFile(name: 'first.m4b', path: first.path, sizeBytes: 3),
+          PickedLocalFile(name: 'second.mp3', path: second.path, sizeBytes: 3),
+        ];
 
         // WHEN
         final selected = _success(await sut.pickAudioFiles());
@@ -160,7 +160,7 @@ void main() {
         expect(picker.allowedExtensions, containsAll(['m4b', 'opus']));
         expect(picker.allowMultiple, isTrue);
 
-        picker.result = null;
+        picker.result = [];
         expect(_success(await sut.pickAudioFiles()), isEmpty);
       },
     );
@@ -169,9 +169,9 @@ void main() {
       'Given isolated document and application-support directories, When the platform picker returns readable files or is cancelled, Then inaccessible provider entries fail with their names',
       () async {
         // WHEN
-        picker.result = FilePickerResult([
-          PlatformFile(name: 'cloud-only.m4b', size: 100),
-        ]);
+        picker.result = const [
+          PickedLocalFile(name: 'cloud-only.m4b', path: null, sizeBytes: 100),
+        ];
 
         // THEN
         expect(
@@ -232,9 +232,9 @@ void main() {
         // GIVEN
         final cover = File('${temporary.path}/cover.JPG')
           ..writeAsStringSync('cover');
-        picker.result = FilePickerResult([
-          PlatformFile(name: 'cover.JPG', size: 5, path: cover.path),
-        ]);
+        picker.result = [
+          PickedLocalFile(name: 'cover.JPG', path: cover.path, sizeBytes: 5),
+        ];
 
         // WHEN
         final imported = await sut.pickAndImportCover('book-1');
@@ -245,7 +245,7 @@ void main() {
         }
         expect(File(imported).readAsStringSync(), 'cover');
 
-        picker.result = null;
+        picker.result = [];
         expect(await sut.pickAndImportCover('book-2'), isNull);
         await sut.clearTemporaryFiles();
         expect(picker.clearCalls, 0);
@@ -262,37 +262,36 @@ S _success<S>(Result<S> result) => switch (result) {
 };
 
 class _FilePicker implements FilePickerGateway {
-  FilePickerResult? result;
+  List<PickedLocalFile> result = [];
   List<String>? allowedExtensions;
   bool? allowMultiple;
   var clearCalls = 0;
 
   @override
-  Future<FilePickerResult?> pickAudioFiles(List<String> extensions) async {
+  Future<List<PickedLocalFile>> pickAudioFiles(List<String> extensions) async {
     allowedExtensions = extensions;
     allowMultiple = true;
     return result;
   }
 
   @override
-  Future<FilePickerResult?> pickImage() async {
+  Future<PickedLocalFile?> pickImage() async {
     allowMultiple = false;
-    return result;
+    return result.firstOrNull;
   }
 
   @override
-  Future<FilePickerResult?> pickJson() async => result;
+  Future<Uint8List?> pickJsonBytes() async => null;
 
   @override
-  Future<String?> saveFile({
+  Future<bool> saveFile({
     required String filename,
     required List<String> extensions,
     required Uint8List bytes,
-  }) async => null;
+  }) async => false;
 
   @override
-  Future<bool?> clearTemporaryFiles() async {
+  Future<void> clearTemporaryFiles() async {
     clearCalls++;
-    return true;
   }
 }
