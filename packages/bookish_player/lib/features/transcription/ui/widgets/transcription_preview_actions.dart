@@ -40,7 +40,7 @@ class TranscriptionPreviewActions extends StatelessWidget {
                   ? () => onShare(buttonContext)
                   : null,
               icon: const Icon(Icons.share_outlined),
-              label: Text(S.of(context).share),
+              label: Text(S.of(context).saveToNotesAndShare),
             ),
           ),
         ),

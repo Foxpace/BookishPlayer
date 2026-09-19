@@ -642,7 +642,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "restoreBackupDescription": MessageLookupByLibrary.simpleMessage(
       "Replace local library data from a backup",
     ),
-    "reviewAndEdit": MessageLookupByLibrary.simpleMessage("Review and edit"),
     "reviewTranscriptionDescription": MessageLookupByLibrary.simpleMessage(
       "Correct the local transcription before saving or sharing it.",
     ),
@@ -651,6 +650,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveDetails": MessageLookupByLibrary.simpleMessage("Save details"),
     "saveNote": MessageLookupByLibrary.simpleMessage("Save note"),
     "saveToNotes": MessageLookupByLibrary.simpleMessage("Save to notes"),
+    "saveToNotesAndShare": MessageLookupByLibrary.simpleMessage("Save & share"),
     "saveVoiceNote": MessageLookupByLibrary.simpleMessage("Save voice note"),
     "secondsEarlier": m26,
     "secondsLater": m27,

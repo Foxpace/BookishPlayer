@@ -13,13 +13,31 @@ Future<void> showContinueListeningSheet(
   BuildContext context, {
   required Audiobook book,
   required ContinueListeningIntents intents,
-}) => showModalBottomSheet<void>(
-  context: context,
-  isScrollControlled: true,
-  isDismissible: false,
-  enableDrag: false,
-  builder: (_) => ContinueListeningSheet(book: book, intents: intents),
-);
+}) async {
+  var actionSelected = false;
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    isDismissible: true,
+    enableDrag: true,
+    builder: (_) => ContinueListeningSheet(
+      book: book,
+      intents: (
+        continueBook: () {
+          actionSelected = true;
+          intents.continueBook();
+        },
+        cancel: () {
+          actionSelected = true;
+          intents.cancel();
+        },
+      ),
+    ),
+  );
+  if (!actionSelected) {
+    intents.cancel();
+  }
+}
 
 class ContinueListeningSheet extends StatelessWidget {
   const ContinueListeningSheet({

@@ -670,9 +670,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "restoreBackupDescription": MessageLookupByLibrary.simpleMessage(
       "Nahradiť lokálne údaje knižnice zo zálohy",
     ),
-    "reviewAndEdit": MessageLookupByLibrary.simpleMessage(
-      "Skontrolovať a upraviť",
-    ),
     "reviewTranscriptionDescription": MessageLookupByLibrary.simpleMessage(
       "Pred uložením alebo zdieľaním opravte miestny prepis.",
     ),
@@ -683,6 +680,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveDetails": MessageLookupByLibrary.simpleMessage("Uložiť podrobnosti"),
     "saveNote": MessageLookupByLibrary.simpleMessage("Uložiť poznámku"),
     "saveToNotes": MessageLookupByLibrary.simpleMessage("Uložiť do poznámok"),
+    "saveToNotesAndShare": MessageLookupByLibrary.simpleMessage(
+      "Uložiť a zdieľať",
+    ),
     "saveVoiceNote": MessageLookupByLibrary.simpleMessage(
       "Uložiť hlasovú poznámku",
     ),

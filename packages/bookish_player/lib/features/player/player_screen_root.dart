@@ -236,6 +236,7 @@ class _PlayerScreenRootState extends State<PlayerScreenRoot>
     return showModalBottomSheet<TranscriptionDraft>(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
       showDragHandle: true,
       builder: (_) => QuoteTranscriptionRoot(
         book: book,

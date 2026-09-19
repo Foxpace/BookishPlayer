@@ -2434,6 +2434,16 @@ class S {
     );
   }
 
+  /// `Save & share`
+  String get saveToNotesAndShare {
+    return Intl.message(
+      'Save & share',
+      name: 'saveToNotesAndShare',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Quote saved to notes.`
   String get quoteSavedToNotes {
     return Intl.message(
@@ -2969,16 +2979,6 @@ class S {
     return Intl.message(
       'Find missing, duplicate, and unused files',
       name: 'storageAssistantDescription',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Review and edit`
-  String get reviewAndEdit {
-    return Intl.message(
-      'Review and edit',
-      name: 'reviewAndEdit',
       desc: '',
       args: [],
     );
