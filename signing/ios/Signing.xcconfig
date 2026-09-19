@@ -1,3 +1,5 @@
-// Shared non-secret signing identity for both Flutter app targets.
-BOOKISH_DEVELOPMENT_TEAM = REDACTED
+// Shared signing settings for both Flutter app targets.
 BOOKISH_BUNDLE_IDENTIFIER = com.tomasrepcik.bookish
+
+// Each developer and CI environment supplies its own signing team.
+#include? "Signing.local.xcconfig"

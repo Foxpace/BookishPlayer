@@ -27,6 +27,7 @@ tst_smaples/
 # Signing material
 **/android/key.properties
 signing/android/key.properties
+signing/ios/Signing.local.xcconfig
 *.jks
 *.keystore
 *.mobileprovision
