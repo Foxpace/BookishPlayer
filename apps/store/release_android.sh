@@ -246,7 +246,6 @@ chmod 600 "$keystore_path" "$play_secret_path"
 
 keytool -list \
   -keystore "$keystore_path" \
-  -storetype JKS \
   -storepass:env BOOKISH_ANDROID_KEYSTORE_PASSWORD \
   -alias "$BOOKISH_ANDROID_KEY_ALIAS" >/dev/null || \
   die "Could not open the JKS or find alias '$BOOKISH_ANDROID_KEY_ALIAS'"
@@ -318,7 +317,6 @@ fi
 printf 'Signing AAB with alias %s...\n' "$BOOKISH_ANDROID_KEY_ALIAS"
 jarsigner \
   -keystore "$keystore_path" \
-  -storetype JKS \
   -storepass:env BOOKISH_ANDROID_KEYSTORE_PASSWORD \
   -keypass:env BOOKISH_ANDROID_KEY_PASSWORD \
   -signedjar "$OUTPUT_PATH" \
