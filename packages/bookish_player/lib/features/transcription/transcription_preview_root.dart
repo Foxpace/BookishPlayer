@@ -79,6 +79,7 @@ class TranscriptionPreviewRoot extends StatelessWidget {
         messenger.showSnackBar(SnackBar(content: Text(savedMessage)));
         return;
       case TranscriptionPreviewEffect.shared:
+        Navigator.pop(context);
         messenger.showSnackBar(SnackBar(content: Text(savedMessage)));
         return;
       case null:
