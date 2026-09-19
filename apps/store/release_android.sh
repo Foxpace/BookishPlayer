@@ -43,13 +43,13 @@ Usage:
     [--validate-only]
 
 Required environment variables:
-  ANDROID_GRADLE_ALIAS
-  ANDROID_GRADLE_BASE64_JKS
-  ANDROID_GRADLE_KEY_PASSWORD
-  ANDROID_GRADLE_KEYSTORE_PASSWORD
-  ANDROID_SUPPLY_BASE64_SECRET
+  BOOKISH_ANDROID_KEY_ALIAS
+  BOOKISH_ANDROID_KEYSTORE_BASE64
+  BOOKISH_ANDROID_KEY_PASSWORD
+  BOOKISH_ANDROID_KEYSTORE_PASSWORD
+  GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64
 
-ANDROID_SUPPLY_BASE64_SECRET must contain the base64-encoded Google Play
+GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64 must contain the base64-encoded Google Play
 service-account JSON key. Both --build-name and --build-number are optional.
 If omitted, --build-name is generated in UTC using the yyyy.mm.dd.hh format and
 --build-number is generated in UTC from the release epoch using minute steps:
@@ -158,11 +158,11 @@ require_command jarsigner
 require_command zip
 require_command unzip
 
-require_environment_variable ANDROID_GRADLE_ALIAS
-require_environment_variable ANDROID_GRADLE_BASE64_JKS
-require_environment_variable ANDROID_GRADLE_KEY_PASSWORD
-require_environment_variable ANDROID_GRADLE_KEYSTORE_PASSWORD
-require_environment_variable ANDROID_SUPPLY_BASE64_SECRET
+require_environment_variable BOOKISH_ANDROID_KEY_ALIAS
+require_environment_variable BOOKISH_ANDROID_KEYSTORE_BASE64
+require_environment_variable BOOKISH_ANDROID_KEY_PASSWORD
+require_environment_variable BOOKISH_ANDROID_KEYSTORE_PASSWORD
+require_environment_variable GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64
 
 PROJECT_DIR="$(cd -- "$PROJECT_DIR" && pwd -P)"
 [[ -f "$PROJECT_DIR/pubspec.yaml" ]] || die "No pubspec.yaml found in $PROJECT_DIR"
@@ -190,11 +190,11 @@ cleanup() {
   # available to any commands executed after this point.
   trap - EXIT HUP INT TERM
   unset \
-    ANDROID_GRADLE_ALIAS \
-    ANDROID_GRADLE_BASE64_JKS \
-    ANDROID_GRADLE_KEY_PASSWORD \
-    ANDROID_GRADLE_KEYSTORE_PASSWORD \
-    ANDROID_SUPPLY_BASE64_SECRET
+    BOOKISH_ANDROID_KEY_ALIAS \
+    BOOKISH_ANDROID_KEYSTORE_BASE64 \
+    BOOKISH_ANDROID_KEY_PASSWORD \
+    BOOKISH_ANDROID_KEYSTORE_PASSWORD \
+    GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64
 
   if [[ -n "${key_properties_path:-}" ]]; then
     if [[ -n "${key_properties_backup_path:-}" && -f "$key_properties_backup_path" ]]; then
@@ -231,24 +231,25 @@ trap 'exit 143' TERM
 ruby -rbase64 -e '
   encoded = ENV.fetch(ARGV.fetch(0)).gsub(/\s+/, "")
   File.binwrite(ARGV.fetch(1), Base64.strict_decode64(encoded))
-' ANDROID_GRADLE_BASE64_JKS "$keystore_path" || die "Could not decode ANDROID_GRADLE_BASE64_JKS"
+' BOOKISH_ANDROID_KEYSTORE_BASE64 "$keystore_path" || \
+  die "Could not decode BOOKISH_ANDROID_KEYSTORE_BASE64"
 
 ruby -rbase64 -rjson -e '
   encoded = ENV.fetch(ARGV.fetch(0)).gsub(/\s+/, "")
   decoded = Base64.strict_decode64(encoded)
   JSON.parse(decoded)
   File.binwrite(ARGV.fetch(1), decoded)
-' ANDROID_SUPPLY_BASE64_SECRET "$play_secret_path" || \
-  die "ANDROID_SUPPLY_BASE64_SECRET is not valid base64-encoded JSON"
+' GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64 "$play_secret_path" || \
+  die "GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64 is not valid base64-encoded JSON"
 
 chmod 600 "$keystore_path" "$play_secret_path"
 
 keytool -list \
   -keystore "$keystore_path" \
   -storetype JKS \
-  -storepass:env ANDROID_GRADLE_KEYSTORE_PASSWORD \
-  -alias "$ANDROID_GRADLE_ALIAS" >/dev/null || \
-  die "Could not open the JKS or find alias '$ANDROID_GRADLE_ALIAS'"
+  -storepass:env BOOKISH_ANDROID_KEYSTORE_PASSWORD \
+  -alias "$BOOKISH_ANDROID_KEY_ALIAS" >/dev/null || \
+  die "Could not open the JKS or find alias '$BOOKISH_ANDROID_KEY_ALIAS'"
 
 mkdir -p -- "$SIGNING_DIRECTORY"
 if [[ -f "$key_properties_path" ]]; then
@@ -258,9 +259,9 @@ fi
 
 cat > "$key_properties_path" <<EOF
 storeFile=$keystore_path
-storePassword=$ANDROID_GRADLE_KEYSTORE_PASSWORD
-keyAlias=$ANDROID_GRADLE_ALIAS
-keyPassword=$ANDROID_GRADLE_KEY_PASSWORD
+storePassword=$BOOKISH_ANDROID_KEYSTORE_PASSWORD
+keyAlias=$BOOKISH_ANDROID_KEY_ALIAS
+keyPassword=$BOOKISH_ANDROID_KEY_PASSWORD
 EOF
 
 chmod 600 "$key_properties_path"
@@ -314,15 +315,15 @@ if [[ ${#signature_entries[@]} -gt 0 ]]; then
   zip -q -d "$unsigned_copy" "${signature_entries[@]}"
 fi
 
-printf 'Signing AAB with alias %s...\n' "$ANDROID_GRADLE_ALIAS"
+printf 'Signing AAB with alias %s...\n' "$BOOKISH_ANDROID_KEY_ALIAS"
 jarsigner \
   -keystore "$keystore_path" \
   -storetype JKS \
-  -storepass:env ANDROID_GRADLE_KEYSTORE_PASSWORD \
-  -keypass:env ANDROID_GRADLE_KEY_PASSWORD \
+  -storepass:env BOOKISH_ANDROID_KEYSTORE_PASSWORD \
+  -keypass:env BOOKISH_ANDROID_KEY_PASSWORD \
   -signedjar "$OUTPUT_PATH" \
   "$unsigned_copy" \
-  "$ANDROID_GRADLE_ALIAS"
+  "$BOOKISH_ANDROID_KEY_ALIAS"
 
 printf 'Verifying signed AAB...\n'
 jarsigner -verify "$OUTPUT_PATH" >/dev/null || die "Signed AAB verification failed"
