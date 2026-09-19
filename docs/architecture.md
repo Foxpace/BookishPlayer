@@ -1,6 +1,12 @@
 # Bookish architecture
 
-Bookish uses one shared feature package and two application targets. The
+Bookish uses one shared feature package and two application targets in a Dart
+workspace. The root pubspec lists all four members and owns compatibility
+overrides. Analyzer plugins are registered in the root analysis options;
+package-level Lintel limits remain in each package. One root lockfile resolves dependencies together, while each target
+builds from its own transitive dependencies. The store guard traverses that
+app-specific graph and checks plugin metadata, rather than scanning the shared
+lockfile or workspace-wide `pub deps` output. The
 `apps/store` dependency graph excludes optional transcription native packages;
 `apps/internal` registers the adapter exported by
 `packages/bookish_cactus_transcription`. Both targets consume

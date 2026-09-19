@@ -11,6 +11,13 @@ It is designed to be self sufficient and simple with warm interface for any user
 
 Shared application code lives in `packages/bookish_player/lib/`. Shared navigation, DI, database, theme, and reusable presentation code belong in `packages/bookish_player/lib/core/`; feature code belongs in `packages/bookish_player/lib/features/<feature>/` and is divided into `cubits`, `models`, `repos`, `ui`, and `use_cases` as needed. Tests mirror that layout under `packages/bookish_player/test/`. Lintel enforces architectural boundaries through `dart analyze`.
 
+All four packages belong to the root Dart workspace. Resolve dependencies once
+with `flutter pub get` at the root; commit only the root `pubspec.lock`. Keep
+compatibility overrides in the root pubspec. Package manifests describe their
+own dependencies and use `resolution: workspace`. Never infer store native
+dependencies from the workspace lockfile; verify the store dependency closure
+and plugin metadata.
+
 The app has two versions:
 
 - public one - store platform projects are in `apps/store/android/` and `apps/store/ios/`; internal platform projects are in `apps/internal/`.
@@ -19,13 +26,14 @@ The app has two versions:
 ## Build, Test, and Development Commands
 
 - Run shared development commands from `packages/bookish_player/`.
-- `flutter pub get` resolves shared dependencies.
+- Run `flutter pub get` at the repository root to resolve every workspace member.
 - `dart run build_runner build` regenerates Freezed, JSON, and Injectable output after annotated model or DI changes.
 - `dart format lib test` formats handwritten Dart sources.
 - `flutter analyze` runs the configured Flutter lints.
 - `flutter test` runs unit, widget, and parser tests.
 - `flutter run` launches the app on a selected device.
-- `../../tool/verify_store_dependencies.sh` proves the store graph excludes Cactus and its FFmpeg adapter.
+- `../../tool/verify_store_dependencies.sh` proves the store graph excludes Cactus and its FFmpeg adapter, even though both exist in the shared workspace lockfile.
+- Run `bash tool/test_store_dependencies.sh` from the root to test the dependency guard.
 - `../../tool/build_store.sh android|ios` creates guarded store artifacts from `apps/store`.
 
 ## Coding Style & Naming Conventions

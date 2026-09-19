@@ -5,16 +5,13 @@ repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 store_root="$repository_root/apps/store"
 
 cd "$store_root"
-flutter pub get --enforce-lockfile
-
-if flutter pub deps --style=compact | grep -Eiq '(^|[^a-z_])(cactus|ffmpeg_kit_flutter_new_audio)([^a-z_]|$)'; then
-  echo "Store dependency graph contains a forbidden transcription package." >&2
-  exit 1
-fi
+bash "$repository_root/tool/verify_store_dependencies.sh"
 
 verify_archive() {
   local artifact="$1"
-  if unzip -l "$artifact" | grep -Eiq 'cactus|ffmpeg'; then
+  local contents
+  contents="$(unzip -Z1 "$artifact")"
+  if grep -Eiq 'cactus|ffmpeg|libav(codec|device|filter|format|util)|libsw(resample|scale)|whisper' <<< "$contents"; then
     echo "Store artifact contains a forbidden transcription native artifact." >&2
     exit 1
   fi

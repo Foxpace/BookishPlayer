@@ -35,3 +35,6 @@ signing/android/key.properties
 
 # Local test reports
 coverage/
+
+# Flutter golden comparison diagnostics
+packages/bookish_player/test/**/failures/

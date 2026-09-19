@@ -1,6 +1,7 @@
 name: bookish_cactus_transcription
 description: "Optional Cactus-backed on-device transcription for Bookish."
 publish_to: "none"
+resolution: workspace
 version: 0.1.0
 
 environment:
@@ -15,6 +16,8 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.15.0
+  flutter_test:
+    sdk: flutter
   freezed: ^3.2.5
   lints: ^6.1.0
   test: ^1.29.0

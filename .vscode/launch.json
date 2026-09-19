@@ -2,90 +2,59 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Bookish Store (Debug)",
+      "name": "Bookish: Debug",
+      "flutterMode": "debug",
       "request": "launch",
       "type": "dart",
-      "cwd": "apps/store",
-      "program": "lib/main.dart",
-      "flutterMode": "debug"
+      "cwd": "${workspaceFolder}/apps/${input:app}",
+      "program": "${workspaceFolder}/apps/${input:app}/lib/main.dart",
+      "preLaunchTask": "Bookish: resolve workspace"
     },
     {
-      "name": "Bookish Store (Profile)",
+      "name": "Bookish: Profile",
+      "flutterMode": "profile",
       "request": "launch",
       "type": "dart",
-      "cwd": "apps/store",
-      "program": "lib/main.dart",
-      "flutterMode": "profile"
+      "cwd": "${workspaceFolder}/apps/${input:app}",
+      "program": "${workspaceFolder}/apps/${input:app}/lib/main.dart",
+      "preLaunchTask": "Bookish: resolve workspace"
     },
     {
-      "name": "Bookish Store (Release)",
+      "name": "Bookish: Release",
+      "flutterMode": "release",
       "request": "launch",
       "type": "dart",
-      "cwd": "apps/store",
-      "program": "lib/main.dart",
-      "flutterMode": "release"
+      "cwd": "${workspaceFolder}/apps/${input:app}",
+      "program": "${workspaceFolder}/apps/${input:app}/lib/main.dart",
+      "preLaunchTask": "Bookish: resolve workspace"
     },
     {
-      "name": "Bookish Internal (Debug)",
+      "name": "Bookish core: All tests",
       "request": "launch",
       "type": "dart",
-      "cwd": "apps/internal",
-      "program": "lib/main.dart",
-      "flutterMode": "debug"
+      "cwd": "${workspaceFolder}/packages/bookish_player",
+      "program": "test",
+      "preLaunchTask": "Bookish: resolve workspace"
     },
     {
-      "name": "Bookish Internal (Profile)",
+      "name": "Cactus adapter: All tests",
       "request": "launch",
       "type": "dart",
-      "cwd": "apps/internal",
-      "program": "lib/main.dart",
-      "flutterMode": "profile"
-    },
-    {
-      "name": "Bookish Internal (Release)",
-      "request": "launch",
-      "type": "dart",
-      "cwd": "apps/internal",
-      "program": "lib/main.dart",
-      "flutterMode": "release"
-    },
-    {
-      "name": "Bookish Player (All Tests)",
-      "request": "launch",
-      "type": "dart",
-      "cwd": "packages/bookish_player",
-      "program": "test"
-    },
-    {
-      "name": "Bookish Player (Current Test File)",
-      "request": "launch",
-      "type": "dart",
-      "cwd": "packages/bookish_player",
-      "program": "${file}"
-    },
-    {
-      "name": "Cactus Transcription (All Tests)",
-      "request": "launch",
-      "type": "dart",
-      "cwd": "packages/bookish_cactus_transcription",
-      "program": "test"
-    },
-    {
-      "name": "Cactus Transcription (Current Test File)",
-      "request": "launch",
-      "type": "dart",
-      "cwd": "packages/bookish_cactus_transcription",
-      "program": "${file}"
+      "cwd": "${workspaceFolder}/packages/bookish_cactus_transcription",
+      "program": "test",
+      "preLaunchTask": "Bookish: resolve workspace"
     }
   ],
-  "compounds": [
+  "inputs": [
     {
-      "name": "All Package Tests",
-      "configurations": [
-        "Bookish Player (All Tests)",
-        "Cactus Transcription (All Tests)"
+      "id": "app",
+      "type": "pickString",
+      "description": "Which Bookish app should run?",
+      "options": [
+        "store",
+        "internal"
       ],
-      "stopAll": true
+      "default": "store"
     }
   ]
 }

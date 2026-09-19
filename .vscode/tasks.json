@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Bookish: resolve workspace",
+      "type": "process",
+      "command": "flutter",
+      "args": [
+        "pub",
+        "get",
+        "--enforce-lockfile"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
