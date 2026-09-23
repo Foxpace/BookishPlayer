@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'import_result.dart';
@@ -9,6 +9,7 @@ part of 'import_result.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ImportResultCopyWith<ImportResult> get copyWith => _$ImportResultCopyWithImpl<I
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportResult&&const DeepCollectionEquality().equals(other.selectedFiles, selectedFiles)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&const DeepCollectionEquality().equals(other.stageHistory, stageHistory)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics)&&(identical(other.failedItem, failedItem) || other.failedItem == failedItem)&&(identical(other.failureKind, failureKind) || other.failureKind == failureKind)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.originalRemovalOnly, originalRemovalOnly) || other.originalRemovalOnly == originalRemovalOnly));
+  final _this = this as ImportResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportResult&&const DeepCollectionEquality().equals(other.selectedFiles, _this.selectedFiles)&&(identical(other.importedCount, _this.importedCount) || other.importedCount == _this.importedCount)&&const DeepCollectionEquality().equals(other.stageHistory, _this.stageHistory)&&(identical(other.diagnostics, _this.diagnostics) || other.diagnostics == _this.diagnostics)&&(identical(other.failedItem, _this.failedItem) || other.failedItem == _this.failedItem)&&(identical(other.failureKind, _this.failureKind) || other.failureKind == _this.failureKind)&&(identical(other.failureStage, _this.failureStage) || other.failureStage == _this.failureStage)&&(identical(other.originalRemovalOnly, _this.originalRemovalOnly) || other.originalRemovalOnly == _this.originalRemovalOnly));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(selectedFiles),importedCount,const DeepCollectionEquality().hash(stageHistory),diagnostics,failedItem,failureKind,failureStage,originalRemovalOnly);
+int get hashCode {
+  final _this = this as ImportResult;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.selectedFiles),_this.importedCount,const DeepCollectionEquality().hash(_this.stageHistory),_this.diagnostics,_this.failedItem,_this.failureKind,_this.failureStage,_this.originalRemovalOnly);
+}
 
 @override
 String toString() {
-  return 'ImportResult(selectedFiles: $selectedFiles, importedCount: $importedCount, stageHistory: $stageHistory, diagnostics: $diagnostics, failedItem: $failedItem, failureKind: $failureKind, failureStage: $failureStage, originalRemovalOnly: $originalRemovalOnly)';
+  final _this = this as ImportResult;
+  return 'ImportResult(selectedFiles: ${_this.selectedFiles}, importedCount: ${_this.importedCount}, stageHistory: ${_this.stageHistory}, diagnostics: ${_this.diagnostics}, failedItem: ${_this.failedItem}, failureKind: ${_this.failureKind}, failureStage: ${_this.failureStage}, originalRemovalOnly: ${_this.originalRemovalOnly})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ImportResultCopyWithImpl<$Res>
 /// Create a copy of ImportResult
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? selectedFiles = null,Object? importedCount = null,Object? stageHistory = null,Object? diagnostics = freezed,Object? failedItem = freezed,Object? failureKind = freezed,Object? failureStage = freezed,Object? originalRemovalOnly = null,}) {
-  return _then(_self.copyWith(
+  return _then(ImportResult(
 selectedFiles: null == selectedFiles ? _self.selectedFiles : selectedFiles // ignore: cast_nullable_to_non_nullable
 as List<SelectedAudioFile>,importedCount: null == importedCount ? _self.importedCount : importedCount // ignore: cast_nullable_to_non_nullable
 as int,stageHistory: null == stageHistory ? _self.stageHistory : stageHistory // ignore: cast_nullable_to_non_nullable
@@ -225,7 +231,7 @@ return $default(_that.selectedFiles,_that.importedCount,_that.stageHistory,_that
 
 
 class _ImportResult implements ImportResult {
-  const _ImportResult({required final  List<SelectedAudioFile> selectedFiles, required this.importedCount, final  List<String> stageHistory = const <String>[], this.diagnostics, this.failedItem, this.failureKind, this.failureStage, this.originalRemovalOnly = false}): _selectedFiles = selectedFiles,_stageHistory = stageHistory;
+  const _ImportResult({required  List<SelectedAudioFile> selectedFiles, required this.importedCount,  List<String> stageHistory = const <String>[], this.diagnostics, this.failedItem, this.failureKind, this.failureStage, this.originalRemovalOnly = false}): _selectedFiles = selectedFiles,_stageHistory = stageHistory;
   
 
  final  List<SelectedAudioFile> _selectedFiles;
@@ -259,16 +265,18 @@ _$ImportResultCopyWith<_ImportResult> get copyWith => __$ImportResultCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportResult&&const DeepCollectionEquality().equals(other._selectedFiles, _selectedFiles)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&const DeepCollectionEquality().equals(other._stageHistory, _stageHistory)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics)&&(identical(other.failedItem, failedItem) || other.failedItem == failedItem)&&(identical(other.failureKind, failureKind) || other.failureKind == failureKind)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.originalRemovalOnly, originalRemovalOnly) || other.originalRemovalOnly == originalRemovalOnly));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportResult&&const DeepCollectionEquality().equals(other.selectedFiles, _selectedFiles)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&const DeepCollectionEquality().equals(other.stageHistory, _stageHistory)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics)&&(identical(other.failedItem, failedItem) || other.failedItem == failedItem)&&(identical(other.failureKind, failureKind) || other.failureKind == failureKind)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.originalRemovalOnly, originalRemovalOnly) || other.originalRemovalOnly == originalRemovalOnly));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_selectedFiles),importedCount,const DeepCollectionEquality().hash(_stageHistory),diagnostics,failedItem,failureKind,failureStage,originalRemovalOnly);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_selectedFiles),importedCount,const DeepCollectionEquality().hash(_stageHistory),diagnostics,failedItem,failureKind,failureStage,originalRemovalOnly);
+}
 
 @override
 String toString() {
-  return 'ImportResult(selectedFiles: $selectedFiles, importedCount: $importedCount, stageHistory: $stageHistory, diagnostics: $diagnostics, failedItem: $failedItem, failureKind: $failureKind, failureStage: $failureStage, originalRemovalOnly: $originalRemovalOnly)';
+    return 'ImportResult(selectedFiles: $selectedFiles, importedCount: $importedCount, stageHistory: $stageHistory, diagnostics: $diagnostics, failedItem: $failedItem, failureKind: $failureKind, failureStage: $failureStage, originalRemovalOnly: $originalRemovalOnly)';
 }
 
 

@@ -16,9 +16,9 @@ class SpeechModelApplication {
   final TranscriptionRepository _repository;
   final TranscriptionPreferences _preferences;
 
-  Future<Result<SpeechModelCatalog>> loadCached() async {
+  Future<Result<SpeechModelCatalog>> load() async {
     try {
-      return await _loadCached();
+      return await _load();
     } catch (error) {
       return Result.failure(
         AppFailure.operationFailed('transcription.models.load', error: error),
@@ -26,44 +26,14 @@ class SpeechModelApplication {
     }
   }
 
-  Future<Result<SpeechModelCatalog>> _loadCached() async {
+  Future<Result<SpeechModelCatalog>> _load() async {
     final (selected, models) = await (
       _preferences.getSelectedModel(),
-      _repository.getModels(refresh: false),
+      _repository.listModels(),
     ).wait;
     return Result.success((
       models: models,
-      selected: _selectAvailable(models, selected ?? 'whisper-tiny'),
-    ));
-  }
-
-  Future<Result<SpeechModelCatalog?>> refresh(
-    SpeechModelCatalog current,
-  ) async {
-    try {
-      return await _refresh(current);
-    } catch (error) {
-      return Result.failure(
-        AppFailure.operationFailed(
-          'transcription.models.refresh',
-          error: error,
-        ),
-      );
-    }
-  }
-
-  Future<Result<SpeechModelCatalog?>> _refresh(
-    SpeechModelCatalog current,
-  ) async {
-    final models = await _repository.getModels();
-
-    if (_haveSameModels(models, current.models)) {
-      return const Result.success(null);
-    }
-
-    return Result.success((
-      models: models,
-      selected: _selectAvailable(models, current.selected),
+      selected: _selectAvailable(models, selected ?? 'whisper-base'),
     ));
   }
 
@@ -110,22 +80,6 @@ class SpeechModelApplication {
     if (models.any((model) => model.slug == selected)) {
       return selected;
     }
-    return models.isEmpty ? 'whisper-tiny' : models.first.slug;
-  }
-
-  bool _haveSameModels(List<SpeechModel> left, List<SpeechModel> right) {
-    if (left.length != right.length) {
-      return false;
-    }
-    for (var index = 0; index < left.length; index++) {
-      final leftModel = left[index];
-      final rightModel = right[index];
-      if (leftModel.slug != rightModel.slug ||
-          leftModel.sizeMb != rightModel.sizeMb ||
-          leftModel.isDownloaded != rightModel.isDownloaded) {
-        return false;
-      }
-    }
-    return true;
+    return models.isEmpty ? 'whisper-base' : models.first.slug;
   }
 }

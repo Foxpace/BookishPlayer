@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/localization/generated/l10n.dart';
@@ -80,9 +78,7 @@ class _BookishMaterialApp extends StatelessWidget {
           onGenerateTitle: (context) => S.of(context).appTitle,
           localizationsDelegates: const [
             S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
+            ...GlobalMaterialLocalizations.delegates,
           ],
           supportedLocales: S.delegate.supportedLocales,
 
@@ -172,14 +168,10 @@ class _RouterAwareNowPlayingShellState
   }
 
   void _handleRouteChanged() {
-    if (WidgetsBinding.instance.schedulerPhase !=
-        SchedulerPhase.persistentCallbacks) {
-      setState(() {});
-      return;
-    }
     if (_routeRebuildScheduled) {
       return;
     }
+    // Route notifications can arrive while the router child is building.
     _routeRebuildScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _routeRebuildScheduled = false;
@@ -187,6 +179,7 @@ class _RouterAwareNowPlayingShellState
         setState(() {});
       }
     });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   @override

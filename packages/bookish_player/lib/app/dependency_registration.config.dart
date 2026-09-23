@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'package:bookish_player/app/app_bootstrapper.dart' as _i945;
 import 'package:bookish_player/core/database/bookish_database.dart' as _i987;
 import 'package:bookish_player/core/di/app_module.dart' as _i249;
@@ -33,7 +34,7 @@ import 'package:bookish_player/features/editing/cubits/metadata_editor_cubit.dar
 import 'package:bookish_player/features/editing/repos/book_editing_repository.dart'
     as _i193;
 import 'package:bookish_player/features/editing/repos/implementations/library_book_editing_repository.dart'
-    as _i937;
+    as _i938;
 import 'package:bookish_player/features/editing/use_cases/editing_application.dart'
     as _i990;
 import 'package:bookish_player/features/importing/cubits/import_cubit.dart'
@@ -65,9 +66,9 @@ import 'package:bookish_player/features/importing/repos/media_probe.dart'
 import 'package:bookish_player/features/importing/use_cases/import_application.dart'
     as _i803;
 import 'package:bookish_player/features/importing/use_cases/import_cleanup.dart'
-    as _i158;
+    as _i159;
 import 'package:bookish_player/features/importing/use_cases/import_source_gateway.dart'
-    as _i1063;
+    as _i1064;
 import 'package:bookish_player/features/importing/use_cases/imported_book_saver.dart'
     as _i703;
 import 'package:bookish_player/features/insights/cubits/listening_insights_cubit.dart'
@@ -91,7 +92,7 @@ import 'package:bookish_player/features/library/repos/implementations/listening_
 import 'package:bookish_player/features/library/repos/implementations/sembast_audiobook_repository.dart'
     as _i465;
 import 'package:bookish_player/features/library/repos/listening_history_repository.dart'
-    as _i276;
+    as _i277;
 import 'package:bookish_player/features/library/repos/observable_audiobook_catalog_repository.dart'
     as _i958;
 import 'package:bookish_player/features/notes/cubits/note_gallery_cubit.dart'
@@ -105,7 +106,7 @@ import 'package:bookish_player/features/notes/repos/implementations/speech_to_te
 import 'package:bookish_player/features/notes/repos/voice_note_transcription_repository.dart'
     as _i60;
 import 'package:bookish_player/features/notes/use_cases/note_gallery_application.dart'
-    as _i501;
+    as _i502;
 import 'package:bookish_player/features/notes/use_cases/player_notes_service.dart'
     as _i177;
 import 'package:bookish_player/features/notes/use_cases/voice_note_application.dart'
@@ -141,7 +142,7 @@ import 'package:bookish_player/features/player/use_cases/playback_command_servic
 import 'package:bookish_player/features/player/use_cases/playback_resume_policy.dart'
     as _i199;
 import 'package:bookish_player/features/player/use_cases/player_application.dart'
-    as _i681;
+    as _i682;
 import 'package:bookish_player/features/player/use_cases/player_device_gateway.dart'
     as _i893;
 import 'package:bookish_player/features/player/use_cases/player_lifecycle_policies.dart'
@@ -149,7 +150,7 @@ import 'package:bookish_player/features/player/use_cases/player_lifecycle_polici
 import 'package:bookish_player/features/player/use_cases/player_lifecycle_use_cases.dart'
     as _i1068;
 import 'package:bookish_player/features/player/use_cases/player_note_use_cases.dart'
-    as _i276;
+    as _i278;
 import 'package:bookish_player/features/player/use_cases/player_progress_saver.dart'
     as _i924;
 import 'package:bookish_player/features/player/use_cases/player_sleep_use_cases.dart'
@@ -330,7 +331,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i754.SettingsDao>(
       () => _i754.SettingsDao(gh<_i987.BookishDatabase>()),
     );
-    gh.lazySingleton<_i276.ListeningHistoryRepository>(
+    gh.lazySingleton<_i277.ListeningHistoryRepository>(
       () => _i712.ListeningHistoryDao(gh<_i987.BookishDatabase>()),
     );
     gh.lazySingleton<_i623.LocalExportRepository>(
@@ -371,8 +372,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i847.SettingsApplication>(
       () => _i847.SettingsApplication(gh<_i852.SettingsRepository>()),
     );
-    gh.factory<_i158.ImportCleanup>(
-      () => _i158.ImportCleanup(
+    gh.factory<_i159.ImportCleanup>(
+      () => _i159.ImportCleanup(
         gh<_i444.FileImportRepository>(),
         gh<_i29.AppDiagnostics>(),
       ),
@@ -385,7 +386,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i342.ListeningSessionTracker>(
       () => _i342.ListeningSessionTracker(
-        gh<_i276.ListeningHistoryRepository>(),
+        gh<_i277.ListeningHistoryRepository>(),
         gh<_i1031.Clock>(),
         gh<_i315.IdGenerator>(),
       ),
@@ -450,8 +451,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i315.IdGenerator>(),
       ),
     );
-    gh.factory<_i501.NoteGalleryApplication>(
-      () => _i501.NoteGalleryApplication(
+    gh.factory<_i502.NoteGalleryApplication>(
+      () => _i502.NoteGalleryApplication(
         gh<_i355.BookNoteRepository>(),
         gh<_i167.BookMetadataRepository>(),
       ),
@@ -478,10 +479,10 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.factory<_i977.NoteGalleryCubit>(
-      () => _i977.NoteGalleryCubit(gh<_i501.NoteGalleryApplication>()),
+      () => _i977.NoteGalleryCubit(gh<_i502.NoteGalleryApplication>()),
     );
-    gh.lazySingleton<_i276.PlayerNoteUseCases>(
-      () => _i276.PlayerNoteUseCases(gh<_i177.PlayerNotesService>()),
+    gh.lazySingleton<_i278.PlayerNoteUseCases>(
+      () => _i278.PlayerNoteUseCases(gh<_i177.PlayerNotesService>()),
     );
     gh.lazySingleton<_i1024.PlayerLifecyclePolicies>(
       () => _i1024.PlayerLifecyclePolicies(
@@ -502,7 +503,7 @@ extension GetItInjectableX on _i174.GetIt {
       registerFor: {_internal},
     );
     gh.lazySingleton<_i193.BookEditingRepository>(
-      () => _i937.LibraryBookEditingRepository(
+      () => _i938.LibraryBookEditingRepository(
         gh<_i564.AudiobookCatalogRepository>(),
         gh<_i444.FileImportRepository>(),
       ),
@@ -510,7 +511,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i316.ListeningInsightsRepository>(
       () => _i848.LibraryListeningInsightsRepository(
         gh<_i167.BookMetadataRepository>(),
-        gh<_i276.ListeningHistoryRepository>(),
+        gh<_i277.ListeningHistoryRepository>(),
       ),
     );
     gh.factory<_i1063.QuoteTranscriptionCubit>(
@@ -543,8 +544,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i903.SleepTimerUseCase>(
       () => _i903.SleepTimerUseCase(gh<_i1014.AudioPlayerRepository>()),
     );
-    gh.factory<_i1063.ImportSourceGateway>(
-      () => _i1063.ImportSourceGateway(
+    gh.factory<_i1064.ImportSourceGateway>(
+      () => _i1064.ImportSourceGateway(
         gh<_i444.FileImportRepository>(),
         gh<_i259.MediaProbe>(),
         gh<_i454.M4bChapterParser>(),
@@ -588,10 +589,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i803.ImportApplication>(
       () => _i803.ImportApplication(
-        gh<_i1063.ImportSourceGateway>(),
+        gh<_i1064.ImportSourceGateway>(),
         gh<_i703.ImportedBookSaver>(),
         gh<_i1031.Clock>(),
-        gh<_i158.ImportCleanup>(),
+        gh<_i159.ImportCleanup>(),
         gh<_i993.ImportDiagnosticsRepository>(),
       ),
     );
@@ -623,10 +624,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i218.ImportCubit>(
       () => _i218.ImportCubit(gh<_i803.ImportApplication>()),
     );
-    gh.lazySingleton<_i681.PlayerApplication>(
-      () => _i681.PlayerApplication(
+    gh.lazySingleton<_i682.PlayerApplication>(
+      () => _i682.PlayerApplication(
         gh<_i1068.PlayerLifecycleUseCases>(),
-        gh<_i276.PlayerNoteUseCases>(),
+        gh<_i278.PlayerNoteUseCases>(),
         gh<_i246.PlayerSleepUseCases>(),
         gh<_i369.PlayerTransportUseCases>(),
         gh<_i893.PlayerDeviceGateway>(),
@@ -634,7 +635,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i948.PlayerCubit>(
       () => _i948.PlayerCubit(
-        gh<_i681.PlayerApplication>(),
+        gh<_i682.PlayerApplication>(),
         gh<_i570.PlayerStateFactory>(),
       ),
     );

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'audio_chapter.dart';
@@ -9,6 +9,7 @@ part of 'audio_chapter.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $AudioChapterCopyWith<AudioChapter> get copyWith => _$AudioChapterCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AudioChapter&&(identical(other.title, title) || other.title == title)&&(identical(other.startMs, startMs) || other.startMs == startMs));
+  final _this = this as AudioChapter;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AudioChapter&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.startMs, _this.startMs) || other.startMs == _this.startMs));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,startMs);
+int get hashCode {
+  final _this = this as AudioChapter;
+  return Object.hash(runtimeType,_this.title,_this.startMs);
+}
 
 @override
 String toString() {
-  return 'AudioChapter(title: $title, startMs: $startMs)';
+  final _this = this as AudioChapter;
+  return 'AudioChapter(title: ${_this.title}, startMs: ${_this.startMs})';
 }
 
 
@@ -66,7 +72,7 @@ class _$AudioChapterCopyWithImpl<$Res>
 /// Create a copy of AudioChapter
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? startMs = null,}) {
-  return _then(_self.copyWith(
+  return _then(AudioChapter(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,startMs: null == startMs ? _self.startMs : startMs // ignore: cast_nullable_to_non_nullable
 as int,
@@ -229,16 +235,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AudioChapter&&(identical(other.title, title) || other.title == title)&&(identical(other.startMs, startMs) || other.startMs == startMs));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AudioChapter&&(identical(other.title, title) || other.title == title)&&(identical(other.startMs, startMs) || other.startMs == startMs));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,startMs);
+int get hashCode {
+    return Object.hash(runtimeType,title,startMs);
+}
 
 @override
 String toString() {
-  return 'AudioChapter(title: $title, startMs: $startMs)';
+    return 'AudioChapter(title: $title, startMs: $startMs)';
 }
 
 

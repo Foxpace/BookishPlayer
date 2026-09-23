@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'listening_activity.dart';
@@ -9,6 +9,7 @@ part of 'listening_activity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ListeningActivityBucketCopyWith<ListeningActivityBucket> get copyWith => _$List
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningActivityBucket&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.listening, listening) || other.listening == listening));
+  final _this = this as ListeningActivityBucket;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningActivityBucket&&(identical(other.startDate, _this.startDate) || other.startDate == _this.startDate)&&(identical(other.endDate, _this.endDate) || other.endDate == _this.endDate)&&(identical(other.listening, _this.listening) || other.listening == _this.listening));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,startDate,endDate,listening);
+int get hashCode {
+  final _this = this as ListeningActivityBucket;
+  return Object.hash(runtimeType,_this.startDate,_this.endDate,_this.listening);
+}
 
 @override
 String toString() {
-  return 'ListeningActivityBucket(startDate: $startDate, endDate: $endDate, listening: $listening)';
+  final _this = this as ListeningActivityBucket;
+  return 'ListeningActivityBucket(startDate: ${_this.startDate}, endDate: ${_this.endDate}, listening: ${_this.listening})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ListeningActivityBucketCopyWithImpl<$Res>
 /// Create a copy of ListeningActivityBucket
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? startDate = null,Object? endDate = null,Object? listening = null,}) {
-  return _then(_self.copyWith(
+  return _then(ListeningActivityBucket(
 startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
 as DateTime,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
 as DateTime,listening: null == listening ? _self.listening : listening // ignore: cast_nullable_to_non_nullable
@@ -225,16 +231,18 @@ _$ListeningActivityBucketCopyWith<_ListeningActivityBucket> get copyWith => __$L
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningActivityBucket&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.listening, listening) || other.listening == listening));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningActivityBucket&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.listening, listening) || other.listening == listening));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,startDate,endDate,listening);
+int get hashCode {
+    return Object.hash(runtimeType,startDate,endDate,listening);
+}
 
 @override
 String toString() {
-  return 'ListeningActivityBucket(startDate: $startDate, endDate: $endDate, listening: $listening)';
+    return 'ListeningActivityBucket(startDate: $startDate, endDate: $endDate, listening: $listening)';
 }
 
 

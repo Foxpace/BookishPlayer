@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'playback_segments.dart';
@@ -9,6 +9,7 @@ part of 'playback_segments.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $PlaybackSegmentCopyWith<PlaybackSegment> get copyWith => _$PlaybackSegmentCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlaybackSegment&&(identical(other.id, id) || other.id == id)&&(identical(other.track, track) || other.track == track)&&(identical(other.title, title) || other.title == title)&&(identical(other.globalStartMs, globalStartMs) || other.globalStartMs == globalStartMs)&&(identical(other.sourceStartMs, sourceStartMs) || other.sourceStartMs == sourceStartMs)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs));
+  final _this = this as PlaybackSegment;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlaybackSegment&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.track, _this.track) || other.track == _this.track)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.globalStartMs, _this.globalStartMs) || other.globalStartMs == _this.globalStartMs)&&(identical(other.sourceStartMs, _this.sourceStartMs) || other.sourceStartMs == _this.sourceStartMs)&&(identical(other.durationMs, _this.durationMs) || other.durationMs == _this.durationMs));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,track,title,globalStartMs,sourceStartMs,durationMs);
+int get hashCode {
+  final _this = this as PlaybackSegment;
+  return Object.hash(runtimeType,_this.id,_this.track,_this.title,_this.globalStartMs,_this.sourceStartMs,_this.durationMs);
+}
 
 @override
 String toString() {
-  return 'PlaybackSegment(id: $id, track: $track, title: $title, globalStartMs: $globalStartMs, sourceStartMs: $sourceStartMs, durationMs: $durationMs)';
+  final _this = this as PlaybackSegment;
+  return 'PlaybackSegment(id: ${_this.id}, track: ${_this.track}, title: ${_this.title}, globalStartMs: ${_this.globalStartMs}, sourceStartMs: ${_this.sourceStartMs}, durationMs: ${_this.durationMs})';
 }
 
 
@@ -63,7 +69,7 @@ class _$PlaybackSegmentCopyWithImpl<$Res>
 /// Create a copy of PlaybackSegment
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? track = null,Object? title = null,Object? globalStartMs = null,Object? sourceStartMs = null,Object? durationMs = null,}) {
-  return _then(_self.copyWith(
+  return _then(PlaybackSegment(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,track: null == track ? _self.track : track // ignore: cast_nullable_to_non_nullable
 as AudioTrack,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -240,16 +246,18 @@ _$PlaybackSegmentCopyWith<_PlaybackSegment> get copyWith => __$PlaybackSegmentCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlaybackSegment&&(identical(other.id, id) || other.id == id)&&(identical(other.track, track) || other.track == track)&&(identical(other.title, title) || other.title == title)&&(identical(other.globalStartMs, globalStartMs) || other.globalStartMs == globalStartMs)&&(identical(other.sourceStartMs, sourceStartMs) || other.sourceStartMs == sourceStartMs)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlaybackSegment&&(identical(other.id, id) || other.id == id)&&(identical(other.track, track) || other.track == track)&&(identical(other.title, title) || other.title == title)&&(identical(other.globalStartMs, globalStartMs) || other.globalStartMs == globalStartMs)&&(identical(other.sourceStartMs, sourceStartMs) || other.sourceStartMs == sourceStartMs)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,track,title,globalStartMs,sourceStartMs,durationMs);
+int get hashCode {
+    return Object.hash(runtimeType,id,track,title,globalStartMs,sourceStartMs,durationMs);
+}
 
 @override
 String toString() {
-  return 'PlaybackSegment(id: $id, track: $track, title: $title, globalStartMs: $globalStartMs, sourceStartMs: $sourceStartMs, durationMs: $durationMs)';
+    return 'PlaybackSegment(id: $id, track: $track, title: $title, globalStartMs: $globalStartMs, sourceStartMs: $sourceStartMs, durationMs: $durationMs)';
 }
 
 

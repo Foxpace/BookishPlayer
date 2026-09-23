@@ -9,7 +9,7 @@ import 'package:bookish_player/features/transcription/cubits/transcription_cubit
 import 'package:bookish_player/features/transcription/ui/speech_models_section.dart';
 import 'package:bookish_player/features/transcription/ui/widgets/speech_model_picker_sheet.dart';
 import 'package:bookish_player/core/presentation/app_message.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -133,9 +133,8 @@ class _SpeechModelsHarness extends StatelessWidget {
       listener: (context, state) {
         final message = state.message;
         if (message != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message.localize(context))));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message.localize(context))));
         }
       },
       builder: (context, state) => SpeechModelsSection(
@@ -192,7 +191,7 @@ class _Transcription implements TranscriptionRepository {
   final downloadedSlugs = <String>[];
 
   @override
-  Future<List<SpeechModel>> getModels({bool refresh = true}) async => models;
+  Future<List<SpeechModel>> listModels() async => models;
 
   @override
   Future<void> downloadModel(
@@ -209,9 +208,6 @@ class _Transcription implements TranscriptionRepository {
   @override
   Future<bool> isModelDownloaded(String slug) async =>
       models.any((model) => model.slug == slug && model.isDownloaded);
-
-  @override
-  Future<void> reset() async {}
 
   @override
   Future<Result<String>> transcribeRange({

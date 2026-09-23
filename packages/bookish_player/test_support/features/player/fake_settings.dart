@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:bookish_player/features/settings/models/appearance_preferences.dart';
 import 'package:bookish_player/features/settings/models/playback_preferences.dart';
 import 'package:bookish_player/features/settings/repos/settings_repository.dart';
+
 import 'player_test_support.dart';
 
 class FakeSettings implements SettingsRepository {

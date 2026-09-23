@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'metadata_editor_state.dart';
@@ -9,6 +9,7 @@ part of 'metadata_editor_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $MetadataEditorStateCopyWith<MetadataEditorState> get copyWith => _$MetadataEdit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MetadataEditorState&&(identical(other.status, status) || other.status == status)&&(identical(other.bookId, bookId) || other.bookId == bookId)&&(identical(other.book, book) || other.book == book)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+  final _this = this as MetadataEditorState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MetadataEditorState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.bookId, _this.bookId) || other.bookId == _this.bookId)&&(identical(other.book, _this.book) || other.book == _this.book)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.effectRevision, _this.effectRevision) || other.effectRevision == _this.effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,bookId,book,message,effectRevision);
+int get hashCode {
+  final _this = this as MetadataEditorState;
+  return Object.hash(runtimeType,_this.status,_this.bookId,_this.book,_this.message,_this.effectRevision);
+}
 
 @override
 String toString() {
-  return 'MetadataEditorState(status: $status, bookId: $bookId, book: $book, message: $message, effectRevision: $effectRevision)';
+  final _this = this as MetadataEditorState;
+  return 'MetadataEditorState(status: ${_this.status}, bookId: ${_this.bookId}, book: ${_this.book}, message: ${_this.message}, effectRevision: ${_this.effectRevision})';
 }
 
 
@@ -63,7 +69,7 @@ class _$MetadataEditorStateCopyWithImpl<$Res>
 /// Create a copy of MetadataEditorState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? bookId = freezed,Object? book = freezed,Object? message = freezed,Object? effectRevision = null,}) {
-  return _then(_self.copyWith(
+  return _then(MetadataEditorState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as MetadataEditorStatus,bookId: freezed == bookId ? _self.bookId : bookId // ignore: cast_nullable_to_non_nullable
 as String?,book: freezed == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
@@ -241,16 +247,18 @@ _$MetadataEditorStateCopyWith<_MetadataEditorState> get copyWith => __$MetadataE
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MetadataEditorState&&(identical(other.status, status) || other.status == status)&&(identical(other.bookId, bookId) || other.bookId == bookId)&&(identical(other.book, book) || other.book == book)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MetadataEditorState&&(identical(other.status, status) || other.status == status)&&(identical(other.bookId, bookId) || other.bookId == bookId)&&(identical(other.book, book) || other.book == book)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,bookId,book,message,effectRevision);
+int get hashCode {
+    return Object.hash(runtimeType,status,bookId,book,message,effectRevision);
+}
 
 @override
 String toString() {
-  return 'MetadataEditorState(status: $status, bookId: $bookId, book: $book, message: $message, effectRevision: $effectRevision)';
+    return 'MetadataEditorState(status: $status, bookId: $bookId, book: $book, message: $message, effectRevision: $effectRevision)';
 }
 
 

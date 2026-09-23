@@ -2,7 +2,7 @@ import 'package:bookish_player/features/settings/diagnostics/use_cases/diagnosti
 import 'package:bookish_player/features/settings/diagnostics/repos/diagnostics_export_repository.dart';
 import 'package:bookish_player/features/settings/diagnostics/cubits/diagnostics_cubit.dart';
 import 'package:bookish_player/features/settings/diagnostics/ui/diagnostics_settings_section.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 

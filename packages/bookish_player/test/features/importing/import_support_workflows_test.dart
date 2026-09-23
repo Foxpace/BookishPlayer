@@ -9,29 +9,26 @@ import '../../../test_support/support/fakes/fake_app_diagnostics.dart';
 
 void main() {
   group('Pending import files and local diagnostics', () {
-    test(
-      'Given pending import files and local diagnostics, When cleanup operations partially fail, Then all paths are attempted and structured failures are recorded',
-      () async {
-        // GIVEN
-        final files = _Files()..failingPaths.add('/bad.m4b');
-        final diagnostics = FakeAppDiagnostics();
-        final sut = ImportCleanup(files, diagnostics);
-        final pending = {'/good.m4b', '/bad.m4b'};
+    test('Given pending import files and local diagnostics, When cleanup operations partially fail, Then all paths are attempted and structured failures are recorded', () async {
+      // GIVEN
+      final files = _Files()..failingPaths.add('/bad.m4b');
+      final diagnostics = FakeAppDiagnostics();
+      final sut = ImportCleanup(files, diagnostics);
+      final pending = {'/good.m4b', '/bad.m4b'};
 
-        await sut.deletePendingFiles(pending);
-        files.clearFailure = Exception('picker busy');
-        // WHEN
-        await sut.clearPickerCache();
+      await sut.deletePendingFiles(pending);
+      files.clearFailure = Exception('picker busy');
+      // WHEN
+      await sut.clearPickerCache();
 
-        // THEN
-        expect(files.deletedPaths, ['/good.m4b', '/bad.m4b']);
-        expect(pending, isEmpty);
-        expect(diagnostics.operations, [
-          'import.cleanup.pending_file',
-          'import.cleanup.picker_cache',
-        ]);
-      },
-    );
+      // THEN
+      expect(files.deletedPaths, ['/good.m4b', '/bad.m4b']);
+      expect(pending, isEmpty);
+      expect(diagnostics.operations, [
+        'import.cleanup.pending_file',
+        'import.cleanup.picker_cache',
+      ]);
+    });
   });
 }
 

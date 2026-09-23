@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'listening_activity_range.dart';
@@ -9,6 +9,7 @@ part of 'listening_activity_range.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ListeningActivityRangeCopyWith<ListeningActivityRange> get copyWith => _$Listen
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningActivityRange&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&const DeepCollectionEquality().equals(other.buckets, buckets));
+  final _this = this as ListeningActivityRange;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningActivityRange&&(identical(other.totalListening, _this.totalListening) || other.totalListening == _this.totalListening)&&const DeepCollectionEquality().equals(other.buckets, _this.buckets));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,totalListening,const DeepCollectionEquality().hash(buckets));
+int get hashCode {
+  final _this = this as ListeningActivityRange;
+  return Object.hash(runtimeType,_this.totalListening,const DeepCollectionEquality().hash(_this.buckets));
+}
 
 @override
 String toString() {
-  return 'ListeningActivityRange(totalListening: $totalListening, buckets: $buckets)';
+  final _this = this as ListeningActivityRange;
+  return 'ListeningActivityRange(totalListening: ${_this.totalListening}, buckets: ${_this.buckets})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ListeningActivityRangeCopyWithImpl<$Res>
 /// Create a copy of ListeningActivityRange
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? totalListening = null,Object? buckets = null,}) {
-  return _then(_self.copyWith(
+  return _then(ListeningActivityRange(
 totalListening: null == totalListening ? _self.totalListening : totalListening // ignore: cast_nullable_to_non_nullable
 as Duration,buckets: null == buckets ? _self.buckets : buckets // ignore: cast_nullable_to_non_nullable
 as List<ListeningActivityBucket>,
@@ -207,7 +213,7 @@ return $default(_that.totalListening,_that.buckets);case _:
 
 
 class _ListeningActivityRange implements ListeningActivityRange {
-  const _ListeningActivityRange({required this.totalListening, required final  List<ListeningActivityBucket> buckets}): _buckets = buckets;
+  const _ListeningActivityRange({required this.totalListening, required  List<ListeningActivityBucket> buckets}): _buckets = buckets;
   
 
 @override final  Duration totalListening;
@@ -229,16 +235,18 @@ _$ListeningActivityRangeCopyWith<_ListeningActivityRange> get copyWith => __$Lis
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningActivityRange&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&const DeepCollectionEquality().equals(other._buckets, _buckets));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningActivityRange&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&const DeepCollectionEquality().equals(other.buckets, _buckets));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,totalListening,const DeepCollectionEquality().hash(_buckets));
+int get hashCode {
+    return Object.hash(runtimeType,totalListening,const DeepCollectionEquality().hash(_buckets));
+}
 
 @override
 String toString() {
-  return 'ListeningActivityRange(totalListening: $totalListening, buckets: $buckets)';
+    return 'ListeningActivityRange(totalListening: $totalListening, buckets: $buckets)';
 }
 
 

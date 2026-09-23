@@ -55,11 +55,12 @@ final class CarPlayCatalogHost: NSObject, CarPlayHostApi,
       )
       return
     }
-    flutterApi.playBook(id: books[indexPath.item].id) { result in
-      switch result {
-      case .success:
+    let bookId = books[indexPath.item].id
+    Task { @MainActor in
+      do {
+        try await flutterApi.playBook(id: bookId)
         completionHandler(nil)
-      case .failure(let error):
+      } catch {
         completionHandler(error)
       }
     }

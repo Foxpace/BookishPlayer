@@ -12,7 +12,7 @@ abstract class SpeechModelsState with _$SpeechModelsState {
   const factory SpeechModelsState({
     @Default(SpeechModelsStatus.initial) SpeechModelsStatus status,
     @Default(<SpeechModel>[]) List<SpeechModel> models,
-    @Default('whisper-tiny') String selectedModel,
+    @Default('whisper-base') String selectedModel,
     double? downloadProgress,
     AppMessage? message,
     @Default(0) int effectRevision,

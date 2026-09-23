@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'storage_assistant_state.dart';
@@ -9,6 +9,7 @@ part of 'storage_assistant_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $StorageAssistantStateCopyWith<StorageAssistantState> get copyWith => _$StorageA
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StorageAssistantState&&(identical(other.loading, loading) || other.loading == loading)&&const DeepCollectionEquality().equals(other.books, books)&&(identical(other.report, report) || other.report == report)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+  final _this = this as StorageAssistantState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StorageAssistantState&&(identical(other.loading, _this.loading) || other.loading == _this.loading)&&const DeepCollectionEquality().equals(other.books, _this.books)&&(identical(other.report, _this.report) || other.report == _this.report)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.effectRevision, _this.effectRevision) || other.effectRevision == _this.effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,loading,const DeepCollectionEquality().hash(books),report,message,effectRevision);
+int get hashCode {
+  final _this = this as StorageAssistantState;
+  return Object.hash(runtimeType,_this.loading,const DeepCollectionEquality().hash(_this.books),_this.report,_this.message,_this.effectRevision);
+}
 
 @override
 String toString() {
-  return 'StorageAssistantState(loading: $loading, books: $books, report: $report, message: $message, effectRevision: $effectRevision)';
+  final _this = this as StorageAssistantState;
+  return 'StorageAssistantState(loading: ${_this.loading}, books: ${_this.books}, report: ${_this.report}, message: ${_this.message}, effectRevision: ${_this.effectRevision})';
 }
 
 
@@ -63,7 +69,7 @@ class _$StorageAssistantStateCopyWithImpl<$Res>
 /// Create a copy of StorageAssistantState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? loading = null,Object? books = null,Object? report = null,Object? message = freezed,Object? effectRevision = null,}) {
-  return _then(_self.copyWith(
+  return _then(StorageAssistantState(
 loading: null == loading ? _self.loading : loading // ignore: cast_nullable_to_non_nullable
 as bool,books: null == books ? _self.books : books // ignore: cast_nullable_to_non_nullable
 as List<Audiobook>,report: null == report ? _self.report : report // ignore: cast_nullable_to_non_nullable
@@ -219,7 +225,7 @@ return $default(_that.loading,_that.books,_that.report,_that.message,_that.effec
 
 
 class _StorageAssistantState implements StorageAssistantState {
-  const _StorageAssistantState({this.loading = true, final  List<Audiobook> books = const <Audiobook>[], this.report = const StorageReport(), this.message, this.effectRevision = 0}): _books = books;
+  const _StorageAssistantState({this.loading = true,  List<Audiobook> books = const <Audiobook>[], this.report = const StorageReport(), this.message, this.effectRevision = 0}): _books = books;
   
 
 @override@JsonKey() final  bool loading;
@@ -244,16 +250,18 @@ _$StorageAssistantStateCopyWith<_StorageAssistantState> get copyWith => __$Stora
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StorageAssistantState&&(identical(other.loading, loading) || other.loading == loading)&&const DeepCollectionEquality().equals(other._books, _books)&&(identical(other.report, report) || other.report == report)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _StorageAssistantState&&(identical(other.loading, loading) || other.loading == loading)&&const DeepCollectionEquality().equals(other.books, _books)&&(identical(other.report, report) || other.report == report)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,loading,const DeepCollectionEquality().hash(_books),report,message,effectRevision);
+int get hashCode {
+    return Object.hash(runtimeType,loading,const DeepCollectionEquality().hash(_books),report,message,effectRevision);
+}
 
 @override
 String toString() {
-  return 'StorageAssistantState(loading: $loading, books: $books, report: $report, message: $message, effectRevision: $effectRevision)';
+    return 'StorageAssistantState(loading: $loading, books: $books, report: $report, message: $message, effectRevision: $effectRevision)';
 }
 
 

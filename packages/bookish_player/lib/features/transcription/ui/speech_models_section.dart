@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../cubits/transcription_cubits.dart';
 import 'widgets/speech_model_selector_card.dart';

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'cactus_speech_model.dart';
@@ -9,6 +9,7 @@ part of 'cactus_speech_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $CactusSpeechModelCopyWith<CactusSpeechModel> get copyWith => _$CactusSpeechMode
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CactusSpeechModel&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.isDownloaded, isDownloaded) || other.isDownloaded == isDownloaded)&&(identical(other.sizeMb, sizeMb) || other.sizeMb == sizeMb));
+  final _this = this as CactusSpeechModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CactusSpeechModel&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.isDownloaded, _this.isDownloaded) || other.isDownloaded == _this.isDownloaded)&&(identical(other.sizeMb, _this.sizeMb) || other.sizeMb == _this.sizeMb));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,slug,isDownloaded,sizeMb);
+int get hashCode {
+  final _this = this as CactusSpeechModel;
+  return Object.hash(runtimeType,_this.slug,_this.isDownloaded,_this.sizeMb);
+}
 
 @override
 String toString() {
-  return 'CactusSpeechModel(slug: $slug, isDownloaded: $isDownloaded, sizeMb: $sizeMb)';
+  final _this = this as CactusSpeechModel;
+  return 'CactusSpeechModel(slug: ${_this.slug}, isDownloaded: ${_this.isDownloaded}, sizeMb: ${_this.sizeMb})';
 }
 
 
@@ -63,7 +69,7 @@ class _$CactusSpeechModelCopyWithImpl<$Res>
 /// Create a copy of CactusSpeechModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? slug = null,Object? isDownloaded = null,Object? sizeMb = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(CactusSpeechModel(
 slug: null == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
 as String,isDownloaded: null == isDownloaded ? _self.isDownloaded : isDownloaded // ignore: cast_nullable_to_non_nullable
 as bool,sizeMb: freezed == sizeMb ? _self.sizeMb : sizeMb // ignore: cast_nullable_to_non_nullable
@@ -225,16 +231,18 @@ _$CactusSpeechModelCopyWith<_CactusSpeechModel> get copyWith => __$CactusSpeechM
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CactusSpeechModel&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.isDownloaded, isDownloaded) || other.isDownloaded == isDownloaded)&&(identical(other.sizeMb, sizeMb) || other.sizeMb == sizeMb));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CactusSpeechModel&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.isDownloaded, isDownloaded) || other.isDownloaded == isDownloaded)&&(identical(other.sizeMb, sizeMb) || other.sizeMb == sizeMb));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,slug,isDownloaded,sizeMb);
+int get hashCode {
+    return Object.hash(runtimeType,slug,isDownloaded,sizeMb);
+}
 
 @override
 String toString() {
-  return 'CactusSpeechModel(slug: $slug, isDownloaded: $isDownloaded, sizeMb: $sizeMb)';
+    return 'CactusSpeechModel(slug: $slug, isDownloaded: $isDownloaded, sizeMb: $sizeMb)';
 }
 
 

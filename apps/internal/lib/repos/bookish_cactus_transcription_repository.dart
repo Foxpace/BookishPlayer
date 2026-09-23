@@ -11,11 +11,8 @@ class BookishCactusTranscriptionRepository implements TranscriptionRepository {
   final CactusTranscriptionRepository _cactus;
 
   @override
-  Future<void> reset() => _cactus.reset();
-
-  @override
-  Future<List<SpeechModel>> getModels({bool refresh = true}) async {
-    final models = await _cactus.getModels(refresh: refresh);
+  Future<List<SpeechModel>> listModels() async {
+    final models = await _cactus.listModels();
     return [
       for (final model in models)
         SpeechModel(

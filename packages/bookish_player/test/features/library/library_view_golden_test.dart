@@ -1,7 +1,7 @@
 import 'package:bookish_player/features/library/cubits/library_cubit.dart';
 import 'package:bookish_player/features/library/cubits/library_intents.dart';
 import 'package:bookish_player/features/library/ui/library_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 

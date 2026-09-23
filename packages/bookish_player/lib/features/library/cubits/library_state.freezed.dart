@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'library_state.dart';
@@ -9,6 +9,7 @@ part of 'library_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $LibraryStateCopyWith<LibraryState> get copyWith => _$LibraryStateCopyWithImpl<L
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibraryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.books, books)&&(identical(other.grouping, grouping) || other.grouping == grouping)&&(identical(other.layout, layout) || other.layout == layout)&&(identical(other.query, query) || other.query == query)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.sort, sort) || other.sort == sort)&&const DeepCollectionEquality().equals(other.sections, sections)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+  final _this = this as LibraryState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibraryState&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.books, _this.books)&&(identical(other.grouping, _this.grouping) || other.grouping == _this.grouping)&&(identical(other.layout, _this.layout) || other.layout == _this.layout)&&(identical(other.query, _this.query) || other.query == _this.query)&&(identical(other.filter, _this.filter) || other.filter == _this.filter)&&(identical(other.sort, _this.sort) || other.sort == _this.sort)&&const DeepCollectionEquality().equals(other.sections, _this.sections)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.effectRevision, _this.effectRevision) || other.effectRevision == _this.effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(books),grouping,layout,query,filter,sort,const DeepCollectionEquality().hash(sections),message,effectRevision);
+int get hashCode {
+  final _this = this as LibraryState;
+  return Object.hash(runtimeType,_this.status,const DeepCollectionEquality().hash(_this.books),_this.grouping,_this.layout,_this.query,_this.filter,_this.sort,const DeepCollectionEquality().hash(_this.sections),_this.message,_this.effectRevision);
+}
 
 @override
 String toString() {
-  return 'LibraryState(status: $status, books: $books, grouping: $grouping, layout: $layout, query: $query, filter: $filter, sort: $sort, sections: $sections, message: $message, effectRevision: $effectRevision)';
+  final _this = this as LibraryState;
+  return 'LibraryState(status: ${_this.status}, books: ${_this.books}, grouping: ${_this.grouping}, layout: ${_this.layout}, query: ${_this.query}, filter: ${_this.filter}, sort: ${_this.sort}, sections: ${_this.sections}, message: ${_this.message}, effectRevision: ${_this.effectRevision})';
 }
 
 
@@ -63,7 +69,7 @@ class _$LibraryStateCopyWithImpl<$Res>
 /// Create a copy of LibraryState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? books = null,Object? grouping = null,Object? layout = null,Object? query = null,Object? filter = null,Object? sort = null,Object? sections = null,Object? message = freezed,Object? effectRevision = null,}) {
-  return _then(_self.copyWith(
+  return _then(LibraryState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as LibraryStatus,books: null == books ? _self.books : books // ignore: cast_nullable_to_non_nullable
 as List<Audiobook>,grouping: null == grouping ? _self.grouping : grouping // ignore: cast_nullable_to_non_nullable
@@ -215,7 +221,7 @@ return $default(_that.status,_that.books,_that.grouping,_that.layout,_that.query
 
 
 class _LibraryState implements LibraryState {
-  const _LibraryState({this.status = LibraryStatus.initial, final  List<Audiobook> books = const <Audiobook>[], this.grouping = LibraryGrouping.none, this.layout = LibraryLayout.list, this.query = '', this.filter = LibraryFilter.all, this.sort = LibrarySort.recent, final  List<LibrarySection> sections = const <LibrarySection>[], this.message, this.effectRevision = 0}): _books = books,_sections = sections;
+  const _LibraryState({this.status = LibraryStatus.initial,  List<Audiobook> books = const <Audiobook>[], this.grouping = LibraryGrouping.none, this.layout = LibraryLayout.list, this.query = '', this.filter = LibraryFilter.all, this.sort = LibrarySort.recent,  List<LibrarySection> sections = const <LibrarySection>[], this.message, this.effectRevision = 0}): _books = books,_sections = sections;
   
 
 @override@JsonKey() final  LibraryStatus status;
@@ -251,16 +257,18 @@ _$LibraryStateCopyWith<_LibraryState> get copyWith => __$LibraryStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibraryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._books, _books)&&(identical(other.grouping, grouping) || other.grouping == grouping)&&(identical(other.layout, layout) || other.layout == layout)&&(identical(other.query, query) || other.query == query)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.sort, sort) || other.sort == sort)&&const DeepCollectionEquality().equals(other._sections, _sections)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibraryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.books, _books)&&(identical(other.grouping, grouping) || other.grouping == grouping)&&(identical(other.layout, layout) || other.layout == layout)&&(identical(other.query, query) || other.query == query)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.sort, sort) || other.sort == sort)&&const DeepCollectionEquality().equals(other.sections, _sections)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_books),grouping,layout,query,filter,sort,const DeepCollectionEquality().hash(_sections),message,effectRevision);
+int get hashCode {
+    return Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_books),grouping,layout,query,filter,sort,const DeepCollectionEquality().hash(_sections),message,effectRevision);
+}
 
 @override
 String toString() {
-  return 'LibraryState(status: $status, books: $books, grouping: $grouping, layout: $layout, query: $query, filter: $filter, sort: $sort, sections: $sections, message: $message, effectRevision: $effectRevision)';
+    return 'LibraryState(status: $status, books: $books, grouping: $grouping, layout: $layout, query: $query, filter: $filter, sort: $sort, sections: $sections, message: $message, effectRevision: $effectRevision)';
 }
 
 
@@ -321,16 +329,21 @@ $LibrarySectionCopyWith<LibrarySection> get copyWith => _$LibrarySectionCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibrarySection&&const DeepCollectionEquality().equals(other.books, books)&&(identical(other.title, title) || other.title == title)&&(identical(other.label, label) || other.label == label));
+  final _this = this as LibrarySection;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibrarySection&&const DeepCollectionEquality().equals(other.books, _this.books)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.label, _this.label) || other.label == _this.label));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(books),title,label);
+int get hashCode {
+  final _this = this as LibrarySection;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.books),_this.title,_this.label);
+}
 
 @override
 String toString() {
-  return 'LibrarySection(books: $books, title: $title, label: $label)';
+  final _this = this as LibrarySection;
+  return 'LibrarySection(books: ${_this.books}, title: ${_this.title}, label: ${_this.label})';
 }
 
 
@@ -359,7 +372,7 @@ class _$LibrarySectionCopyWithImpl<$Res>
 /// Create a copy of LibrarySection
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? books = null,Object? title = null,Object? label = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(LibrarySection(
 books: null == books ? _self.books : books // ignore: cast_nullable_to_non_nullable
 as List<Audiobook>,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,label: freezed == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
@@ -504,7 +517,7 @@ return $default(_that.books,_that.title,_that.label);case _:
 
 
 class _LibrarySection implements LibrarySection {
-  const _LibrarySection({required final  List<Audiobook> books, this.title = '', this.label}): _books = books;
+  const _LibrarySection({required  List<Audiobook> books, this.title = '', this.label}): _books = books;
   
 
  final  List<Audiobook> _books;
@@ -527,16 +540,18 @@ _$LibrarySectionCopyWith<_LibrarySection> get copyWith => __$LibrarySectionCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibrarySection&&const DeepCollectionEquality().equals(other._books, _books)&&(identical(other.title, title) || other.title == title)&&(identical(other.label, label) || other.label == label));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibrarySection&&const DeepCollectionEquality().equals(other.books, _books)&&(identical(other.title, title) || other.title == title)&&(identical(other.label, label) || other.label == label));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_books),title,label);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_books),title,label);
+}
 
 @override
 String toString() {
-  return 'LibrarySection(books: $books, title: $title, label: $label)';
+    return 'LibrarySection(books: $books, title: $title, label: $label)';
 }
 
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'import_state.dart';
@@ -9,6 +9,7 @@ part of 'import_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ImportStateCopyWith<ImportState> get copyWith => _$ImportStateCopyWithImpl<Impo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportState&&(identical(other.status, status) || other.status == status)&&(identical(other.cancellationRequested, cancellationRequested) || other.cancellationRequested == cancellationRequested)&&(identical(other.finderTransfer, finderTransfer) || other.finderTransfer == finderTransfer)&&const DeepCollectionEquality().equals(other.selectedFiles, selectedFiles)&&(identical(other.failureResult, failureResult) || other.failureResult == failureResult)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.totalFiles, totalFiles) || other.totalFiles == totalFiles)&&(identical(other.currentTitle, currentTitle) || other.currentTitle == currentTitle)&&(identical(other.heading, heading) || other.heading == heading)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics));
+  final _this = this as ImportState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.cancellationRequested, _this.cancellationRequested) || other.cancellationRequested == _this.cancellationRequested)&&(identical(other.finderTransfer, _this.finderTransfer) || other.finderTransfer == _this.finderTransfer)&&const DeepCollectionEquality().equals(other.selectedFiles, _this.selectedFiles)&&(identical(other.failureResult, _this.failureResult) || other.failureResult == _this.failureResult)&&(identical(other.stage, _this.stage) || other.stage == _this.stage)&&(identical(other.importedCount, _this.importedCount) || other.importedCount == _this.importedCount)&&(identical(other.totalFiles, _this.totalFiles) || other.totalFiles == _this.totalFiles)&&(identical(other.currentTitle, _this.currentTitle) || other.currentTitle == _this.currentTitle)&&(identical(other.heading, _this.heading) || other.heading == _this.heading)&&(identical(other.detail, _this.detail) || other.detail == _this.detail)&&(identical(other.failureStage, _this.failureStage) || other.failureStage == _this.failureStage)&&(identical(other.copiedBytes, _this.copiedBytes) || other.copiedBytes == _this.copiedBytes)&&(identical(other.totalBytes, _this.totalBytes) || other.totalBytes == _this.totalBytes)&&(identical(other.progress, _this.progress) || other.progress == _this.progress)&&(identical(other.diagnostics, _this.diagnostics) || other.diagnostics == _this.diagnostics));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,cancellationRequested,finderTransfer,const DeepCollectionEquality().hash(selectedFiles),failureResult,stage,importedCount,totalFiles,currentTitle,heading,detail,failureStage,copiedBytes,totalBytes,progress,diagnostics);
+int get hashCode {
+  final _this = this as ImportState;
+  return Object.hash(runtimeType,_this.status,_this.cancellationRequested,_this.finderTransfer,const DeepCollectionEquality().hash(_this.selectedFiles),_this.failureResult,_this.stage,_this.importedCount,_this.totalFiles,_this.currentTitle,_this.heading,_this.detail,_this.failureStage,_this.copiedBytes,_this.totalBytes,_this.progress,_this.diagnostics);
+}
 
 @override
 String toString() {
-  return 'ImportState(status: $status, cancellationRequested: $cancellationRequested, finderTransfer: $finderTransfer, selectedFiles: $selectedFiles, failureResult: $failureResult, stage: $stage, importedCount: $importedCount, totalFiles: $totalFiles, currentTitle: $currentTitle, heading: $heading, detail: $detail, failureStage: $failureStage, copiedBytes: $copiedBytes, totalBytes: $totalBytes, progress: $progress, diagnostics: $diagnostics)';
+  final _this = this as ImportState;
+  return 'ImportState(status: ${_this.status}, cancellationRequested: ${_this.cancellationRequested}, finderTransfer: ${_this.finderTransfer}, selectedFiles: ${_this.selectedFiles}, failureResult: ${_this.failureResult}, stage: ${_this.stage}, importedCount: ${_this.importedCount}, totalFiles: ${_this.totalFiles}, currentTitle: ${_this.currentTitle}, heading: ${_this.heading}, detail: ${_this.detail}, failureStage: ${_this.failureStage}, copiedBytes: ${_this.copiedBytes}, totalBytes: ${_this.totalBytes}, progress: ${_this.progress}, diagnostics: ${_this.diagnostics})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ImportStateCopyWithImpl<$Res>
 /// Create a copy of ImportState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? cancellationRequested = null,Object? finderTransfer = null,Object? selectedFiles = null,Object? failureResult = freezed,Object? stage = null,Object? importedCount = null,Object? totalFiles = null,Object? currentTitle = freezed,Object? heading = null,Object? detail = null,Object? failureStage = freezed,Object? copiedBytes = freezed,Object? totalBytes = freezed,Object? progress = freezed,Object? diagnostics = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ImportState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as ImportStatus,cancellationRequested: null == cancellationRequested ? _self.cancellationRequested : cancellationRequested // ignore: cast_nullable_to_non_nullable
 as bool,finderTransfer: null == finderTransfer ? _self.finderTransfer : finderTransfer // ignore: cast_nullable_to_non_nullable
@@ -233,7 +239,7 @@ return $default(_that.status,_that.cancellationRequested,_that.finderTransfer,_t
 
 
 class _ImportState implements ImportState {
-  const _ImportState({this.status = ImportStatus.idle, this.cancellationRequested = false, this.finderTransfer = false, final  List<SelectedAudioFile> selectedFiles = const <SelectedAudioFile>[], this.failureResult, this.stage = ImportStage.selectingFiles, this.importedCount = 0, this.totalFiles = 0, this.currentTitle, this.heading = ImportHeading.openingFileBrowser, this.detail = ImportDetail.chooseFiles, this.failureStage, this.copiedBytes, this.totalBytes, this.progress, this.diagnostics}): _selectedFiles = selectedFiles;
+  const _ImportState({this.status = ImportStatus.idle, this.cancellationRequested = false, this.finderTransfer = false,  List<SelectedAudioFile> selectedFiles = const <SelectedAudioFile>[], this.failureResult, this.stage = ImportStage.selectingFiles, this.importedCount = 0, this.totalFiles = 0, this.currentTitle, this.heading = ImportHeading.openingFileBrowser, this.detail = ImportDetail.chooseFiles, this.failureStage, this.copiedBytes, this.totalBytes, this.progress, this.diagnostics}): _selectedFiles = selectedFiles;
   
 
 @override@JsonKey() final  ImportStatus status;
@@ -269,16 +275,18 @@ _$ImportStateCopyWith<_ImportState> get copyWith => __$ImportStateCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportState&&(identical(other.status, status) || other.status == status)&&(identical(other.cancellationRequested, cancellationRequested) || other.cancellationRequested == cancellationRequested)&&(identical(other.finderTransfer, finderTransfer) || other.finderTransfer == finderTransfer)&&const DeepCollectionEquality().equals(other._selectedFiles, _selectedFiles)&&(identical(other.failureResult, failureResult) || other.failureResult == failureResult)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.totalFiles, totalFiles) || other.totalFiles == totalFiles)&&(identical(other.currentTitle, currentTitle) || other.currentTitle == currentTitle)&&(identical(other.heading, heading) || other.heading == heading)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportState&&(identical(other.status, status) || other.status == status)&&(identical(other.cancellationRequested, cancellationRequested) || other.cancellationRequested == cancellationRequested)&&(identical(other.finderTransfer, finderTransfer) || other.finderTransfer == finderTransfer)&&const DeepCollectionEquality().equals(other.selectedFiles, _selectedFiles)&&(identical(other.failureResult, failureResult) || other.failureResult == failureResult)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.totalFiles, totalFiles) || other.totalFiles == totalFiles)&&(identical(other.currentTitle, currentTitle) || other.currentTitle == currentTitle)&&(identical(other.heading, heading) || other.heading == heading)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.failureStage, failureStage) || other.failureStage == failureStage)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.diagnostics, diagnostics) || other.diagnostics == diagnostics));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,cancellationRequested,finderTransfer,const DeepCollectionEquality().hash(_selectedFiles),failureResult,stage,importedCount,totalFiles,currentTitle,heading,detail,failureStage,copiedBytes,totalBytes,progress,diagnostics);
+int get hashCode {
+    return Object.hash(runtimeType,status,cancellationRequested,finderTransfer,const DeepCollectionEquality().hash(_selectedFiles),failureResult,stage,importedCount,totalFiles,currentTitle,heading,detail,failureStage,copiedBytes,totalBytes,progress,diagnostics);
+}
 
 @override
 String toString() {
-  return 'ImportState(status: $status, cancellationRequested: $cancellationRequested, finderTransfer: $finderTransfer, selectedFiles: $selectedFiles, failureResult: $failureResult, stage: $stage, importedCount: $importedCount, totalFiles: $totalFiles, currentTitle: $currentTitle, heading: $heading, detail: $detail, failureStage: $failureStage, copiedBytes: $copiedBytes, totalBytes: $totalBytes, progress: $progress, diagnostics: $diagnostics)';
+    return 'ImportState(status: $status, cancellationRequested: $cancellationRequested, finderTransfer: $finderTransfer, selectedFiles: $selectedFiles, failureResult: $failureResult, stage: $stage, importedCount: $importedCount, totalFiles: $totalFiles, currentTitle: $currentTitle, heading: $heading, detail: $detail, failureStage: $failureStage, copiedBytes: $copiedBytes, totalBytes: $totalBytes, progress: $progress, diagnostics: $diagnostics)';
 }
 
 

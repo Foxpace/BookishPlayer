@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../../../core/theme/bookish_theme.dart';
@@ -43,9 +43,8 @@ class ImportFailureView extends StatelessWidget {
           Text(
             state.heading.localize(context),
             textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+            style: Theme.of(context).textTheme.headlineSmall
+                ?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
           Text(

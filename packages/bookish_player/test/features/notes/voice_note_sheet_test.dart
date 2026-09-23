@@ -2,7 +2,7 @@ import 'package:bookish_player/features/notes/repos/voice_note_transcription_rep
 import 'package:bookish_player/features/notes/ui/widgets/voice_note_sheet.dart';
 import 'package:bookish_player/features/notes/cubits/voice_note_cubit.dart';
 import 'package:bookish_player/features/notes/cubits/notes_cubits.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,6 +1,6 @@
 import 'package:bookish_player/features/notes/models/book_note.dart';
 import 'package:bookish_player/features/player/ui/widgets/player_note_tile.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../test_support/support/pump_bookish_app.dart';

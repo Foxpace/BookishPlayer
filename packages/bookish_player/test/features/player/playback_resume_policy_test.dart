@@ -30,46 +30,40 @@ void main() {
       );
     }
 
-    test(
-      'Given the playback resume policy, When its behavior is exercised, Then smart resume does not rewind into the previous chapter',
-      () {
-        // GIVEN
-        final paused = pauseAt(const Duration(minutes: 1));
-        clock.advance(const Duration(minutes: 10));
+    test('Given the playback resume policy, When its behavior is exercised, Then smart resume does not rewind into the previous chapter', () {
+      // GIVEN
+      final paused = pauseAt(const Duration(minutes: 1));
+      clock.advance(const Duration(minutes: 10));
 
-        // WHEN
-        final action = sut.evaluate(
-          playing: true,
-          wasPlaying: paused.wasPlaying,
-          pausedAt: paused.pausedAt,
-          position: const Duration(minutes: 1),
-          chapterStart: const Duration(minutes: 1),
-        );
+      // WHEN
+      final action = sut.evaluate(
+        playing: true,
+        wasPlaying: paused.wasPlaying,
+        pausedAt: paused.pausedAt,
+        position: const Duration(minutes: 1),
+        chapterStart: const Duration(minutes: 1),
+      );
 
-        // THEN
-        expect(action.rewind, Duration.zero);
-      },
-    );
+      // THEN
+      expect(action.rewind, Duration.zero);
+    });
 
-    test(
-      'Given the playback resume policy, When its behavior is exercised, Then smart resume is limited to elapsed time in the current chapter',
-      () {
-        // GIVEN
-        final paused = pauseAt(const Duration(seconds: 65));
-        clock.advance(const Duration(minutes: 10));
+    test('Given the playback resume policy, When its behavior is exercised, Then smart resume is limited to elapsed time in the current chapter', () {
+      // GIVEN
+      final paused = pauseAt(const Duration(seconds: 65));
+      clock.advance(const Duration(minutes: 10));
 
-        // WHEN
-        final action = sut.evaluate(
-          playing: true,
-          wasPlaying: paused.wasPlaying,
-          pausedAt: paused.pausedAt,
-          position: const Duration(seconds: 65),
-          chapterStart: const Duration(minutes: 1),
-        );
+      // WHEN
+      final action = sut.evaluate(
+        playing: true,
+        wasPlaying: paused.wasPlaying,
+        pausedAt: paused.pausedAt,
+        position: const Duration(seconds: 65),
+        chapterStart: const Duration(minutes: 1),
+      );
 
-        // THEN
-        expect(action.rewind, const Duration(seconds: 5));
-      },
-    );
+      // THEN
+      expect(action.rewind, const Duration(seconds: 5));
+    });
   });
 }

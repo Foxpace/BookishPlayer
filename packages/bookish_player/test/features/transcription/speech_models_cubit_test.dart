@@ -30,73 +30,61 @@ void main() {
 
     tearDown(() => sut.close());
 
-    test(
-      'Given local speech models and preferences, When cached and refreshed models are loaded, Then the selected available model and refreshed catalog are emitted',
-      () async {
-        // GIVEN
-        preferences.selected = 'missing';
-        transcription.responses = [
-          const [SpeechModel(slug: 'tiny', isDownloaded: false)],
-          const [
-            SpeechModel(slug: 'tiny', isDownloaded: false),
-            SpeechModel(slug: 'small', isDownloaded: true),
-          ],
-        ];
+    test('Given local speech models and preferences, When models are loaded, Then the local catalog is read once and model selection is saved', () async {
+      // GIVEN
+      preferences.selected = 'missing';
+      transcription.models = const [
+        SpeechModel(slug: 'tiny', isDownloaded: false),
+        SpeechModel(slug: 'small', isDownloaded: true),
+      ];
 
-        await sut.load();
-        // WHEN
-        await sut.selectModel('small');
+      await sut.load();
+      // WHEN
+      await sut.selectModel('small');
 
-        // THEN
-        expect(sut.state.status, SpeechModelsStatus.ready);
-        expect(sut.state.models, hasLength(2));
-        expect(sut.state.selectedModel, 'small');
-        expect(sut.state.selectedModelIsDownloaded, isTrue);
-        expect(preferences.selected, 'small');
-      },
-    );
+      // THEN
+      expect(sut.state.status, SpeechModelsStatus.ready);
+      expect(sut.state.models, hasLength(2));
+      expect(transcription.catalogReads, 1);
+      expect(sut.state.selectedModel, 'small');
+      expect(sut.state.selectedModelIsDownloaded, isTrue);
+      expect(preferences.selected, 'small');
+    });
 
-    test(
-      'Given local speech models and preferences, When the selected model downloads, Then progress and a typed completion effect are emitted',
-      () async {
-        // GIVEN
-        transcription.responses = [
-          const [SpeechModel(slug: 'whisper-tiny', isDownloaded: false)],
-          const [SpeechModel(slug: 'whisper-tiny', isDownloaded: false)],
-        ];
-        await sut.load();
+    test('Given local speech models and preferences, When the selected model downloads, Then progress and a typed completion effect are emitted', () async {
+      // GIVEN
+      transcription.models = const [
+        SpeechModel(slug: 'whisper-tiny', isDownloaded: false),
+      ];
+      await sut.load();
 
-        // WHEN
-        await sut.downloadSelectedModel();
+      // WHEN
+      await sut.downloadSelectedModel();
 
-        // THEN
-        expect(sut.state.status, SpeechModelsStatus.ready);
-        expect(sut.state.selectedModelIsDownloaded, isTrue);
-        expect(sut.state.message, AppMessage.speechModelDownloaded);
-        expect(sut.state.effectRevision, 1);
-      },
-    );
+      // THEN
+      expect(sut.state.status, SpeechModelsStatus.ready);
+      expect(sut.state.selectedModelIsDownloaded, isTrue);
+      expect(sut.state.message, AppMessage.speechModelDownloaded);
+      expect(sut.state.effectRevision, 1);
+    });
 
-    test(
-      'Given local speech models and preferences, When loading and download operations fail, Then failures stay typed and revisioned',
-      () async {
-        // GIVEN
-        transcription.loadFailure = Exception('catalog');
-        // WHEN
-        await sut.load();
-        // THEN
-        expect(sut.state.message, AppMessage.speechModelsLoadFailed);
-        expect(sut.state.effectRevision, 1);
+    test('Given local speech models and preferences, When loading and download operations fail, Then failures stay typed and revisioned', () async {
+      // GIVEN
+      transcription.loadFailure = Exception('catalog');
+      // WHEN
+      await sut.load();
+      // THEN
+      expect(sut.state.message, AppMessage.speechModelsLoadFailed);
+      expect(sut.state.effectRevision, 1);
 
-        transcription.loadFailure = null;
-        transcription.responses = [const [], const []];
-        await sut.load();
-        transcription.downloadFailure = Exception('download');
-        await sut.downloadSelectedModel();
-        expect(sut.state.message, AppMessage.speechModelDownloadFailed);
-        expect(sut.state.effectRevision, 2);
-      },
-    );
+      transcription.loadFailure = null;
+      transcription.models = const [];
+      await sut.load();
+      transcription.downloadFailure = Exception('download');
+      await sut.downloadSelectedModel();
+      expect(sut.state.message, AppMessage.speechModelDownloadFailed);
+      expect(sut.state.effectRevision, 2);
+    });
   });
 }
 
@@ -113,17 +101,18 @@ class _FakePreferences implements TranscriptionPreferences {
 }
 
 class _FakeTranscription implements TranscriptionRepository {
-  List<List<SpeechModel>> responses = const [[], []];
+  List<SpeechModel> models = const [];
+  var catalogReads = 0;
   Exception? loadFailure;
   Exception? downloadFailure;
-  var _responseIndex = 0;
 
   @override
-  Future<List<SpeechModel>> getModels({bool refresh = true}) async {
+  Future<List<SpeechModel>> listModels() async {
     if (loadFailure case final failure?) {
       throw failure;
     }
-    return responses[_responseIndex++];
+    catalogReads++;
+    return models;
   }
 
   @override
@@ -139,9 +128,6 @@ class _FakeTranscription implements TranscriptionRepository {
 
   @override
   Future<bool> isModelDownloaded(String slug) async => false;
-
-  @override
-  Future<void> reset() async {}
 
   @override
   Future<Result<String>> transcribeRange({

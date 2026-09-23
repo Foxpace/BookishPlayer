@@ -1,7 +1,7 @@
 import 'package:bookish_player/features/player/cubits/player_cubit.dart';
 import 'package:bookish_player/features/player/cubits/player_cubits.dart';
 import 'package:bookish_player/features/player/ui/now_playing_shell.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PlayerTestNowPlayingShell extends StatelessWidget {

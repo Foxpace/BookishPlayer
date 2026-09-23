@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../cubits/library_cubits.dart';
@@ -34,9 +34,8 @@ class LibraryViewSheet extends StatelessWidget {
           children: [
             Text(
               S.of(context).libraryView,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+              style: Theme.of(context).textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 18),
             LibraryViewDropdown<LibraryFilter>(

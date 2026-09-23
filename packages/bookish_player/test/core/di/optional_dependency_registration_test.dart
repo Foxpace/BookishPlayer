@@ -10,51 +10,42 @@ import 'package:get_it/get_it.dart';
 
 void main() {
   group('Optional transcription dependency registrations', () {
-    test(
-      'Given the store environment, When dependencies are configured, Then transcription factories are absent',
-      () async {
-        // GIVEN
-        final container = GetIt.asNewInstance();
-        addTearDown(() => container.reset(dispose: true));
+    test('Given the store environment, When dependencies are configured, Then transcription factories are absent', () async {
+      // GIVEN
+      final container = GetIt.asNewInstance();
+      addTearDown(() => container.reset(dispose: true));
 
-        // WHEN
-        await configureDependencies(
-          container: container,
-          environments: const {'test'},
-        );
+      // WHEN
+      await configureDependencies(
+        container: container,
+        environments: const {'test'},
+      );
 
-        // THEN
-        expect(container.isRegistered<TranscriptionPreferences>(), isFalse);
-        expect(container.isRegistered<SpeechModelApplication>(), isFalse);
-        expect(
-          container.isRegistered<QuoteTranscriptionApplication>(),
-          isFalse,
-        );
-        expect(container.isRegistered<SpeechModelsCubit>(), isFalse);
-        expect(container.isRegistered<QuoteTranscriptionCubit>(), isFalse);
-      },
-    );
+      // THEN
+      expect(container.isRegistered<TranscriptionPreferences>(), isFalse);
+      expect(container.isRegistered<SpeechModelApplication>(), isFalse);
+      expect(container.isRegistered<QuoteTranscriptionApplication>(), isFalse);
+      expect(container.isRegistered<SpeechModelsCubit>(), isFalse);
+      expect(container.isRegistered<QuoteTranscriptionCubit>(), isFalse);
+    });
 
-    test(
-      'Given the internal environment, When dependencies are configured, Then transcription factories are present',
-      () async {
-        // GIVEN
-        final container = GetIt.asNewInstance();
-        addTearDown(() => container.reset(dispose: true));
+    test('Given the internal environment, When dependencies are configured, Then transcription factories are present', () async {
+      // GIVEN
+      final container = GetIt.asNewInstance();
+      addTearDown(() => container.reset(dispose: true));
 
-        // WHEN
-        await configureDependencies(
-          container: container,
-          environments: const {'test', internalEnvironment},
-        );
+      // WHEN
+      await configureDependencies(
+        container: container,
+        environments: const {'test', internalEnvironment},
+      );
 
-        // THEN
-        expect(container.isRegistered<TranscriptionPreferences>(), isTrue);
-        expect(container.isRegistered<SpeechModelApplication>(), isTrue);
-        expect(container.isRegistered<QuoteTranscriptionApplication>(), isTrue);
-        expect(container.isRegistered<SpeechModelsCubit>(), isTrue);
-        expect(container.isRegistered<QuoteTranscriptionCubit>(), isTrue);
-      },
-    );
+      // THEN
+      expect(container.isRegistered<TranscriptionPreferences>(), isTrue);
+      expect(container.isRegistered<SpeechModelApplication>(), isTrue);
+      expect(container.isRegistered<QuoteTranscriptionApplication>(), isTrue);
+      expect(container.isRegistered<SpeechModelsCubit>(), isTrue);
+      expect(container.isRegistered<QuoteTranscriptionCubit>(), isTrue);
+    });
   });
 }

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'note_gallery_state.dart';
@@ -9,6 +9,7 @@ part of 'note_gallery_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $NoteGalleryStateCopyWith<NoteGalleryState> get copyWith => _$NoteGalleryStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteGalleryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.metadata, metadata)&&const DeepCollectionEquality().equals(other.notes, notes)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+  final _this = this as NoteGalleryState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteGalleryState&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.metadata, _this.metadata)&&const DeepCollectionEquality().equals(other.notes, _this.notes)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.effectRevision, _this.effectRevision) || other.effectRevision == _this.effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(metadata),const DeepCollectionEquality().hash(notes),message,effectRevision);
+int get hashCode {
+  final _this = this as NoteGalleryState;
+  return Object.hash(runtimeType,_this.status,const DeepCollectionEquality().hash(_this.metadata),const DeepCollectionEquality().hash(_this.notes),_this.message,_this.effectRevision);
+}
 
 @override
 String toString() {
-  return 'NoteGalleryState(status: $status, metadata: $metadata, notes: $notes, message: $message, effectRevision: $effectRevision)';
+  final _this = this as NoteGalleryState;
+  return 'NoteGalleryState(status: ${_this.status}, metadata: ${_this.metadata}, notes: ${_this.notes}, message: ${_this.message}, effectRevision: ${_this.effectRevision})';
 }
 
 
@@ -63,7 +69,7 @@ class _$NoteGalleryStateCopyWithImpl<$Res>
 /// Create a copy of NoteGalleryState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? metadata = null,Object? notes = null,Object? message = freezed,Object? effectRevision = null,}) {
-  return _then(_self.copyWith(
+  return _then(NoteGalleryState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as NoteGalleryStatus,metadata: null == metadata ? _self.metadata : metadata // ignore: cast_nullable_to_non_nullable
 as List<BookMetadata>,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
@@ -210,7 +216,7 @@ return $default(_that.status,_that.metadata,_that.notes,_that.message,_that.effe
 
 
 class _NoteGalleryState implements NoteGalleryState {
-  const _NoteGalleryState({this.status = NoteGalleryStatus.loading, final  List<BookMetadata> metadata = const <BookMetadata>[], final  List<BookNote> notes = const <BookNote>[], this.message, this.effectRevision = 0}): _metadata = metadata,_notes = notes;
+  const _NoteGalleryState({this.status = NoteGalleryStatus.loading,  List<BookMetadata> metadata = const <BookMetadata>[],  List<BookNote> notes = const <BookNote>[], this.message, this.effectRevision = 0}): _metadata = metadata,_notes = notes;
   
 
 @override@JsonKey() final  NoteGalleryStatus status;
@@ -241,16 +247,18 @@ _$NoteGalleryStateCopyWith<_NoteGalleryState> get copyWith => __$NoteGalleryStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteGalleryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._metadata, _metadata)&&const DeepCollectionEquality().equals(other._notes, _notes)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteGalleryState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.metadata, _metadata)&&const DeepCollectionEquality().equals(other.notes, _notes)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_metadata),const DeepCollectionEquality().hash(_notes),message,effectRevision);
+int get hashCode {
+    return Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_metadata),const DeepCollectionEquality().hash(_notes),message,effectRevision);
+}
 
 @override
 String toString() {
-  return 'NoteGalleryState(status: $status, metadata: $metadata, notes: $notes, message: $message, effectRevision: $effectRevision)';
+    return 'NoteGalleryState(status: $status, metadata: $metadata, notes: $notes, message: $message, effectRevision: $effectRevision)';
 }
 
 

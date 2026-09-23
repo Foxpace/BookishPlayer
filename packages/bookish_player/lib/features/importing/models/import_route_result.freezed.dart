@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'import_route_result.dart';
@@ -9,6 +9,7 @@ part of 'import_route_result.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ImportRouteResultCopyWith<ImportRouteResult> get copyWith => _$ImportRouteResul
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportRouteResult&&(identical(other.status, status) || other.status == status)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.failedItem, failedItem) || other.failedItem == failedItem));
+  final _this = this as ImportRouteResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportRouteResult&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.importedCount, _this.importedCount) || other.importedCount == _this.importedCount)&&(identical(other.failedItem, _this.failedItem) || other.failedItem == _this.failedItem));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,importedCount,failedItem);
+int get hashCode {
+  final _this = this as ImportRouteResult;
+  return Object.hash(runtimeType,_this.status,_this.importedCount,_this.failedItem);
+}
 
 @override
 String toString() {
-  return 'ImportRouteResult(status: $status, importedCount: $importedCount, failedItem: $failedItem)';
+  final _this = this as ImportRouteResult;
+  return 'ImportRouteResult(status: ${_this.status}, importedCount: ${_this.importedCount}, failedItem: ${_this.failedItem})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ImportRouteResultCopyWithImpl<$Res>
 /// Create a copy of ImportRouteResult
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? importedCount = null,Object? failedItem = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ImportRouteResult(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as ImportRouteStatus,importedCount: null == importedCount ? _self.importedCount : importedCount // ignore: cast_nullable_to_non_nullable
 as int,failedItem: freezed == failedItem ? _self.failedItem : failedItem // ignore: cast_nullable_to_non_nullable
@@ -237,16 +243,18 @@ _$ImportRouteResultCopyWith<_ImportRouteResult> get copyWith => __$ImportRouteRe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportRouteResult&&(identical(other.status, status) || other.status == status)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.failedItem, failedItem) || other.failedItem == failedItem));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportRouteResult&&(identical(other.status, status) || other.status == status)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.failedItem, failedItem) || other.failedItem == failedItem));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,importedCount,failedItem);
+int get hashCode {
+    return Object.hash(runtimeType,status,importedCount,failedItem);
+}
 
 @override
 String toString() {
-  return 'ImportRouteResult(status: $status, importedCount: $importedCount, failedItem: $failedItem)';
+    return 'ImportRouteResult(status: $status, importedCount: $importedCount, failedItem: $failedItem)';
 }
 
 

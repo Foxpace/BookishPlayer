@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'speech_models_state.dart';
@@ -9,6 +9,7 @@ part of 'speech_models_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $SpeechModelsStateCopyWith<SpeechModelsState> get copyWith => _$SpeechModelsStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpeechModelsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.models, models)&&(identical(other.selectedModel, selectedModel) || other.selectedModel == selectedModel)&&(identical(other.downloadProgress, downloadProgress) || other.downloadProgress == downloadProgress)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+  final _this = this as SpeechModelsState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpeechModelsState&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.models, _this.models)&&(identical(other.selectedModel, _this.selectedModel) || other.selectedModel == _this.selectedModel)&&(identical(other.downloadProgress, _this.downloadProgress) || other.downloadProgress == _this.downloadProgress)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.effectRevision, _this.effectRevision) || other.effectRevision == _this.effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(models),selectedModel,downloadProgress,message,effectRevision);
+int get hashCode {
+  final _this = this as SpeechModelsState;
+  return Object.hash(runtimeType,_this.status,const DeepCollectionEquality().hash(_this.models),_this.selectedModel,_this.downloadProgress,_this.message,_this.effectRevision);
+}
 
 @override
 String toString() {
-  return 'SpeechModelsState(status: $status, models: $models, selectedModel: $selectedModel, downloadProgress: $downloadProgress, message: $message, effectRevision: $effectRevision)';
+  final _this = this as SpeechModelsState;
+  return 'SpeechModelsState(status: ${_this.status}, models: ${_this.models}, selectedModel: ${_this.selectedModel}, downloadProgress: ${_this.downloadProgress}, message: ${_this.message}, effectRevision: ${_this.effectRevision})';
 }
 
 
@@ -63,7 +69,7 @@ class _$SpeechModelsStateCopyWithImpl<$Res>
 /// Create a copy of SpeechModelsState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? models = null,Object? selectedModel = null,Object? downloadProgress = freezed,Object? message = freezed,Object? effectRevision = null,}) {
-  return _then(_self.copyWith(
+  return _then(SpeechModelsState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as SpeechModelsStatus,models: null == models ? _self.models : models // ignore: cast_nullable_to_non_nullable
 as List<SpeechModel>,selectedModel: null == selectedModel ? _self.selectedModel : selectedModel // ignore: cast_nullable_to_non_nullable
@@ -211,7 +217,7 @@ return $default(_that.status,_that.models,_that.selectedModel,_that.downloadProg
 
 
 class _SpeechModelsState extends SpeechModelsState {
-  const _SpeechModelsState({this.status = SpeechModelsStatus.initial, final  List<SpeechModel> models = const <SpeechModel>[], this.selectedModel = 'whisper-tiny', this.downloadProgress, this.message, this.effectRevision = 0}): _models = models,super._();
+  const _SpeechModelsState({this.status = SpeechModelsStatus.initial,  List<SpeechModel> models = const <SpeechModel>[], this.selectedModel = 'whisper-base', this.downloadProgress, this.message, this.effectRevision = 0}): _models = models,super._();
   
 
 @override@JsonKey() final  SpeechModelsStatus status;
@@ -237,16 +243,18 @@ _$SpeechModelsStateCopyWith<_SpeechModelsState> get copyWith => __$SpeechModelsS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpeechModelsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._models, _models)&&(identical(other.selectedModel, selectedModel) || other.selectedModel == selectedModel)&&(identical(other.downloadProgress, downloadProgress) || other.downloadProgress == downloadProgress)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpeechModelsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.models, _models)&&(identical(other.selectedModel, selectedModel) || other.selectedModel == selectedModel)&&(identical(other.downloadProgress, downloadProgress) || other.downloadProgress == downloadProgress)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_models),selectedModel,downloadProgress,message,effectRevision);
+int get hashCode {
+    return Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_models),selectedModel,downloadProgress,message,effectRevision);
+}
 
 @override
 String toString() {
-  return 'SpeechModelsState(status: $status, models: $models, selectedModel: $selectedModel, downloadProgress: $downloadProgress, message: $message, effectRevision: $effectRevision)';
+    return 'SpeechModelsState(status: $status, models: $models, selectedModel: $selectedModel, downloadProgress: $downloadProgress, message: $message, effectRevision: $effectRevision)';
 }
 
 

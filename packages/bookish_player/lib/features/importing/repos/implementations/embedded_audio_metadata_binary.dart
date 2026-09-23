@@ -95,9 +95,9 @@ int decodeSynchsafeInteger(List<int> bytes, int offset) =>
 int readUint32(List<int> bytes, int offset) =>
     ByteData.sublistView(Uint8List.fromList(bytes)).getUint32(offset);
 
-int readUint32LittleEndian(List<int> bytes, int offset) => ByteData.sublistView(
-  Uint8List.fromList(bytes),
-).getUint32(offset, Endian.little);
+int readUint32LittleEndian(List<int> bytes, int offset) =>
+    ByteData.sublistView(Uint8List.fromList(bytes))
+        .getUint32(offset, Endian.little);
 
 int readUint64(List<int> bytes, int offset) =>
     ByteData.sublistView(Uint8List.fromList(bytes)).getUint64(offset);

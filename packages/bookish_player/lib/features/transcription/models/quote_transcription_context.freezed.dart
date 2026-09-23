@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'quote_transcription_context.dart';
@@ -9,6 +9,7 @@ part of 'quote_transcription_context.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $QuoteTranscriptionContextCopyWith<QuoteTranscriptionContext> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuoteTranscriptionContext&&(identical(other.book, book) || other.book == book)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart));
+  final _this = this as QuoteTranscriptionContext;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuoteTranscriptionContext&&(identical(other.book, _this.book) || other.book == _this.book)&&(identical(other.chapterTitle, _this.chapterTitle) || other.chapterTitle == _this.chapterTitle)&&(identical(other.chapterStart, _this.chapterStart) || other.chapterStart == _this.chapterStart));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book,chapterTitle,chapterStart);
+int get hashCode {
+  final _this = this as QuoteTranscriptionContext;
+  return Object.hash(runtimeType,_this.book,_this.chapterTitle,_this.chapterStart);
+}
 
 @override
 String toString() {
-  return 'QuoteTranscriptionContext(book: $book, chapterTitle: $chapterTitle, chapterStart: $chapterStart)';
+  final _this = this as QuoteTranscriptionContext;
+  return 'QuoteTranscriptionContext(book: ${_this.book}, chapterTitle: ${_this.chapterTitle}, chapterStart: ${_this.chapterStart})';
 }
 
 
@@ -63,7 +69,7 @@ class _$QuoteTranscriptionContextCopyWithImpl<$Res>
 /// Create a copy of QuoteTranscriptionContext
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? book = null,Object? chapterTitle = freezed,Object? chapterStart = null,}) {
-  return _then(_self.copyWith(
+  return _then(QuoteTranscriptionContext(
 book: null == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
 as Audiobook,chapterTitle: freezed == chapterTitle ? _self.chapterTitle : chapterTitle // ignore: cast_nullable_to_non_nullable
 as String?,chapterStart: null == chapterStart ? _self.chapterStart : chapterStart // ignore: cast_nullable_to_non_nullable
@@ -234,16 +240,18 @@ _$QuoteTranscriptionContextCopyWith<_QuoteTranscriptionContext> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuoteTranscriptionContext&&(identical(other.book, book) || other.book == book)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuoteTranscriptionContext&&(identical(other.book, book) || other.book == book)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book,chapterTitle,chapterStart);
+int get hashCode {
+    return Object.hash(runtimeType,book,chapterTitle,chapterStart);
+}
 
 @override
 String toString() {
-  return 'QuoteTranscriptionContext(book: $book, chapterTitle: $chapterTitle, chapterStart: $chapterStart)';
+    return 'QuoteTranscriptionContext(book: $book, chapterTitle: $chapterTitle, chapterStart: $chapterStart)';
 }
 
 

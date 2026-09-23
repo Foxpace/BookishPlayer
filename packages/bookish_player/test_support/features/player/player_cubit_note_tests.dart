@@ -87,65 +87,55 @@ void _registerNoteCubitTests() {
   );
   tearDown(() => harness.close());
 
-  test(
-    'Given an open book, When quote, bookmark, and voice notes are added, Then their typed metadata is stored',
-    () async {
-      // WHEN
-      await harness.sut.addNoteAt(
-        'A transcribed quote',
-        const Duration(seconds: 35),
-        chapterTitle: 'Chapter two',
-        endPosition: const Duration(seconds: 52),
-      );
+  test('Given an open book, When quote, bookmark, and voice notes are added, Then their typed metadata is stored', () async {
+    // WHEN
+    await harness.sut.addNoteAt(
+      'A transcribed quote',
+      const Duration(seconds: 35),
+      chapterTitle: 'Chapter two',
+      endPosition: const Duration(seconds: 52),
+    );
 
-      // THEN
-      expect(harness.books.savedNote?.text, 'A transcribed quote');
-      expect(harness.books.savedNote?.positionMs, 35000);
-      expect(harness.books.savedNote?.endPositionMs, 52000);
-      expect(harness.books.savedNote?.chapterTitle, 'Chapter two');
+    // THEN
+    expect(harness.books.savedNote?.text, 'A transcribed quote');
+    expect(harness.books.savedNote?.positionMs, 35000);
+    expect(harness.books.savedNote?.endPositionMs, 52000);
+    expect(harness.books.savedNote?.chapterTitle, 'Chapter two');
 
-      // WHEN
-      await harness.sut.addBookmark();
+    // WHEN
+    await harness.sut.addBookmark();
 
-      // THEN
-      expect(harness.books.savedNote?.kind, BookNoteKind.bookmark);
+    // THEN
+    expect(harness.books.savedNote?.kind, BookNoteKind.bookmark);
 
-      // WHEN
-      await harness.sut.addVoiceNote('Remember this idea');
+    // WHEN
+    await harness.sut.addVoiceNote('Remember this idea');
 
-      // THEN
-      expect(harness.books.savedNote?.kind, BookNoteKind.voice);
-      expect(harness.books.savedNote?.text, 'Remember this idea');
-    },
-  );
+    // THEN
+    expect(harness.books.savedNote?.kind, BookNoteKind.voice);
+    expect(harness.books.savedNote?.text, 'Remember this idea');
+  });
 
-  test(
-    'Given a saved note, When it is updated and shared, Then its optional title is persisted and exported',
-    () async {
-      // GIVEN
-      await harness.sut.addNote('Original note');
-      final note = harness.sut.state.notes.single;
+  test('Given a saved note, When it is updated and shared, Then its optional title is persisted and exported', () async {
+    // GIVEN
+    await harness.sut.addNote('Original note');
+    final note = harness.sut.state.notes.single;
 
-      // WHEN
-      await harness.sut.updateNote(
-        note,
-        title: 'Key idea',
-        text: 'Edited note',
-      );
+    // WHEN
+    await harness.sut.updateNote(note, title: 'Key idea', text: 'Edited note');
 
-      // THEN
-      expect(harness.books.savedNote?.title, 'Key idea');
-      expect(harness.books.savedNote?.text, 'Edited note');
-      expect(harness.sut.state.notes.single.title, 'Key idea');
+    // THEN
+    expect(harness.books.savedNote?.title, 'Key idea');
+    expect(harness.books.savedNote?.text, 'Edited note');
+    expect(harness.sut.state.notes.single.title, 'Key idea');
 
-      // WHEN
-      await harness.sut.shareNote(harness.sut.state.notes.single);
+    // WHEN
+    await harness.sut.shareNote(harness.sut.state.notes.single);
 
-      // THEN
-      expect(harness.sharing.subject, 'Note from Book title');
-      expect(harness.sharing.text, 'Key idea\n\nEdited note');
-    },
-  );
+    // THEN
+    expect(harness.sharing.subject, 'Note from Book title');
+    expect(harness.sharing.text, 'Key idea\n\nEdited note');
+  });
 }
 
 final class _NoteHarness {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
@@ -29,9 +29,8 @@ class AllTimeListeningSummary extends StatelessWidget {
       children: [
         Text(
           l10n.allTimeListening,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+          style: Theme.of(context).textTheme.headlineSmall
+              ?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 10),
         Wrap(

@@ -7,7 +7,7 @@ import 'package:bookish_player/features/transcription/repos/transcription_prefer
 import 'package:bookish_player/features/transcription/repos/transcription_repository.dart';
 import 'package:bookish_player/features/transcription/transcription_preview_root.dart';
 import 'package:bookish_player/features/transcription/use_cases/quote_transcription_application.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../test_support/support/pump_bookish_app.dart';

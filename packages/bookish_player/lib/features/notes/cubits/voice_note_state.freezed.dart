@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'voice_note_state.dart';
@@ -9,6 +9,7 @@ part of 'voice_note_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $VoiceNoteStateCopyWith<VoiceNoteState> get copyWith => _$VoiceNoteStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VoiceNoteState&&(identical(other.status, status) || other.status == status)&&(identical(other.text, text) || other.text == text)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+  final _this = this as VoiceNoteState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VoiceNoteState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.effectRevision, _this.effectRevision) || other.effectRevision == _this.effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,text,message,effectRevision);
+int get hashCode {
+  final _this = this as VoiceNoteState;
+  return Object.hash(runtimeType,_this.status,_this.text,_this.message,_this.effectRevision);
+}
 
 @override
 String toString() {
-  return 'VoiceNoteState(status: $status, text: $text, message: $message, effectRevision: $effectRevision)';
+  final _this = this as VoiceNoteState;
+  return 'VoiceNoteState(status: ${_this.status}, text: ${_this.text}, message: ${_this.message}, effectRevision: ${_this.effectRevision})';
 }
 
 
@@ -63,7 +69,7 @@ class _$VoiceNoteStateCopyWithImpl<$Res>
 /// Create a copy of VoiceNoteState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? text = null,Object? message = freezed,Object? effectRevision = null,}) {
-  return _then(_self.copyWith(
+  return _then(VoiceNoteState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as VoiceNoteStatus,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
@@ -227,16 +233,18 @@ _$VoiceNoteStateCopyWith<_VoiceNoteState> get copyWith => __$VoiceNoteStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VoiceNoteState&&(identical(other.status, status) || other.status == status)&&(identical(other.text, text) || other.text == text)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _VoiceNoteState&&(identical(other.status, status) || other.status == status)&&(identical(other.text, text) || other.text == text)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,text,message,effectRevision);
+int get hashCode {
+    return Object.hash(runtimeType,status,text,message,effectRevision);
+}
 
 @override
 String toString() {
-  return 'VoiceNoteState(status: $status, text: $text, message: $message, effectRevision: $effectRevision)';
+    return 'VoiceNoteState(status: $status, text: $text, message: $message, effectRevision: $effectRevision)';
 }
 
 

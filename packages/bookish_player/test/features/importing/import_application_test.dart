@@ -18,61 +18,51 @@ import '../../../test_support/support/fakes/fake_id_generator.dart';
 
 void main() {
   group('Import application', () {
-    test(
-      'Given two selected audiobooks, When the second fails after copying, Then the first remains committed and copied diagnostics omit private input',
-      () async {
-        // GIVEN
-        const rawSecret =
-            'provider failed at /private/reader/second-secret.m4b';
-        final files = _Files(_selectedBooks);
-        final books = FakeImportBooks(<String>[]);
-        final sut = _application(
-          files,
-          books,
-          metadata: const _MetadataFailure('/bookish/import-1.m4b', rawSecret),
-        );
+    test('Given two selected audiobooks, When the second fails after copying, Then the first remains committed and copied diagnostics omit private input', () async {
+      // GIVEN
+      const rawSecret = 'provider failed at /private/reader/second-secret.m4b';
+      final files = _Files(_selectedBooks);
+      final books = FakeImportBooks(<String>[]);
+      final sut = _application(
+        files,
+        books,
+        metadata: const _MetadataFailure('/bookish/import-1.m4b', rawSecret),
+      );
 
-        // WHEN
-        final failure = await _captureFailure(
-          sut.importBooks(finderTransfer: false, onProgress: (_) {}),
-        );
+      // WHEN
+      final failure = await _captureFailure(
+        sut.importBooks(finderTransfer: false, onProgress: (_) {}),
+      );
 
-        // THEN
-        expect(books.saved.map((book) => book.title), ['First']);
-        expect(failure.importedCount, 1);
-        expect(failure.failedItem?.displayName, 'second-secret.m4b');
-        expect(failure.failureStage, ImportStage.analyzingChapters);
-        expect(files.deletedPaths, ['/bookish/import-1.m4b']);
-        expect(failure.diagnostics, contains('Failure kind: unexpected'));
-        expect(failure.diagnostics, isNot(contains('second-secret')));
-        expect(failure.diagnostics, isNot(contains('/private/reader')));
-        expect(failure.diagnostics, isNot(contains(rawSecret)));
-      },
-    );
+      // THEN
+      expect(books.saved.map((book) => book.title), ['First']);
+      expect(failure.importedCount, 1);
+      expect(failure.failedItem?.displayName, 'second-secret.m4b');
+      expect(failure.failureStage, ImportStage.analyzingChapters);
+      expect(files.deletedPaths, ['/bookish/import-1.m4b']);
+      expect(failure.diagnostics, contains('Failure kind: unexpected'));
+      expect(failure.diagnostics, isNot(contains('second-secret')));
+      expect(failure.diagnostics, isNot(contains('/private/reader')));
+      expect(failure.diagnostics, isNot(contains(rawSecret)));
+    });
 
-    test(
-      'Given one committed audiobook and a second active copy, When cancellation is requested, Then cancellation is intentional and the committed book remains',
-      () async {
-        // GIVEN
-        final files = _Files(_selectedBooks, pauseCopyAt: 1);
-        final books = FakeImportBooks(<String>[]);
-        final sut = _application(files, books);
-        final import = sut.importBooks(
-          finderTransfer: false,
-          onProgress: (_) {},
-        );
-        await files.copyPaused.future;
+    test('Given one committed audiobook and a second active copy, When cancellation is requested, Then cancellation is intentional and the committed book remains', () async {
+      // GIVEN
+      final files = _Files(_selectedBooks, pauseCopyAt: 1);
+      final books = FakeImportBooks(<String>[]);
+      final sut = _application(files, books);
+      final import = sut.importBooks(finderTransfer: false, onProgress: (_) {});
+      await files.copyPaused.future;
 
-        // WHEN
-        sut.cancelImport();
-        final cancellation = await _captureCancellation(import);
+      // WHEN
+      sut.cancelImport();
+      final cancellation = await _captureCancellation(import);
 
-        // THEN
-        expect(cancellation.importedCount, 1);
-        expect(books.saved.map((book) => book.title), ['First']);
-        expect(files.clearCount, 1);
-      },
-    );
+      // THEN
+      expect(cancellation.importedCount, 1);
+      expect(books.saved.map((book) => book.title), ['First']);
+      expect(files.clearCount, 1);
+    });
   });
 }
 

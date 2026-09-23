@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'file_import_repository.dart';
@@ -9,6 +9,7 @@ part of 'file_import_repository.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ImportedAudioFileCopyWith<ImportedAudioFile> get copyWith => _$ImportedAudioFil
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportedAudioFile&&(identical(other.path, path) || other.path == path)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+  final _this = this as ImportedAudioFile;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportedAudioFile&&(identical(other.path, _this.path) || other.path == _this.path)&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,path,displayName);
+int get hashCode {
+  final _this = this as ImportedAudioFile;
+  return Object.hash(runtimeType,_this.path,_this.displayName);
+}
 
 @override
 String toString() {
-  return 'ImportedAudioFile(path: $path, displayName: $displayName)';
+  final _this = this as ImportedAudioFile;
+  return 'ImportedAudioFile(path: ${_this.path}, displayName: ${_this.displayName})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ImportedAudioFileCopyWithImpl<$Res>
 /// Create a copy of ImportedAudioFile
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? path = null,Object? displayName = null,}) {
-  return _then(_self.copyWith(
+  return _then(ImportedAudioFile(
 path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,
@@ -223,16 +229,18 @@ _$ImportedAudioFileCopyWith<_ImportedAudioFile> get copyWith => __$ImportedAudio
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportedAudioFile&&(identical(other.path, path) || other.path == path)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportedAudioFile&&(identical(other.path, path) || other.path == path)&&(identical(other.displayName, displayName) || other.displayName == displayName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,path,displayName);
+int get hashCode {
+    return Object.hash(runtimeType,path,displayName);
+}
 
 @override
 String toString() {
-  return 'ImportedAudioFile(path: $path, displayName: $displayName)';
+    return 'ImportedAudioFile(path: $path, displayName: $displayName)';
 }
 
 

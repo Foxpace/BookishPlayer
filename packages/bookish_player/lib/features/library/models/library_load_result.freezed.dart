@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'library_load_result.dart';
@@ -9,6 +9,7 @@ part of 'library_load_result.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $LibraryLoadResultCopyWith<LibraryLoadResult> get copyWith => _$LibraryLoadResul
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibraryLoadResult&&const DeepCollectionEquality().equals(other.books, books)&&(identical(other.layout, layout) || other.layout == layout));
+  final _this = this as LibraryLoadResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibraryLoadResult&&const DeepCollectionEquality().equals(other.books, _this.books)&&(identical(other.layout, _this.layout) || other.layout == _this.layout));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(books),layout);
+int get hashCode {
+  final _this = this as LibraryLoadResult;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.books),_this.layout);
+}
 
 @override
 String toString() {
-  return 'LibraryLoadResult(books: $books, layout: $layout)';
+  final _this = this as LibraryLoadResult;
+  return 'LibraryLoadResult(books: ${_this.books}, layout: ${_this.layout})';
 }
 
 
@@ -63,7 +69,7 @@ class _$LibraryLoadResultCopyWithImpl<$Res>
 /// Create a copy of LibraryLoadResult
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? books = null,Object? layout = null,}) {
-  return _then(_self.copyWith(
+  return _then(LibraryLoadResult(
 books: null == books ? _self.books : books // ignore: cast_nullable_to_non_nullable
 as List<Audiobook>,layout: null == layout ? _self.layout : layout // ignore: cast_nullable_to_non_nullable
 as String,
@@ -207,7 +213,7 @@ return $default(_that.books,_that.layout);case _:
 
 
 class _LibraryLoadResult implements LibraryLoadResult {
-  const _LibraryLoadResult({required final  List<Audiobook> books, required this.layout}): _books = books;
+  const _LibraryLoadResult({required  List<Audiobook> books, required this.layout}): _books = books;
   
 
  final  List<Audiobook> _books;
@@ -229,16 +235,18 @@ _$LibraryLoadResultCopyWith<_LibraryLoadResult> get copyWith => __$LibraryLoadRe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibraryLoadResult&&const DeepCollectionEquality().equals(other._books, _books)&&(identical(other.layout, layout) || other.layout == layout));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibraryLoadResult&&const DeepCollectionEquality().equals(other.books, _books)&&(identical(other.layout, layout) || other.layout == layout));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_books),layout);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_books),layout);
+}
 
 @override
 String toString() {
-  return 'LibraryLoadResult(books: $books, layout: $layout)';
+    return 'LibraryLoadResult(books: $books, layout: $layout)';
 }
 
 

@@ -8,18 +8,15 @@ void registerPlayerCubitPlaybackFlowTests() {
       setUp(() => harness = _PlaybackFlowHarness());
       tearDown(() => harness.close());
 
-      test(
-        'Given a saved speed, When a book opens, Then speed and chapters are restored',
-        () async {
-          // WHEN
-          await harness.open();
+      test('Given a saved speed, When a book opens, Then speed and chapters are restored', () async {
+        // WHEN
+        await harness.open();
 
-          // THEN
-          expect(harness.sut.state.speed, 1.5);
-          expect(harness.audio.speed, 1.5);
-          expect(harness.sut.state.chapterTimeline, hasLength(2));
-        },
-      );
+        // THEN
+        expect(harness.sut.state.speed, 1.5);
+        expect(harness.audio.speed, 1.5);
+        expect(harness.sut.state.chapterTimeline, hasLength(2));
+      });
     });
 
     group('Open book', () {
@@ -28,42 +25,33 @@ void registerPlayerCubitPlaybackFlowTests() {
       setUp(() async => harness = await _PlaybackFlowHarness.opened());
       tearDown(() => harness.close());
 
-      test(
-        'Given an open book, When speed and position change, Then both are persisted',
-        () async {
-          // WHEN
-          await harness.changeSpeedAndEmitPosition();
+      test('Given an open book, When speed and position change, Then both are persisted', () async {
+        // WHEN
+        await harness.changeSpeedAndEmitPosition();
 
-          // THEN
-          expect(harness.books.savedSpeed, 1.75);
-          expect(harness.books.progress, _checkpoint);
-          expect(harness.sut.state.chapterPosition, _checkpoint);
-        },
-      );
+        // THEN
+        expect(harness.books.savedSpeed, 1.75);
+        expect(harness.books.progress, _checkpoint);
+        expect(harness.sut.state.chapterPosition, _checkpoint);
+      });
 
-      test(
-        'Given an open chapter, When its end-sleep boundary is reached, Then playback pauses in the next chapter',
-        () async {
-          // WHEN
-          await harness.reachEndOfChapter();
+      test('Given an open chapter, When its end-sleep boundary is reached, Then playback pauses in the next chapter', () async {
+        // WHEN
+        await harness.reachEndOfChapter();
 
-          // THEN
-          expect(harness.audio.pauseCount, 1);
-          expect(harness.sut.state.sleepTimerType, isNull);
-          expect(harness.sut.state.currentChapter?.title, 'Two');
-        },
-      );
+        // THEN
+        expect(harness.audio.pauseCount, 1);
+        expect(harness.sut.state.sleepTimerType, isNull);
+        expect(harness.sut.state.currentChapter?.title, 'Two');
+      });
 
-      test(
-        'Given an open book, When chapter navigation is requested, Then seeks stay chapter-relative',
-        () async {
-          // WHEN
-          final positions = await harness.navigateChapters();
+      test('Given an open book, When chapter navigation is requested, Then seeks stay chapter-relative', () async {
+        // WHEN
+        final positions = await harness.navigateChapters();
 
-          // THEN
-          expect(positions, [Duration.zero, const Duration(seconds: 60)]);
-        },
-      );
+        // THEN
+        expect(positions, [Duration.zero, const Duration(seconds: 60)]);
+      });
     });
   });
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 
@@ -15,10 +15,8 @@ class ResetBookishSection extends StatelessWidget {
       children: [
         Text(
           S.of(context).resetBookish,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: colors.error,
-            fontWeight: FontWeight.w700,
-          ),
+          style: Theme.of(context).textTheme.titleLarge
+              ?.copyWith(color: colors.error, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 8),
         Card(

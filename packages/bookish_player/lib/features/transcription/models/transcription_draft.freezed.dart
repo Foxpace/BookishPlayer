@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'transcription_draft.dart';
@@ -9,6 +9,7 @@ part of 'transcription_draft.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $TranscriptionDraftCopyWith<TranscriptionDraft> get copyWith => _$TranscriptionD
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TranscriptionDraft&&(identical(other.book, book) || other.book == book)&&(identical(other.text, text) || other.text == text)&&(identical(other.start, start) || other.start == start)&&(identical(other.end, end) || other.end == end)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart)&&(identical(other.chapterEnd, chapterEnd) || other.chapterEnd == chapterEnd)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle));
+  final _this = this as TranscriptionDraft;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TranscriptionDraft&&(identical(other.book, _this.book) || other.book == _this.book)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.start, _this.start) || other.start == _this.start)&&(identical(other.end, _this.end) || other.end == _this.end)&&(identical(other.chapterStart, _this.chapterStart) || other.chapterStart == _this.chapterStart)&&(identical(other.chapterEnd, _this.chapterEnd) || other.chapterEnd == _this.chapterEnd)&&(identical(other.chapterTitle, _this.chapterTitle) || other.chapterTitle == _this.chapterTitle));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book,text,start,end,chapterStart,chapterEnd,chapterTitle);
+int get hashCode {
+  final _this = this as TranscriptionDraft;
+  return Object.hash(runtimeType,_this.book,_this.text,_this.start,_this.end,_this.chapterStart,_this.chapterEnd,_this.chapterTitle);
+}
 
 @override
 String toString() {
-  return 'TranscriptionDraft(book: $book, text: $text, start: $start, end: $end, chapterStart: $chapterStart, chapterEnd: $chapterEnd, chapterTitle: $chapterTitle)';
+  final _this = this as TranscriptionDraft;
+  return 'TranscriptionDraft(book: ${_this.book}, text: ${_this.text}, start: ${_this.start}, end: ${_this.end}, chapterStart: ${_this.chapterStart}, chapterEnd: ${_this.chapterEnd}, chapterTitle: ${_this.chapterTitle})';
 }
 
 
@@ -63,7 +69,7 @@ class _$TranscriptionDraftCopyWithImpl<$Res>
 /// Create a copy of TranscriptionDraft
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? book = null,Object? text = null,Object? start = null,Object? end = null,Object? chapterStart = null,Object? chapterEnd = null,Object? chapterTitle = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(TranscriptionDraft(
 book: null == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
 as Audiobook,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,start: null == start ? _self.start : start // ignore: cast_nullable_to_non_nullable
@@ -242,16 +248,18 @@ _$TranscriptionDraftCopyWith<_TranscriptionDraft> get copyWith => __$Transcripti
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TranscriptionDraft&&(identical(other.book, book) || other.book == book)&&(identical(other.text, text) || other.text == text)&&(identical(other.start, start) || other.start == start)&&(identical(other.end, end) || other.end == end)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart)&&(identical(other.chapterEnd, chapterEnd) || other.chapterEnd == chapterEnd)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TranscriptionDraft&&(identical(other.book, book) || other.book == book)&&(identical(other.text, text) || other.text == text)&&(identical(other.start, start) || other.start == start)&&(identical(other.end, end) || other.end == end)&&(identical(other.chapterStart, chapterStart) || other.chapterStart == chapterStart)&&(identical(other.chapterEnd, chapterEnd) || other.chapterEnd == chapterEnd)&&(identical(other.chapterTitle, chapterTitle) || other.chapterTitle == chapterTitle));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book,text,start,end,chapterStart,chapterEnd,chapterTitle);
+int get hashCode {
+    return Object.hash(runtimeType,book,text,start,end,chapterStart,chapterEnd,chapterTitle);
+}
 
 @override
 String toString() {
-  return 'TranscriptionDraft(book: $book, text: $text, start: $start, end: $end, chapterStart: $chapterStart, chapterEnd: $chapterEnd, chapterTitle: $chapterTitle)';
+    return 'TranscriptionDraft(book: $book, text: $text, start: $start, end: $end, chapterStart: $chapterStart, chapterEnd: $chapterEnd, chapterTitle: $chapterTitle)';
 }
 
 

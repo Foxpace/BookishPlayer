@@ -2,7 +2,7 @@ import 'package:bookish_player/features/settings/models/playback_preferences.dar
 import 'package:bookish_player/features/settings/cubits/settings_cubit.dart';
 import 'package:bookish_player/features/settings/cubits/settings_state.dart';
 import 'package:bookish_player/features/settings/ui/widgets/playback_settings_section.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'audiobook_metadata_extractor.dart';
@@ -9,6 +9,7 @@ part of 'audiobook_metadata_extractor.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ImportedAudiobookMetadataCopyWith<ImportedAudiobookMetadata> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportedAudiobookMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&(identical(other.series, series) || other.series == series)&&(identical(other.narrator, narrator) || other.narrator == narrator)&&(identical(other.year, year) || other.year == year));
+  final _this = this as ImportedAudiobookMetadata;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportedAudiobookMetadata&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.author, _this.author) || other.author == _this.author)&&(identical(other.series, _this.series) || other.series == _this.series)&&(identical(other.narrator, _this.narrator) || other.narrator == _this.narrator)&&(identical(other.year, _this.year) || other.year == _this.year));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,author,series,narrator,year);
+int get hashCode {
+  final _this = this as ImportedAudiobookMetadata;
+  return Object.hash(runtimeType,_this.title,_this.author,_this.series,_this.narrator,_this.year);
+}
 
 @override
 String toString() {
-  return 'ImportedAudiobookMetadata(title: $title, author: $author, series: $series, narrator: $narrator, year: $year)';
+  final _this = this as ImportedAudiobookMetadata;
+  return 'ImportedAudiobookMetadata(title: ${_this.title}, author: ${_this.author}, series: ${_this.series}, narrator: ${_this.narrator}, year: ${_this.year})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ImportedAudiobookMetadataCopyWithImpl<$Res>
 /// Create a copy of ImportedAudiobookMetadata
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? title = freezed,Object? author = freezed,Object? series = freezed,Object? narrator = freezed,Object? year = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ImportedAudiobookMetadata(
 title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,author: freezed == author ? _self.author : author // ignore: cast_nullable_to_non_nullable
 as String?,series: freezed == series ? _self.series : series // ignore: cast_nullable_to_non_nullable
@@ -229,16 +235,18 @@ _$ImportedAudiobookMetadataCopyWith<_ImportedAudiobookMetadata> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportedAudiobookMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&(identical(other.series, series) || other.series == series)&&(identical(other.narrator, narrator) || other.narrator == narrator)&&(identical(other.year, year) || other.year == year));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportedAudiobookMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&(identical(other.series, series) || other.series == series)&&(identical(other.narrator, narrator) || other.narrator == narrator)&&(identical(other.year, year) || other.year == year));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,author,series,narrator,year);
+int get hashCode {
+    return Object.hash(runtimeType,title,author,series,narrator,year);
+}
 
 @override
 String toString() {
-  return 'ImportedAudiobookMetadata(title: $title, author: $author, series: $series, narrator: $narrator, year: $year)';
+    return 'ImportedAudiobookMetadata(title: $title, author: $author, series: $series, narrator: $narrator, year: $year)';
 }
 
 

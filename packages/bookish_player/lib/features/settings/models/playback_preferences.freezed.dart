@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'playback_preferences.dart';
@@ -9,6 +9,7 @@ part of 'playback_preferences.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $PlaybackPreferencesCopyWith<PlaybackPreferences> get copyWith => _$PlaybackPref
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlaybackPreferences&&(identical(other.rewindSeconds, rewindSeconds) || other.rewindSeconds == rewindSeconds)&&(identical(other.forwardSeconds, forwardSeconds) || other.forwardSeconds == forwardSeconds)&&(identical(other.shortenSilence, shortenSilence) || other.shortenSilence == shortenSilence)&&(identical(other.voiceBoost, voiceBoost) || other.voiceBoost == voiceBoost)&&(identical(other.sleepFadeSeconds, sleepFadeSeconds) || other.sleepFadeSeconds == sleepFadeSeconds)&&(identical(other.largeSeekMinutes, largeSeekMinutes) || other.largeSeekMinutes == largeSeekMinutes)&&(identical(other.continueSeries, continueSeries) || other.continueSeries == continueSeries)&&(identical(other.chapterFallbackMinutes, chapterFallbackMinutes) || other.chapterFallbackMinutes == chapterFallbackMinutes));
+  final _this = this as PlaybackPreferences;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlaybackPreferences&&(identical(other.rewindSeconds, _this.rewindSeconds) || other.rewindSeconds == _this.rewindSeconds)&&(identical(other.forwardSeconds, _this.forwardSeconds) || other.forwardSeconds == _this.forwardSeconds)&&(identical(other.shortenSilence, _this.shortenSilence) || other.shortenSilence == _this.shortenSilence)&&(identical(other.voiceBoost, _this.voiceBoost) || other.voiceBoost == _this.voiceBoost)&&(identical(other.sleepFadeSeconds, _this.sleepFadeSeconds) || other.sleepFadeSeconds == _this.sleepFadeSeconds)&&(identical(other.largeSeekMinutes, _this.largeSeekMinutes) || other.largeSeekMinutes == _this.largeSeekMinutes)&&(identical(other.continueSeries, _this.continueSeries) || other.continueSeries == _this.continueSeries)&&(identical(other.chapterFallbackMinutes, _this.chapterFallbackMinutes) || other.chapterFallbackMinutes == _this.chapterFallbackMinutes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,rewindSeconds,forwardSeconds,shortenSilence,voiceBoost,sleepFadeSeconds,largeSeekMinutes,continueSeries,chapterFallbackMinutes);
+int get hashCode {
+  final _this = this as PlaybackPreferences;
+  return Object.hash(runtimeType,_this.rewindSeconds,_this.forwardSeconds,_this.shortenSilence,_this.voiceBoost,_this.sleepFadeSeconds,_this.largeSeekMinutes,_this.continueSeries,_this.chapterFallbackMinutes);
+}
 
 @override
 String toString() {
-  return 'PlaybackPreferences(rewindSeconds: $rewindSeconds, forwardSeconds: $forwardSeconds, shortenSilence: $shortenSilence, voiceBoost: $voiceBoost, sleepFadeSeconds: $sleepFadeSeconds, largeSeekMinutes: $largeSeekMinutes, continueSeries: $continueSeries, chapterFallbackMinutes: $chapterFallbackMinutes)';
+  final _this = this as PlaybackPreferences;
+  return 'PlaybackPreferences(rewindSeconds: ${_this.rewindSeconds}, forwardSeconds: ${_this.forwardSeconds}, shortenSilence: ${_this.shortenSilence}, voiceBoost: ${_this.voiceBoost}, sleepFadeSeconds: ${_this.sleepFadeSeconds}, largeSeekMinutes: ${_this.largeSeekMinutes}, continueSeries: ${_this.continueSeries}, chapterFallbackMinutes: ${_this.chapterFallbackMinutes})';
 }
 
 
@@ -66,7 +72,7 @@ class _$PlaybackPreferencesCopyWithImpl<$Res>
 /// Create a copy of PlaybackPreferences
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? rewindSeconds = null,Object? forwardSeconds = null,Object? shortenSilence = null,Object? voiceBoost = null,Object? sleepFadeSeconds = null,Object? largeSeekMinutes = null,Object? continueSeries = null,Object? chapterFallbackMinutes = null,}) {
-  return _then(_self.copyWith(
+  return _then(PlaybackPreferences(
 rewindSeconds: null == rewindSeconds ? _self.rewindSeconds : rewindSeconds // ignore: cast_nullable_to_non_nullable
 as int,forwardSeconds: null == forwardSeconds ? _self.forwardSeconds : forwardSeconds // ignore: cast_nullable_to_non_nullable
 as int,shortenSilence: null == shortenSilence ? _self.shortenSilence : shortenSilence // ignore: cast_nullable_to_non_nullable
@@ -241,16 +247,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlaybackPreferences&&(identical(other.rewindSeconds, rewindSeconds) || other.rewindSeconds == rewindSeconds)&&(identical(other.forwardSeconds, forwardSeconds) || other.forwardSeconds == forwardSeconds)&&(identical(other.shortenSilence, shortenSilence) || other.shortenSilence == shortenSilence)&&(identical(other.voiceBoost, voiceBoost) || other.voiceBoost == voiceBoost)&&(identical(other.sleepFadeSeconds, sleepFadeSeconds) || other.sleepFadeSeconds == sleepFadeSeconds)&&(identical(other.largeSeekMinutes, largeSeekMinutes) || other.largeSeekMinutes == largeSeekMinutes)&&(identical(other.continueSeries, continueSeries) || other.continueSeries == continueSeries)&&(identical(other.chapterFallbackMinutes, chapterFallbackMinutes) || other.chapterFallbackMinutes == chapterFallbackMinutes));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlaybackPreferences&&(identical(other.rewindSeconds, rewindSeconds) || other.rewindSeconds == rewindSeconds)&&(identical(other.forwardSeconds, forwardSeconds) || other.forwardSeconds == forwardSeconds)&&(identical(other.shortenSilence, shortenSilence) || other.shortenSilence == shortenSilence)&&(identical(other.voiceBoost, voiceBoost) || other.voiceBoost == voiceBoost)&&(identical(other.sleepFadeSeconds, sleepFadeSeconds) || other.sleepFadeSeconds == sleepFadeSeconds)&&(identical(other.largeSeekMinutes, largeSeekMinutes) || other.largeSeekMinutes == largeSeekMinutes)&&(identical(other.continueSeries, continueSeries) || other.continueSeries == continueSeries)&&(identical(other.chapterFallbackMinutes, chapterFallbackMinutes) || other.chapterFallbackMinutes == chapterFallbackMinutes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,rewindSeconds,forwardSeconds,shortenSilence,voiceBoost,sleepFadeSeconds,largeSeekMinutes,continueSeries,chapterFallbackMinutes);
+int get hashCode {
+    return Object.hash(runtimeType,rewindSeconds,forwardSeconds,shortenSilence,voiceBoost,sleepFadeSeconds,largeSeekMinutes,continueSeries,chapterFallbackMinutes);
+}
 
 @override
 String toString() {
-  return 'PlaybackPreferences(rewindSeconds: $rewindSeconds, forwardSeconds: $forwardSeconds, shortenSilence: $shortenSilence, voiceBoost: $voiceBoost, sleepFadeSeconds: $sleepFadeSeconds, largeSeekMinutes: $largeSeekMinutes, continueSeries: $continueSeries, chapterFallbackMinutes: $chapterFallbackMinutes)';
+    return 'PlaybackPreferences(rewindSeconds: $rewindSeconds, forwardSeconds: $forwardSeconds, shortenSilence: $shortenSilence, voiceBoost: $voiceBoost, sleepFadeSeconds: $sleepFadeSeconds, largeSeekMinutes: $largeSeekMinutes, continueSeries: $continueSeries, chapterFallbackMinutes: $chapterFallbackMinutes)';
 }
 
 

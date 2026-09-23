@@ -2,17 +2,11 @@ name: bookish_workspace
 publish_to: none
 
 environment:
-  sdk: ^3.12.2
-  flutter: '>=3.35.0'
+  sdk: ^3.13.0
+  flutter: '>=3.47.0'
 
 workspace:
   - apps/store
   - apps/internal
   - packages/bookish_player
   - packages/bookish_cactus_transcription
-
-# Cactus 1.3.0 constraints conflict with file_picker/share_plus through win32.
-# Workspace members share versions, so keep compatibility overrides here.
-dependency_overrides:
-  device_info_plus: ^13.2.0
-  package_info_plus: ^10.2.1

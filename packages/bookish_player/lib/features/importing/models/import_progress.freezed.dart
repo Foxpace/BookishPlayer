@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'import_progress.dart';
@@ -9,6 +9,7 @@ part of 'import_progress.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ImportProgressCopyWith<ImportProgress> get copyWith => _$ImportProgressCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportProgress&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.selected, selected) || other.selected == selected)&&(identical(other.index, index) || other.index == index)&&(identical(other.total, total) || other.total == total)&&(identical(other.title, title) || other.title == title)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes));
+  final _this = this as ImportProgress;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportProgress&&(identical(other.stage, _this.stage) || other.stage == _this.stage)&&(identical(other.selected, _this.selected) || other.selected == _this.selected)&&(identical(other.index, _this.index) || other.index == _this.index)&&(identical(other.total, _this.total) || other.total == _this.total)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.copiedBytes, _this.copiedBytes) || other.copiedBytes == _this.copiedBytes)&&(identical(other.totalBytes, _this.totalBytes) || other.totalBytes == _this.totalBytes));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,stage,selected,index,total,title,copiedBytes,totalBytes);
+int get hashCode {
+  final _this = this as ImportProgress;
+  return Object.hash(runtimeType,_this.stage,_this.selected,_this.index,_this.total,_this.title,_this.copiedBytes,_this.totalBytes);
+}
 
 @override
 String toString() {
-  return 'ImportProgress(stage: $stage, selected: $selected, index: $index, total: $total, title: $title, copiedBytes: $copiedBytes, totalBytes: $totalBytes)';
+  final _this = this as ImportProgress;
+  return 'ImportProgress(stage: ${_this.stage}, selected: ${_this.selected}, index: ${_this.index}, total: ${_this.total}, title: ${_this.title}, copiedBytes: ${_this.copiedBytes}, totalBytes: ${_this.totalBytes})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ImportProgressCopyWithImpl<$Res>
 /// Create a copy of ImportProgress
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? stage = null,Object? selected = freezed,Object? index = null,Object? total = null,Object? title = freezed,Object? copiedBytes = freezed,Object? totalBytes = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ImportProgress(
 stage: null == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable
 as ImportStage,selected: freezed == selected ? _self.selected : selected // ignore: cast_nullable_to_non_nullable
 as SelectedAudioFile?,index: null == index ? _self.index : index // ignore: cast_nullable_to_non_nullable
@@ -245,16 +251,18 @@ _$ImportProgressCopyWith<_ImportProgress> get copyWith => __$ImportProgressCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportProgress&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.selected, selected) || other.selected == selected)&&(identical(other.index, index) || other.index == index)&&(identical(other.total, total) || other.total == total)&&(identical(other.title, title) || other.title == title)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportProgress&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.selected, selected) || other.selected == selected)&&(identical(other.index, index) || other.index == index)&&(identical(other.total, total) || other.total == total)&&(identical(other.title, title) || other.title == title)&&(identical(other.copiedBytes, copiedBytes) || other.copiedBytes == copiedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,stage,selected,index,total,title,copiedBytes,totalBytes);
+int get hashCode {
+    return Object.hash(runtimeType,stage,selected,index,total,title,copiedBytes,totalBytes);
+}
 
 @override
 String toString() {
-  return 'ImportProgress(stage: $stage, selected: $selected, index: $index, total: $total, title: $title, copiedBytes: $copiedBytes, totalBytes: $totalBytes)';
+    return 'ImportProgress(stage: $stage, selected: $selected, index: $index, total: $total, title: $title, copiedBytes: $copiedBytes, totalBytes: $totalBytes)';
 }
 
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'book_metadata.dart';
@@ -9,6 +9,7 @@ part of 'book_metadata.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $BookMetadataCopyWith<BookMetadata> get copyWith => _$BookMetadataCopyWithImpl<B
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookMetadata&&(identical(other.id, id) || other.id == id)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.title, title) || other.title == title)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.activeBookId, activeBookId) || other.activeBookId == activeBookId)&&(identical(other.author, author) || other.author == author)&&(identical(other.series, series) || other.series == series)&&(identical(other.narrator, narrator) || other.narrator == narrator)&&(identical(other.year, year) || other.year == year)&&(identical(other.folder, folder) || other.folder == folder)&&(identical(other.seriesPosition, seriesPosition) || other.seriesPosition == seriesPosition)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath)&&(identical(other.artworkScanned, artworkScanned) || other.artworkScanned == artworkScanned)&&const DeepCollectionEquality().equals(other.chapters, chapters));
+  final _this = this as BookMetadata;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookMetadata&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.fingerprint, _this.fingerprint) || other.fingerprint == _this.fingerprint)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.durationMs, _this.durationMs) || other.durationMs == _this.durationMs)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.activeBookId, _this.activeBookId) || other.activeBookId == _this.activeBookId)&&(identical(other.author, _this.author) || other.author == _this.author)&&(identical(other.series, _this.series) || other.series == _this.series)&&(identical(other.narrator, _this.narrator) || other.narrator == _this.narrator)&&(identical(other.year, _this.year) || other.year == _this.year)&&(identical(other.folder, _this.folder) || other.folder == _this.folder)&&(identical(other.seriesPosition, _this.seriesPosition) || other.seriesPosition == _this.seriesPosition)&&(identical(other.completedAt, _this.completedAt) || other.completedAt == _this.completedAt)&&(identical(other.artworkPath, _this.artworkPath) || other.artworkPath == _this.artworkPath)&&(identical(other.artworkScanned, _this.artworkScanned) || other.artworkScanned == _this.artworkScanned)&&const DeepCollectionEquality().equals(other.chapters, _this.chapters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fingerprint,title,durationMs,createdAt,activeBookId,author,series,narrator,year,folder,seriesPosition,completedAt,artworkPath,artworkScanned,const DeepCollectionEquality().hash(chapters));
+int get hashCode {
+  final _this = this as BookMetadata;
+  return Object.hash(runtimeType,_this.id,_this.fingerprint,_this.title,_this.durationMs,_this.createdAt,_this.activeBookId,_this.author,_this.series,_this.narrator,_this.year,_this.folder,_this.seriesPosition,_this.completedAt,_this.artworkPath,_this.artworkScanned,const DeepCollectionEquality().hash(_this.chapters));
+}
 
 @override
 String toString() {
-  return 'BookMetadata(id: $id, fingerprint: $fingerprint, title: $title, durationMs: $durationMs, createdAt: $createdAt, activeBookId: $activeBookId, author: $author, series: $series, narrator: $narrator, year: $year, folder: $folder, seriesPosition: $seriesPosition, completedAt: $completedAt, artworkPath: $artworkPath, artworkScanned: $artworkScanned, chapters: $chapters)';
+  final _this = this as BookMetadata;
+  return 'BookMetadata(id: ${_this.id}, fingerprint: ${_this.fingerprint}, title: ${_this.title}, durationMs: ${_this.durationMs}, createdAt: ${_this.createdAt}, activeBookId: ${_this.activeBookId}, author: ${_this.author}, series: ${_this.series}, narrator: ${_this.narrator}, year: ${_this.year}, folder: ${_this.folder}, seriesPosition: ${_this.seriesPosition}, completedAt: ${_this.completedAt}, artworkPath: ${_this.artworkPath}, artworkScanned: ${_this.artworkScanned}, chapters: ${_this.chapters})';
 }
 
 
@@ -66,7 +72,7 @@ class _$BookMetadataCopyWithImpl<$Res>
 /// Create a copy of BookMetadata
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? fingerprint = null,Object? title = null,Object? durationMs = null,Object? createdAt = null,Object? activeBookId = freezed,Object? author = null,Object? series = null,Object? narrator = null,Object? year = freezed,Object? folder = null,Object? seriesPosition = freezed,Object? completedAt = freezed,Object? artworkPath = freezed,Object? artworkScanned = null,Object? chapters = null,}) {
-  return _then(_self.copyWith(
+  return _then(BookMetadata(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,fingerprint: null == fingerprint ? _self.fingerprint : fingerprint // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -224,7 +230,7 @@ return $default(_that.id,_that.fingerprint,_that.title,_that.durationMs,_that.cr
 @JsonSerializable()
 
 class _BookMetadata implements BookMetadata {
-  const _BookMetadata({required this.id, required this.fingerprint, required this.title, required this.durationMs, required this.createdAt, this.activeBookId, this.author = '', this.series = '', this.narrator = '', this.year, this.folder = 'Imported', this.seriesPosition, this.completedAt, this.artworkPath, this.artworkScanned = false, final  List<AudioChapter> chapters = const <AudioChapter>[]}): _chapters = chapters;
+  const _BookMetadata({required this.id, required this.fingerprint, required this.title, required this.durationMs, required this.createdAt, this.activeBookId, this.author = '', this.series = '', this.narrator = '', this.year, this.folder = 'Imported', this.seriesPosition, this.completedAt, this.artworkPath, this.artworkScanned = false,  List<AudioChapter> chapters = const <AudioChapter>[]}): _chapters = chapters;
   factory _BookMetadata.fromJson(Map<String, dynamic> json) => _$BookMetadataFromJson(json);
 
 @override final  String id;
@@ -263,16 +269,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookMetadata&&(identical(other.id, id) || other.id == id)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.title, title) || other.title == title)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.activeBookId, activeBookId) || other.activeBookId == activeBookId)&&(identical(other.author, author) || other.author == author)&&(identical(other.series, series) || other.series == series)&&(identical(other.narrator, narrator) || other.narrator == narrator)&&(identical(other.year, year) || other.year == year)&&(identical(other.folder, folder) || other.folder == folder)&&(identical(other.seriesPosition, seriesPosition) || other.seriesPosition == seriesPosition)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath)&&(identical(other.artworkScanned, artworkScanned) || other.artworkScanned == artworkScanned)&&const DeepCollectionEquality().equals(other._chapters, _chapters));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookMetadata&&(identical(other.id, id) || other.id == id)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.title, title) || other.title == title)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.activeBookId, activeBookId) || other.activeBookId == activeBookId)&&(identical(other.author, author) || other.author == author)&&(identical(other.series, series) || other.series == series)&&(identical(other.narrator, narrator) || other.narrator == narrator)&&(identical(other.year, year) || other.year == year)&&(identical(other.folder, folder) || other.folder == folder)&&(identical(other.seriesPosition, seriesPosition) || other.seriesPosition == seriesPosition)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath)&&(identical(other.artworkScanned, artworkScanned) || other.artworkScanned == artworkScanned)&&const DeepCollectionEquality().equals(other.chapters, _chapters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fingerprint,title,durationMs,createdAt,activeBookId,author,series,narrator,year,folder,seriesPosition,completedAt,artworkPath,artworkScanned,const DeepCollectionEquality().hash(_chapters));
+int get hashCode {
+    return Object.hash(runtimeType,id,fingerprint,title,durationMs,createdAt,activeBookId,author,series,narrator,year,folder,seriesPosition,completedAt,artworkPath,artworkScanned,const DeepCollectionEquality().hash(_chapters));
+}
 
 @override
 String toString() {
-  return 'BookMetadata(id: $id, fingerprint: $fingerprint, title: $title, durationMs: $durationMs, createdAt: $createdAt, activeBookId: $activeBookId, author: $author, series: $series, narrator: $narrator, year: $year, folder: $folder, seriesPosition: $seriesPosition, completedAt: $completedAt, artworkPath: $artworkPath, artworkScanned: $artworkScanned, chapters: $chapters)';
+    return 'BookMetadata(id: $id, fingerprint: $fingerprint, title: $title, durationMs: $durationMs, createdAt: $createdAt, activeBookId: $activeBookId, author: $author, series: $series, narrator: $narrator, year: $year, folder: $folder, seriesPosition: $seriesPosition, completedAt: $completedAt, artworkPath: $artworkPath, artworkScanned: $artworkScanned, chapters: $chapters)';
 }
 
 

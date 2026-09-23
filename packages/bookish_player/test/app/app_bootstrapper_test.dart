@@ -16,44 +16,38 @@ void main() {
       sut = AppBootstrapper(audio, _FakeCarPlayBootstrap(calls));
     });
 
-    test(
-      'Given an uninitialized application, When startup is requested twice, Then audio and CarPlay initialize concurrently once',
-      () async {
-        // GIVEN
-        final audioCompletion = Completer<void>();
-        audio.completion = audioCompletion;
+    test('Given an uninitialized application, When startup is requested twice, Then audio and CarPlay initialize concurrently once', () async {
+      // GIVEN
+      final audioCompletion = Completer<void>();
+      audio.completion = audioCompletion;
 
-        // WHEN
-        final first = sut.initialize();
-        final second = sut.initialize();
+      // WHEN
+      final first = sut.initialize();
+      final second = sut.initialize();
 
-        await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
-        // THEN
-        expect(calls, ['audio', 'carPlay']);
+      // THEN
+      expect(calls, ['audio', 'carPlay']);
 
-        audioCompletion.complete();
-        await (first, second).wait;
-        await sut.initialize();
+      audioCompletion.complete();
+      await (first, second).wait;
+      await sut.initialize();
 
-        expect(calls, ['audio', 'carPlay']);
-      },
-    );
-    test(
-      'Given audio-service startup fails, When startup is retried after the failure is removed, Then all startup parts are retried',
-      () async {
-        // GIVEN
-        audio.failure = StateError('audio');
+      expect(calls, ['audio', 'carPlay']);
+    });
+    test('Given audio-service startup fails, When startup is retried after the failure is removed, Then all startup parts are retried', () async {
+      // GIVEN
+      audio.failure = StateError('audio');
 
-        // WHEN
-        await expectLater(sut.initialize(), throwsStateError);
-        audio.failure = null;
-        await sut.initialize();
+      // WHEN
+      await expectLater(sut.initialize(), throwsStateError);
+      audio.failure = null;
+      await sut.initialize();
 
-        // THEN
-        expect(calls, ['audio', 'carPlay', 'audio', 'carPlay']);
-      },
-    );
+      // THEN
+      expect(calls, ['audio', 'carPlay', 'audio', 'carPlay']);
+    });
   });
 }
 

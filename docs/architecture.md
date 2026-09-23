@@ -1,8 +1,7 @@
 # Bookish architecture
 
 Bookish uses one shared feature package and two application targets in a Dart
-workspace. The root pubspec lists all four members and owns compatibility
-overrides. Analyzer plugins are registered in the root analysis options;
+workspace. The root pubspec lists all four members. Dependencies resolve without overrides. Analyzer plugins are registered in the root analysis options;
 package-level Lintel limits remain in each package. One root lockfile resolves dependencies together, while each target
 builds from its own transitive dependencies. The store guard traverses that
 app-specific graph and checks plugin metadata, rather than scanning the shared
@@ -92,6 +91,21 @@ feature/
   contain classified stages and timings but omit book names, titles, paths, raw
   exceptions, and stack traces.
 
+## Internal native transcription
+
+The optional adapter uses Cactus v2.0.1 FFI bindings and builds a pinned native
+runtime with telemetry and cloud handoff disabled. The Cactus build hook invokes
+`tool/build_cactus.sh` when a native binary is missing or stale, then bundles the
+arm64 code asset. The internal iOS simulator configuration excludes x86_64;
+Android builds target arm64. Both iOS app targets use SwiftPM for Flutter plugins,
+with no CocoaPods integration.
+
+Whisper base downloads are pinned to a matching v2 bundle and stored separately
+from legacy plugin downloads. Native inference runs in a worker isolate. Each
+request owns and releases its model; the adapter serializes requests and removes
+temporary audio when the operation finishes. See the
+[adapter instructions](../packages/bookish_cactus_transcription/README.md).
+
 ## Dependency direction
 
 Feature dependencies must remain acyclic:
@@ -115,6 +129,10 @@ portability   -> library/notes/settings repository ports
   workflows live under `app/use_cases/` and own their full command sequence.
 - Compose cross-feature presentation only in app, router, or `ScreenRoot` code.
 - Never import another feature's repository implementation.
+
+The shared UI imports `package:material_ui/material_ui.dart` and uses
+`GlobalMaterialLocalizations.delegates`. Keep widgets, themes, and localization
+delegates on the same Material implementation.
 
 ## State and effects
 

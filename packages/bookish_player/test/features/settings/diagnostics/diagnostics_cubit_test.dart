@@ -20,49 +20,40 @@ void main() {
 
     tearDown(() => sut.close());
 
-    test(
-      'Given a local diagnostics file, When the user exports diagnostics, Then the file is forwarded and a revisioned effect is emitted',
-      () async {
-        // GIVEN
-        diagnostics.sourcePath = '/safe/diagnostics.jsonl';
+    test('Given a local diagnostics file, When the user exports diagnostics, Then the file is forwarded and a revisioned effect is emitted', () async {
+      // GIVEN
+      diagnostics.sourcePath = '/safe/diagnostics.jsonl';
 
-        // WHEN
-        await sut.export();
+      // WHEN
+      await sut.export();
 
-        // THEN
-        expect(exporter.exportedPaths, ['/safe/diagnostics.jsonl']);
-        expect(sut.state.status, DiagnosticsStatus.success);
-        expect(sut.state.message, DiagnosticsMessage.exported);
-        expect(sut.state.effectRevision, 1);
-      },
-    );
+      // THEN
+      expect(exporter.exportedPaths, ['/safe/diagnostics.jsonl']);
+      expect(sut.state.status, DiagnosticsStatus.success);
+      expect(sut.state.message, DiagnosticsMessage.exported);
+      expect(sut.state.effectRevision, 1);
+    });
 
-    test(
-      'Given no recorded local diagnostics, When the user requests an export, Then no platform export is opened',
-      () async {
-        // WHEN
-        await sut.export();
+    test('Given no recorded local diagnostics, When the user requests an export, Then no platform export is opened', () async {
+      // WHEN
+      await sut.export();
 
-        // THEN
-        expect(exporter.exportedPaths, isEmpty);
-        expect(sut.state.message, DiagnosticsMessage.noRecords);
-      },
-    );
+      // THEN
+      expect(exporter.exportedPaths, isEmpty);
+      expect(sut.state.message, DiagnosticsMessage.noRecords);
+    });
 
-    test(
-      'Given locally recorded diagnostics, When the user deletes them, Then the local store is cleared and success is emitted',
-      () async {
-        // GIVEN
-        diagnostics.sourcePath = '/diagnostics.jsonl';
+    test('Given locally recorded diagnostics, When the user deletes them, Then the local store is cleared and success is emitted', () async {
+      // GIVEN
+      diagnostics.sourcePath = '/diagnostics.jsonl';
 
-        // WHEN
-        await sut.clear();
+      // WHEN
+      await sut.clear();
 
-        // THEN
-        expect(diagnostics.clearCalls, 1);
-        expect(sut.state.message, DiagnosticsMessage.deleted);
-      },
-    );
+      // THEN
+      expect(diagnostics.clearCalls, 1);
+      expect(sut.state.message, DiagnosticsMessage.deleted);
+    });
   });
 }
 

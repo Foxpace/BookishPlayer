@@ -17,85 +17,76 @@ void main() {
       sut = SembastBackupStoreRepository(BookishDatabase.forTesting(database));
     });
 
-    test(
-      'Given an empty local Bookish database, When a compatible backup is restored and snapshotted, Then normalized books, notes, sessions, and settings round-trip',
-      () async {
-        // GIVEN
-        await sut.restore(
-          backupFixture(
-            theme: 'dark',
-            useSystemColors: false,
-            primaryColor: 0xFF336699,
-          ),
-        );
+    test('Given an empty local Bookish database, When a compatible backup is restored and snapshotted, Then normalized books, notes, sessions, and settings round-trip', () async {
+      // GIVEN
+      await sut.restore(
+        backupFixture(
+          theme: 'dark',
+          useSystemColors: false,
+          primaryColor: 0xFF336699,
+        ),
+      );
 
-        // WHEN
-        final snapshot = _success(await sut.snapshot());
+      // WHEN
+      final snapshot = _success(await sut.snapshot());
 
-        // THEN
-        expect(snapshot.books.single.id, 'book-1');
-        expect(snapshot.bookMetadata.single.id, 'metadata-1');
-        expect(snapshot.notes.single.id, 'note-1');
-        expect(snapshot.sessions.single.id, 'session-1');
-        expect(snapshot.settings.theme, 'dark');
-        expect(snapshot.settings.useSystemColors, isFalse);
-        expect(snapshot.settings.primaryColor, 0xFF336699);
-        expect(snapshot.settings.playback, settingsFixture);
-      },
-    );
+      // THEN
+      expect(snapshot.books.single.id, 'book-1');
+      expect(snapshot.bookMetadata.single.id, 'metadata-1');
+      expect(snapshot.notes.single.id, 'note-1');
+      expect(snapshot.sessions.single.id, 'session-1');
+      expect(snapshot.settings.theme, 'dark');
+      expect(snapshot.settings.useSystemColors, isFalse);
+      expect(snapshot.settings.primaryColor, 0xFF336699);
+      expect(snapshot.settings.playback, settingsFixture);
+    });
 
-    test(
-      'Given an empty local Bookish database, When restoration contains a broken note reference, Then the transaction rolls back to the previous library',
-      () async {
-        // GIVEN
-        await sut.restore(backupFixture());
-        // WHEN
-        final invalid = backupFixture(
-          content: (
-            books: null,
-            metadata: null,
-            notes: [bookNoteFixture(metadataId: 'missing')],
-            sessions: null,
-          ),
-        );
+    test('Given an empty local Bookish database, When restoration contains a broken note reference, Then the transaction rolls back to the previous library', () async {
+      // GIVEN
+      await sut.restore(backupFixture());
+      // WHEN
+      final invalid = backupFixture(
+        content: (
+          books: null,
+          metadata: null,
+          notes: [bookNoteFixture(metadataId: 'missing')],
+          sessions: null,
+        ),
+      );
 
-        // THEN
-        expect(
-          await sut.restore(invalid),
-          const Result<bool>.failure(
-            AppFailure.invalidData('backup.storage.corrupted'),
-          ),
-        );
+      // THEN
+      expect(
+        await sut.restore(invalid),
+        const Result<bool>.failure(
+          AppFailure.invalidData('backup.storage.corrupted'),
+        ),
+      );
 
-        final snapshot = _success(await sut.snapshot());
-        expect(snapshot.books.single.id, 'book-1');
-        expect(snapshot.notes.single.id, 'note-1');
-      },
-    );
+      final snapshot = _success(await sut.snapshot());
+      expect(snapshot.books.single.id, 'book-1');
+      expect(snapshot.notes.single.id, 'note-1');
+    });
 
-    test(
-      'Given an empty local Bookish database, When old backups omit normalized metadata identifiers, Then matching metadata is reconnected during restoration',
-      () async {
-        // GIVEN
-        final legacyBook = audiobookFixture(metadataId: '');
-        final metadata = bookMetadataFixture(activeBookId: legacyBook.id);
-        final legacy = backupFixture(
-          content: (
-            books: [legacyBook],
-            metadata: [metadata],
-            notes: const <BookNote>[],
-            sessions: const [],
-          ),
-        );
+    test('Given an empty local Bookish database, When old backups omit normalized metadata identifiers, Then matching metadata is reconnected during restoration', () async {
+      // GIVEN
+      final legacyBook = audiobookFixture(metadataId: '');
+      final metadata = bookMetadataFixture(activeBookId: legacyBook.id);
+      final legacy = backupFixture(
+        content: (
+          books: [legacyBook],
+          metadata: [metadata],
+          notes: const <BookNote>[],
+          sessions: const [],
+        ),
+      );
 
-        await sut.restore(legacy);
+      await sut.restore(legacy);
 
-        // WHEN
-        final snapshot = _success(await sut.snapshot());
-        // THEN
-        expect(snapshot.books.single.metadataId, metadata.id);
-      },
-    );
+      // WHEN
+      final snapshot = _success(await sut.snapshot());
+      // THEN
+      expect(snapshot.books.single.metadataId, metadata.id);
+    });
   });
 }
 

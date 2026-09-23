@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'audio_track.dart';
@@ -9,6 +9,7 @@ part of 'audio_track.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $AudioTrackCopyWith<AudioTrack> get copyWith => _$AudioTrackCopyWithImpl<AudioTr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AudioTrack&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.order, order) || other.order == order));
+  final _this = this as AudioTrack;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AudioTrack&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.filePath, _this.filePath) || other.filePath == _this.filePath)&&(identical(other.durationMs, _this.durationMs) || other.durationMs == _this.durationMs)&&(identical(other.order, _this.order) || other.order == _this.order));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,filePath,durationMs,order);
+int get hashCode {
+  final _this = this as AudioTrack;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.filePath,_this.durationMs,_this.order);
+}
 
 @override
 String toString() {
-  return 'AudioTrack(id: $id, title: $title, filePath: $filePath, durationMs: $durationMs, order: $order)';
+  final _this = this as AudioTrack;
+  return 'AudioTrack(id: ${_this.id}, title: ${_this.title}, filePath: ${_this.filePath}, durationMs: ${_this.durationMs}, order: ${_this.order})';
 }
 
 
@@ -66,7 +72,7 @@ class _$AudioTrackCopyWithImpl<$Res>
 /// Create a copy of AudioTrack
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? filePath = null,Object? durationMs = null,Object? order = null,}) {
-  return _then(_self.copyWith(
+  return _then(AudioTrack(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,filePath: null == filePath ? _self.filePath : filePath // ignore: cast_nullable_to_non_nullable
@@ -235,16 +241,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AudioTrack&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.order, order) || other.order == order));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AudioTrack&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.order, order) || other.order == order));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,filePath,durationMs,order);
+int get hashCode {
+    return Object.hash(runtimeType,id,title,filePath,durationMs,order);
+}
 
 @override
 String toString() {
-  return 'AudioTrack(id: $id, title: $title, filePath: $filePath, durationMs: $durationMs, order: $order)';
+    return 'AudioTrack(id: $id, title: $title, filePath: $filePath, durationMs: $durationMs, order: $order)';
 }
 
 

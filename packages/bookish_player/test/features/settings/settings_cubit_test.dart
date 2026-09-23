@@ -10,38 +10,35 @@ import '../../../test_support/features/settings/settings_test_application.dart';
 
 void main() {
   group('Settings cubit', () {
-    test(
-      'Given the settings cubit, When its behavior is exercised, Then loads and persists an independent theme preference',
-      () async {
-        // GIVEN
-        final repository = _FakeSettingsStore(
-          const AppearancePreferences(theme: ThemePreference.dark),
-        );
-        final sut = SettingsCubit(buildSettingsApplication(repository));
-        addTearDown(sut.close);
+    test('Given the settings cubit, When its behavior is exercised, Then loads and persists an independent theme preference', () async {
+      // GIVEN
+      final repository = _FakeSettingsStore(
+        const AppearancePreferences(theme: ThemePreference.dark),
+      );
+      final sut = SettingsCubit(buildSettingsApplication(repository));
+      addTearDown(sut.close);
 
-        // WHEN
-        await sut.load();
+      // WHEN
+      await sut.load();
 
-        // THEN
-        expect(sut.state.status, SettingsStatus.ready);
-        expect(sut.state.appearance.theme, ThemePreference.dark);
+      // THEN
+      expect(sut.state.status, SettingsStatus.ready);
+      expect(sut.state.appearance.theme, ThemePreference.dark);
 
-        await sut.setThemePreference(ThemePreference.light);
-        await sut.setUseSystemColors(enabled: false);
-        await sut.setPrimaryColor(0xFF336699);
+      await sut.setThemePreference(ThemePreference.light);
+      await sut.setUseSystemColors(enabled: false);
+      await sut.setPrimaryColor(0xFF336699);
 
-        expect(
-          sut.state.appearance,
-          const AppearancePreferences(
-            theme: ThemePreference.light,
-            useSystemColors: false,
-            primaryColor: 0xFF336699,
-          ),
-        );
-        expect(repository.savedPreference, sut.state.appearance);
-      },
-    );
+      expect(
+        sut.state.appearance,
+        const AppearancePreferences(
+          theme: ThemePreference.light,
+          useSystemColors: false,
+          primaryColor: 0xFF336699,
+        ),
+      );
+      expect(repository.savedPreference, sut.state.appearance);
+    });
   });
 }
 

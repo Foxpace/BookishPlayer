@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 
@@ -23,16 +23,14 @@ class LibraryHeader extends StatelessWidget {
             children: [
               Text(
                 'BOOKISH',
-                style: Theme.of(
-                  context,
-                ).textTheme.labelSmall?.copyWith(letterSpacing: 3),
+                style: Theme.of(context).textTheme.labelSmall
+                    ?.copyWith(letterSpacing: 3),
               ),
               const SizedBox(height: 5),
               Text(
                 S.of(context).yourLibrary,
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+                style: Theme.of(context).textTheme.headlineLarge
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),

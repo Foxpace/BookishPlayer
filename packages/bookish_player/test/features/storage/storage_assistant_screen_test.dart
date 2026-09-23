@@ -7,7 +7,7 @@ import 'package:bookish_player/features/storage/repos/app_data_reset_repository.
 import 'package:bookish_player/features/storage/repos/library_storage_repository.dart';
 import 'package:bookish_player/features/storage/models/storage_report.dart';
 import 'package:bookish_player/features/storage/cubits/storage_assistant_cubit.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -31,9 +31,8 @@ void main() {
     setUp(() async {
       books = _Books([
         audiobookFixture().copyWith(folder: 'History'),
-        audiobookFixture(
-          id: 'book-2',
-        ).copyWith(title: 'A Duplicate Audiobook', folder: 'Archive'),
+        audiobookFixture(id: 'book-2')
+            .copyWith(title: 'A Duplicate Audiobook', folder: 'Archive'),
       ]);
       storage = _Storage();
       reset = _Reset();

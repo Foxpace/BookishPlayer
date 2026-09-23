@@ -17,14 +17,6 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
-    // Cactus 1.3.0 hard-codes 35, while its overridden Plus plugins require 36.
-    if (name == "cactus") {
-        afterEvaluate {
-            extensions.configure<com.android.build.gradle.LibraryExtension> {
-                compileSdk = 36
-            }
-        }
-    }
 }
 
 tasks.register<Delete>("clean") {

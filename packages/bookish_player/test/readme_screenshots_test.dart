@@ -192,9 +192,9 @@ void _ignoreValue(Object? _) {}
 void _ignoreBookAction(Audiobook _, BookAction _) {}
 
 Future<void> _loadScreenshotFonts() async {
-  final serifFont = File(
-    'test/assets/fonts/Merriweather-Regular.ttf',
-  ).readAsBytes().then(ByteData.sublistView);
+  final serifFont = File('test/assets/fonts/Merriweather-Regular.ttf')
+      .readAsBytes()
+      .then(ByteData.sublistView);
   await (FontLoader('serif')..addFont(serifFont)).load();
   await (FontLoader(
     'MaterialIcons',

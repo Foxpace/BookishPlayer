@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class StorageSectionTitle extends StatelessWidget {
   const StorageSectionTitle({
@@ -13,9 +13,8 @@ class StorageSectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     '$title · $count',
-    style: Theme.of(
-      context,
-    ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+    style: Theme.of(context).textTheme.titleLarge
+        ?.copyWith(fontWeight: FontWeight.w700),
   );
 }
 

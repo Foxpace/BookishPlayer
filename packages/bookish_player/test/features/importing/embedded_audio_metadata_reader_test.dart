@@ -15,59 +15,50 @@ void main() {
 
     tearDown(() => directory.delete(recursive: true));
 
-    test(
-      'Given the embedded audio metadata reader, When its behavior is exercised, Then reads conservative text metadata from ID3 tags',
-      () async {
-        // GIVEN
-        final file = await _taggedId3Fixture(directory);
+    test('Given the embedded audio metadata reader, When its behavior is exercised, Then reads conservative text metadata from ID3 tags', () async {
+      // GIVEN
+      final file = await _taggedId3Fixture(directory);
 
-        // WHEN
-        final metadata = readEmbeddedTextMetadata(file);
+      // WHEN
+      final metadata = readEmbeddedTextMetadata(file);
 
-        // THEN
-        expect(metadata.title, 'A Wizard of Earthsea');
-        expect(metadata.author, 'Ursula K. Le Guin');
-        expect(metadata.series, 'Earthsea');
-        expect(metadata.narrator, 'Rob Inglis');
-        expect(metadata.year, 1968);
-      },
-    );
+      // THEN
+      expect(metadata.title, 'A Wizard of Earthsea');
+      expect(metadata.author, 'Ursula K. Le Guin');
+      expect(metadata.series, 'Earthsea');
+      expect(metadata.narrator, 'Rob Inglis');
+      expect(metadata.year, 1968);
+    });
 
-    test(
-      'Given the embedded audio metadata reader, When its behavior is exercised, Then does not infer metadata from missing or unrelated tags',
-      () async {
-        // GIVEN
-        final file = await _unrelatedId3Fixture(directory);
+    test('Given the embedded audio metadata reader, When its behavior is exercised, Then does not infer metadata from missing or unrelated tags', () async {
+      // GIVEN
+      final file = await _unrelatedId3Fixture(directory);
 
-        // WHEN
-        final metadata = readEmbeddedTextMetadata(file);
+      // WHEN
+      final metadata = readEmbeddedTextMetadata(file);
 
-        // THEN
-        expect(metadata.title, isNull);
-        expect(metadata.author, isNull);
-        expect(metadata.series, isNull);
-        expect(metadata.narrator, isNull);
-        expect(metadata.year, isNull);
-      },
-    );
+      // THEN
+      expect(metadata.title, isNull);
+      expect(metadata.author, isNull);
+      expect(metadata.series, isNull);
+      expect(metadata.narrator, isNull);
+      expect(metadata.year, isNull);
+    });
 
-    test(
-      'Given the embedded audio metadata reader, When its behavior is exercised, Then reads explicit metadata atoms from M4B files',
-      () async {
-        // GIVEN
-        final file = await _taggedM4bFixture(directory);
+    test('Given the embedded audio metadata reader, When its behavior is exercised, Then reads explicit metadata atoms from M4B files', () async {
+      // GIVEN
+      final file = await _taggedM4bFixture(directory);
 
-        // WHEN
-        final metadata = readEmbeddedTextMetadata(file);
+      // WHEN
+      final metadata = readEmbeddedTextMetadata(file);
 
-        // THEN
-        expect(metadata.title, 'The Left Hand of Darkness');
-        expect(metadata.author, 'Ursula K. Le Guin');
-        expect(metadata.series, 'Hainish Cycle');
-        expect(metadata.narrator, 'George Guidall');
-        expect(metadata.year, 1969);
-      },
-    );
+      // THEN
+      expect(metadata.title, 'The Left Hand of Darkness');
+      expect(metadata.author, 'Ursula K. Le Guin');
+      expect(metadata.series, 'Hainish Cycle');
+      expect(metadata.narrator, 'George Guidall');
+      expect(metadata.year, 1969);
+    });
   });
 }
 

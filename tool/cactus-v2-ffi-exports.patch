@@ -1,0 +1,12 @@
+diff --git a/android/CMakeLists.txt b/android/CMakeLists.txt
+--- a/android/CMakeLists.txt
++++ b/android/CMakeLists.txt
+@@ -38,3 +38,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+ endif()
+ 
+ target_link_options(cactus_jni PRIVATE -Wl,-z,max-page-size=16384)
++
++# Dart FFI needs exported C symbols. The NDK hides symbols from static archives.
++target_sources(cactus_jni PRIVATE
++    "${CMAKE_CURRENT_SOURCE_DIR}/../../../tool/cactus_ffi_exports.cpp"
++)

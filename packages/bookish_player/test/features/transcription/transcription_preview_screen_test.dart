@@ -2,7 +2,7 @@ import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:bookish_player/features/transcription/cubits/transcription_preview_state.dart';
 import 'package:bookish_player/features/transcription/models/transcription_draft.dart';
 import 'package:bookish_player/features/transcription/ui/transcription_preview_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../test_support/support/pump_bookish_app.dart';

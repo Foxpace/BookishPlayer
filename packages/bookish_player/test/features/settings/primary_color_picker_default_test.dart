@@ -1,6 +1,6 @@
 import 'package:bookish_player/core/theme/bookish_theme_seed.dart';
 import 'package:bookish_player/features/settings/ui/widgets/primary_color_picker_dialog.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../test_support/support/pump_bookish_app.dart';

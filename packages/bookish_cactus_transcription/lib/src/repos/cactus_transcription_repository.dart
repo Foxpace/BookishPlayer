@@ -1,97 +1,100 @@
+import 'dart:developer' as developer;
 import 'dart:io';
 
-import 'package:cactus/cactus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../cactus_models.dart';
 import '../cactus_pcm_stream_factory.dart';
-import '../speech_model_catalog_cache.dart';
+import 'cactus_inference.dart';
+import 'cactus_model_download.dart';
 
 class CactusTranscriptionRepository {
-  CactusTranscriptionRepository(this._audio) {
-    CactusConfig.isTelemetryEnabled = false;
+  CactusTranscriptionRepository(
+    this._pcmStreamFactory, {
+    Future<Directory> Function()? documents,
+    CactusInference inference = transcribeCactusAudio,
+  }) : _documentsDirectory = documents ?? getApplicationDocumentsDirectory,
+       _transcribePcm = inference,
+       _modelDownloader = CactusModelDownloader();
+
+  final CactusPcmStreamFactory _pcmStreamFactory;
+  final Future<Directory> Function() _documentsDirectory;
+  final CactusInference _transcribePcm;
+  final CactusModelDownloader _modelDownloader;
+  final _activeModelDownloads = <String, Future<void>>{};
+  Future<void> _transcriptionQueue = Future.value();
+
+  Future<Directory> _modelsDirectory() async {
+    final documentsDirectory = await _documentsDirectory();
+    return Directory(p.join(documentsDirectory.path, 'cactus-v2.0.1', 'models'))
+        .create(recursive: true);
   }
 
-  final CactusPcmStreamFactory _audio;
-  final _stt = CactusSTT();
-  String? _initializedModel;
-
-  Future<void> reset() async {
-    if (_stt.isLoaded()) {
-      _stt.unload();
-    }
-    _initializedModel = null;
-  }
-
-  Future<List<CactusSpeechModel>> getModels({bool refresh = true}) async {
-    final documents = await getApplicationDocumentsDirectory();
-    final cache = SpeechModelCatalogCache(documents);
-    var catalog = cache.read();
-
-    if (refresh && await _hasInternetConnection()) {
-      try {
-        catalog = await _refreshCatalog(cache, catalog);
-      } catch (_) {
-        // The persisted catalog and local model directories remain authoritative.
-      }
-    }
-
-    if (catalog.isEmpty) {
-      catalog = const [
-        CactusSpeechModel(slug: 'whisper-tiny', isDownloaded: false),
-        CactusSpeechModel(slug: 'whisper-base', isDownloaded: false),
-      ];
-    }
-
-    return reconcileSpeechModels(
-      catalog: catalog,
-      downloadedSlugs: cache.downloadedSlugs(),
-    );
-  }
-
-  Future<List<CactusSpeechModel>> _refreshCatalog(
-    SpeechModelCatalogCache cache,
-    List<CactusSpeechModel> current,
-  ) async {
-    final remote = await _stt.getVoiceModels();
-    if (remote.isEmpty) {
-      return current;
-    }
-
-    final refreshed = [
-      for (final model in remote)
-        CactusSpeechModel(
-          slug: model.slug,
-          sizeMb: model.sizeMb,
-          isDownloaded: false,
-        ),
-    ];
-
-    cache.write(refreshed);
-    return refreshed;
-  }
+  Future<List<CactusSpeechModel>> listModels() async => [
+    for (final slug in cactusModelRevisions.keys)
+      CactusSpeechModel(
+        slug: slug,
+        isDownloaded: await isModelDownloaded(slug),
+      ),
+  ];
 
   Future<bool> isModelDownloaded(String slug) async {
-    final documents = await getApplicationDocumentsDirectory();
-    final directory = Directory(p.join(documents.path, 'models', slug));
-    if (!directory.existsSync()) {
-      return false;
-    }
-
-    return directory.listSync().isNotEmpty;
+    if (!cactusModelRevisions.containsKey(slug)) return false;
+    final modelDirectory = p.join((await _modelsDirectory()).path, slug);
+    final completionMarker = File(p.join(modelDirectory, '.complete'));
+    return await completionMarker.exists() &&
+        await completionMarker.readAsString() == cactusModelRevisions[slug] &&
+        await File(p.join(modelDirectory, 'config.txt')).exists() &&
+        await File(p.join(modelDirectory, 'components', 'manifest.json'))
+            .exists();
   }
 
   Future<void> downloadModel(
     String slug, {
     CactusDownloadProgress? onProgress,
-  }) async {
-    await _stt.downloadModel(
-      model: slug,
-      downloadProcessCallback: (progress, _, isError) => onProgress?.call(
-        progress,
-        isError ? CactusDownloadPhase.failure : CactusDownloadPhase.downloading,
-      ),
+  }) {
+    return _activeModelDownloads.putIfAbsent(
+      slug,
+      () => _downloadModel(slug, onProgress),
+    );
+  }
+
+  Future<void> _downloadModel(
+    String slug,
+    CactusDownloadProgress? onProgress,
+  ) async {
+    try {
+      await _downloadModelIfMissing(slug, onProgress);
+    } catch (_) {
+      onProgress?.call(0, CactusDownloadPhase.failure);
+      rethrow;
+    } finally {
+      _activeModelDownloads.remove(slug);
+    }
+  }
+
+  Future<void> _downloadModelIfMissing(
+    String slug,
+    CactusDownloadProgress? progress,
+  ) async {
+    if (!cactusModelRevisions.containsKey(slug)) {
+      throw const CactusTranscriptionException('Unsupported speech model.');
+    }
+    if (await isModelDownloaded(slug)) {
+      progress?.call(1, CactusDownloadPhase.downloading);
+      return;
+    }
+    final modelDirectory = Directory(
+      p.join((await _modelsDirectory()).path, slug),
+    );
+    if (await modelDirectory.exists()) {
+      await modelDirectory.delete(recursive: true);
+    }
+    await _modelDownloader.download(
+      modelDirectory: modelDirectory,
+      modelSlug: slug,
+      onProgress: progress,
     );
   }
 
@@ -100,20 +103,66 @@ class CactusTranscriptionRepository {
     required Duration start,
     required Duration end,
     required String model,
-  }) async {
+  }) {
+    final transcription = _transcriptionQueue.then(
+      (_) => _transcribeQueuedRange(source, start, end, model),
+    );
+    _transcriptionQueue = transcription.then<void>((_) {});
+    return transcription;
+  }
+
+  Future<CactusTranscriptionOutcome> _transcribeQueuedRange(
+    CactusAudioSource source,
+    Duration start,
+    Duration end,
+    String model,
+  ) async {
     if (end <= start) {
+      developer.log(
+        'Rejected transcription range: model=$model, '
+        'startMs=${start.inMilliseconds}, endMs=${end.inMilliseconds}',
+        name: 'bookish.cactus',
+      );
       return const CactusTranscriptionOutcome.failure(
         'Choose an audio range longer than zero.',
       );
     }
+    developer.log(
+      'Starting transcription: model=$model, '
+      'startMs=${start.inMilliseconds}, endMs=${end.inMilliseconds}',
+      name: 'bookish.cactus',
+    );
     try {
-      return await _transcribeAvailableRange(source, start, end, model);
-    } catch (error) {
+      final outcome = await _transcribeWithDownloadedModel(
+        source,
+        start,
+        end,
+        model,
+      );
+      if (outcome case CactusTranscriptionFailed(:final message)) {
+        developer.log(
+          'Transcription failed: model=$model, reason=${_logDetail(message)}',
+          name: 'bookish.cactus',
+        );
+      } else {
+        developer.log(
+          'Transcription completed: model=$model',
+          name: 'bookish.cactus',
+        );
+      }
+      return outcome;
+    } catch (error, stackTrace) {
+      developer.log(
+        'Transcription threw an error: model=$model',
+        name: 'bookish.cactus',
+        error: error,
+        stackTrace: stackTrace,
+      );
       return CactusTranscriptionOutcome.failure('$error');
     }
   }
 
-  Future<CactusTranscriptionOutcome> _transcribeAvailableRange(
+  Future<CactusTranscriptionOutcome> _transcribeWithDownloadedModel(
     CactusAudioSource source,
     Duration start,
     Duration end,
@@ -124,43 +173,67 @@ class CactusTranscriptionRepository {
         'Download a speech model in Settings before transcribing.',
       );
     }
-    return _transcribe(source, start, end, model);
+    final temporaryDirectory = await Directory.systemTemp.createTemp(
+      'bookish-speech-',
+    );
+    try {
+      return await _writePcmAndTranscribe(
+        source,
+        start,
+        end,
+        model,
+        temporaryDirectory,
+      );
+    } finally {
+      await temporaryDirectory.delete(recursive: true);
+    }
   }
 
-  Future<CactusTranscriptionOutcome> _transcribe(
+  Future<CactusTranscriptionOutcome> _writePcmAndTranscribe(
     CactusAudioSource source,
     Duration start,
     Duration end,
     String model,
+    Directory temporaryDirectory,
   ) async {
-    if (_initializedModel != model || !_stt.isLoaded()) {
-      _stt.unload();
-      await _stt.initializeModel(params: CactusInitParams(model: model));
-      _initializedModel = model;
-    }
-
-    final result = await _stt.transcribe(
-      audioStream: _audio.createStream(source, start, end),
-    );
-    return result.success
-        ? CactusTranscriptionOutcome.success(result.text.trim())
-        : CactusTranscriptionOutcome.failure(
-            result.errorMessage ?? 'Cactus could not transcribe this audio.',
-          );
-  }
-
-  Future<bool> _hasInternetConnection() async {
+    final pcmFile = File(p.join(temporaryDirectory.path, 'audio.pcm'));
+    final pcmFileSink = pcmFile.openWrite();
     try {
-      return await _lookupModelHost();
-    } catch (_) {
-      return false;
+      await pcmFileSink.addStream(
+        _pcmStreamFactory.createStream(source, start, end),
+      );
+    } catch (error, stackTrace) {
+      developer.log(
+        'Audio decoding failed: model=$model',
+        name: 'bookish.cactus',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    } finally {
+      await pcmFileSink.close();
+    }
+    final modelDirectory = p.join((await _modelsDirectory()).path, model);
+    try {
+      return await _transcribePcm(modelDirectory, pcmFile.path);
+    } catch (error, stackTrace) {
+      developer.log(
+        'Cactus inference failed: model=$model',
+        name: 'bookish.cactus',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
   }
 
-  Future<bool> _lookupModelHost() async {
-    final addresses = await InternetAddress.lookup(
-      'vlqqczxwyaodtcdmdmlw.supabase.co',
-    ).timeout(const Duration(seconds: 2));
-    return addresses.any((address) => address.rawAddress.isNotEmpty);
+  String _logDetail(String detail) {
+    final withoutPaths = detail.replaceAll(
+      RegExp(r'(?:/[\w .-]+){2,}|(?:[A-Za-z]:\\[^\s]+)'),
+      '<redacted-path>',
+    );
+    return withoutPaths.length <= 500
+        ? withoutPaths
+        : '${withoutPaths.substring(0, 500)}…';
   }
 }

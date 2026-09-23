@@ -39,9 +39,8 @@ class LibraryApplication {
       _books.getBooks(),
       _settings.getLibraryLayout(),
     ).wait;
-    final books = await [
-      for (final book in savedBooks) _scanArtwork(book),
-    ].wait;
+    final books = await [for (final book in savedBooks) _scanArtwork(book)]
+        .wait;
     return Result.success(
       LibraryLoadResult(books: books, layout: layout ?? 'list'),
     );

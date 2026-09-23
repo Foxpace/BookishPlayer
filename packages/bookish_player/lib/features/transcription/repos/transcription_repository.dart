@@ -4,9 +4,7 @@ import '../models/speech_model.dart';
 import '../models/transcription_download.dart';
 
 abstract interface class TranscriptionRepository {
-  Future<void> reset();
-
-  Future<List<SpeechModel>> getModels({bool refresh = true});
+  Future<List<SpeechModel>> listModels();
 
   Future<bool> isModelDownloaded(String slug);
 

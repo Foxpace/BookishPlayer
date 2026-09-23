@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'cactus_audio_track.dart';
@@ -9,6 +9,7 @@ part of 'cactus_audio_track.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $CactusAudioTrackCopyWith<CactusAudioTrack> get copyWith => _$CactusAudioTrackCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CactusAudioTrack&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs));
+  final _this = this as CactusAudioTrack;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CactusAudioTrack&&(identical(other.filePath, _this.filePath) || other.filePath == _this.filePath)&&(identical(other.durationMs, _this.durationMs) || other.durationMs == _this.durationMs));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,filePath,durationMs);
+int get hashCode {
+  final _this = this as CactusAudioTrack;
+  return Object.hash(runtimeType,_this.filePath,_this.durationMs);
+}
 
 @override
 String toString() {
-  return 'CactusAudioTrack(filePath: $filePath, durationMs: $durationMs)';
+  final _this = this as CactusAudioTrack;
+  return 'CactusAudioTrack(filePath: ${_this.filePath}, durationMs: ${_this.durationMs})';
 }
 
 
@@ -63,7 +69,7 @@ class _$CactusAudioTrackCopyWithImpl<$Res>
 /// Create a copy of CactusAudioTrack
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? filePath = null,Object? durationMs = null,}) {
-  return _then(_self.copyWith(
+  return _then(CactusAudioTrack(
 filePath: null == filePath ? _self.filePath : filePath // ignore: cast_nullable_to_non_nullable
 as String,durationMs: null == durationMs ? _self.durationMs : durationMs // ignore: cast_nullable_to_non_nullable
 as int,
@@ -223,16 +229,18 @@ _$CactusAudioTrackCopyWith<_CactusAudioTrack> get copyWith => __$CactusAudioTrac
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CactusAudioTrack&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CactusAudioTrack&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,filePath,durationMs);
+int get hashCode {
+    return Object.hash(runtimeType,filePath,durationMs);
+}
 
 @override
 String toString() {
-  return 'CactusAudioTrack(filePath: $filePath, durationMs: $durationMs)';
+    return 'CactusAudioTrack(filePath: $filePath, durationMs: $durationMs)';
 }
 
 

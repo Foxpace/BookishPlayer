@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../../../core/presentation/formatters.dart';
@@ -27,9 +27,9 @@ class BookProgressSummary extends StatelessWidget {
           child: LinearProgressIndicator(
             value: progress,
             minHeight: 5,
-            backgroundColor: Theme.of(
-              context,
-            ).progressIndicatorTheme.linearTrackColor,
+            backgroundColor: Theme.of(context)
+                .progressIndicatorTheme
+                .linearTrackColor,
           ),
         ),
         const SizedBox(height: 7),
@@ -37,9 +37,8 @@ class BookProgressSummary extends StatelessWidget {
           _progressLabel(context, progress),
           maxLines: singleLine ? 1 : null,
           overflow: singleLine ? TextOverflow.ellipsis : null,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ],
     );

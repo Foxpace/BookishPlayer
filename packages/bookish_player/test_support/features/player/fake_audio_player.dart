@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'player_test_support.dart';
 
 class FakeAudioPlayer implements AudioPlayerRepository {

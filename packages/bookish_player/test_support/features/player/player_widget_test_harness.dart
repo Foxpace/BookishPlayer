@@ -4,7 +4,7 @@ import 'package:bookish_player/features/player/cubits/player_cubits.dart';
 import 'package:bookish_player/features/player/cubits/player_ui_intents.dart';
 import 'package:bookish_player/features/player/ui/player_screen.dart';
 import 'package:bookish_player/features/player/ui/widgets/notes_sheet.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PlayerTestScreenHarness extends StatefulWidget {

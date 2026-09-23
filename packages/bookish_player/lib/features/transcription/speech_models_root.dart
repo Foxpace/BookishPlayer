@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/di/injection.dart';
@@ -36,9 +36,8 @@ class SpeechModelsRoot extends StatelessWidget {
   void _showMessage(BuildContext context, SpeechModelsState state) {
     final message = state.message;
     if (message != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message.localize(context))));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message.localize(context))));
     }
   }
 

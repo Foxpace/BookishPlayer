@@ -24,181 +24,169 @@ void main() {
       sut = SleepTimerUseCase(audio);
     });
 
-    test(
-      'Given a stateless playback sleep use case, When an immediate timer elapses, Then volume fades, playback pauses, and completion runs',
-      () {
-        fakeAsync((time) {
-          var elapsedCalls = 0;
+    test('Given a stateless playback sleep use case, When an immediate timer elapses, Then volume fades, playback pauses, and completion runs', () {
+      fakeAsync((time) {
+        var elapsedCalls = 0;
 
-          // WHEN
-          sut.scheduleFixed(Duration.zero, Duration.zero, () async {
-            elapsedCalls++;
-          });
-          time.elapse(Duration.zero);
-          time.flushMicrotasks();
-
-          // THEN
-          expect(audio.volumes, hasLength(11));
-          expect(audio.volumes.first, .9);
-          expect(audio.volumes.last, 1);
-          expect(audio.pauseCount, 1);
-          expect(elapsedCalls, 1);
+        // WHEN
+        sut.scheduleFixed(Duration.zero, Duration.zero, () async {
+          elapsedCalls++;
         });
-      },
-    );
+        time.elapse(Duration.zero);
+        time.flushMicrotasks();
 
-    test(
-      'Given a stateless playback sleep use case, When chapter boundaries and cancellation are evaluated, Then the next stable boundary is selected and cancelled work stops',
-      () {
-        fakeAsync((time) {
-          // GIVEN
-          final book = audiobookFixture().copyWith(
-            durationMs: 60_000,
-            chapters: const [
-              AudioChapter(title: 'One', startMs: 0),
-              AudioChapter(title: 'Two', startMs: 20_000),
-            ],
-          );
+        // THEN
+        expect(audio.volumes, hasLength(11));
+        expect(audio.volumes.first, .9);
+        expect(audio.volumes.last, 1);
+        expect(audio.pauseCount, 1);
+        expect(elapsedCalls, 1);
+      });
+    });
 
-          // WHEN
-          final timer = sut.scheduleChapterFallback(
-            const Duration(seconds: 5),
-            Duration.zero,
-            () async {},
-          );
-          timer.cancel();
-          time.elapse(const Duration(seconds: 5));
-          time.flushMicrotasks();
+    test('Given a stateless playback sleep use case, When chapter boundaries and cancellation are evaluated, Then the next stable boundary is selected and cancelled work stops', () {
+      fakeAsync((time) {
+        // GIVEN
+        final book = audiobookFixture().copyWith(
+          durationMs: 60_000,
+          chapters: const [
+            AudioChapter(title: 'One', startMs: 0),
+            AudioChapter(title: 'Two', startMs: 20_000),
+          ],
+        );
 
-          // THEN
-          expect(sut.chapterEnd(book, const Duration(seconds: 5)), 20_000);
-          expect(sut.chapterEnd(book, const Duration(seconds: 20)), 60_000);
-          expect(audio.pauseCount, 0);
-        });
-      },
-    );
+        // WHEN
+        final timer = sut.scheduleChapterFallback(
+          const Duration(seconds: 5),
+          Duration.zero,
+          () async {},
+        );
+        timer.cancel();
+        time.elapse(const Duration(seconds: 5));
+        time.flushMicrotasks();
+
+        // THEN
+        expect(sut.chapterEnd(book, const Duration(seconds: 5)), 20_000);
+        expect(sut.chapterEnd(book, const Duration(seconds: 20)), 60_000);
+        expect(audio.pauseCount, 0);
+      });
+    });
   });
 
   group('Deterministic listening-session tracker', () {
-    test(
-      'Given a deterministic listening-session tracker, When short and meaningful sessions finish, Then only meaningful playback is persisted with stable metadata',
-      () async {
-        // GIVEN
-        final history = _History();
-        final clock = FakeClock(fixtureTime);
-        final sut = ListeningSessionTracker(
-          history,
-          clock,
-          FakeIdGenerator('session'),
-        );
+    test('Given a deterministic listening-session tracker, When short and meaningful sessions finish, Then only meaningful playback is persisted with stable metadata', () async {
+      // GIVEN
+      final history = _History();
+      final clock = FakeClock(fixtureTime);
+      final sut = ListeningSessionTracker(
+        history,
+        clock,
+        FakeIdGenerator('session'),
+      );
 
-        final shortSession = sut.start(const Duration(seconds: 2));
-        clock.advance(const Duration(seconds: 1));
-        // WHEN
-        await sut.finish(
-          startedAt: shortSession.startedAt,
-          startPosition: shortSession.startPosition,
-          book: audiobookFixture(),
-          position: const Duration(seconds: 3),
-          speed: 1,
-        );
-        // THEN
-        expect(history.sessions, isEmpty);
+      final shortSession = sut.start(const Duration(seconds: 2));
+      clock.advance(const Duration(seconds: 1));
+      // WHEN
+      await sut.finish(
+        startedAt: shortSession.startedAt,
+        startPosition: shortSession.startPosition,
+        book: audiobookFixture(),
+        position: const Duration(seconds: 3),
+        speed: 1,
+      );
+      // THEN
+      expect(history.sessions, isEmpty);
 
-        final session = sut.start(const Duration(seconds: 10));
-        clock.advance(const Duration(seconds: 1));
-        clock.advance(const Duration(seconds: 2));
-        await sut.finish(
-          startedAt: session.startedAt,
-          startPosition: session.startPosition,
-          book: audiobookFixture(),
-          position: const Duration(seconds: 15),
-          speed: 1.25,
-        );
+      final session = sut.start(const Duration(seconds: 10));
+      clock.advance(const Duration(seconds: 1));
+      clock.advance(const Duration(seconds: 2));
+      await sut.finish(
+        startedAt: session.startedAt,
+        startPosition: session.startPosition,
+        book: audiobookFixture(),
+        position: const Duration(seconds: 15),
+        speed: 1.25,
+      );
 
-        expect(history.sessions.single.id, 'session-0');
-        expect(history.sessions.single.metadataId, 'metadata-1');
-        expect(history.sessions.single.listenedMs, 3000);
-        expect(history.sessions.single.startPositionMs, 10_000);
-        expect(history.sessions.single.endPositionMs, 15_000);
-        expect(history.sessions.single.speed, 1.25);
+      expect(history.sessions.single.id, 'session-0');
+      expect(history.sessions.single.metadataId, 'metadata-1');
+      expect(history.sessions.single.listenedMs, 3000);
+      expect(history.sessions.single.startPositionMs, 10_000);
+      expect(history.sessions.single.endPositionMs, 15_000);
+      expect(history.sessions.single.speed, 1.25);
 
-        await sut.finish(
-          startedAt: null,
-          startPosition: null,
-          book: null,
-          position: Duration.zero,
-          speed: 1,
-        );
-        expect(history.sessions, hasLength(1));
-      },
-    );
+      await sut.finish(
+        startedAt: null,
+        startPosition: null,
+        book: null,
+        position: Duration.zero,
+        speed: 1,
+      );
+      expect(history.sessions, hasLength(1));
+    });
   });
 
   group('Stateless playback command service and two local books', () {
-    test(
-      'Given a stateless playback command service and two local books, When explicit context and playback intents are supplied, Then audio commands and progress remain transactionally ordered',
-      () async {
-        // GIVEN
-        final first = audiobookFixture();
-        final second = audiobookFixture(id: 'book-2');
-        final books = FakeBooks.withBooks([first, second]);
-        final audio = _CommandAudio()
-          ..currentPosition = const Duration(seconds: 12);
-        final settings = FakeLibrarySettings()
-          ..playback = const PlaybackPreferences(
-            rewindSeconds: 20,
-            forwardSeconds: 45,
-            shortenSilence: true,
-            voiceBoost: true,
-          );
-        final sut = PlaybackCommandService(audio, books, settings);
-        final requestedIds = <String>[];
-        final requestSubscription = sut.playRequests.listen((request) async {
-          requestedIds.add(request.bookId);
-          await audio.play();
-          request.completion.complete();
-        });
-
-        // WHEN
-        final opened = await sut.openById('book-1');
-        // THEN
-        expect(switch (opened) {
-          ResultSuccess(:final value) => value.book.id,
-          ResultFailure() => null,
-        }, 'book-1');
-        expect(audio.loadedIds, ['book-1']);
-        expect(audio.skipIntervals.single, (20, 45));
-        expect(audio.shortenSilenceValues, [true]);
-        expect(audio.voiceBoostValues, [true]);
-
-        audio.currentPosition = const Duration(seconds: 12);
-        await sut.open(second, previousBook: first);
-        expect(audio.pauseCount, 1);
-        expect(books.progress, const Duration(seconds: 12));
-
-        await sut.playBook('book-2');
-        expect(requestedIds, ['book-2']);
-        expect(audio.playing, isTrue);
-        await sut.toggle();
-        expect(audio.playing, isFalse);
-        await sut.toggle();
-        expect(audio.playing, isTrue);
-
-        await sut.removeCurrentBook();
-        expect(audio.playing, isFalse);
-        await sut.reset();
-        expect(audio.clearCalls, 1);
-
-        expect(
-          await sut.openById('missing'),
-          const Result<PlaybackOpenResult>.failure(
-            AppFailure.notFound('player.book'),
-          ),
+    test('Given a stateless playback command service and two local books, When explicit context and playback intents are supplied, Then audio commands and progress remain transactionally ordered', () async {
+      // GIVEN
+      final first = audiobookFixture();
+      final second = audiobookFixture(id: 'book-2');
+      final books = FakeBooks.withBooks([first, second]);
+      final audio = _CommandAudio()
+        ..currentPosition = const Duration(seconds: 12);
+      final settings = FakeLibrarySettings()
+        ..playback = const PlaybackPreferences(
+          rewindSeconds: 20,
+          forwardSeconds: 45,
+          shortenSilence: true,
+          voiceBoost: true,
         );
-        await requestSubscription.cancel();
-      },
-    );
+      final sut = PlaybackCommandService(audio, books, settings);
+      final requestedIds = <String>[];
+      final requestSubscription = sut.playRequests.listen((request) async {
+        requestedIds.add(request.bookId);
+        await audio.play();
+        request.completion.complete();
+      });
+
+      // WHEN
+      final opened = await sut.openById('book-1');
+      // THEN
+      expect(switch (opened) {
+        ResultSuccess(:final value) => value.book.id,
+        ResultFailure() => null,
+      }, 'book-1');
+      expect(audio.loadedIds, ['book-1']);
+      expect(audio.skipIntervals.single, (20, 45));
+      expect(audio.shortenSilenceValues, [true]);
+      expect(audio.voiceBoostValues, [true]);
+
+      audio.currentPosition = const Duration(seconds: 12);
+      await sut.open(second, previousBook: first);
+      expect(audio.pauseCount, 1);
+      expect(books.progress, const Duration(seconds: 12));
+
+      await sut.playBook('book-2');
+      expect(requestedIds, ['book-2']);
+      expect(audio.playing, isTrue);
+      await sut.toggle();
+      expect(audio.playing, isFalse);
+      await sut.toggle();
+      expect(audio.playing, isTrue);
+
+      await sut.removeCurrentBook();
+      expect(audio.playing, isFalse);
+      await sut.reset();
+      expect(audio.clearCalls, 1);
+
+      expect(
+        await sut.openById('missing'),
+        const Result<PlaybackOpenResult>.failure(
+          AppFailure.notFound('player.book'),
+        ),
+      );
+      await requestSubscription.cancel();
+    });
   });
 }
 

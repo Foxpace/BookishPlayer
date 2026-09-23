@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'chapter_parse_report.dart';
@@ -9,6 +9,7 @@ part of 'chapter_parse_report.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ChapterParseReportCopyWith<ChapterParseReport> get copyWith => _$ChapterParseRe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterParseReport&&const DeepCollectionEquality().equals(other.chapters, chapters)&&const DeepCollectionEquality().equals(other.diagnostics, diagnostics)&&const DeepCollectionEquality().equals(other.warnings, warnings));
+  final _this = this as ChapterParseReport;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterParseReport&&const DeepCollectionEquality().equals(other.chapters, _this.chapters)&&const DeepCollectionEquality().equals(other.diagnostics, _this.diagnostics)&&const DeepCollectionEquality().equals(other.warnings, _this.warnings));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(chapters),const DeepCollectionEquality().hash(diagnostics),const DeepCollectionEquality().hash(warnings));
+int get hashCode {
+  final _this = this as ChapterParseReport;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.chapters),const DeepCollectionEquality().hash(_this.diagnostics),const DeepCollectionEquality().hash(_this.warnings));
+}
 
 @override
 String toString() {
-  return 'ChapterParseReport(chapters: $chapters, diagnostics: $diagnostics, warnings: $warnings)';
+  final _this = this as ChapterParseReport;
+  return 'ChapterParseReport(chapters: ${_this.chapters}, diagnostics: ${_this.diagnostics}, warnings: ${_this.warnings})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ChapterParseReportCopyWithImpl<$Res>
 /// Create a copy of ChapterParseReport
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? chapters = null,Object? diagnostics = null,Object? warnings = null,}) {
-  return _then(_self.copyWith(
+  return _then(ChapterParseReport(
 chapters: null == chapters ? _self.chapters : chapters // ignore: cast_nullable_to_non_nullable
 as List<AudioChapter>,diagnostics: null == diagnostics ? _self.diagnostics : diagnostics // ignore: cast_nullable_to_non_nullable
 as List<String>,warnings: null == warnings ? _self.warnings : warnings // ignore: cast_nullable_to_non_nullable
@@ -208,7 +214,7 @@ return $default(_that.chapters,_that.diagnostics,_that.warnings);case _:
 
 
 class _ChapterParseReport implements ChapterParseReport {
-  const _ChapterParseReport({final  List<AudioChapter> chapters = const <AudioChapter>[], final  List<String> diagnostics = const <String>[], final  List<String> warnings = const <String>[]}): _chapters = chapters,_diagnostics = diagnostics,_warnings = warnings;
+  const _ChapterParseReport({ List<AudioChapter> chapters = const <AudioChapter>[],  List<String> diagnostics = const <String>[],  List<String> warnings = const <String>[]}): _chapters = chapters,_diagnostics = diagnostics,_warnings = warnings;
   
 
  final  List<AudioChapter> _chapters;
@@ -243,16 +249,18 @@ _$ChapterParseReportCopyWith<_ChapterParseReport> get copyWith => __$ChapterPars
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChapterParseReport&&const DeepCollectionEquality().equals(other._chapters, _chapters)&&const DeepCollectionEquality().equals(other._diagnostics, _diagnostics)&&const DeepCollectionEquality().equals(other._warnings, _warnings));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChapterParseReport&&const DeepCollectionEquality().equals(other.chapters, _chapters)&&const DeepCollectionEquality().equals(other.diagnostics, _diagnostics)&&const DeepCollectionEquality().equals(other.warnings, _warnings));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_chapters),const DeepCollectionEquality().hash(_diagnostics),const DeepCollectionEquality().hash(_warnings));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_chapters),const DeepCollectionEquality().hash(_diagnostics),const DeepCollectionEquality().hash(_warnings));
+}
 
 @override
 String toString() {
-  return 'ChapterParseReport(chapters: $chapters, diagnostics: $diagnostics, warnings: $warnings)';
+    return 'ChapterParseReport(chapters: $chapters, diagnostics: $diagnostics, warnings: $warnings)';
 }
 
 

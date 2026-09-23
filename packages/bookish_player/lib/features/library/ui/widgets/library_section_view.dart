@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../cubits/library_cubits.dart';
@@ -37,9 +37,8 @@ class LibrarySectionView extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 10),
             child: Text(
               _localizeSectionTitle(context, section),
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
         if (layout == LibraryLayout.list)

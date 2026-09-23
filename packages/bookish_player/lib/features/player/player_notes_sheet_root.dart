@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/localization/generated/l10n.dart';
@@ -44,18 +44,16 @@ class PlayerNotesSheetRoot extends StatelessWidget {
   Future<void> _addBookmark(BuildContext context) async {
     await cubit.addBookmark();
     if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(S.of(context).bookmarkSaved)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(S.of(context).bookmarkSaved)));
     }
   }
 
   Future<void> _exportNotes(BuildContext context) async {
     final saved = await cubit.exportNotes();
     if (saved && context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(S.of(context).notesExported)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(S.of(context).notesExported)));
     }
   }
 }

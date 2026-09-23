@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'bookish_backup.dart';
@@ -9,6 +9,7 @@ part of 'bookish_backup.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $BookishBackupCopyWith<BookishBackup> get copyWith => _$BookishBackupCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookishBackup&&(identical(other.exportedAt, exportedAt) || other.exportedAt == exportedAt)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other.books, books)&&const DeepCollectionEquality().equals(other.notes, notes)&&const DeepCollectionEquality().equals(other.bookMetadata, bookMetadata)&&const DeepCollectionEquality().equals(other.sessions, sessions));
+  final _this = this as BookishBackup;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookishBackup&&(identical(other.exportedAt, _this.exportedAt) || other.exportedAt == _this.exportedAt)&&(identical(other.settings, _this.settings) || other.settings == _this.settings)&&(identical(other.schemaVersion, _this.schemaVersion) || other.schemaVersion == _this.schemaVersion)&&const DeepCollectionEquality().equals(other.books, _this.books)&&const DeepCollectionEquality().equals(other.notes, _this.notes)&&const DeepCollectionEquality().equals(other.bookMetadata, _this.bookMetadata)&&const DeepCollectionEquality().equals(other.sessions, _this.sessions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,exportedAt,settings,schemaVersion,const DeepCollectionEquality().hash(books),const DeepCollectionEquality().hash(notes),const DeepCollectionEquality().hash(bookMetadata),const DeepCollectionEquality().hash(sessions));
+int get hashCode {
+  final _this = this as BookishBackup;
+  return Object.hash(runtimeType,_this.exportedAt,_this.settings,_this.schemaVersion,const DeepCollectionEquality().hash(_this.books),const DeepCollectionEquality().hash(_this.notes),const DeepCollectionEquality().hash(_this.bookMetadata),const DeepCollectionEquality().hash(_this.sessions));
+}
 
 @override
 String toString() {
-  return 'BookishBackup(exportedAt: $exportedAt, settings: $settings, schemaVersion: $schemaVersion, books: $books, notes: $notes, bookMetadata: $bookMetadata, sessions: $sessions)';
+  final _this = this as BookishBackup;
+  return 'BookishBackup(exportedAt: ${_this.exportedAt}, settings: ${_this.settings}, schemaVersion: ${_this.schemaVersion}, books: ${_this.books}, notes: ${_this.notes}, bookMetadata: ${_this.bookMetadata}, sessions: ${_this.sessions})';
 }
 
 
@@ -66,7 +72,7 @@ class _$BookishBackupCopyWithImpl<$Res>
 /// Create a copy of BookishBackup
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? exportedAt = null,Object? settings = null,Object? schemaVersion = null,Object? books = null,Object? notes = null,Object? bookMetadata = null,Object? sessions = null,}) {
-  return _then(_self.copyWith(
+  return _then(BookishBackup(
 exportedAt: null == exportedAt ? _self.exportedAt : exportedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,settings: null == settings ? _self.settings : settings // ignore: cast_nullable_to_non_nullable
 as BackupSettings,schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
@@ -224,7 +230,7 @@ return $default(_that.exportedAt,_that.settings,_that.schemaVersion,_that.books,
 @JsonSerializable()
 
 class _BookishBackup implements BookishBackup {
-  const _BookishBackup({required this.exportedAt, required this.settings, this.schemaVersion = 3, final  List<Audiobook> books = const <Audiobook>[], final  List<BookNote> notes = const <BookNote>[], final  List<BookMetadata> bookMetadata = const <BookMetadata>[], final  List<ListeningSession> sessions = const <ListeningSession>[]}): _books = books,_notes = notes,_bookMetadata = bookMetadata,_sessions = sessions;
+  const _BookishBackup({required this.exportedAt, required this.settings, this.schemaVersion = 3,  List<Audiobook> books = const <Audiobook>[],  List<BookNote> notes = const <BookNote>[],  List<BookMetadata> bookMetadata = const <BookMetadata>[],  List<ListeningSession> sessions = const <ListeningSession>[]}): _books = books,_notes = notes,_bookMetadata = bookMetadata,_sessions = sessions;
   factory _BookishBackup.fromJson(Map<String, dynamic> json) => _$BookishBackupFromJson(json);
 
 @override final  DateTime exportedAt;
@@ -272,16 +278,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookishBackup&&(identical(other.exportedAt, exportedAt) || other.exportedAt == exportedAt)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other._books, _books)&&const DeepCollectionEquality().equals(other._notes, _notes)&&const DeepCollectionEquality().equals(other._bookMetadata, _bookMetadata)&&const DeepCollectionEquality().equals(other._sessions, _sessions));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookishBackup&&(identical(other.exportedAt, exportedAt) || other.exportedAt == exportedAt)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other.books, _books)&&const DeepCollectionEquality().equals(other.notes, _notes)&&const DeepCollectionEquality().equals(other.bookMetadata, _bookMetadata)&&const DeepCollectionEquality().equals(other.sessions, _sessions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,exportedAt,settings,schemaVersion,const DeepCollectionEquality().hash(_books),const DeepCollectionEquality().hash(_notes),const DeepCollectionEquality().hash(_bookMetadata),const DeepCollectionEquality().hash(_sessions));
+int get hashCode {
+    return Object.hash(runtimeType,exportedAt,settings,schemaVersion,const DeepCollectionEquality().hash(_books),const DeepCollectionEquality().hash(_notes),const DeepCollectionEquality().hash(_bookMetadata),const DeepCollectionEquality().hash(_sessions));
+}
 
 @override
 String toString() {
-  return 'BookishBackup(exportedAt: $exportedAt, settings: $settings, schemaVersion: $schemaVersion, books: $books, notes: $notes, bookMetadata: $bookMetadata, sessions: $sessions)';
+    return 'BookishBackup(exportedAt: $exportedAt, settings: $settings, schemaVersion: $schemaVersion, books: $books, notes: $notes, bookMetadata: $bookMetadata, sessions: $sessions)';
 }
 
 
@@ -351,16 +359,21 @@ $BackupSettingsCopyWith<BackupSettings> get copyWith => _$BackupSettingsCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BackupSettings&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.useSystemColors, useSystemColors) || other.useSystemColors == useSystemColors)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&(identical(other.playback, playback) || other.playback == playback));
+  final _this = this as BackupSettings;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BackupSettings&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.useSystemColors, _this.useSystemColors) || other.useSystemColors == _this.useSystemColors)&&(identical(other.primaryColor, _this.primaryColor) || other.primaryColor == _this.primaryColor)&&(identical(other.playback, _this.playback) || other.playback == _this.playback));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,theme,useSystemColors,primaryColor,playback);
+int get hashCode {
+  final _this = this as BackupSettings;
+  return Object.hash(runtimeType,_this.theme,_this.useSystemColors,_this.primaryColor,_this.playback);
+}
 
 @override
 String toString() {
-  return 'BackupSettings(theme: $theme, useSystemColors: $useSystemColors, primaryColor: $primaryColor, playback: $playback)';
+  final _this = this as BackupSettings;
+  return 'BackupSettings(theme: ${_this.theme}, useSystemColors: ${_this.useSystemColors}, primaryColor: ${_this.primaryColor}, playback: ${_this.playback})';
 }
 
 
@@ -389,7 +402,7 @@ class _$BackupSettingsCopyWithImpl<$Res>
 /// Create a copy of BackupSettings
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? theme = null,Object? useSystemColors = null,Object? primaryColor = null,Object? playback = null,}) {
-  return _then(_self.copyWith(
+  return _then(BackupSettings(
 theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
 as String,useSystemColors: null == useSystemColors ? _self.useSystemColors : useSystemColors // ignore: cast_nullable_to_non_nullable
 as bool,primaryColor: null == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
@@ -565,16 +578,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BackupSettings&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.useSystemColors, useSystemColors) || other.useSystemColors == useSystemColors)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&(identical(other.playback, playback) || other.playback == playback));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BackupSettings&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.useSystemColors, useSystemColors) || other.useSystemColors == useSystemColors)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&(identical(other.playback, playback) || other.playback == playback));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,theme,useSystemColors,primaryColor,playback);
+int get hashCode {
+    return Object.hash(runtimeType,theme,useSystemColors,primaryColor,playback);
+}
 
 @override
 String toString() {
-  return 'BackupSettings(theme: $theme, useSystemColors: $useSystemColors, primaryColor: $primaryColor, playback: $playback)';
+    return 'BackupSettings(theme: $theme, useSystemColors: $useSystemColors, primaryColor: $primaryColor, playback: $playback)';
 }
 
 

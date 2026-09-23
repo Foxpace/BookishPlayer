@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'playback_open_result.dart';
@@ -9,6 +9,7 @@ part of 'playback_open_result.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $PlaybackOpenResultCopyWith<PlaybackOpenResult> get copyWith => _$PlaybackOpenRe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlaybackOpenResult&&(identical(other.book, book) || other.book == book)&&(identical(other.preferences, preferences) || other.preferences == preferences));
+  final _this = this as PlaybackOpenResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlaybackOpenResult&&(identical(other.book, _this.book) || other.book == _this.book)&&(identical(other.preferences, _this.preferences) || other.preferences == _this.preferences));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book,preferences);
+int get hashCode {
+  final _this = this as PlaybackOpenResult;
+  return Object.hash(runtimeType,_this.book,_this.preferences);
+}
 
 @override
 String toString() {
-  return 'PlaybackOpenResult(book: $book, preferences: $preferences)';
+  final _this = this as PlaybackOpenResult;
+  return 'PlaybackOpenResult(book: ${_this.book}, preferences: ${_this.preferences})';
 }
 
 
@@ -63,7 +69,7 @@ class _$PlaybackOpenResultCopyWithImpl<$Res>
 /// Create a copy of PlaybackOpenResult
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? book = null,Object? preferences = null,}) {
-  return _then(_self.copyWith(
+  return _then(PlaybackOpenResult(
 book: null == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
 as Audiobook,preferences: null == preferences ? _self.preferences : preferences // ignore: cast_nullable_to_non_nullable
 as PlaybackPreferences,
@@ -241,16 +247,18 @@ _$PlaybackOpenResultCopyWith<_PlaybackOpenResult> get copyWith => __$PlaybackOpe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlaybackOpenResult&&(identical(other.book, book) || other.book == book)&&(identical(other.preferences, preferences) || other.preferences == preferences));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlaybackOpenResult&&(identical(other.book, book) || other.book == book)&&(identical(other.preferences, preferences) || other.preferences == preferences));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book,preferences);
+int get hashCode {
+    return Object.hash(runtimeType,book,preferences);
+}
 
 @override
 String toString() {
-  return 'PlaybackOpenResult(book: $book, preferences: $preferences)';
+    return 'PlaybackOpenResult(book: $book, preferences: $preferences)';
 }
 
 

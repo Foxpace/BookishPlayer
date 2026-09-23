@@ -21,10 +21,9 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
   }
 
   Future<void> _loadModelsAndEmit() async {
-    switch (await _application.loadCached()) {
+    switch (await _application.load()) {
       case ResultSuccess(:final value):
         _emitCatalog(value);
-        await _refreshModelsAndEmit(value);
       case ResultFailure():
         _emitModelsLoadFailure();
     }
@@ -38,19 +37,6 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
         selectedModel: catalog.selected,
       ),
     );
-  }
-
-  Future<void> _refreshModelsAndEmit(SpeechModelCatalog cached) async {
-    switch (await _application.refresh(cached)) {
-      case ResultSuccess(value: final refreshed?):
-        if (!isClosed) {
-          _emitCatalog(refreshed);
-        }
-      case ResultSuccess(value: null):
-        return;
-      case ResultFailure():
-        _emitModelsLoadFailure();
-    }
   }
 
   void _emitModelsLoadFailure() => emit(

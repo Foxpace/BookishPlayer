@@ -6,15 +6,16 @@ import 'transcription_preview_effect.dart';
 import 'transcription_preview_state.dart';
 import 'transcription_preview_status.dart';
 
-typedef StoreTranscriptionNote =
-    Future<void> Function(String text, TranscriptionDraft draft);
-typedef ShareTranscriptionDraft =
-    Future<void> Function(
-      TranscriptionDraft draft,
-      String text, {
-      required String subject,
-      ShareOrigin? origin,
-    });
+typedef StoreTranscriptionNote = Future<void> Function(
+  String text,
+  TranscriptionDraft draft,
+);
+typedef ShareTranscriptionDraft = Future<void> Function(
+  TranscriptionDraft draft,
+  String text, {
+  required String subject,
+  ShareOrigin? origin,
+});
 
 class TranscriptionPreviewCubit extends Cubit<TranscriptionPreviewState> {
   factory TranscriptionPreviewCubit({

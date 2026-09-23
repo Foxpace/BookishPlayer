@@ -14,32 +14,29 @@ void main() {
 
     tearDown(() => container.reset(dispose: true));
 
-    test(
-      'Given a fresh isolated GetIt container, When test dependencies and fake platform ports are configured, Then bootstrap resolves without opening production platform services',
-      () async {
-        // GIVEN
-        await configureDependencies(
-          container: container,
-          environments: const {'test'},
+    test('Given a fresh isolated GetIt container, When test dependencies and fake platform ports are configured, Then bootstrap resolves without opening production platform services', () async {
+      // GIVEN
+      await configureDependencies(
+        container: container,
+        environments: const {'test'},
+      );
+      final calls = <String>[];
+      container
+        ..registerLazySingleton<AudioServiceBootstrap>(
+          () => _FakeAudioBootstrap(calls),
+        )
+        ..registerLazySingleton<CarPlayBootstrap>(
+          () => _FakeCarPlayBootstrap(calls),
         );
-        final calls = <String>[];
-        container
-          ..registerLazySingleton<AudioServiceBootstrap>(
-            () => _FakeAudioBootstrap(calls),
-          )
-          ..registerLazySingleton<CarPlayBootstrap>(
-            () => _FakeCarPlayBootstrap(calls),
-          );
 
-        final bootstrapper = container<AppBootstrapper>();
-        // WHEN
-        await bootstrapper.initialize();
+      final bootstrapper = container<AppBootstrapper>();
+      // WHEN
+      await bootstrapper.initialize();
 
-        // THEN
-        expect(calls, ['audio', 'carPlay']);
-        expect(container.currentScopeName, 'baseScope');
-      },
-    );
+      // THEN
+      expect(calls, ['audio', 'carPlay']);
+      expect(container.currentScopeName, 'baseScope');
+    });
   });
 }
 

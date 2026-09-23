@@ -14,59 +14,59 @@ import '../../../test_support/features/transcription/transcription_test_builder.
 
 void main() {
   group('Quote transcription cubit', () {
-    test(
-      'Given the quote transcription cubit, When its behavior is exercised, Then transcription workflow maps range intent and output into state',
-      () async {
-        // GIVEN
-        final sharing = _Sharing();
-        final application = buildQuoteTranscriptionApplication(
-          transcription: _Transcription(),
-          preferences: _Settings(),
-          sharing: sharing,
-        );
-        final sut = QuoteTranscriptionCubit(application);
-        addTearDown(sut.close);
-        final book = Audiobook(
-          id: 'book',
-          title: 'Book',
-          filePath: '/book.mp3',
-          durationMs: 120000,
-          addedAt: DateTime(2026),
-        );
+    test('Given the quote transcription cubit, When its behavior is exercised, Then transcription workflow maps range intent and output into state', () async {
+      // GIVEN
+      final sharing = _Sharing();
+      final transcription = _Transcription();
+      final application = buildQuoteTranscriptionApplication(
+        transcription: transcription,
+        preferences: _Settings(),
+        sharing: sharing,
+      );
+      final sut = QuoteTranscriptionCubit(application);
+      addTearDown(sut.close);
+      final book = Audiobook(
+        id: 'book',
+        title: 'Book',
+        filePath: '/book.mp3',
+        durationMs: 120000,
+        addedAt: DateTime(2026),
+      );
 
-        sut.prepare(
-          book: book,
-          chapterTitle: 'Chapter',
-          chapterStart: const Duration(seconds: 30),
-          chapterDuration: const Duration(minutes: 1),
-          anchor: const Duration(seconds: 45),
+      sut.prepare(
+        book: book,
+        chapterTitle: 'Chapter',
+        chapterStart: const Duration(seconds: 30),
+        chapterDuration: const Duration(minutes: 1),
+        anchor: const Duration(seconds: 45),
+      );
+      sut.applyPreset(const Duration(seconds: 15));
+      // WHEN
+      await sut.transcribe();
+
+      // THEN
+      expect(sut.state.status, QuoteTranscriptionStatus.complete);
+      expect(sut.state.draft?.text, 'local quote');
+      expect(sut.state.draft?.start, const Duration(minutes: 1));
+      expect(transcription.selectedModel, 'whisper-base');
+
+      final draft = sut.state.draft;
+      expect(draft, isNotNull);
+      if (draft != null) {
+        await application.shareDraft(
+          draft,
+          'edited quote',
+          subject: 'Quote from Book',
         );
-        sut.applyPreset(const Duration(seconds: 15));
-        // WHEN
-        await sut.transcribe();
-
-        // THEN
-        expect(sut.state.status, QuoteTranscriptionStatus.complete);
-        expect(sut.state.draft?.text, 'local quote');
-        expect(sut.state.draft?.start, const Duration(minutes: 1));
-
-        final draft = sut.state.draft;
-        expect(draft, isNotNull);
-        if (draft != null) {
-          await application.shareDraft(
-            draft,
-            'edited quote',
-            subject: 'Quote from Book',
-          );
-        }
-        expect(sharing.text, contains('edited quote'));
-        expect(sharing.text, contains('Chapter'));
-      },
-    );
+      }
+      expect(sharing.text, contains('edited quote'));
+      expect(sharing.text, contains('Chapter'));
+    });
   });
 }
 
 class _Transcription implements TranscriptionRepository {
+  String? selectedModel;
   @override
   Future<void> downloadModel(
     String slug, {
@@ -74,13 +74,12 @@ class _Transcription implements TranscriptionRepository {
   }) async {}
 
   @override
-  Future<List<SpeechModel>> getModels({bool refresh = true}) async => const [];
+  Future<List<SpeechModel>> listModels() async => const [
+    SpeechModel(slug: 'whisper-base', isDownloaded: true),
+  ];
 
   @override
   Future<bool> isModelDownloaded(String slug) async => true;
-
-  @override
-  Future<void> reset() async {}
 
   @override
   Future<Result<String>> transcribeRange({
@@ -88,7 +87,10 @@ class _Transcription implements TranscriptionRepository {
     required Duration start,
     required Duration end,
     required String model,
-  }) async => const Result.success('local quote');
+  }) async {
+    selectedModel = model;
+    return const Result.success('local quote');
+  }
 }
 
 class _Sharing implements QuoteShareRepository {

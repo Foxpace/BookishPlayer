@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../localization/generated/l10n.dart';
 import '../theme/bookish_theme.dart';

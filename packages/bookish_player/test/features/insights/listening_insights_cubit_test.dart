@@ -13,30 +13,27 @@ import '../../../test_support/support/fakes/fake_clock.dart';
 
 void main() {
   group('Malformed listening metadata', () {
-    test(
-      'Given malformed listening metadata, When listening insights are loaded, Then a typed revisioned failure is emitted',
-      () async {
-        // GIVEN
-        final sut = ListeningInsightsCubit(
-          LoadListeningInsightsUseCase(
-            LibraryListeningInsightsRepository(
-              _BrokenMetadata(),
-              _EmptyHistory(),
-            ),
-            FakeClock(),
+    test('Given malformed listening metadata, When listening insights are loaded, Then a typed revisioned failure is emitted', () async {
+      // GIVEN
+      final sut = ListeningInsightsCubit(
+        LoadListeningInsightsUseCase(
+          LibraryListeningInsightsRepository(
+            _BrokenMetadata(),
+            _EmptyHistory(),
           ),
-        );
-        addTearDown(sut.close);
+          FakeClock(),
+        ),
+      );
+      addTearDown(sut.close);
 
-        // WHEN
-        await sut.load();
+      // WHEN
+      await sut.load();
 
-        // THEN
-        expect(sut.state.status, ListeningInsightsStatus.failure);
-        expect(sut.state.message, AppMessage.listeningInsightsLoadFailed);
-        expect(sut.state.effectRevision, 1);
-      },
-    );
+      // THEN
+      expect(sut.state.status, ListeningInsightsStatus.failure);
+      expect(sut.state.message, AppMessage.listeningInsightsLoadFailed);
+      expect(sut.state.effectRevision, 1);
+    });
   });
 }
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'embedded_audio_metadata.dart';
@@ -9,6 +9,7 @@ part of 'embedded_audio_metadata.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $EmbeddedArtworkCopyWith<EmbeddedArtwork> get copyWith => _$EmbeddedArtworkCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EmbeddedArtwork&&const DeepCollectionEquality().equals(other.bytes, bytes)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType));
+  final _this = this as EmbeddedArtwork;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EmbeddedArtwork&&const DeepCollectionEquality().equals(other.bytes, _this.bytes)&&(identical(other.mimeType, _this.mimeType) || other.mimeType == _this.mimeType));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(bytes),mimeType);
+int get hashCode {
+  final _this = this as EmbeddedArtwork;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.bytes),_this.mimeType);
+}
 
 @override
 String toString() {
-  return 'EmbeddedArtwork(bytes: $bytes, mimeType: $mimeType)';
+  final _this = this as EmbeddedArtwork;
+  return 'EmbeddedArtwork(bytes: ${_this.bytes}, mimeType: ${_this.mimeType})';
 }
 
 
@@ -63,7 +69,7 @@ class _$EmbeddedArtworkCopyWithImpl<$Res>
 /// Create a copy of EmbeddedArtwork
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? bytes = null,Object? mimeType = null,}) {
-  return _then(_self.copyWith(
+  return _then(EmbeddedArtwork(
 bytes: null == bytes ? _self.bytes : bytes // ignore: cast_nullable_to_non_nullable
 as Uint8List,mimeType: null == mimeType ? _self.mimeType : mimeType // ignore: cast_nullable_to_non_nullable
 as String,
@@ -223,16 +229,18 @@ _$EmbeddedArtworkCopyWith<_EmbeddedArtwork> get copyWith => __$EmbeddedArtworkCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EmbeddedArtwork&&const DeepCollectionEquality().equals(other.bytes, bytes)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EmbeddedArtwork&&const DeepCollectionEquality().equals(other.bytes, bytes)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(bytes),mimeType);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(bytes),mimeType);
+}
 
 @override
 String toString() {
-  return 'EmbeddedArtwork(bytes: $bytes, mimeType: $mimeType)';
+    return 'EmbeddedArtwork(bytes: $bytes, mimeType: $mimeType)';
 }
 
 

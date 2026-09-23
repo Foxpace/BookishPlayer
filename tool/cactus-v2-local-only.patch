@@ -1,0 +1,29 @@
+diff --git a/cactus-engine/src/telemetry_impl.cpp b/cactus-engine/src/telemetry_impl.cpp
+index 150440b..dc3ba53 100644
+--- a/cactus-engine/src/telemetry_impl.cpp
++++ b/cactus-engine/src/telemetry_impl.cpp
+@@ -1289,6 +1289,10 @@ static void process_events(const std::vector<Event>& fresh_events) {
+ }
+ 
+ void init(const char* project_id_param, const char* project_scope_param, const char* cloud_key_param) {
++    // Bookish is local-only: do not create identifiers or start telemetry.
++    enabled = false;
++    cloud_disabled = true;
++    return;
+     std::unique_lock<std::mutex> lifecycle_guard(telemetry_mutex);
+     telemetry_lifecycle_cv.wait(lifecycle_guard, [] {
+         return lifecycle_state != TelemetryLifecycleState::ShuttingDown;
+diff --git a/cactus-engine/src/utils.h b/cactus-engine/src/utils.h
+index afc720a..92da5a2 100644
+--- a/cactus-engine/src/utils.h
++++ b/cactus-engine/src/utils.h
+@@ -464,6 +464,9 @@ namespace cactus {
+ namespace ffi {
+ 
+ inline bool env_flag_enabled(const char* key) {
++    // Bookish never permits native cloud handoff.
++    if (std::string(key) == "CACTUS_NO_CLOUD_TELE" ||
++        std::string(key) == "CACTUS_DISABLE_CLOUD_HANDOFF") return true;
+     const char* value = std::getenv(key);
+     return value && value[0] != '\0' && !(value[0] == '0' && value[1] == '\0');
+ }

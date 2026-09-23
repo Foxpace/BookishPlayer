@@ -8,7 +8,7 @@ export 'package:bookish_player/features/player/cubits/player_cubit.dart';
 export 'package:bookish_player/features/player/repos/audio_player_repository.dart';
 export 'package:bookish_player/features/player/ui/player_screen.dart';
 export 'package:bookish_player/features/player/ui/widgets/chapters_sheet.dart';
-export 'package:flutter/material.dart';
+export 'package:material_ui/material_ui.dart';
 export 'package:flutter_bloc/flutter_bloc.dart';
 export 'package:flutter_test/flutter_test.dart';
 

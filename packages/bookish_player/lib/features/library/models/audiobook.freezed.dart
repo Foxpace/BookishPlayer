@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'audiobook.dart';
@@ -9,6 +9,7 @@ part of 'audiobook.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $AudiobookCopyWith<Audiobook> get copyWith => _$AudiobookCopyWithImpl<Audiobook>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Audiobook&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.addedAt, addedAt) || other.addedAt == addedAt)&&(identical(other.metadataId, metadataId) || other.metadataId == metadataId)&&(identical(other.author, author) || other.author == author)&&(identical(other.series, series) || other.series == series)&&(identical(other.narrator, narrator) || other.narrator == narrator)&&(identical(other.year, year) || other.year == year)&&(identical(other.folder, folder) || other.folder == folder)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath)&&(identical(other.artworkScanned, artworkScanned) || other.artworkScanned == artworkScanned)&&(identical(other.positionMs, positionMs) || other.positionMs == positionMs)&&(identical(other.lastPlayedAt, lastPlayedAt) || other.lastPlayedAt == lastPlayedAt)&&(identical(other.playbackSpeed, playbackSpeed) || other.playbackSpeed == playbackSpeed)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.statusOverride, statusOverride) || other.statusOverride == statusOverride)&&(identical(other.seriesPosition, seriesPosition) || other.seriesPosition == seriesPosition)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&const DeepCollectionEquality().equals(other.tracks, tracks)&&const DeepCollectionEquality().equals(other.chapters, chapters));
+  final _this = this as Audiobook;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Audiobook&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.filePath, _this.filePath) || other.filePath == _this.filePath)&&(identical(other.durationMs, _this.durationMs) || other.durationMs == _this.durationMs)&&(identical(other.addedAt, _this.addedAt) || other.addedAt == _this.addedAt)&&(identical(other.metadataId, _this.metadataId) || other.metadataId == _this.metadataId)&&(identical(other.author, _this.author) || other.author == _this.author)&&(identical(other.series, _this.series) || other.series == _this.series)&&(identical(other.narrator, _this.narrator) || other.narrator == _this.narrator)&&(identical(other.year, _this.year) || other.year == _this.year)&&(identical(other.folder, _this.folder) || other.folder == _this.folder)&&(identical(other.artworkPath, _this.artworkPath) || other.artworkPath == _this.artworkPath)&&(identical(other.artworkScanned, _this.artworkScanned) || other.artworkScanned == _this.artworkScanned)&&(identical(other.positionMs, _this.positionMs) || other.positionMs == _this.positionMs)&&(identical(other.lastPlayedAt, _this.lastPlayedAt) || other.lastPlayedAt == _this.lastPlayedAt)&&(identical(other.playbackSpeed, _this.playbackSpeed) || other.playbackSpeed == _this.playbackSpeed)&&(identical(other.isFavorite, _this.isFavorite) || other.isFavorite == _this.isFavorite)&&(identical(other.statusOverride, _this.statusOverride) || other.statusOverride == _this.statusOverride)&&(identical(other.seriesPosition, _this.seriesPosition) || other.seriesPosition == _this.seriesPosition)&&(identical(other.completedAt, _this.completedAt) || other.completedAt == _this.completedAt)&&const DeepCollectionEquality().equals(other.tracks, _this.tracks)&&const DeepCollectionEquality().equals(other.chapters, _this.chapters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,title,filePath,durationMs,addedAt,metadataId,author,series,narrator,year,folder,artworkPath,artworkScanned,positionMs,lastPlayedAt,playbackSpeed,isFavorite,statusOverride,seriesPosition,completedAt,const DeepCollectionEquality().hash(tracks),const DeepCollectionEquality().hash(chapters)]);
+int get hashCode {
+  final _this = this as Audiobook;
+  return Object.hashAll([runtimeType,_this.id,_this.title,_this.filePath,_this.durationMs,_this.addedAt,_this.metadataId,_this.author,_this.series,_this.narrator,_this.year,_this.folder,_this.artworkPath,_this.artworkScanned,_this.positionMs,_this.lastPlayedAt,_this.playbackSpeed,_this.isFavorite,_this.statusOverride,_this.seriesPosition,_this.completedAt,const DeepCollectionEquality().hash(_this.tracks),const DeepCollectionEquality().hash(_this.chapters)]);
+}
 
 @override
 String toString() {
-  return 'Audiobook(id: $id, title: $title, filePath: $filePath, durationMs: $durationMs, addedAt: $addedAt, metadataId: $metadataId, author: $author, series: $series, narrator: $narrator, year: $year, folder: $folder, artworkPath: $artworkPath, artworkScanned: $artworkScanned, positionMs: $positionMs, lastPlayedAt: $lastPlayedAt, playbackSpeed: $playbackSpeed, isFavorite: $isFavorite, statusOverride: $statusOverride, seriesPosition: $seriesPosition, completedAt: $completedAt, tracks: $tracks, chapters: $chapters)';
+  final _this = this as Audiobook;
+  return 'Audiobook(id: ${_this.id}, title: ${_this.title}, filePath: ${_this.filePath}, durationMs: ${_this.durationMs}, addedAt: ${_this.addedAt}, metadataId: ${_this.metadataId}, author: ${_this.author}, series: ${_this.series}, narrator: ${_this.narrator}, year: ${_this.year}, folder: ${_this.folder}, artworkPath: ${_this.artworkPath}, artworkScanned: ${_this.artworkScanned}, positionMs: ${_this.positionMs}, lastPlayedAt: ${_this.lastPlayedAt}, playbackSpeed: ${_this.playbackSpeed}, isFavorite: ${_this.isFavorite}, statusOverride: ${_this.statusOverride}, seriesPosition: ${_this.seriesPosition}, completedAt: ${_this.completedAt}, tracks: ${_this.tracks}, chapters: ${_this.chapters})';
 }
 
 
@@ -66,7 +72,7 @@ class _$AudiobookCopyWithImpl<$Res>
 /// Create a copy of Audiobook
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? filePath = null,Object? durationMs = null,Object? addedAt = null,Object? metadataId = null,Object? author = null,Object? series = null,Object? narrator = null,Object? year = freezed,Object? folder = null,Object? artworkPath = freezed,Object? artworkScanned = null,Object? positionMs = null,Object? lastPlayedAt = freezed,Object? playbackSpeed = null,Object? isFavorite = null,Object? statusOverride = freezed,Object? seriesPosition = freezed,Object? completedAt = freezed,Object? tracks = null,Object? chapters = null,}) {
-  return _then(_self.copyWith(
+  return _then(Audiobook(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,filePath: null == filePath ? _self.filePath : filePath // ignore: cast_nullable_to_non_nullable
@@ -230,7 +236,7 @@ return $default(_that.id,_that.title,_that.filePath,_that.durationMs,_that.added
 @JsonSerializable()
 
 class _Audiobook implements Audiobook {
-  const _Audiobook({required this.id, required this.title, required this.filePath, required this.durationMs, required this.addedAt, this.metadataId = '', this.author = '', this.series = '', this.narrator = '', this.year, this.folder = 'Imported', this.artworkPath, this.artworkScanned = false, this.positionMs = 0, this.lastPlayedAt, this.playbackSpeed = 1.0, this.isFavorite = false, this.statusOverride, this.seriesPosition, this.completedAt, final  List<AudioTrack> tracks = const <AudioTrack>[], final  List<AudioChapter> chapters = const <AudioChapter>[]}): _tracks = tracks,_chapters = chapters;
+  const _Audiobook({required this.id, required this.title, required this.filePath, required this.durationMs, required this.addedAt, this.metadataId = '', this.author = '', this.series = '', this.narrator = '', this.year, this.folder = 'Imported', this.artworkPath, this.artworkScanned = false, this.positionMs = 0, this.lastPlayedAt, this.playbackSpeed = 1.0, this.isFavorite = false, this.statusOverride, this.seriesPosition, this.completedAt,  List<AudioTrack> tracks = const <AudioTrack>[],  List<AudioChapter> chapters = const <AudioChapter>[]}): _tracks = tracks,_chapters = chapters;
   factory _Audiobook.fromJson(Map<String, dynamic> json) => _$AudiobookFromJson(json);
 
 @override final  String id;
@@ -281,16 +287,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Audiobook&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.addedAt, addedAt) || other.addedAt == addedAt)&&(identical(other.metadataId, metadataId) || other.metadataId == metadataId)&&(identical(other.author, author) || other.author == author)&&(identical(other.series, series) || other.series == series)&&(identical(other.narrator, narrator) || other.narrator == narrator)&&(identical(other.year, year) || other.year == year)&&(identical(other.folder, folder) || other.folder == folder)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath)&&(identical(other.artworkScanned, artworkScanned) || other.artworkScanned == artworkScanned)&&(identical(other.positionMs, positionMs) || other.positionMs == positionMs)&&(identical(other.lastPlayedAt, lastPlayedAt) || other.lastPlayedAt == lastPlayedAt)&&(identical(other.playbackSpeed, playbackSpeed) || other.playbackSpeed == playbackSpeed)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.statusOverride, statusOverride) || other.statusOverride == statusOverride)&&(identical(other.seriesPosition, seriesPosition) || other.seriesPosition == seriesPosition)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&const DeepCollectionEquality().equals(other._tracks, _tracks)&&const DeepCollectionEquality().equals(other._chapters, _chapters));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Audiobook&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.addedAt, addedAt) || other.addedAt == addedAt)&&(identical(other.metadataId, metadataId) || other.metadataId == metadataId)&&(identical(other.author, author) || other.author == author)&&(identical(other.series, series) || other.series == series)&&(identical(other.narrator, narrator) || other.narrator == narrator)&&(identical(other.year, year) || other.year == year)&&(identical(other.folder, folder) || other.folder == folder)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath)&&(identical(other.artworkScanned, artworkScanned) || other.artworkScanned == artworkScanned)&&(identical(other.positionMs, positionMs) || other.positionMs == positionMs)&&(identical(other.lastPlayedAt, lastPlayedAt) || other.lastPlayedAt == lastPlayedAt)&&(identical(other.playbackSpeed, playbackSpeed) || other.playbackSpeed == playbackSpeed)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.statusOverride, statusOverride) || other.statusOverride == statusOverride)&&(identical(other.seriesPosition, seriesPosition) || other.seriesPosition == seriesPosition)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&const DeepCollectionEquality().equals(other.tracks, _tracks)&&const DeepCollectionEquality().equals(other.chapters, _chapters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,title,filePath,durationMs,addedAt,metadataId,author,series,narrator,year,folder,artworkPath,artworkScanned,positionMs,lastPlayedAt,playbackSpeed,isFavorite,statusOverride,seriesPosition,completedAt,const DeepCollectionEquality().hash(_tracks),const DeepCollectionEquality().hash(_chapters)]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,title,filePath,durationMs,addedAt,metadataId,author,series,narrator,year,folder,artworkPath,artworkScanned,positionMs,lastPlayedAt,playbackSpeed,isFavorite,statusOverride,seriesPosition,completedAt,const DeepCollectionEquality().hash(_tracks),const DeepCollectionEquality().hash(_chapters)]);
+}
 
 @override
 String toString() {
-  return 'Audiobook(id: $id, title: $title, filePath: $filePath, durationMs: $durationMs, addedAt: $addedAt, metadataId: $metadataId, author: $author, series: $series, narrator: $narrator, year: $year, folder: $folder, artworkPath: $artworkPath, artworkScanned: $artworkScanned, positionMs: $positionMs, lastPlayedAt: $lastPlayedAt, playbackSpeed: $playbackSpeed, isFavorite: $isFavorite, statusOverride: $statusOverride, seriesPosition: $seriesPosition, completedAt: $completedAt, tracks: $tracks, chapters: $chapters)';
+    return 'Audiobook(id: $id, title: $title, filePath: $filePath, durationMs: $durationMs, addedAt: $addedAt, metadataId: $metadataId, author: $author, series: $series, narrator: $narrator, year: $year, folder: $folder, artworkPath: $artworkPath, artworkScanned: $artworkScanned, positionMs: $positionMs, lastPlayedAt: $lastPlayedAt, playbackSpeed: $playbackSpeed, isFavorite: $isFavorite, statusOverride: $statusOverride, seriesPosition: $seriesPosition, completedAt: $completedAt, tracks: $tracks, chapters: $chapters)';
 }
 
 

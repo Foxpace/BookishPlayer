@@ -29,7 +29,7 @@
   </tr>
 </table>
 
-Screens use the public-domain LibriVox recording of [*Alice's Adventures in Wonderland*](https://librivox.org/alices-adventures-in-wonderland-by-lewis-carroll-5/).
+Screens use the public-domain LibriVox recording of [_Alice's Adventures in Wonderland_](https://librivox.org/alices-adventures-in-wonderland-by-lewis-carroll-5/).
 
 Bookish treats an audiobook as a book, not a loose playlist. Import it once, keep it on the device, and return to the exact chapter and position later. Notes, history, covers, preferences, and backups remain local too.
 
@@ -64,7 +64,8 @@ for module and dependency rules.
 
 ## Development
 
-Install Flutter and the platform toolchain for Android or iOS, then run:
+Use Flutter 3.47 or newer with Dart 3.13 or newer. Android builds require
+SDK 37 and use AGP 9.1.1 with Gradle 9.3.1. Install the platform toolchain, then run:
 
 ```sh
 flutter pub get
@@ -89,6 +90,10 @@ Use `./tool/build_store.sh android` or `./tool/build_store.sh ios` for guarded
 store builds. CI must create its own local signing file before iOS builds.
 
 Run `bash tool/test_store_dependencies.sh` to test the store dependency guard.
+
+The internal app builds its pinned native Cactus runtime through a Flutter build
+hook. See [the adapter setup guide](packages/bookish_cactus_transcription/README.md)
+for fresh-clone steps, supported targets, and caveats.
 
 Run adapter tests with `flutter test` from
 `packages/bookish_cactus_transcription`.

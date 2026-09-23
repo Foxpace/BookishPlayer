@@ -3,7 +3,7 @@ import 'package:bookish_player/features/editing/cubits/metadata_editor_state.dar
 import 'package:bookish_player/features/editing/ui/metadata_editor_screen.dart';
 import 'package:bookish_player/features/editing/ui/widgets/chapter_editor_dialog.dart';
 import 'package:bookish_player/features/library/models/library_models.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 

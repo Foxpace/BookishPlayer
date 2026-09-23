@@ -18,40 +18,34 @@ void main() {
 
     tearDown(() => sut.close());
 
-    test(
-      'Given a voice-note transcription port, When listening starts, updates, and stops, Then immutable state follows the spoken text lifecycle',
-      () async {
-        // GIVEN
-        await sut.toggle();
-        speech.emitText('Remember this');
-        // WHEN
-        await sut.toggle();
+    test('Given a voice-note transcription port, When listening starts, updates, and stops, Then immutable state follows the spoken text lifecycle', () async {
+      // GIVEN
+      await sut.toggle();
+      speech.emitText('Remember this');
+      // WHEN
+      await sut.toggle();
 
-        // THEN
-        expect(sut.state.status, VoiceNoteStatus.idle);
-        expect(sut.state.text, 'Remember this');
-        expect(speech.stopCalls, 1);
-      },
-    );
+      // THEN
+      expect(sut.state.status, VoiceNoteStatus.idle);
+      expect(sut.state.text, 'Remember this');
+      expect(speech.stopCalls, 1);
+    });
 
-    test(
-      'Given a voice-note transcription port, When speech recognition is unavailable or fails, Then typed revisioned failures are emitted',
-      () async {
-        // GIVEN
-        speech.available = false;
-        // WHEN
-        await sut.toggle();
-        // THEN
-        expect(sut.state.message, AppMessage.speechRecognitionUnavailable);
-        expect(sut.state.effectRevision, 1);
+    test('Given a voice-note transcription port, When speech recognition is unavailable or fails, Then typed revisioned failures are emitted', () async {
+      // GIVEN
+      speech.available = false;
+      // WHEN
+      await sut.toggle();
+      // THEN
+      expect(sut.state.message, AppMessage.speechRecognitionUnavailable);
+      expect(sut.state.effectRevision, 1);
 
-        speech.available = true;
-        await sut.toggle();
-        speech.emitError('failed');
-        expect(sut.state.message, AppMessage.speechRecognitionFailed);
-        expect(sut.state.effectRevision, 2);
-      },
-    );
+      speech.available = true;
+      await sut.toggle();
+      speech.emitError('failed');
+      expect(sut.state.message, AppMessage.speechRecognitionFailed);
+      expect(sut.state.effectRevision, 2);
+    });
   });
 }
 

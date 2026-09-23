@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -51,9 +51,8 @@ class StorageAssistantScreenRoot extends StatelessWidget {
   void _showMessage(BuildContext context, StorageAssistantState state) {
     final message = state.message;
     if (message != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message.localize(context))));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message.localize(context))));
     }
   }
 

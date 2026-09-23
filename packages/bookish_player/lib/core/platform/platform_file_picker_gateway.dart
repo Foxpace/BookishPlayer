@@ -7,11 +7,8 @@ import 'file_picker_gateway.dart';
 import 'picked_local_file.dart';
 
 extension _PlatformFilePickedLocalFile on PlatformFile {
-  PickedLocalFile get pickedLocalFile => PickedLocalFile(
-    name: name,
-    path: path,
-    sizeBytes: lengthSync(),
-  );
+  PickedLocalFile get pickedLocalFile =>
+      PickedLocalFile(name: name, path: path, sizeBytes: lengthSync());
 }
 
 @LazySingleton(as: FilePickerGateway)

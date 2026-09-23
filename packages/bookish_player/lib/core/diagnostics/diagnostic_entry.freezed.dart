@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'diagnostic_entry.dart';
@@ -9,6 +9,7 @@ part of 'diagnostic_entry.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $DiagnosticEntryCopyWith<DiagnosticEntry> get copyWith => _$DiagnosticEntryCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosticEntry&&(identical(other.time, time) || other.time == time)&&(identical(other.operation, operation) || other.operation == operation)&&(identical(other.errorType, errorType) || other.errorType == errorType)&&(identical(other.stack, stack) || other.stack == stack)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.platformVersion, platformVersion) || other.platformVersion == platformVersion)&&(identical(other.build, build) || other.build == build)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.context, context)&&const DeepCollectionEquality().equals(other.history, history)&&const DeepCollectionEquality().equals(other.diagnostics, diagnostics));
+  final _this = this as DiagnosticEntry;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosticEntry&&(identical(other.time, _this.time) || other.time == _this.time)&&(identical(other.operation, _this.operation) || other.operation == _this.operation)&&(identical(other.errorType, _this.errorType) || other.errorType == _this.errorType)&&(identical(other.stack, _this.stack) || other.stack == _this.stack)&&(identical(other.platform, _this.platform) || other.platform == _this.platform)&&(identical(other.platformVersion, _this.platformVersion) || other.platformVersion == _this.platformVersion)&&(identical(other.build, _this.build) || other.build == _this.build)&&(identical(other.message, _this.message) || other.message == _this.message)&&const DeepCollectionEquality().equals(other.context, _this.context)&&const DeepCollectionEquality().equals(other.history, _this.history)&&const DeepCollectionEquality().equals(other.diagnostics, _this.diagnostics));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,time,operation,errorType,stack,platform,platformVersion,build,message,const DeepCollectionEquality().hash(context),const DeepCollectionEquality().hash(history),const DeepCollectionEquality().hash(diagnostics));
+int get hashCode {
+  final _this = this as DiagnosticEntry;
+  return Object.hash(runtimeType,_this.time,_this.operation,_this.errorType,_this.stack,_this.platform,_this.platformVersion,_this.build,_this.message,const DeepCollectionEquality().hash(_this.context),const DeepCollectionEquality().hash(_this.history),const DeepCollectionEquality().hash(_this.diagnostics));
+}
 
 @override
 String toString() {
-  return 'DiagnosticEntry(time: $time, operation: $operation, errorType: $errorType, stack: $stack, platform: $platform, platformVersion: $platformVersion, build: $build, message: $message, context: $context, history: $history, diagnostics: $diagnostics)';
+  final _this = this as DiagnosticEntry;
+  return 'DiagnosticEntry(time: ${_this.time}, operation: ${_this.operation}, errorType: ${_this.errorType}, stack: ${_this.stack}, platform: ${_this.platform}, platformVersion: ${_this.platformVersion}, build: ${_this.build}, message: ${_this.message}, context: ${_this.context}, history: ${_this.history}, diagnostics: ${_this.diagnostics})';
 }
 
 
@@ -66,7 +72,7 @@ class _$DiagnosticEntryCopyWithImpl<$Res>
 /// Create a copy of DiagnosticEntry
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? time = null,Object? operation = null,Object? errorType = null,Object? stack = null,Object? platform = null,Object? platformVersion = null,Object? build = null,Object? message = freezed,Object? context = null,Object? history = null,Object? diagnostics = null,}) {
-  return _then(_self.copyWith(
+  return _then(DiagnosticEntry(
 time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,operation: null == operation ? _self.operation : operation // ignore: cast_nullable_to_non_nullable
 as String,errorType: null == errorType ? _self.errorType : errorType // ignore: cast_nullable_to_non_nullable
@@ -219,7 +225,7 @@ return $default(_that.time,_that.operation,_that.errorType,_that.stack,_that.pla
 @JsonSerializable()
 
 class _DiagnosticEntry extends DiagnosticEntry {
-  const _DiagnosticEntry({required this.time, required this.operation, required this.errorType, required this.stack, required this.platform, required this.platformVersion, required this.build, this.message, final  Map<String, String> context = const <String, String>{}, final  List<String> history = const <String>[], final  List<String> diagnostics = const <String>[]}): _context = context,_history = history,_diagnostics = diagnostics,super._();
+  const _DiagnosticEntry({required this.time, required this.operation, required this.errorType, required this.stack, required this.platform, required this.platformVersion, required this.build, this.message,  Map<String, String> context = const <String, String>{},  List<String> history = const <String>[],  List<String> diagnostics = const <String>[]}): _context = context,_history = history,_diagnostics = diagnostics,super._();
   factory _DiagnosticEntry.fromJson(Map<String, dynamic> json) => _$DiagnosticEntryFromJson(json);
 
 @override final  String time;
@@ -265,16 +271,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DiagnosticEntry&&(identical(other.time, time) || other.time == time)&&(identical(other.operation, operation) || other.operation == operation)&&(identical(other.errorType, errorType) || other.errorType == errorType)&&(identical(other.stack, stack) || other.stack == stack)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.platformVersion, platformVersion) || other.platformVersion == platformVersion)&&(identical(other.build, build) || other.build == build)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._context, _context)&&const DeepCollectionEquality().equals(other._history, _history)&&const DeepCollectionEquality().equals(other._diagnostics, _diagnostics));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _DiagnosticEntry&&(identical(other.time, time) || other.time == time)&&(identical(other.operation, operation) || other.operation == operation)&&(identical(other.errorType, errorType) || other.errorType == errorType)&&(identical(other.stack, stack) || other.stack == stack)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.platformVersion, platformVersion) || other.platformVersion == platformVersion)&&(identical(other.build, build) || other.build == build)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.context, _context)&&const DeepCollectionEquality().equals(other.history, _history)&&const DeepCollectionEquality().equals(other.diagnostics, _diagnostics));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,time,operation,errorType,stack,platform,platformVersion,build,message,const DeepCollectionEquality().hash(_context),const DeepCollectionEquality().hash(_history),const DeepCollectionEquality().hash(_diagnostics));
+int get hashCode {
+    return Object.hash(runtimeType,time,operation,errorType,stack,platform,platformVersion,build,message,const DeepCollectionEquality().hash(_context),const DeepCollectionEquality().hash(_history),const DeepCollectionEquality().hash(_diagnostics));
+}
 
 @override
 String toString() {
-  return 'DiagnosticEntry(time: $time, operation: $operation, errorType: $errorType, stack: $stack, platform: $platform, platformVersion: $platformVersion, build: $build, message: $message, context: $context, history: $history, diagnostics: $diagnostics)';
+    return 'DiagnosticEntry(time: $time, operation: $operation, errorType: $errorType, stack: $stack, platform: $platform, platformVersion: $platformVersion, build: $build, message: $message, context: $context, history: $history, diagnostics: $diagnostics)';
 }
 
 

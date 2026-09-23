@@ -7,9 +7,8 @@ import 'package:bookish_player/features/library/cubits/library_cubit.dart';
 import 'package:bookish_player/features/library/ui/library_screen.dart';
 import 'package:bookish_player/features/library/cubits/library_cubits.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../test_support/support/fakes/fake_library_test_support.dart';
@@ -30,45 +29,39 @@ void main() {
 
     tearDown(() => sut.close());
 
-    test(
-      'Given the library cubit, When its behavior is exercised, Then library layout is an intent-backed persisted state value',
-      () async {
-        // WHEN
-        await sut.setLayout(LibraryLayout.grid);
+    test('Given the library cubit, When its behavior is exercised, Then library layout is an intent-backed persisted state value', () async {
+      // WHEN
+      await sut.setLayout(LibraryLayout.grid);
 
-        // THEN
-        expect(sut.state.layout, LibraryLayout.grid);
-        expect(settings.layout, 'grid');
-      },
-    );
+      // THEN
+      expect(sut.state.layout, LibraryLayout.grid);
+      expect(settings.layout, 'grid');
+    });
 
-    test(
-      'Given the library cubit, When its behavior is exercised, Then search, filters, sorting, favorites, and shelf status compose',
-      () async {
-        // GIVEN
-        books.books = _searchableBooks();
-        final [alpha, beta] = books.books;
-        await sut.load();
+    test('Given the library cubit, When its behavior is exercised, Then search, filters, sorting, favorites, and shelf status compose', () async {
+      // GIVEN
+      books.books = _searchableBooks();
+      final [alpha, beta] = books.books;
+      await sut.load();
 
-        // WHEN
-        sut.setQuery('writer');
-        // THEN
-        expect(sut.state.sections.single.books.single.id, 'a');
-        sut.setQuery('');
-        await sut.toggleFavorite(beta);
-        sut.setFilter(LibraryFilter.favorites);
-        expect(sut.state.sections.single.books.single.id, 'b');
-        await sut.setListeningStatus(beta, ListeningStatus.wantToListen);
-        sut.setFilter(LibraryFilter.wantToListen);
-        expect(sut.state.sections.single.books.single.id, 'b');
-        sut.setFilter(LibraryFilter.all);
-        sut.setSort(LibrarySort.title);
-        expect(sut.state.sections.single.books.map((book) => book.id), [
-          'a',
-          'b',
-        ]);
-      },
-    );
+      // WHEN
+      sut.setQuery('writer');
+      // THEN
+      expect(sut.state.sections.single.books.single.id, 'a');
+      sut.setQuery('');
+      await sut.toggleFavorite(beta);
+      sut.setFilter(LibraryFilter.favorites);
+      expect(sut.state.sections.single.books.single.id, 'b');
+      await sut.setListeningStatus(beta, ListeningStatus.wantToListen);
+      sut.setFilter(LibraryFilter.wantToListen);
+      expect(sut.state.sections.single.books.single.id, 'b');
+      sut.setFilter(LibraryFilter.all);
+      sut.setSort(LibrarySort.title);
+      expect(sut.state.sections.single.books.map((book) => book.id), [
+        'a',
+        'b',
+      ]);
+    });
 
     testWidgets(
       'Given the library cubit, When its behavior is exercised, Then finished books are labelled in the library',
@@ -97,9 +90,7 @@ void main() {
             child: MaterialApp(
               localizationsDelegates: const [
                 S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
+                ...GlobalMaterialLocalizations.delegates,
               ],
               supportedLocales: S.delegate.supportedLocales,
               home: _libraryScreen(sut),
@@ -133,9 +124,7 @@ void main() {
               routerConfig: router,
               localizationsDelegates: const [
                 S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
+                ...GlobalMaterialLocalizations.delegates,
               ],
               supportedLocales: S.delegate.supportedLocales,
             ),

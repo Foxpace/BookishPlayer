@@ -4,7 +4,7 @@ import 'package:bookish_player/core/presentation/app_message.dart';
 import 'package:bookish_player/features/storage/cubits/storage_assistant_cubit.dart';
 import 'package:bookish_player/features/storage/cubits/storage_assistant_state.dart';
 import 'package:bookish_player/features/storage/ui/storage_assistant_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -28,9 +28,8 @@ class StorageAssistantTestHarness extends StatelessWidget {
       listener: (context, state) {
         final message = state.message;
         if (message != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message.localize(context))));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message.localize(context))));
         }
       },
       builder: (context, state) => StorageAssistantScreen(

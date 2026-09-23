@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'import_failed_item.dart';
@@ -9,6 +9,7 @@ part of 'import_failed_item.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ImportFailedItemCopyWith<ImportFailedItem> get copyWith => _$ImportFailedItemCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportFailedItem&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.kind, kind) || other.kind == kind));
+  final _this = this as ImportFailedItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportFailedItem&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName)&&(identical(other.stage, _this.stage) || other.stage == _this.stage)&&(identical(other.kind, _this.kind) || other.kind == _this.kind));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,displayName,stage,kind);
+int get hashCode {
+  final _this = this as ImportFailedItem;
+  return Object.hash(runtimeType,_this.displayName,_this.stage,_this.kind);
+}
 
 @override
 String toString() {
-  return 'ImportFailedItem(displayName: $displayName, stage: $stage, kind: $kind)';
+  final _this = this as ImportFailedItem;
+  return 'ImportFailedItem(displayName: ${_this.displayName}, stage: ${_this.stage}, kind: ${_this.kind})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ImportFailedItemCopyWithImpl<$Res>
 /// Create a copy of ImportFailedItem
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? displayName = null,Object? stage = null,Object? kind = null,}) {
-  return _then(_self.copyWith(
+  return _then(ImportFailedItem(
 displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,stage: null == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable
 as ImportStage,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
@@ -225,16 +231,18 @@ _$ImportFailedItemCopyWith<_ImportFailedItem> get copyWith => __$ImportFailedIte
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportFailedItem&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.kind, kind) || other.kind == kind));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportFailedItem&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.kind, kind) || other.kind == kind));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,displayName,stage,kind);
+int get hashCode {
+    return Object.hash(runtimeType,displayName,stage,kind);
+}
 
 @override
 String toString() {
-  return 'ImportFailedItem(displayName: $displayName, stage: $stage, kind: $kind)';
+    return 'ImportFailedItem(displayName: $displayName, stage: $stage, kind: $kind)';
 }
 
 

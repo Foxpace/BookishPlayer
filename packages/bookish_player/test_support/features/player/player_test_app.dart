@@ -1,6 +1,6 @@
 import 'package:bookish_player/core/localization/generated/l10n.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
+
 import 'player_test_support.dart';
 
 class PlayerTestApp extends StatelessWidget {
@@ -15,9 +15,7 @@ class PlayerTestApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       localizationsDelegates: const [
         S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
       ],
       supportedLocales: S.delegate.supportedLocales,
       home: home,

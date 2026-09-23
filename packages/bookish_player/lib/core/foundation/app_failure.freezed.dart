@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'app_failure.dart';
@@ -9,6 +9,7 @@ part of 'app_failure.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $AppFailureCopyWith<AppFailure> get copyWith => _$AppFailureCopyWithImpl<AppFail
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppFailure&&(identical(other.detail, detail) || other.detail == detail)&&const DeepCollectionEquality().equals(other.error, error));
+  final _this = this as AppFailure;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppFailure&&(identical(other.detail, _this.detail) || other.detail == _this.detail)&&const DeepCollectionEquality().equals(other.error, _this.error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,detail,const DeepCollectionEquality().hash(error));
+int get hashCode {
+  final _this = this as AppFailure;
+  return Object.hash(runtimeType,_this.detail,const DeepCollectionEquality().hash(_this.error));
+}
 
 @override
 String toString() {
-  return 'AppFailure(detail: $detail, error: $error)';
+  final _this = this as AppFailure;
+  return 'AppFailure(detail: ${_this.detail}, error: ${_this.error})';
 }
 
 
@@ -234,16 +240,18 @@ $CancelledFailureCopyWith<CancelledFailure> get copyWith => _$CancelledFailureCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CancelledFailure&&(identical(other.detail, detail) || other.detail == detail)&&const DeepCollectionEquality().equals(other.error, error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CancelledFailure&&(identical(other.detail, detail) || other.detail == detail)&&const DeepCollectionEquality().equals(other.error, error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,detail,const DeepCollectionEquality().hash(error));
+int get hashCode {
+    return Object.hash(runtimeType,detail,const DeepCollectionEquality().hash(error));
+}
 
 @override
 String toString() {
-  return 'AppFailure.cancelled(detail: $detail, error: $error)';
+    return 'AppFailure.cancelled(detail: $detail, error: $error)';
 }
 
 
@@ -301,16 +309,18 @@ $NotFoundFailureCopyWith<NotFoundFailure> get copyWith => _$NotFoundFailureCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotFoundFailure&&(identical(other.detail, detail) || other.detail == detail)&&const DeepCollectionEquality().equals(other.error, error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is NotFoundFailure&&(identical(other.detail, detail) || other.detail == detail)&&const DeepCollectionEquality().equals(other.error, error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,detail,const DeepCollectionEquality().hash(error));
+int get hashCode {
+    return Object.hash(runtimeType,detail,const DeepCollectionEquality().hash(error));
+}
 
 @override
 String toString() {
-  return 'AppFailure.notFound(detail: $detail, error: $error)';
+    return 'AppFailure.notFound(detail: $detail, error: $error)';
 }
 
 
@@ -368,16 +378,18 @@ $InvalidDataFailureCopyWith<InvalidDataFailure> get copyWith => _$InvalidDataFai
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InvalidDataFailure&&(identical(other.detail, detail) || other.detail == detail)&&const DeepCollectionEquality().equals(other.error, error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is InvalidDataFailure&&(identical(other.detail, detail) || other.detail == detail)&&const DeepCollectionEquality().equals(other.error, error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,detail,const DeepCollectionEquality().hash(error));
+int get hashCode {
+    return Object.hash(runtimeType,detail,const DeepCollectionEquality().hash(error));
+}
 
 @override
 String toString() {
-  return 'AppFailure.invalidData(detail: $detail, error: $error)';
+    return 'AppFailure.invalidData(detail: $detail, error: $error)';
 }
 
 
@@ -435,16 +447,18 @@ $OperationFailureCopyWith<OperationFailure> get copyWith => _$OperationFailureCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OperationFailure&&(identical(other.detail, detail) || other.detail == detail)&&const DeepCollectionEquality().equals(other.error, error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is OperationFailure&&(identical(other.detail, detail) || other.detail == detail)&&const DeepCollectionEquality().equals(other.error, error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,detail,const DeepCollectionEquality().hash(error));
+int get hashCode {
+    return Object.hash(runtimeType,detail,const DeepCollectionEquality().hash(error));
+}
 
 @override
 String toString() {
-  return 'AppFailure.operationFailed(detail: $detail, error: $error)';
+    return 'AppFailure.operationFailed(detail: $detail, error: $error)';
 }
 
 

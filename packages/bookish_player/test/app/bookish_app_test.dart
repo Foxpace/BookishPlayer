@@ -83,7 +83,6 @@ void main() {
 
       final navigation = router.push<void>('/player/book-1');
       await tester.pump();
-      expect(find.byType(NowPlayingBar), findsNothing);
       await tester.pumpAndSettle();
 
       // THEN

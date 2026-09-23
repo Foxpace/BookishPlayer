@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'player_chapter.dart';
@@ -9,6 +9,7 @@ part of 'player_chapter.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $PlayerChapterCopyWith<PlayerChapter> get copyWith => _$PlayerChapterCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayerChapter&&(identical(other.index, index) || other.index == index)&&(identical(other.title, title) || other.title == title)&&(identical(other.start, start) || other.start == start)&&(identical(other.duration, duration) || other.duration == duration));
+  final _this = this as PlayerChapter;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayerChapter&&(identical(other.index, _this.index) || other.index == _this.index)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.start, _this.start) || other.start == _this.start)&&(identical(other.duration, _this.duration) || other.duration == _this.duration));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,index,title,start,duration);
+int get hashCode {
+  final _this = this as PlayerChapter;
+  return Object.hash(runtimeType,_this.index,_this.title,_this.start,_this.duration);
+}
 
 @override
 String toString() {
-  return 'PlayerChapter(index: $index, title: $title, start: $start, duration: $duration)';
+  final _this = this as PlayerChapter;
+  return 'PlayerChapter(index: ${_this.index}, title: ${_this.title}, start: ${_this.start}, duration: ${_this.duration})';
 }
 
 
@@ -63,7 +69,7 @@ class _$PlayerChapterCopyWithImpl<$Res>
 /// Create a copy of PlayerChapter
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? index = null,Object? title = null,Object? start = null,Object? duration = null,}) {
-  return _then(_self.copyWith(
+  return _then(PlayerChapter(
 index: null == index ? _self.index : index // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,start: null == start ? _self.start : start // ignore: cast_nullable_to_non_nullable
@@ -227,16 +233,18 @@ _$PlayerChapterCopyWith<_PlayerChapter> get copyWith => __$PlayerChapterCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayerChapter&&(identical(other.index, index) || other.index == index)&&(identical(other.title, title) || other.title == title)&&(identical(other.start, start) || other.start == start)&&(identical(other.duration, duration) || other.duration == duration));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayerChapter&&(identical(other.index, index) || other.index == index)&&(identical(other.title, title) || other.title == title)&&(identical(other.start, start) || other.start == start)&&(identical(other.duration, duration) || other.duration == duration));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,index,title,start,duration);
+int get hashCode {
+    return Object.hash(runtimeType,index,title,start,duration);
+}
 
 @override
 String toString() {
-  return 'PlayerChapter(index: $index, title: $title, start: $start, duration: $duration)';
+    return 'PlayerChapter(index: $index, title: $title, start: $start, duration: $duration)';
 }
 
 

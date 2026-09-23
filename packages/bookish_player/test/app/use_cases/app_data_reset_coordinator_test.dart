@@ -4,59 +4,47 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Application data reset', () {
-    test(
-      'Given available reset steps, When reset runs, Then operations complete in dependency order',
-      () async {
-        // GIVEN
-        final steps = _ResetSteps();
-        final sut = steps.build();
-        // WHEN
-        final outcome = await sut.reset();
-        // THEN
-        expect(outcome, AppDataResetOutcome.completed);
-        expect(steps.calls, ['playback', 'delete', 'settings']);
-      },
-    );
+    test('Given available reset steps, When reset runs, Then operations complete in dependency order', () async {
+      // GIVEN
+      final steps = _ResetSteps();
+      final sut = steps.build();
+      // WHEN
+      final outcome = await sut.reset();
+      // THEN
+      expect(outcome, AppDataResetOutcome.completed);
+      expect(steps.calls, ['playback', 'delete', 'settings']);
+    });
 
-    test(
-      'Given playback reset failure, When reset runs, Then persistent deletion does not start',
-      () async {
-        // GIVEN
-        final steps = _ResetSteps(failure: _ResetStep.playback);
-        // WHEN
-        final outcome = await steps.build().reset();
-        // THEN
-        expect(outcome, AppDataResetOutcome.playbackResetFailed);
-        expect(steps.calls, ['playback']);
-      },
-    );
+    test('Given playback reset failure, When reset runs, Then persistent deletion does not start', () async {
+      // GIVEN
+      final steps = _ResetSteps(failure: _ResetStep.playback);
+      // WHEN
+      final outcome = await steps.build().reset();
+      // THEN
+      expect(outcome, AppDataResetOutcome.playbackResetFailed);
+      expect(steps.calls, ['playback']);
+    });
 
-    test(
-      'Given persistent deletion failure, When reset runs, Then settings reload does not start',
-      () async {
-        // GIVEN
-        final steps = _ResetSteps(failure: _ResetStep.delete);
-        // WHEN
-        final outcome = await steps.build().reset();
-        // THEN
-        expect(outcome, AppDataResetOutcome.persistentDeletionFailed);
-        expect(steps.calls, ['playback', 'delete']);
-      },
-    );
+    test('Given persistent deletion failure, When reset runs, Then settings reload does not start', () async {
+      // GIVEN
+      final steps = _ResetSteps(failure: _ResetStep.delete);
+      // WHEN
+      final outcome = await steps.build().reset();
+      // THEN
+      expect(outcome, AppDataResetOutcome.persistentDeletionFailed);
+      expect(steps.calls, ['playback', 'delete']);
+    });
 
-    test(
-      'Given settings reload failure after deletion, When reset runs, Then deletion remains committed',
-      () async {
-        // GIVEN
-        final steps = _ResetSteps(failure: _ResetStep.settings);
-        // WHEN
-        final outcome = await steps.build().reset();
-        // THEN
-        expect(outcome, AppDataResetOutcome.completedWithSettingsReloadWarning);
-        expect(outcome.dataRemoved, isTrue);
-        expect(steps.calls, ['playback', 'delete', 'settings']);
-      },
-    );
+    test('Given settings reload failure after deletion, When reset runs, Then deletion remains committed', () async {
+      // GIVEN
+      final steps = _ResetSteps(failure: _ResetStep.settings);
+      // WHEN
+      final outcome = await steps.build().reset();
+      // THEN
+      expect(outcome, AppDataResetOutcome.completedWithSettingsReloadWarning);
+      expect(outcome.dataRemoved, isTrue);
+      expect(steps.calls, ['playback', 'delete', 'settings']);
+    });
   });
 }
 

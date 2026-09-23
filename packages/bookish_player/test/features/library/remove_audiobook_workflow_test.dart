@@ -37,29 +37,23 @@ void main() {
       );
     });
 
-    test(
-      'Given the remove audiobook workflow, When its behavior is exercised, Then audio-only removal retains imported artwork',
-      () async {
-        // WHEN
-        await sut.removeBook(book, AudiobookRemovalMode.keepUserData);
+    test('Given the remove audiobook workflow, When its behavior is exercised, Then audio-only removal retains imported artwork', () async {
+      // WHEN
+      await sut.removeBook(book, AudiobookRemovalMode.keepUserData);
 
-        // THEN
-        expect(books.mode, AudiobookRemovalMode.keepUserData);
-        expect(files.deletedPaths, ['/audio/book.m4b']);
-      },
-    );
+      // THEN
+      expect(books.mode, AudiobookRemovalMode.keepUserData);
+      expect(files.deletedPaths, ['/audio/book.m4b']);
+    });
 
-    test(
-      'Given the remove audiobook workflow, When its behavior is exercised, Then full removal also deletes imported artwork',
-      () async {
-        // WHEN
-        await sut.removeBook(book, AudiobookRemovalMode.deleteAllData);
+    test('Given the remove audiobook workflow, When its behavior is exercised, Then full removal also deletes imported artwork', () async {
+      // WHEN
+      await sut.removeBook(book, AudiobookRemovalMode.deleteAllData);
 
-        // THEN
-        expect(books.mode, AudiobookRemovalMode.deleteAllData);
-        expect(files.deletedPaths, ['/audio/book.m4b', '/covers/book.jpg']);
-      },
-    );
+      // THEN
+      expect(books.mode, AudiobookRemovalMode.deleteAllData);
+      expect(files.deletedPaths, ['/audio/book.m4b', '/covers/book.jpg']);
+    });
   });
 }
 

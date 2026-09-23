@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'listening_insights_summary.dart';
@@ -9,6 +9,7 @@ part of 'listening_insights_summary.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ListeningInsightsSummaryCopyWith<ListeningInsightsSummary> get copyWith => _$Li
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningInsightsSummary&&const DeepCollectionEquality().equals(other.activityByPeriod, activityByPeriod)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays));
+  final _this = this as ListeningInsightsSummary;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListeningInsightsSummary&&const DeepCollectionEquality().equals(other.activityByPeriod, _this.activityByPeriod)&&(identical(other.totalListening, _this.totalListening) || other.totalListening == _this.totalListening)&&(identical(other.completedBooks, _this.completedBooks) || other.completedBooks == _this.completedBooks)&&(identical(other.activeDays, _this.activeDays) || other.activeDays == _this.activeDays)&&(identical(other.streakDays, _this.streakDays) || other.streakDays == _this.streakDays));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(activityByPeriod),totalListening,completedBooks,activeDays,streakDays);
+int get hashCode {
+  final _this = this as ListeningInsightsSummary;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.activityByPeriod),_this.totalListening,_this.completedBooks,_this.activeDays,_this.streakDays);
+}
 
 @override
 String toString() {
-  return 'ListeningInsightsSummary(activityByPeriod: $activityByPeriod, totalListening: $totalListening, completedBooks: $completedBooks, activeDays: $activeDays, streakDays: $streakDays)';
+  final _this = this as ListeningInsightsSummary;
+  return 'ListeningInsightsSummary(activityByPeriod: ${_this.activityByPeriod}, totalListening: ${_this.totalListening}, completedBooks: ${_this.completedBooks}, activeDays: ${_this.activeDays}, streakDays: ${_this.streakDays})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ListeningInsightsSummaryCopyWithImpl<$Res>
 /// Create a copy of ListeningInsightsSummary
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? activityByPeriod = null,Object? totalListening = null,Object? completedBooks = null,Object? activeDays = null,Object? streakDays = null,}) {
-  return _then(_self.copyWith(
+  return _then(ListeningInsightsSummary(
 activityByPeriod: null == activityByPeriod ? _self.activityByPeriod : activityByPeriod // ignore: cast_nullable_to_non_nullable
 as Map<InsightsPeriod, ListeningActivityRange>,totalListening: null == totalListening ? _self.totalListening : totalListening // ignore: cast_nullable_to_non_nullable
 as Duration,completedBooks: null == completedBooks ? _self.completedBooks : completedBooks // ignore: cast_nullable_to_non_nullable
@@ -210,7 +216,7 @@ return $default(_that.activityByPeriod,_that.totalListening,_that.completedBooks
 
 
 class _ListeningInsightsSummary implements ListeningInsightsSummary {
-  const _ListeningInsightsSummary({required final  Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, required this.totalListening, required this.completedBooks, required this.activeDays, required this.streakDays}): _activityByPeriod = activityByPeriod;
+  const _ListeningInsightsSummary({required  Map<InsightsPeriod, ListeningActivityRange> activityByPeriod, required this.totalListening, required this.completedBooks, required this.activeDays, required this.streakDays}): _activityByPeriod = activityByPeriod;
   
 
  final  Map<InsightsPeriod, ListeningActivityRange> _activityByPeriod;
@@ -235,16 +241,18 @@ _$ListeningInsightsSummaryCopyWith<_ListeningInsightsSummary> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningInsightsSummary&&const DeepCollectionEquality().equals(other._activityByPeriod, _activityByPeriod)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListeningInsightsSummary&&const DeepCollectionEquality().equals(other.activityByPeriod, _activityByPeriod)&&(identical(other.totalListening, totalListening) || other.totalListening == totalListening)&&(identical(other.completedBooks, completedBooks) || other.completedBooks == completedBooks)&&(identical(other.activeDays, activeDays) || other.activeDays == activeDays)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_activityByPeriod),totalListening,completedBooks,activeDays,streakDays);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_activityByPeriod),totalListening,completedBooks,activeDays,streakDays);
+}
 
 @override
 String toString() {
-  return 'ListeningInsightsSummary(activityByPeriod: $activityByPeriod, totalListening: $totalListening, completedBooks: $completedBooks, activeDays: $activeDays, streakDays: $streakDays)';
+    return 'ListeningInsightsSummary(activityByPeriod: $activityByPeriod, totalListening: $totalListening, completedBooks: $completedBooks, activeDays: $activeDays, streakDays: $streakDays)';
 }
 
 

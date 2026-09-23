@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'settings_state.dart';
@@ -9,6 +9,7 @@ part of 'settings_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $SettingsStateCopyWith<SettingsState> get copyWith => _$SettingsStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsState&&(identical(other.status, status) || other.status == status)&&(identical(other.appearance, appearance) || other.appearance == appearance)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+  final _this = this as SettingsState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.appearance, _this.appearance) || other.appearance == _this.appearance)&&(identical(other.playback, _this.playback) || other.playback == _this.playback)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.effectRevision, _this.effectRevision) || other.effectRevision == _this.effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,appearance,playback,message,effectRevision);
+int get hashCode {
+  final _this = this as SettingsState;
+  return Object.hash(runtimeType,_this.status,_this.appearance,_this.playback,_this.message,_this.effectRevision);
+}
 
 @override
 String toString() {
-  return 'SettingsState(status: $status, appearance: $appearance, playback: $playback, message: $message, effectRevision: $effectRevision)';
+  final _this = this as SettingsState;
+  return 'SettingsState(status: ${_this.status}, appearance: ${_this.appearance}, playback: ${_this.playback}, message: ${_this.message}, effectRevision: ${_this.effectRevision})';
 }
 
 
@@ -63,7 +69,7 @@ class _$SettingsStateCopyWithImpl<$Res>
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? appearance = null,Object? playback = null,Object? message = freezed,Object? effectRevision = null,}) {
-  return _then(_self.copyWith(
+  return _then(SettingsState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as SettingsStatus,appearance: null == appearance ? _self.appearance : appearance // ignore: cast_nullable_to_non_nullable
 as AppearancePreferences,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
@@ -247,16 +253,18 @@ _$SettingsStateCopyWith<_SettingsState> get copyWith => __$SettingsStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SettingsState&&(identical(other.status, status) || other.status == status)&&(identical(other.appearance, appearance) || other.appearance == appearance)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SettingsState&&(identical(other.status, status) || other.status == status)&&(identical(other.appearance, appearance) || other.appearance == appearance)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,appearance,playback,message,effectRevision);
+int get hashCode {
+    return Object.hash(runtimeType,status,appearance,playback,message,effectRevision);
+}
 
 @override
 String toString() {
-  return 'SettingsState(status: $status, appearance: $appearance, playback: $playback, message: $message, effectRevision: $effectRevision)';
+    return 'SettingsState(status: $status, appearance: $appearance, playback: $playback, message: $message, effectRevision: $effectRevision)';
 }
 
 

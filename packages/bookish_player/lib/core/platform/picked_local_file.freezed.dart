@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'picked_local_file.dart';
@@ -9,6 +9,7 @@ part of 'picked_local_file.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $PickedLocalFileCopyWith<PickedLocalFile> get copyWith => _$PickedLocalFileCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PickedLocalFile&&(identical(other.name, name) || other.name == name)&&(identical(other.path, path) || other.path == path)&&(identical(other.sizeBytes, sizeBytes) || other.sizeBytes == sizeBytes));
+  final _this = this as PickedLocalFile;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PickedLocalFile&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.path, _this.path) || other.path == _this.path)&&(identical(other.sizeBytes, _this.sizeBytes) || other.sizeBytes == _this.sizeBytes));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,path,sizeBytes);
+int get hashCode {
+  final _this = this as PickedLocalFile;
+  return Object.hash(runtimeType,_this.name,_this.path,_this.sizeBytes);
+}
 
 @override
 String toString() {
-  return 'PickedLocalFile(name: $name, path: $path, sizeBytes: $sizeBytes)';
+  final _this = this as PickedLocalFile;
+  return 'PickedLocalFile(name: ${_this.name}, path: ${_this.path}, sizeBytes: ${_this.sizeBytes})';
 }
 
 
@@ -63,7 +69,7 @@ class _$PickedLocalFileCopyWithImpl<$Res>
 /// Create a copy of PickedLocalFile
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? path = freezed,Object? sizeBytes = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(PickedLocalFile(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,path: freezed == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String?,sizeBytes: freezed == sizeBytes ? _self.sizeBytes : sizeBytes // ignore: cast_nullable_to_non_nullable
@@ -225,16 +231,18 @@ _$PickedLocalFileCopyWith<_PickedLocalFile> get copyWith => __$PickedLocalFileCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PickedLocalFile&&(identical(other.name, name) || other.name == name)&&(identical(other.path, path) || other.path == path)&&(identical(other.sizeBytes, sizeBytes) || other.sizeBytes == sizeBytes));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PickedLocalFile&&(identical(other.name, name) || other.name == name)&&(identical(other.path, path) || other.path == path)&&(identical(other.sizeBytes, sizeBytes) || other.sizeBytes == sizeBytes));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,path,sizeBytes);
+int get hashCode {
+    return Object.hash(runtimeType,name,path,sizeBytes);
+}
 
 @override
 String toString() {
-  return 'PickedLocalFile(name: $name, path: $path, sizeBytes: $sizeBytes)';
+    return 'PickedLocalFile(name: $name, path: $path, sizeBytes: $sizeBytes)';
 }
 
 

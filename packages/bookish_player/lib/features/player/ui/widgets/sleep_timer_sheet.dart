@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../cubits/player_cubits.dart';
@@ -28,9 +28,8 @@ class SleepTimerSheet extends StatelessWidget {
           children: [
             Text(
               S.of(context).sleepTimer,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+              style: Theme.of(context).textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
             if (state.sleepTimerType != null) ...[
               const SizedBox(height: 6),

@@ -1,3 +1,8 @@
+analyzer:
+  exclude:
+    - build/**
+    - "**/build/**"
+
 # Analyzer plugins are registered once, at the Dart workspace root.
 plugins:
   lintel:

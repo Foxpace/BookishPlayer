@@ -5,7 +5,7 @@ resolution: workspace
 version: 0.1.0+1
 
 environment:
-  sdk: ^3.12.2
+  sdk: ^3.13.0
 
 dependencies:
   bookish_player:

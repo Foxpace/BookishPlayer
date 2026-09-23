@@ -4,6 +4,7 @@ import '../../../test_support/features/player/player_cubit_continue_listening_te
 import '../../../test_support/features/player/player_cubit_playback_flow_tests.dart';
 import '../../../test_support/features/player/player_cubit_widget_tests.dart';
 import '../../../test_support/features/player/player_screen_layout_tests.dart';
+
 import 'package:bookish_player/features/player/use_cases/playback_command_service.dart';
 
 void main() {
@@ -19,218 +20,197 @@ void main() {
 
       tearDown(() => harness.close());
 
-      test(
-        'Given the player cubit, When its behavior is exercised, Then external playback requests are handled as Cubit intents',
-        () async {
-          // GIVEN
-          final book = _book(id: 'external-book', title: 'External book');
-          harness = _PlayerHarness([book]);
-          final sut = harness.sut;
+      test('Given the player cubit, When its behavior is exercised, Then external playback requests are handled as Cubit intents', () async {
+        // GIVEN
+        final book = _book(id: 'external-book', title: 'External book');
+        harness = _PlayerHarness([book]);
+        final sut = harness.sut;
 
-          // WHEN
-          await harness.playBook(book.id);
+        // WHEN
+        await harness.playBook(book.id);
 
-          // THEN
-          expect(sut.state.book?.id, book.id);
-          expect(sut.state.status, PlayerStatus.ready);
-          expect(harness.audio.playing, isTrue);
-        },
-      );
+        // THEN
+        expect(sut.state.book?.id, book.id);
+        expect(sut.state.status, PlayerStatus.ready);
+        expect(harness.audio.playing, isTrue);
+      });
 
-      test(
-        'Given the player cubit, When its behavior is exercised, Then app data reset clears playback and the active player state',
-        () async {
-          // GIVEN
-          final book = _book(id: 'reset-book', title: 'Reset book');
-          harness = _PlayerHarness([book]);
-          final sut = await harness.open(book, playing: true);
+      test('Given the player cubit, When its behavior is exercised, Then app data reset clears playback and the active player state', () async {
+        // GIVEN
+        final book = _book(id: 'reset-book', title: 'Reset book');
+        harness = _PlayerHarness([book]);
+        final sut = await harness.open(book, playing: true);
 
-          // WHEN
-          await sut.resetForAppDataRemoval();
+        // WHEN
+        await sut.resetForAppDataRemoval();
 
-          // THEN
-          expect(sut.state, const PlayerState());
-          expect(harness.audio.playing, isFalse);
-          expect(harness.audio.currentPosition, Duration.zero);
-        },
-      );
+        // THEN
+        expect(sut.state, const PlayerState());
+        expect(harness.audio.playing, isFalse);
+        expect(harness.audio.currentPosition, Duration.zero);
+      });
 
-      test(
-        'Given the player cubit, When its behavior is exercised, Then continues with the next numbered unfinished series volume',
-        () async {
-          // GIVEN
-          final first = _book(
-            id: 'first',
-            title: 'First',
-            details: (
-              durationMs: 60000,
-              series: 'Saga',
-              seriesPosition: 1,
-              addedAt: DateTime(2025),
-              chapters: const [],
-            ),
-          );
-          final second = _book(
-            id: 'second',
-            title: 'Second',
-            details: (
-              durationMs: 60000,
-              series: 'Saga',
-              seriesPosition: 2,
-              addedAt: DateTime(2026),
-              chapters: const [],
-            ),
-          );
-          harness = _PlayerHarness([first, second]);
-          final sut = await harness.open(first);
+      test('Given the player cubit, When its behavior is exercised, Then continues with the next numbered unfinished series volume', () async {
+        // GIVEN
+        final first = _book(
+          id: 'first',
+          title: 'First',
+          details: (
+            durationMs: 60000,
+            series: 'Saga',
+            seriesPosition: 1,
+            addedAt: DateTime(2025),
+            chapters: const [],
+          ),
+        );
+        final second = _book(
+          id: 'second',
+          title: 'Second',
+          details: (
+            durationMs: 60000,
+            series: 'Saga',
+            seriesPosition: 2,
+            addedAt: DateTime(2026),
+            chapters: const [],
+          ),
+        );
+        harness = _PlayerHarness([first, second]);
+        final sut = await harness.open(first);
 
-          harness.audio.emitCompleted();
-          // WHEN
-          await Future<void>.delayed(const Duration(milliseconds: 20));
+        harness.audio.emitCompleted();
+        // WHEN
+        await Future<void>.delayed(const Duration(milliseconds: 20));
 
-          // THEN
-          expect(sut.state.book?.id, 'second');
-          expect(harness.audio.playing, isTrue);
-          final completed = await harness.books.getBook('first');
-          expect(completed?.isFinished, isTrue);
-          expect(completed?.completedAt, isNotNull);
-          expect(completed?.positionMs, first.durationMs);
-        },
-      );
+        // THEN
+        expect(sut.state.book?.id, 'second');
+        expect(harness.audio.playing, isTrue);
+        final completed = await harness.books.getBook('first');
+        expect(completed?.isFinished, isTrue);
+        expect(completed?.completedAt, isNotNull);
+        expect(completed?.positionMs, first.durationMs);
+      });
 
-      test(
-        'Given the player cubit, When its behavior is exercised, Then chapter-relative seeks cannot cascade into later chapters',
-        () async {
-          // GIVEN
-          final book = _book(
-            id: 'book',
-            title: 'Book',
-            details: (
-              durationMs: 90000,
-              series: '',
-              seriesPosition: null,
-              addedAt: null,
-              chapters: const [
-                AudioChapter(title: 'One', startMs: 0),
-                AudioChapter(title: 'Two', startMs: 30000),
-                AudioChapter(title: 'Three', startMs: 60000),
-              ],
-            ),
-          );
-          harness = _PlayerHarness([book]);
-          final sut = await harness.open(book);
-          await sut.seekWithinChapter(const Duration(seconds: 30));
-          // WHEN
-          await sut.seekWithinChapter(const Duration(seconds: 30));
+      test('Given the player cubit, When its behavior is exercised, Then chapter-relative seeks cannot cascade into later chapters', () async {
+        // GIVEN
+        final book = _book(
+          id: 'book',
+          title: 'Book',
+          details: (
+            durationMs: 90000,
+            series: '',
+            seriesPosition: null,
+            addedAt: null,
+            chapters: const [
+              AudioChapter(title: 'One', startMs: 0),
+              AudioChapter(title: 'Two', startMs: 30000),
+              AudioChapter(title: 'Three', startMs: 60000),
+            ],
+          ),
+        );
+        harness = _PlayerHarness([book]);
+        final sut = await harness.open(book);
+        await sut.seekWithinChapter(const Duration(seconds: 30));
+        // WHEN
+        await sut.seekWithinChapter(const Duration(seconds: 30));
 
-          // THEN
-          expect(
-            harness.audio.currentPosition,
-            const Duration(milliseconds: 29999),
-          );
-          expect(sut.state.currentChapterIndex, 0);
-          expect(sut.state.currentChapter?.title, 'One');
-        },
-      );
+        // THEN
+        expect(
+          harness.audio.currentPosition,
+          const Duration(milliseconds: 29999),
+        );
+        expect(sut.state.currentChapterIndex, 0);
+        expect(sut.state.currentChapter?.title, 'One');
+      });
 
-      test(
-        'Given a chapter boundary, When skip controls cross it, Then playback stays in the current chapter',
-        () async {
-          // GIVEN
-          final book = _book(
-            id: 'book',
-            title: 'Book',
-            details: (
-              durationMs: 90000,
-              series: '',
-              seriesPosition: null,
-              addedAt: null,
-              chapters: const [
-                AudioChapter(title: 'One', startMs: 0),
-                AudioChapter(title: 'Two', startMs: 30000),
-                AudioChapter(title: 'Three', startMs: 60000),
-              ],
-            ),
-          );
-          harness = _PlayerHarness([book]);
-          final sut = await harness.open(book, playing: true);
-          await sut.seekWithinChapter(const Duration(seconds: 20));
+      test('Given a chapter boundary, When skip controls cross it, Then playback stays in the current chapter', () async {
+        // GIVEN
+        final book = _book(
+          id: 'book',
+          title: 'Book',
+          details: (
+            durationMs: 90000,
+            series: '',
+            seriesPosition: null,
+            addedAt: null,
+            chapters: const [
+              AudioChapter(title: 'One', startMs: 0),
+              AudioChapter(title: 'Two', startMs: 30000),
+              AudioChapter(title: 'Three', startMs: 60000),
+            ],
+          ),
+        );
+        harness = _PlayerHarness([book]);
+        final sut = await harness.open(book, playing: true);
+        await sut.seekWithinChapter(const Duration(seconds: 20));
 
-          // WHEN
-          await sut.skipBy(const Duration(seconds: 15));
-          final forwardPosition = harness.audio.currentPosition;
-          final forwardChapter = sut.state.currentChapter?.title;
-          final wasPlayingAfterForwardSkip = harness.audio.playing;
-          await sut.seekWithinChapter(const Duration(seconds: 10));
-          await sut.skipBy(const Duration(seconds: -15));
+        // WHEN
+        await sut.skipBy(const Duration(seconds: 15));
+        final forwardPosition = harness.audio.currentPosition;
+        final forwardChapter = sut.state.currentChapter?.title;
+        final wasPlayingAfterForwardSkip = harness.audio.playing;
+        await sut.seekWithinChapter(const Duration(seconds: 10));
+        await sut.skipBy(const Duration(seconds: -15));
 
-          // THEN
-          expect(forwardPosition, const Duration(milliseconds: 29999));
-          expect(forwardChapter, 'One');
-          expect(wasPlayingAfterForwardSkip, isFalse);
-          expect(harness.audio.currentPosition, Duration.zero);
-          expect(sut.state.currentChapter?.title, 'One');
-        },
-      );
+        // THEN
+        expect(forwardPosition, const Duration(milliseconds: 29999));
+        expect(forwardChapter, 'One');
+        expect(wasPlayingAfterForwardSkip, isFalse);
+        expect(harness.audio.currentPosition, Duration.zero);
+        expect(sut.state.currentChapter?.title, 'One');
+      });
 
-      test(
-        'Given the player cubit, When its behavior is exercised, Then stops a paused current book before switching queues',
-        () async {
-          // GIVEN
-          final first = _book(id: 'first', title: 'First');
-          final second = _book(
-            id: 'second',
-            title: 'Second',
-            details: const (
-              durationMs: 90000,
-              series: '',
-              seriesPosition: null,
-              addedAt: null,
-              chapters: [],
-            ),
-          );
-          harness = _PlayerHarness([first, second]);
-          final sut = harness.sut;
+      test('Given the player cubit, When its behavior is exercised, Then stops a paused current book before switching queues', () async {
+        // GIVEN
+        final first = _book(id: 'first', title: 'First');
+        final second = _book(
+          id: 'second',
+          title: 'Second',
+          details: const (
+            durationMs: 90000,
+            series: '',
+            seriesPosition: null,
+            addedAt: null,
+            chapters: [],
+          ),
+        );
+        harness = _PlayerHarness([first, second]);
+        final sut = harness.sut;
 
-          // WHEN
-          await sut.open(first);
-          // THEN
-          expect(harness.audio.playing, isFalse);
-          expect(harness.audio.currentPosition, Duration.zero);
-          harness.audio.currentPosition = const Duration(seconds: 12);
+        // WHEN
+        await sut.open(first);
+        // THEN
+        expect(harness.audio.playing, isFalse);
+        expect(harness.audio.currentPosition, Duration.zero);
+        harness.audio.currentPosition = const Duration(seconds: 12);
 
-          await sut.open(second);
+        await sut.open(second);
 
-          expect(harness.audio.pauseCount, 1);
-          expect(sut.state.book?.id, 'second');
-          expect(sut.state.isPlaying, isFalse);
-          expect(harness.audio.currentPosition, Duration.zero);
-          expect((await harness.books.getBook('first'))?.positionMs, 12000);
+        expect(harness.audio.pauseCount, 1);
+        expect(sut.state.book?.id, 'second');
+        expect(sut.state.isPlaying, isFalse);
+        expect(harness.audio.currentPosition, Duration.zero);
+        expect((await harness.books.getBook('first'))?.positionMs, 12000);
 
-          await sut.openById('first');
+        await sut.openById('first');
 
-          expect(sut.state.book?.id, 'first');
-          expect(harness.audio.currentPosition, const Duration(seconds: 12));
-        },
-      );
+        expect(sut.state.book?.id, 'first');
+        expect(harness.audio.currentPosition, const Duration(seconds: 12));
+      });
 
-      test(
-        'Given active playback, When playback is paused explicitly, Then audio stops without toggling it back on',
-        () async {
-          // GIVEN
-          final book = _book(id: 'book', title: 'Book');
-          harness = _PlayerHarness([book]);
-          final sut = await harness.open(book, playing: true);
+      test('Given active playback, When playback is paused explicitly, Then audio stops without toggling it back on', () async {
+        // GIVEN
+        final book = _book(id: 'book', title: 'Book');
+        harness = _PlayerHarness([book]);
+        final sut = await harness.open(book, playing: true);
 
-          // WHEN
-          await sut.pausePlayback();
-          await sut.pausePlayback();
+        // WHEN
+        await sut.pausePlayback();
+        await sut.pausePlayback();
 
-          // THEN
-          expect(harness.audio.playing, isFalse);
-          expect(harness.audio.pauseCount, 2);
-        },
-      );
+        // THEN
+        expect(harness.audio.playing, isFalse);
+        expect(harness.audio.pauseCount, 2);
+      });
     });
   });
 }

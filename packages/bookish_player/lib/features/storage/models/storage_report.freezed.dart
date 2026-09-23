@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'storage_report.dart';
@@ -9,6 +9,7 @@ part of 'storage_report.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $StorageReportCopyWith<StorageReport> get copyWith => _$StorageReportCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StorageReport&&(identical(other.managedBytes, managedBytes) || other.managedBytes == managedBytes)&&(identical(other.reclaimableBytes, reclaimableBytes) || other.reclaimableBytes == reclaimableBytes)&&const DeepCollectionEquality().equals(other.missingBookIds, missingBookIds)&&const DeepCollectionEquality().equals(other.duplicateBookIds, duplicateBookIds)&&const DeepCollectionEquality().equals(other.orphanPaths, orphanPaths));
+  final _this = this as StorageReport;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StorageReport&&(identical(other.managedBytes, _this.managedBytes) || other.managedBytes == _this.managedBytes)&&(identical(other.reclaimableBytes, _this.reclaimableBytes) || other.reclaimableBytes == _this.reclaimableBytes)&&const DeepCollectionEquality().equals(other.missingBookIds, _this.missingBookIds)&&const DeepCollectionEquality().equals(other.duplicateBookIds, _this.duplicateBookIds)&&const DeepCollectionEquality().equals(other.orphanPaths, _this.orphanPaths));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,managedBytes,reclaimableBytes,const DeepCollectionEquality().hash(missingBookIds),const DeepCollectionEquality().hash(duplicateBookIds),const DeepCollectionEquality().hash(orphanPaths));
+int get hashCode {
+  final _this = this as StorageReport;
+  return Object.hash(runtimeType,_this.managedBytes,_this.reclaimableBytes,const DeepCollectionEquality().hash(_this.missingBookIds),const DeepCollectionEquality().hash(_this.duplicateBookIds),const DeepCollectionEquality().hash(_this.orphanPaths));
+}
 
 @override
 String toString() {
-  return 'StorageReport(managedBytes: $managedBytes, reclaimableBytes: $reclaimableBytes, missingBookIds: $missingBookIds, duplicateBookIds: $duplicateBookIds, orphanPaths: $orphanPaths)';
+  final _this = this as StorageReport;
+  return 'StorageReport(managedBytes: ${_this.managedBytes}, reclaimableBytes: ${_this.reclaimableBytes}, missingBookIds: ${_this.missingBookIds}, duplicateBookIds: ${_this.duplicateBookIds}, orphanPaths: ${_this.orphanPaths})';
 }
 
 
@@ -63,7 +69,7 @@ class _$StorageReportCopyWithImpl<$Res>
 /// Create a copy of StorageReport
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? managedBytes = null,Object? reclaimableBytes = null,Object? missingBookIds = null,Object? duplicateBookIds = null,Object? orphanPaths = null,}) {
-  return _then(_self.copyWith(
+  return _then(StorageReport(
 managedBytes: null == managedBytes ? _self.managedBytes : managedBytes // ignore: cast_nullable_to_non_nullable
 as int,reclaimableBytes: null == reclaimableBytes ? _self.reclaimableBytes : reclaimableBytes // ignore: cast_nullable_to_non_nullable
 as int,missingBookIds: null == missingBookIds ? _self.missingBookIds : missingBookIds // ignore: cast_nullable_to_non_nullable
@@ -210,7 +216,7 @@ return $default(_that.managedBytes,_that.reclaimableBytes,_that.missingBookIds,_
 
 
 class _StorageReport implements StorageReport {
-  const _StorageReport({this.managedBytes = 0, this.reclaimableBytes = 0, final  List<String> missingBookIds = const <String>[], final  List<List<String>> duplicateBookIds = const <List<String>>[], final  List<String> orphanPaths = const <String>[]}): _missingBookIds = missingBookIds,_duplicateBookIds = duplicateBookIds,_orphanPaths = orphanPaths;
+  const _StorageReport({this.managedBytes = 0, this.reclaimableBytes = 0,  List<String> missingBookIds = const <String>[],  List<List<String>> duplicateBookIds = const <List<String>>[],  List<String> orphanPaths = const <String>[]}): _missingBookIds = missingBookIds,_duplicateBookIds = duplicateBookIds,_orphanPaths = orphanPaths;
   
 
 @override@JsonKey() final  int managedBytes;
@@ -247,16 +253,18 @@ _$StorageReportCopyWith<_StorageReport> get copyWith => __$StorageReportCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StorageReport&&(identical(other.managedBytes, managedBytes) || other.managedBytes == managedBytes)&&(identical(other.reclaimableBytes, reclaimableBytes) || other.reclaimableBytes == reclaimableBytes)&&const DeepCollectionEquality().equals(other._missingBookIds, _missingBookIds)&&const DeepCollectionEquality().equals(other._duplicateBookIds, _duplicateBookIds)&&const DeepCollectionEquality().equals(other._orphanPaths, _orphanPaths));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _StorageReport&&(identical(other.managedBytes, managedBytes) || other.managedBytes == managedBytes)&&(identical(other.reclaimableBytes, reclaimableBytes) || other.reclaimableBytes == reclaimableBytes)&&const DeepCollectionEquality().equals(other.missingBookIds, _missingBookIds)&&const DeepCollectionEquality().equals(other.duplicateBookIds, _duplicateBookIds)&&const DeepCollectionEquality().equals(other.orphanPaths, _orphanPaths));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,managedBytes,reclaimableBytes,const DeepCollectionEquality().hash(_missingBookIds),const DeepCollectionEquality().hash(_duplicateBookIds),const DeepCollectionEquality().hash(_orphanPaths));
+int get hashCode {
+    return Object.hash(runtimeType,managedBytes,reclaimableBytes,const DeepCollectionEquality().hash(_missingBookIds),const DeepCollectionEquality().hash(_duplicateBookIds),const DeepCollectionEquality().hash(_orphanPaths));
+}
 
 @override
 String toString() {
-  return 'StorageReport(managedBytes: $managedBytes, reclaimableBytes: $reclaimableBytes, missingBookIds: $missingBookIds, duplicateBookIds: $duplicateBookIds, orphanPaths: $orphanPaths)';
+    return 'StorageReport(managedBytes: $managedBytes, reclaimableBytes: $reclaimableBytes, missingBookIds: $missingBookIds, duplicateBookIds: $duplicateBookIds, orphanPaths: $orphanPaths)';
 }
 
 

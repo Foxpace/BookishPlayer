@@ -10,7 +10,7 @@ import 'package:bookish_player/features/transcription/repos/transcription_reposi
 import 'package:bookish_player/features/transcription/cubits/quote_transcription_cubit.dart';
 import 'package:bookish_player/features/transcription/cubits/transcription_cubits.dart';
 import 'package:bookish_player/features/transcription/ui/widgets/transcription_sheet.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -89,7 +89,7 @@ void main() {
 
         expect(result?.text, 'A local quote');
         expect(result?.chapterTitle, 'A chapter');
-        expect(transcription.models, ['whisper-small']);
+        expect(transcription.models, ['whisper-base']);
         expect(transcription.ranges, hasLength(1));
         expect(find.text('Transcribe a quote'), findsNothing);
       },
@@ -191,7 +191,7 @@ class _Transcription implements TranscriptionRepository {
   }
 
   @override
-  Future<List<SpeechModel>> getModels({bool refresh = true}) async => const [];
+  Future<List<SpeechModel>> listModels() async => const [];
 
   @override
   Future<bool> isModelDownloaded(String slug) async => true;
@@ -201,9 +201,6 @@ class _Transcription implements TranscriptionRepository {
     String slug, {
     TranscriptionDownloadProgress? onProgress,
   }) async {}
-
-  @override
-  Future<void> reset() async {}
 }
 
 class _Sharing implements QuoteShareRepository {

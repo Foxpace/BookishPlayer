@@ -15,90 +15,82 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Background file-copy worker', () {
-    test(
-      'Given the background file-copy worker, When a large audiobook is copied, Then bytes and monotonic progress arrive without a partial file',
-      () async {
-        // GIVEN
-        final temporary = await Directory.systemTemp.createTemp(
-          'bookish_background_copy_test_',
+    test('Given the background file-copy worker, When a large audiobook is copied, Then bytes and monotonic progress arrive without a partial file', () async {
+      // GIVEN
+      final temporary = await Directory.systemTemp.createTemp(
+        'bookish_background_copy_test_',
+      );
+      final source = File('${temporary.path}/source.m4b');
+      final destination = '${temporary.path}/destination.m4b';
+      const chunk = 1024 * 1024;
+      const chunkCount = 20;
+      final bytes = List<int>.generate(chunk, (index) => index % 251);
+      final output = source.openWrite();
+      for (var index = 0; index < chunkCount; index++) {
+        output.add(bytes);
+      }
+      await output.close();
+      // WHEN
+      final progress = <(int, int)>[];
+
+      // THEN
+      try {
+        final result = await copyFileInBackground(
+          source.path,
+          destination,
+          onProgress: (copied, total) => progress.add((copied, total)),
         );
-        final source = File('${temporary.path}/source.m4b');
-        final destination = '${temporary.path}/destination.m4b';
-        const chunk = 1024 * 1024;
-        const chunkCount = 20;
-        final bytes = List<int>.generate(chunk, (index) => index % 251);
-        final output = source.openWrite();
-        for (var index = 0; index < chunkCount; index++) {
-          output.add(bytes);
-        }
-        await output.close();
-        // WHEN
-        final progress = <(int, int)>[];
+        expect(result, const Result<bool>.success(true));
+
+        final copied = File(destination);
+        expect(await copied.length(), chunk * chunkCount);
+        expect(progress.first, (0, chunk * chunkCount));
+        expect(progress.last, (chunk * chunkCount, chunk * chunkCount));
+        expect(File('$destination.part').existsSync(), isFalse);
+        expect(
+          await copied
+              .openRead(0, chunk)
+              .fold<List<int>>(
+                <int>[],
+                (result, value) => result..addAll(value),
+              ),
+          bytes,
+        );
+      } finally {
+        await temporary.delete(recursive: true);
+      }
+    });
+
+    test('Given an active background copy, When intentional cancellation is requested, Then the worker stops and removes partial and destination files', () async {
+      // GIVEN
+      final temporary = await Directory.systemTemp.createTemp(
+        'bookish_cancelled_copy_test_',
+      );
+      final source = File('${temporary.path}/source.m4b');
+      final destination = '${temporary.path}/destination.m4b';
+      source.writeAsBytesSync(List<int>.filled(8 * 1024 * 1024, 7));
+      final cancellation = ImportCancellationSignal();
+
+      // WHEN
+      try {
+        final copy = copyFileInBackground(
+          source.path,
+          destination,
+          cancellation: cancellation,
+          onProgress: (_, _) => cancellation.cancel(),
+        );
 
         // THEN
-        try {
-          final result = await copyFileInBackground(
-            source.path,
-            destination,
-            onProgress: (copied, total) => progress.add((copied, total)),
-          );
-          expect(result, const Result<bool>.success(true));
-
-          final copied = File(destination);
-          expect(await copied.length(), chunk * chunkCount);
-          expect(progress.first, (0, chunk * chunkCount));
-          expect(progress.last, (chunk * chunkCount, chunk * chunkCount));
-          expect(File('$destination.part').existsSync(), isFalse);
-          expect(
-            await copied
-                .openRead(0, chunk)
-                .fold<List<int>>(
-                  <int>[],
-                  (result, value) => result..addAll(value),
-                ),
-            bytes,
-          );
-        } finally {
-          await temporary.delete(recursive: true);
-        }
-      },
-    );
-
-    test(
-      'Given an active background copy, When intentional cancellation is requested, Then the worker stops and removes partial and destination files',
-      () async {
-        // GIVEN
-        final temporary = await Directory.systemTemp.createTemp(
-          'bookish_cancelled_copy_test_',
+        expect(
+          await copy,
+          const Result<bool>.failure(AppFailure.cancelled('import.cancelled')),
         );
-        final source = File('${temporary.path}/source.m4b');
-        final destination = '${temporary.path}/destination.m4b';
-        source.writeAsBytesSync(List<int>.filled(8 * 1024 * 1024, 7));
-        final cancellation = ImportCancellationSignal();
-
-        // WHEN
-        try {
-          final copy = copyFileInBackground(
-            source.path,
-            destination,
-            cancellation: cancellation,
-            onProgress: (_, _) => cancellation.cancel(),
-          );
-
-          // THEN
-          expect(
-            await copy,
-            const Result<bool>.failure(
-              AppFailure.cancelled('import.cancelled'),
-            ),
-          );
-          expect(File(destination).existsSync(), isFalse);
-          expect(File('$destination.part').existsSync(), isFalse);
-        } finally {
-          await temporary.delete(recursive: true);
-        }
-      },
-    );
+        expect(File(destination).existsSync(), isFalse);
+        expect(File('$destination.part').existsSync(), isFalse);
+      } finally {
+        await temporary.delete(recursive: true);
+      }
+    });
   });
 
   group('Isolated document and application-support directories', () {
@@ -135,122 +127,110 @@ void main() {
       await temporary.delete(recursive: true);
     });
 
-    test(
-      'Given isolated document and application-support directories, When the platform picker returns readable files or is cancelled, Then selections retain provider metadata and cancellation is empty',
-      () async {
-        // GIVEN
-        final first = File('${temporary.path}/first.m4b')
-          ..writeAsStringSync('one');
-        final second = File('${temporary.path}/second.mp3')
-          ..writeAsStringSync('two');
-        picker.result = [
-          PickedLocalFile(name: 'first.m4b', path: first.path, sizeBytes: 3),
-          PickedLocalFile(name: 'second.mp3', path: second.path, sizeBytes: 3),
-        ];
+    test('Given isolated document and application-support directories, When the platform picker returns readable files or is cancelled, Then selections retain provider metadata and cancellation is empty', () async {
+      // GIVEN
+      final first = File('${temporary.path}/first.m4b')
+        ..writeAsStringSync('one');
+      final second = File('${temporary.path}/second.mp3')
+        ..writeAsStringSync('two');
+      picker.result = [
+        PickedLocalFile(name: 'first.m4b', path: first.path, sizeBytes: 3),
+        PickedLocalFile(name: 'second.mp3', path: second.path, sizeBytes: 3),
+      ];
 
-        // WHEN
-        final selected = _success(await sut.pickAudioFiles());
+      // WHEN
+      final selected = _success(await sut.pickAudioFiles());
 
-        // THEN
-        expect(selected.map((file) => file.displayName), [
-          'first.m4b',
-          'second.mp3',
-        ]);
-        expect(selected.map((file) => file.sizeBytes), [3, 3]);
-        expect(picker.allowedExtensions, containsAll(['m4b', 'opus']));
-        expect(picker.allowMultiple, isTrue);
+      // THEN
+      expect(selected.map((file) => file.displayName), [
+        'first.m4b',
+        'second.mp3',
+      ]);
+      expect(selected.map((file) => file.sizeBytes), [3, 3]);
+      expect(picker.allowedExtensions, containsAll(['m4b', 'opus']));
+      expect(picker.allowMultiple, isTrue);
 
-        picker.result = [];
-        expect(_success(await sut.pickAudioFiles()), isEmpty);
-      },
-    );
+      picker.result = [];
+      expect(_success(await sut.pickAudioFiles()), isEmpty);
+    });
 
-    test(
-      'Given isolated document and application-support directories, When the platform picker returns readable files or is cancelled, Then inaccessible provider entries fail with their names',
-      () async {
-        // WHEN
-        picker.result = const [
-          PickedLocalFile(name: 'cloud-only.m4b', path: null, sizeBytes: 100),
-        ];
+    test('Given isolated document and application-support directories, When the platform picker returns readable files or is cancelled, Then inaccessible provider entries fail with their names', () async {
+      // WHEN
+      picker.result = const [
+        PickedLocalFile(name: 'cloud-only.m4b', path: null, sizeBytes: 100),
+      ];
 
-        // THEN
-        expect(
-          await sut.pickAudioFiles(),
-          const Result<List<SelectedAudioFile>>.failure(
-            AppFailure.operationFailed('import.fileAccess'),
-          ),
-        );
-      },
-    );
+      // THEN
+      expect(
+        await sut.pickAudioFiles(),
+        const Result<List<SelectedAudioFile>>.failure(
+          AppFailure.operationFailed('import.fileAccess'),
+        ),
+      );
+    });
 
-    test(
-      'Given isolated document and application-support directories, When transferred files are discovered, imported, and removed, Then only supported audio is copied to a generated durable path',
-      () async {
-        // GIVEN
-        final nested = await Directory('${documents.path}/nested').create();
-        final alpha = File('${nested.path}/alpha.MP3')
-          ..writeAsStringSync('alpha');
-        final beta = File('${documents.path}/beta.m4b')
-          ..writeAsStringSync('beta');
-        File('${documents.path}/ignore.txt').writeAsStringSync('ignore');
+    test('Given isolated document and application-support directories, When transferred files are discovered, imported, and removed, Then only supported audio is copied to a generated durable path', () async {
+      // GIVEN
+      final nested = await Directory('${documents.path}/nested').create();
+      final alpha = File('${nested.path}/alpha.MP3')
+        ..writeAsStringSync('alpha');
+      final beta = File('${documents.path}/beta.m4b')
+        ..writeAsStringSync('beta');
+      File('${documents.path}/ignore.txt').writeAsStringSync('ignore');
 
-        // WHEN
-        final transferred = _success(await sut.findTransferredAudioFiles());
-        // THEN
-        expect(transferred.map((file) => file.displayName), [
-          'beta.m4b',
-          'alpha.MP3',
-        ]);
+      // WHEN
+      final transferred = _success(await sut.findTransferredAudioFiles());
+      // THEN
+      expect(transferred.map((file) => file.displayName), [
+        'beta.m4b',
+        'alpha.MP3',
+      ]);
 
-        final progress = <(int, int)>[];
-        final imported = _success(
-          await sut.importFile(
-            transferred.first,
-            onProgress: (copied, total) => progress.add((copied, total)),
-          ),
-        );
-        expect(imported.displayName, 'beta.m4b');
-        expect(imported.path, '${support.path}/audiobooks/audio-0.m4b');
-        expect(File(imported.path).readAsStringSync(), 'beta');
-        expect(progress.last, (4, 4));
+      final progress = <(int, int)>[];
+      final imported = _success(
+        await sut.importFile(
+          transferred.first,
+          onProgress: (copied, total) => progress.add((copied, total)),
+        ),
+      );
+      expect(imported.displayName, 'beta.m4b');
+      expect(imported.path, '${support.path}/audiobooks/audio-0.m4b');
+      expect(File(imported.path).readAsStringSync(), 'beta');
+      expect(progress.last, (4, 4));
 
-        expect(
-          await sut.removeTransferredAudioFiles(transferred),
-          const Result<bool>.success(true),
-        );
-        expect(alpha.existsSync(), isFalse);
-        expect(beta.existsSync(), isFalse);
-        await sut.deleteImportedFile(imported.path);
-        await sut.deleteImportedFile('${support.path}/missing.m4b');
-        expect(File(imported.path).existsSync(), isFalse);
-      },
-    );
+      expect(
+        await sut.removeTransferredAudioFiles(transferred),
+        const Result<bool>.success(true),
+      );
+      expect(alpha.existsSync(), isFalse);
+      expect(beta.existsSync(), isFalse);
+      await sut.deleteImportedFile(imported.path);
+      await sut.deleteImportedFile('${support.path}/missing.m4b');
+      expect(File(imported.path).existsSync(), isFalse);
+    });
 
-    test(
-      'Given isolated document and application-support directories, When cover selection succeeds or is cancelled, Then artwork is copied by book identity without retaining provider paths',
-      () async {
-        // GIVEN
-        final cover = File('${temporary.path}/cover.JPG')
-          ..writeAsStringSync('cover');
-        picker.result = [
-          PickedLocalFile(name: 'cover.JPG', path: cover.path, sizeBytes: 5),
-        ];
+    test('Given isolated document and application-support directories, When cover selection succeeds or is cancelled, Then artwork is copied by book identity without retaining provider paths', () async {
+      // GIVEN
+      final cover = File('${temporary.path}/cover.JPG')
+        ..writeAsStringSync('cover');
+      picker.result = [
+        PickedLocalFile(name: 'cover.JPG', path: cover.path, sizeBytes: 5),
+      ];
 
-        // WHEN
-        final imported = await sut.pickAndImportCover('book-1');
-        // THEN
-        expect(imported, '${support.path}/covers/book-1.jpg');
-        if (imported == null) {
-          fail('The selected cover must be imported.');
-        }
-        expect(File(imported).readAsStringSync(), 'cover');
+      // WHEN
+      final imported = await sut.pickAndImportCover('book-1');
+      // THEN
+      expect(imported, '${support.path}/covers/book-1.jpg');
+      if (imported == null) {
+        fail('The selected cover must be imported.');
+      }
+      expect(File(imported).readAsStringSync(), 'cover');
 
-        picker.result = [];
-        expect(await sut.pickAndImportCover('book-2'), isNull);
-        await sut.clearTemporaryFiles();
-        expect(picker.clearCalls, 0);
-      },
-    );
+      picker.result = [];
+      expect(await sut.pickAndImportCover('book-2'), isNull);
+      await sut.clearTemporaryFiles();
+      expect(picker.clearCalls, 0);
+    });
   });
 }
 

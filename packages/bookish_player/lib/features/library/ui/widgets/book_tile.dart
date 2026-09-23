@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/presentation/book_cover.dart';
 import '../../models/library_models.dart';
@@ -67,9 +67,8 @@ class _BookListDetails extends StatelessWidget {
           book.title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          style: Theme.of(context).textTheme.titleMedium
+              ?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 9),
         BookProgressSummary(book: book),

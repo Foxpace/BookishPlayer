@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../library/models/library_models.dart';
 import '../../cubits/player_cubits.dart';
@@ -40,10 +40,8 @@ class PlayerDetails extends StatelessWidget {
           maxLines: 2,
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-            height: 1.2,
-          ),
+          style: Theme.of(context).textTheme.headlineSmall
+              ?.copyWith(fontWeight: FontWeight.w700, height: 1.2),
         ),
         SizedBox(height: compact ? 18 : 26),
         PlayerTimeline(

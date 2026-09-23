@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import '../localization/generated/l10n.dart';
 import 'app_message.dart';
 

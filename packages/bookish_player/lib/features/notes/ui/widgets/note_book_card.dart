@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../../../core/presentation/book_cover.dart';
@@ -67,9 +67,8 @@ class _BookNoteSummary extends StatelessWidget {
           metadata.title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          style: Theme.of(context).textTheme.titleMedium
+              ?.copyWith(fontWeight: FontWeight.w700),
         ),
         if (metadata.author.isNotEmpty)
           Text(metadata.author, maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -110,9 +109,8 @@ class _NoteCount extends StatelessWidget {
       ),
       child: Text(
         '$count ${count == 1 ? 'note' : 'notes'}',
-        style: Theme.of(
-          context,
-        ).textTheme.labelLarge?.copyWith(color: colorScheme.onPrimaryContainer),
+        style: Theme.of(context).textTheme.labelLarge
+            ?.copyWith(color: colorScheme.onPrimaryContainer),
       ),
     );
   }

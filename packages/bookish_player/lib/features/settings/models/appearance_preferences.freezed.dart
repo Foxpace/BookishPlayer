@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'appearance_preferences.dart';
@@ -9,6 +9,7 @@ part of 'appearance_preferences.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $AppearancePreferencesCopyWith<AppearancePreferences> get copyWith => _$Appearan
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppearancePreferences&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.useSystemColors, useSystemColors) || other.useSystemColors == useSystemColors)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor));
+  final _this = this as AppearancePreferences;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppearancePreferences&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.useSystemColors, _this.useSystemColors) || other.useSystemColors == _this.useSystemColors)&&(identical(other.primaryColor, _this.primaryColor) || other.primaryColor == _this.primaryColor));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,theme,useSystemColors,primaryColor);
+int get hashCode {
+  final _this = this as AppearancePreferences;
+  return Object.hash(runtimeType,_this.theme,_this.useSystemColors,_this.primaryColor);
+}
 
 @override
 String toString() {
-  return 'AppearancePreferences(theme: $theme, useSystemColors: $useSystemColors, primaryColor: $primaryColor)';
+  final _this = this as AppearancePreferences;
+  return 'AppearancePreferences(theme: ${_this.theme}, useSystemColors: ${_this.useSystemColors}, primaryColor: ${_this.primaryColor})';
 }
 
 
@@ -63,7 +69,7 @@ class _$AppearancePreferencesCopyWithImpl<$Res>
 /// Create a copy of AppearancePreferences
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? theme = null,Object? useSystemColors = null,Object? primaryColor = null,}) {
-  return _then(_self.copyWith(
+  return _then(AppearancePreferences(
 theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
 as ThemePreference,useSystemColors: null == useSystemColors ? _self.useSystemColors : useSystemColors // ignore: cast_nullable_to_non_nullable
 as bool,primaryColor: null == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
@@ -225,16 +231,18 @@ _$AppearancePreferencesCopyWith<_AppearancePreferences> get copyWith => __$Appea
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppearancePreferences&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.useSystemColors, useSystemColors) || other.useSystemColors == useSystemColors)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppearancePreferences&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.useSystemColors, useSystemColors) || other.useSystemColors == useSystemColors)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,theme,useSystemColors,primaryColor);
+int get hashCode {
+    return Object.hash(runtimeType,theme,useSystemColors,primaryColor);
+}
 
 @override
 String toString() {
-  return 'AppearancePreferences(theme: $theme, useSystemColors: $useSystemColors, primaryColor: $primaryColor)';
+    return 'AppearancePreferences(theme: $theme, useSystemColors: $useSystemColors, primaryColor: $primaryColor)';
 }
 
 

@@ -31,56 +31,47 @@ void main() {
 
     tearDown(() => sut.close());
 
-    test(
-      'Given local library storage, When storage is inspected and cleaned, Then reports, deletion intents, and revisioned effects are emitted',
-      () async {
-        // GIVEN
-        await sut.load();
-        // WHEN
-        await sut.cleanOrphans();
+    test('Given local library storage, When storage is inspected and cleaned, Then reports, deletion intents, and revisioned effects are emitted', () async {
+      // GIVEN
+      await sut.load();
+      // WHEN
+      await sut.cleanOrphans();
 
-        // THEN
-        expect(storage.inspectedBooks, hasLength(2));
-        expect(storage.deletedPaths, ['/orphan.tmp']);
-        expect(sut.state.message, AppMessage.unusedFilesRemoved);
-        expect(sut.state.effectRevision, 1);
+      // THEN
+      expect(storage.inspectedBooks, hasLength(2));
+      expect(storage.deletedPaths, ['/orphan.tmp']);
+      expect(sut.state.message, AppMessage.unusedFilesRemoved);
+      expect(sut.state.effectRevision, 1);
 
-        await sut.removeMissingBook('book-1');
-        expect(books.deletedIds, ['book-1']);
-      },
-    );
+      await sut.removeMissingBook('book-1');
+      expect(books.deletedIds, ['book-1']);
+    });
 
-    test(
-      'Given local library storage, When all application data is erased, Then persistent data is cleared',
-      () async {
-        // WHEN
-        final outcome = await sut.clearAll();
+    test('Given local library storage, When all application data is erased, Then persistent data is cleared', () async {
+      // WHEN
+      final outcome = await sut.clearAll();
 
-        // THEN
-        expect(outcome.dataRemoved, isTrue);
-        expect(reset.clearCalls, 1);
-        expect(sut.state.message, AppMessage.allDataRemoved);
-      },
-    );
+      // THEN
+      expect(outcome.dataRemoved, isTrue);
+      expect(reset.clearCalls, 1);
+      expect(sut.state.message, AppMessage.allDataRemoved);
+    });
 
-    test(
-      'Given local library storage, When inspection or clearing fails, Then typed failure effects are emitted without throwing',
-      () async {
-        // GIVEN
-        storage.failure = Exception('inspect');
-        // WHEN
-        await sut.load();
-        // THEN
-        expect(sut.state.message, AppMessage.storageInspectFailed);
-        expect(sut.state.effectRevision, 1);
+    test('Given local library storage, When inspection or clearing fails, Then typed failure effects are emitted without throwing', () async {
+      // GIVEN
+      storage.failure = Exception('inspect');
+      // WHEN
+      await sut.load();
+      // THEN
+      expect(sut.state.message, AppMessage.storageInspectFailed);
+      expect(sut.state.effectRevision, 1);
 
-        storage.failure = null;
-        reset.failure = Exception('clear');
-        expect((await sut.clearAll()).dataRemoved, isFalse);
-        expect(sut.state.message, AppMessage.clearDataFailed);
-        expect(sut.state.effectRevision, 2);
-      },
-    );
+      storage.failure = null;
+      reset.failure = Exception('clear');
+      expect((await sut.clearAll()).dataRemoved, isFalse);
+      expect(sut.state.message, AppMessage.clearDataFailed);
+      expect(sut.state.effectRevision, 2);
+    });
   });
 }
 

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../models/speech_model.dart';
@@ -46,9 +46,8 @@ class SpeechModelTile extends StatelessWidget {
       ),
       subtitle: Text(details),
       selected: selected,
-      selectedTileColor: Theme.of(
-        context,
-      ).colorScheme.primaryContainer.withValues(alpha: 0.3),
+      selectedTileColor: Theme.of(context).colorScheme.primaryContainer
+          .withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       onTap: working ? null : () => onActivate(model),
     );

@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:injectable/injectable.dart';
 
 import '../../../core/foundation/result.dart';
@@ -28,7 +30,14 @@ class QuoteTranscriptionApplication {
   }) async {
     try {
       return await _transcribe(book: book, start: start, end: end);
-    } catch (error) {
+    } catch (error, stackTrace) {
+      developer.log(
+        'Quote transcription request failed before Cactus returned a result: '
+        'startMs=${start.inMilliseconds}, endMs=${end.inMilliseconds}',
+        name: 'bookish.transcription',
+        error: error,
+        stackTrace: stackTrace,
+      );
       return Result.failure(
         AppFailure.operationFailed('transcription.quote', error: error),
       );
@@ -40,7 +49,11 @@ class QuoteTranscriptionApplication {
     required Duration start,
     required Duration end,
   }) async {
-    final model = await _preferences.getSelectedModel() ?? 'whisper-tiny';
+    final selected = await _preferences.getSelectedModel();
+    final models = await _transcription.listModels();
+    final model = models.any((item) => item.slug == selected)
+        ? selected!
+        : (models.isEmpty ? 'whisper-base' : models.first.slug);
     return _transcription.transcribeRange(
       book: book,
       start: start,
