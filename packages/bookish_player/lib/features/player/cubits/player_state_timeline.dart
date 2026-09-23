@@ -5,8 +5,20 @@ import 'player_duration_clamp.dart';
 typedef _ChapterWindow = ({Duration start, Duration duration});
 
 extension PlayerStateTimeline on PlayerState {
+  Duration chapterSeekTarget(Duration relativePosition) {
+    final maximum = chapterDuration > Duration.zero
+        ? chapterDuration - const Duration(milliseconds: 1)
+        : Duration.zero;
+    final clamped = relativePosition < Duration.zero
+        ? Duration.zero
+        : relativePosition > maximum
+        ? maximum
+        : relativePosition;
+    return (chapterStart + clamped).clampedTo(duration);
+  }
+
   Duration chapterSeekDistance(Duration relativePosition) =>
-      chapterStart + relativePosition - position;
+      chapterSeekTarget(relativePosition) - position;
 
   bool requiresSeekConfirmation(Duration distance) =>
       distance.abs() >= Duration(minutes: playback.largeSeekMinutes);

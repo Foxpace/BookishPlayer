@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'intl/messages_all.dart';
@@ -265,31 +265,71 @@ class S {
     );
   }
 
-  /// `Choose a model to use it. If needed, it downloads automatically. Audio and generated text stay on this device.`
+  /// `No model downloaded`
+  String get noDownloadedSpeechModel {
+    return Intl.message(
+      'No model downloaded',
+      name: 'noDownloadedSpeechModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manage downloads and choose a model to use. Audio and generated text stay on this device.`
   String get speechModelDescription {
     return Intl.message(
-      'Choose a model to use it. If needed, it downloads automatically. Audio and generated text stay on this device.',
+      'Manage downloads and choose a model to use. Audio and generated text stay on this device.',
       name: 'speechModelDescription',
       desc: '',
       args: [],
     );
   }
 
-  /// `Choose speech model`
-  String get chooseSpeechModel {
+  /// `Manage speech models`
+  String get manageSpeechModels {
     return Intl.message(
-      'Choose speech model',
-      name: 'chooseSpeechModel',
+      'Manage speech models',
+      name: 'manageSpeechModels',
       desc: '',
       args: [],
     );
   }
 
-  /// `Tap a model to select it. Models that are not on this device download automatically.`
-  String get chooseSpeechModelDescription {
+  /// `Download, use, or remove models stored on this device.`
+  String get manageSpeechModelsDescription {
     return Intl.message(
-      'Tap a model to select it. Models that are not on this device download automatically.',
-      name: 'chooseSpeechModelDescription',
+      'Download, use, or remove models stored on this device.',
+      name: 'manageSpeechModelsDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download`
+  String get downloadModel {
+    return Intl.message('Download', name: 'downloadModel', desc: '', args: []);
+  }
+
+  /// `Use`
+  String get useModel {
+    return Intl.message('Use', name: 'useModel', desc: '', args: []);
+  }
+
+  /// `Remove {model}?`
+  String removeSpeechModelQuestion(String model) {
+    return Intl.message(
+      'Remove $model?',
+      name: 'removeSpeechModelQuestion',
+      desc: '',
+      args: [model],
+    );
+  }
+
+  /// `This deletes the downloaded model from this device. You can download it again later.`
+  String get removeSpeechModelDescription {
+    return Intl.message(
+      'This deletes the downloaded model from this device. You can download it again later.',
+      name: 'removeSpeechModelDescription',
       desc: '',
       args: [],
     );
@@ -323,11 +363,6 @@ class S {
       desc: '',
       args: [],
     );
-  }
-
-  /// `Selected`
-  String get modelSelected {
-    return Intl.message('Selected', name: 'modelSelected', desc: '', args: []);
   }
 
   /// `{size} MB`
@@ -905,6 +940,26 @@ class S {
     );
   }
 
+  /// `Speech model removed from this device.`
+  String get speechModelRemoved {
+    return Intl.message(
+      'Speech model removed from this device.',
+      name: 'speechModelRemoved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not remove the speech model.`
+  String get speechModelRemoveFailed {
+    return Intl.message(
+      'Could not remove the speech model.',
+      name: 'speechModelRemoveFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `No speech was detected in this range.`
   String get noSpeechDetected {
     return Intl.message(
@@ -1466,16 +1521,6 @@ class S {
   /// `Jump`
   String get jump {
     return Intl.message('Jump', name: 'jump', desc: '', args: []);
-  }
-
-  /// `Playback position changed.`
-  String get playbackPositionChanged {
-    return Intl.message(
-      'Playback position changed.',
-      name: 'playbackPositionChanged',
-      desc: '',
-      args: [],
-    );
   }
 
   /// `This moves {duration} back.`
@@ -2498,11 +2543,6 @@ class S {
   /// `Chapters`
   String get chapters {
     return Intl.message('Chapters', name: 'chapters', desc: '', args: []);
-  }
-
-  /// `Undo`
-  String get undo {
-    return Intl.message('Undo', name: 'undo', desc: '', args: []);
   }
 
   /// `No audiobook selected`

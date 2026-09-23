@@ -8,6 +8,7 @@ import 'cubits/transcription_cubits.dart';
 import 'models/speech_model.dart';
 import 'ui/speech_models_section.dart';
 import 'ui/widgets/speech_model_picker_sheet.dart';
+import 'ui/widgets/speech_model_removal_dialog.dart';
 
 /// Composition boundary for speech-model settings and its single Cubit.
 class SpeechModelsRoot extends StatelessWidget {
@@ -51,20 +52,32 @@ class SpeechModelsRoot extends StatelessWidget {
             bloc: cubit,
             builder: (_, state) => SpeechModelPickerSheet(
               state: state,
-              onActivate: (model) => _activateModel(sheetContext, cubit, model),
+              onSelect: (model) => _selectModel(sheetContext, cubit, model),
+              onDownload: (model) => cubit.downloadModel(model.slug),
+              onRemove: (model) => _removeModel(sheetContext, cubit, model),
             ),
           ),
     );
   }
 
-  Future<void> _activateModel(
+  Future<void> _selectModel(
     BuildContext context,
     SpeechModelsCubit cubit,
     SpeechModel model,
   ) async {
-    final activated = await cubit.activateModel(model);
-    if (context.mounted && activated) {
+    final selected = await cubit.selectModel(model.slug);
+    if (context.mounted && selected) {
       Navigator.pop(context);
+    }
+  }
+
+  Future<void> _removeModel(
+    BuildContext context,
+    SpeechModelsCubit cubit,
+    SpeechModel model,
+  ) async {
+    if (await confirmSpeechModelRemoval(context, model)) {
+      await cubit.removeModel(model.slug);
     }
   }
 }

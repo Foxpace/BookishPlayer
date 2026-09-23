@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../../test_support/features/player/player_test_support.dart';
 import '../../../test_support/features/player/player_cubit_note_tests.dart';
 import '../../../test_support/features/player/player_cubit_continue_listening_tests.dart';
@@ -6,6 +8,7 @@ import '../../../test_support/features/player/player_cubit_widget_tests.dart';
 import '../../../test_support/features/player/player_screen_layout_tests.dart';
 
 import 'package:bookish_player/features/player/use_cases/playback_command_service.dart';
+import 'package:bookish_player/features/player/cubits/player_state_timeline.dart';
 
 void main() {
   group('Player cubit', () {
@@ -122,7 +125,7 @@ void main() {
         expect(sut.state.currentChapter?.title, 'One');
       });
 
-      test('Given a chapter boundary, When skip controls cross it, Then playback stays in the current chapter', () async {
+      test('Given a chapter boundary, When skip controls cross it, Then playback keeps playing in the current chapter', () async {
         // GIVEN
         final book = _book(
           id: 'book',
@@ -154,9 +157,126 @@ void main() {
         // THEN
         expect(forwardPosition, const Duration(milliseconds: 29999));
         expect(forwardChapter, 'One');
-        expect(wasPlayingAfterForwardSkip, isFalse);
+        expect(wasPlayingAfterForwardSkip, isTrue);
         expect(harness.audio.currentPosition, Duration.zero);
         expect(sut.state.currentChapter?.title, 'One');
+      });
+
+      test('Given rapid next chapter taps, When the first seek is pending, Then each tap advances one chapter', () async {
+        // GIVEN
+        final book = _book(
+          id: 'book',
+          title: 'Book',
+          details: (
+            durationMs: 120000,
+            series: '',
+            seriesPosition: null,
+            addedAt: null,
+            chapters: const [
+              AudioChapter(title: 'One', startMs: 0),
+              AudioChapter(title: 'Two', startMs: 30000),
+              AudioChapter(title: 'Three', startMs: 60000),
+              AudioChapter(title: 'Four', startMs: 90000),
+            ],
+          ),
+        );
+        final audio = _DelayedSeekAudioPlayer();
+        harness = _PlayerHarness([book], audio: audio);
+        final sut = await harness.open(book);
+
+        // WHEN
+        final first = sut.nextChapter();
+        await audio.firstSeekStarted;
+        final second = sut.nextChapter();
+        final third = sut.nextChapter();
+        audio.resumeFirstSeek();
+        await Future.wait([first, second, third]);
+
+        // THEN
+        expect(audio.seekedPositions, [
+          const Duration(seconds: 30),
+          const Duration(seconds: 60),
+          const Duration(seconds: 90),
+        ]);
+        expect(sut.state.currentChapter?.title, 'Four');
+      });
+
+      test('Given rapid previous chapter taps, When the first seek is pending, Then each tap uses the reached chapter', () async {
+        // GIVEN
+        final book = _book(
+          id: 'book',
+          title: 'Book',
+          details: (
+            durationMs: 120000,
+            series: '',
+            seriesPosition: null,
+            addedAt: null,
+            chapters: const [
+              AudioChapter(title: 'One', startMs: 0),
+              AudioChapter(title: 'Two', startMs: 30000),
+              AudioChapter(title: 'Three', startMs: 60000),
+              AudioChapter(title: 'Four', startMs: 90000),
+            ],
+          ),
+        ).copyWith(positionMs: 95000);
+        final audio = _DelayedSeekAudioPlayer();
+        harness = _PlayerHarness([book], audio: audio);
+        final sut = await harness.open(book);
+
+        // WHEN
+        final first = sut.previousChapter();
+        await audio.firstSeekStarted;
+        final second = sut.previousChapter();
+        final third = sut.previousChapter();
+        audio.resumeFirstSeek();
+        await Future.wait([first, second, third]);
+
+        // THEN
+        expect(audio.seekedPositions, [
+          const Duration(seconds: 90),
+          const Duration(seconds: 60),
+          const Duration(seconds: 30),
+        ]);
+        expect(sut.state.currentChapter?.title, 'Two');
+      });
+
+      test('Given a chapter timeline, When a seek exceeds either end, Then its destination and distance are clamped together', () async {
+        // GIVEN
+        final book = _book(
+          id: 'book',
+          title: 'Book',
+          details: (
+            durationMs: 60000,
+            series: '',
+            seriesPosition: null,
+            addedAt: null,
+            chapters: const [
+              AudioChapter(title: 'One', startMs: 0),
+              AudioChapter(title: 'Two', startMs: 30000),
+            ],
+          ),
+        );
+        harness = _PlayerHarness([book]);
+        final sut = await harness.open(book);
+        await sut.seek(const Duration(seconds: 15));
+
+        // WHEN / THEN
+        expect(
+          sut.state.chapterSeekTarget(const Duration(seconds: -10)),
+          Duration.zero,
+        );
+        expect(
+          sut.state.chapterSeekDistance(const Duration(seconds: -10)),
+          const Duration(seconds: -15),
+        );
+        expect(
+          sut.state.chapterSeekTarget(const Duration(minutes: 2)),
+          const Duration(milliseconds: 29999),
+        );
+        expect(
+          sut.state.chapterSeekDistance(const Duration(minutes: 2)),
+          const Duration(milliseconds: 14999),
+        );
       });
 
       test('Given the player cubit, When its behavior is exercised, Then stops a paused current book before switching queues', () async {
@@ -216,11 +336,11 @@ void main() {
 }
 
 final class _PlayerHarness {
-  _PlayerHarness(List<Audiobook> availableBooks)
-    : audio = FakeAudioPlayer(),
+  _PlayerHarness(List<Audiobook> availableBooks, {FakeAudioPlayer? audio})
+    : audio = audio ?? FakeAudioPlayer(),
       books = FakeBooks.withBooks(availableBooks) {
     final created = createPlayerCubitHarness(
-      audio,
+      this.audio,
       books,
       FakeExports(),
       FakeSettings(),
@@ -247,6 +367,26 @@ final class _PlayerHarness {
   Future<void> close() async {
     await sut.close();
     await audio.close();
+  }
+}
+
+final class _DelayedSeekAudioPlayer extends FakeAudioPlayer {
+  final _firstSeekStarted = Completer<void>();
+  final _resume = Completer<void>();
+  final seekedPositions = <Duration>[];
+
+  Future<void> get firstSeekStarted => _firstSeekStarted.future;
+
+  void resumeFirstSeek() => _resume.complete();
+
+  @override
+  Future<void> seek(Duration position) async {
+    if (!_firstSeekStarted.isCompleted) {
+      _firstSeekStarted.complete();
+      await _resume.future;
+    }
+    seekedPositions.add(position);
+    await super.seek(position);
   }
 }
 

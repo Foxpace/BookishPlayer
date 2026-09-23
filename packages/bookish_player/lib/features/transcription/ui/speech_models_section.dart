@@ -15,13 +15,14 @@ class SpeechModelsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final working = state.status == SpeechModelsStatus.downloading;
-    final selectedModel = state.models.isEmpty
-        ? null
-        : state.models.firstWhere(
-            (model) => model.slug == state.selectedModel,
-            orElse: () => state.models.first,
-          );
+    final working =
+        state.status == SpeechModelsStatus.downloading ||
+        state.status == SpeechModelsStatus.removing;
+    final selectedModel = state.selectedModelIsDownloaded
+        ? state.models
+              .where((model) => model.slug == state.selectedModel)
+              .firstOrNull
+        : null;
     return SpeechModelSelectorCard(
       state: state,
       selectedModel: selectedModel,

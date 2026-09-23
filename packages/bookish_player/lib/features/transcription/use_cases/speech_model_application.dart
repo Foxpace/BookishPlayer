@@ -48,11 +48,16 @@ class SpeechModelApplication {
   }
 
   Future<Result<bool>> _select(String slug) async {
+    if (!await _repository.isModelDownloaded(slug)) {
+      return const Result.failure(
+        AppFailure.notFound('transcription.model.downloaded'),
+      );
+    }
     await _preferences.setSelectedModel(slug);
     return const Result.success(true);
   }
 
-  Future<Result<bool>> download(
+  Future<Result<List<SpeechModel>>> download(
     String slug, {
     TranscriptionDownloadProgress? onProgress,
   }) async {
@@ -68,17 +73,40 @@ class SpeechModelApplication {
     }
   }
 
-  Future<Result<bool>> _download(
+  Future<Result<List<SpeechModel>>> _download(
     String slug,
     TranscriptionDownloadProgress? onProgress,
   ) async {
     await _repository.downloadModel(slug, onProgress: onProgress);
-    return const Result.success(true);
+    return Result.success(await _repository.listModels());
+  }
+
+  Future<Result<SpeechModelCatalog>> remove(String slug) async {
+    try {
+      await _repository.removeModel(slug);
+      final catalog = await _load();
+      if (catalog case ResultSuccess(:final value)) {
+        final saved = await _preferences.getSelectedModel();
+        if (saved != value.selected) {
+          await _preferences.setSelectedModel(value.selected);
+        }
+      }
+      return catalog;
+    } catch (error) {
+      return Result.failure(
+        AppFailure.operationFailed('transcription.model.remove', error: error),
+      );
+    }
   }
 
   String _selectAvailable(List<SpeechModel> models, String selected) {
-    if (models.any((model) => model.slug == selected)) {
+    if (models.any((model) => model.slug == selected && model.isDownloaded)) {
       return selected;
+    }
+    for (final model in models) {
+      if (model.isDownloaded) {
+        return model.slug;
+      }
     }
     return models.isEmpty ? 'whisper-base' : models.first.slug;
   }

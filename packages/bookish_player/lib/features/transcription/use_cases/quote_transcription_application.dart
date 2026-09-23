@@ -51,8 +51,11 @@ class QuoteTranscriptionApplication {
   }) async {
     final selected = await _preferences.getSelectedModel();
     final models = await _transcription.listModels();
-    final model = models.any((item) => item.slug == selected)
+    final model =
+        models.any((item) => item.slug == selected && item.isDownloaded)
         ? selected!
+        : models.any((item) => item.isDownloaded)
+        ? models.firstWhere((item) => item.isDownloaded).slug
         : (models.isEmpty ? 'whisper-base' : models.first.slug);
     return _transcription.transcribeRange(
       book: book,

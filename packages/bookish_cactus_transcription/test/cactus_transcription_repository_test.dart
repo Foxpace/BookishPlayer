@@ -64,6 +64,82 @@ void main() {
     expect(await sut.isModelDownloaded('../whisper-tiny'), isFalse);
   });
 
+  test('Given a downloaded model, When it is removed, Then its files are deleted and the catalog reports it missing', () async {
+    // GIVEN
+    prepareModel();
+    final sut = repository(
+      (_, _) async => const CactusTranscriptionOutcome.success(''),
+    );
+    expect(await sut.isModelDownloaded('whisper-base'), isTrue);
+
+    // WHEN
+    await sut.removeModel('whisper-base');
+
+    // THEN
+    expect(await sut.isModelDownloaded('whisper-base'), isFalse);
+    expect(
+      Directory('${directory.path}/cactus-v2.0.1/models/whisper-base')
+          .existsSync(),
+      isFalse,
+    );
+    await expectLater(
+      sut.removeModel('../models'),
+      throwsA(isA<CactusTranscriptionException>()),
+    );
+  });
+
+  test('Given active transcription, When its model is removed, Then deletion waits for inference', () async {
+    // GIVEN
+    prepareModel();
+    final inference = Completer<CactusTranscriptionOutcome>();
+    final started = Completer<void>();
+    final sut = repository((_, _) {
+      started.complete();
+      return inference.future;
+    });
+    final transcription = transcribe(sut);
+    await started.future;
+
+    // WHEN
+    final removal = sut.removeModel('whisper-base');
+    await Future<void>.delayed(Duration.zero);
+    expect(await sut.isModelDownloaded('whisper-base'), isTrue);
+    inference.complete(const CactusTranscriptionOutcome.success('done'));
+    await transcription;
+    await removal;
+
+    // THEN
+    expect(await sut.isModelDownloaded('whisper-base'), isFalse);
+  });
+
+  test('Given queued transcription before removal, When the model is removed, Then queued work finishes before deletion', () async {
+    // GIVEN
+    prepareModel();
+    final first = Completer<CactusTranscriptionOutcome>();
+    final started = Completer<void>();
+    var calls = 0;
+    final sut = repository((_, _) {
+      calls++;
+      if (calls == 1) {
+        started.complete();
+        return first.future;
+      }
+      return Future.value(const CactusTranscriptionOutcome.success('second'));
+    });
+    final one = transcribe(sut);
+    await started.future;
+    final two = transcribe(sut);
+
+    // WHEN
+    final removal = sut.removeModel('whisper-base');
+    first.complete(const CactusTranscriptionOutcome.success('first'));
+    await Future.wait([one, two, removal]).timeout(const Duration(seconds: 3));
+
+    // THEN
+    expect(calls, 2);
+    expect(await sut.isModelDownloaded('whisper-base'), isFalse);
+  });
+
   test('Given a ready model, When transcribing, Then passes decoded PCM and removes the temporary file', () async {
     // GIVEN
     prepareModel();

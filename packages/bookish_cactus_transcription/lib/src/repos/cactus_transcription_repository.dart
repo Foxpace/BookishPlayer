@@ -23,6 +23,7 @@ class CactusTranscriptionRepository {
   final CactusInference _transcribePcm;
   final CactusModelDownloader _modelDownloader;
   final _activeModelDownloads = <String, Future<void>>{};
+  final _activeModelRemovals = <String, Future<void>>{};
   Future<void> _transcriptionQueue = Future.value();
 
   Future<Directory> _modelsDirectory() async {
@@ -53,8 +54,12 @@ class CactusTranscriptionRepository {
   Future<void> downloadModel(
     String slug, {
     CactusDownloadProgress? onProgress,
-  }) {
-    return _activeModelDownloads.putIfAbsent(
+  }) async {
+    final removal = _activeModelRemovals[slug];
+    if (removal != null) {
+      await removal;
+    }
+    await _activeModelDownloads.putIfAbsent(
       slug,
       () => _downloadModel(slug, onProgress),
     );
@@ -98,14 +103,53 @@ class CactusTranscriptionRepository {
     );
   }
 
+  Future<void> removeModel(String slug) {
+    if (!cactusModelRevisions.containsKey(slug)) {
+      return Future.error(
+        const CactusTranscriptionException('Unsupported speech model.'),
+      );
+    }
+    final pendingTranscriptions = _transcriptionQueue;
+    return _activeModelRemovals.putIfAbsent(
+      slug,
+      () => _removeModel(slug, pendingTranscriptions),
+    );
+  }
+
+  Future<void> _removeModel(
+    String slug,
+    Future<void> pendingTranscriptions,
+  ) async {
+    try {
+      final download = _activeModelDownloads[slug];
+      if (download != null) {
+        try {
+          await download;
+        } catch (_) {
+          // A failed download may leave a partial directory to remove.
+        }
+      }
+      await pendingTranscriptions;
+      final modelDirectory = Directory(
+        p.join((await _modelsDirectory()).path, slug),
+      );
+      if (await modelDirectory.exists()) {
+        await modelDirectory.delete(recursive: true);
+      }
+    } finally {
+      _activeModelRemovals.remove(slug);
+    }
+  }
+
   Future<CactusTranscriptionOutcome> transcribeRange({
     required CactusAudioSource source,
     required Duration start,
     required Duration end,
     required String model,
   }) {
+    final removal = _activeModelRemovals[model];
     final transcription = _transcriptionQueue.then(
-      (_) => _transcribeQueuedRange(source, start, end, model),
+      (_) => _transcribeQueuedRange(source, start, end, model, removal),
     );
     _transcriptionQueue = transcription.then<void>((_) {});
     return transcription;
@@ -116,6 +160,7 @@ class CactusTranscriptionRepository {
     Duration start,
     Duration end,
     String model,
+    Future<void>? pendingRemoval,
   ) async {
     if (end <= start) {
       developer.log(
@@ -133,6 +178,9 @@ class CactusTranscriptionRepository {
       name: 'bookish.cactus',
     );
     try {
+      if (pendingRemoval != null) {
+        await pendingRemoval;
+      }
       final outcome = await _transcribeWithDownloadedModel(
         source,
         start,

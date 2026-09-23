@@ -6,11 +6,13 @@ import '../../models/speech_model.dart';
 class SpeechModelSelector extends StatelessWidget {
   const SpeechModelSelector({
     required this.selectedModel,
+    required this.modelsAvailable,
     required this.onTap,
     super.key,
   });
 
   final SpeechModel? selectedModel;
+  final bool modelsAvailable;
   final VoidCallback? onTap;
 
   @override
@@ -32,7 +34,11 @@ class SpeechModelSelector extends StatelessWidget {
               Expanded(
                 child: switch (selectedModel) {
                   final model? => _SpeechModelLabel(model: model),
-                  null => Text(S.of(context).noSpeechModelsAvailable),
+                  null => Text(
+                    modelsAvailable
+                        ? S.of(context).noDownloadedSpeechModel
+                        : S.of(context).noSpeechModelsAvailable,
+                  ),
                 },
               ),
               const SizedBox(width: 8),

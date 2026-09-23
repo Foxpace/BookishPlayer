@@ -26,6 +26,8 @@ extension AppMessageLocalization on AppMessage {
       AppMessage.speechModelsLoadFailed => l10n.speechModelsLoadFailed,
       AppMessage.speechModelDownloaded => l10n.speechModelDownloaded,
       AppMessage.speechModelDownloadFailed => l10n.speechModelDownloadFailed,
+      AppMessage.speechModelRemoved => l10n.speechModelRemoved,
+      AppMessage.speechModelRemoveFailed => l10n.speechModelRemoveFailed,
       AppMessage.noSpeechDetected => l10n.noSpeechDetected,
       AppMessage.quoteTranscriptionFailed => l10n.quoteTranscriptionFailed,
       AppMessage.libraryLoadFailed => l10n.libraryLoadFailed,

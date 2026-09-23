@@ -17,6 +17,8 @@ enum AppMessage {
   speechModelsLoadFailed,
   speechModelDownloaded,
   speechModelDownloadFailed,
+  speechModelRemoved,
+  speechModelRemoveFailed,
   noSpeechDetected,
   quoteTranscriptionFailed,
   libraryLoadFailed,

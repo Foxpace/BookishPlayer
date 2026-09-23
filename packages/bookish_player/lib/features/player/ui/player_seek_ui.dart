@@ -28,18 +28,4 @@ extension PlayerSeekUi on BuildContext {
     );
     return confirmed == true && mounted;
   }
-
-  void showSeekUndo(VoidCallback onUndo) {
-    final messenger = ScaffoldMessenger.of(this);
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        persist: false,
-        content: Text(S.of(this).playbackPositionChanged),
-        action: SnackBarAction(label: S.of(this).undo, onPressed: onUndo),
-      ),
-    );
-  }
 }

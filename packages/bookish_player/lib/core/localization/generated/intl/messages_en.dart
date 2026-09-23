@@ -78,13 +78,15 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m25(title) =>
       "“${title}” will be removed from the library because its audio is no longer available.";
 
-  static String m26(count) => "${count} sec earlier";
+  static String m26(model) => "Remove ${model}?";
 
-  static String m27(count) => "${count} sec later";
+  static String m27(count) => "${count} sec earlier";
 
-  static String m28(count) => "${count} sec";
+  static String m28(count) => "${count} sec later";
 
-  static String m29(position) => "To ${position}";
+  static String m29(count) => "${count} sec";
+
+  static String m30(position) => "To ${position}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -197,12 +199,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseAudiobooks": MessageLookupByLibrary.simpleMessage(
       "Choose audiobooks",
     ),
-    "chooseSpeechModel": MessageLookupByLibrary.simpleMessage(
-      "Choose speech model",
-    ),
-    "chooseSpeechModelDescription": MessageLookupByLibrary.simpleMessage(
-      "Tap a model to select it. Models that are not on this device download automatically.",
-    ),
     "clean": MessageLookupByLibrary.simpleMessage("Clean"),
     "clearDataFailed": MessageLookupByLibrary.simpleMessage(
       "Bookish could not remove all app data.",
@@ -272,6 +268,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dictateVoiceNote": MessageLookupByLibrary.simpleMessage(
       "Dictate voice note",
     ),
+    "downloadModel": MessageLookupByLibrary.simpleMessage("Download"),
     "duplicateBooks": MessageLookupByLibrary.simpleMessage("Duplicate books"),
     "editAudiobook": MessageLookupByLibrary.simpleMessage("Edit audiobook"),
     "editMetadata": MessageLookupByLibrary.simpleMessage("Edit metadata"),
@@ -480,6 +477,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "localTranscriptionTitle": MessageLookupByLibrary.simpleMessage(
       "Local transcription",
     ),
+    "manageSpeechModels": MessageLookupByLibrary.simpleMessage(
+      "Manage speech models",
+    ),
+    "manageSpeechModelsDescription": MessageLookupByLibrary.simpleMessage(
+      "Download, use, or remove models stored on this device.",
+    ),
     "managedStorage": m14,
     "markFinished": MessageLookupByLibrary.simpleMessage("Mark finished"),
     "markUnfinished": MessageLookupByLibrary.simpleMessage("Mark unfinished"),
@@ -502,7 +505,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "modelNotDownloaded": MessageLookupByLibrary.simpleMessage(
       "Not downloaded",
     ),
-    "modelSelected": MessageLookupByLibrary.simpleMessage("Selected"),
     "modelSize": m17,
     "month": MessageLookupByLibrary.simpleMessage("Month"),
     "moveFromFinderDescription": MessageLookupByLibrary.simpleMessage(
@@ -518,6 +520,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noBooksMatchFilters": MessageLookupByLibrary.simpleMessage(
       "No books match these filters.",
+    ),
+    "noDownloadedSpeechModel": MessageLookupByLibrary.simpleMessage(
+      "No model downloaded",
     ),
     "noDuplicateBooks": MessageLookupByLibrary.simpleMessage(
       "No duplicate books detected.",
@@ -576,9 +581,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "playbackDescription": MessageLookupByLibrary.simpleMessage(
       "Tune Bookish for narration, sleep, and precise seeking.",
     ),
-    "playbackPositionChanged": MessageLookupByLibrary.simpleMessage(
-      "Playback position changed.",
-    ),
     "playbackResetFailed": MessageLookupByLibrary.simpleMessage(
       "Playback could not be reset safely.",
     ),
@@ -628,6 +630,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeMissingLibraryEntry": MessageLookupByLibrary.simpleMessage(
       "Remove missing library entry",
     ),
+    "removeSpeechModelDescription": MessageLookupByLibrary.simpleMessage(
+      "This deletes the downloaded model from this device. You can download it again later.",
+    ),
+    "removeSpeechModelQuestion": m26,
     "removeUnusedFiles": MessageLookupByLibrary.simpleMessage(
       "Remove unused files",
     ),
@@ -652,9 +658,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveToNotes": MessageLookupByLibrary.simpleMessage("Save to notes"),
     "saveToNotesAndShare": MessageLookupByLibrary.simpleMessage("Save & share"),
     "saveVoiceNote": MessageLookupByLibrary.simpleMessage("Save voice note"),
-    "secondsEarlier": m26,
-    "secondsLater": m27,
-    "secondsShort": m28,
+    "secondsEarlier": m27,
+    "secondsLater": m28,
+    "secondsShort": m29,
     "seriesField": MessageLookupByLibrary.simpleMessage("Series"),
     "settingsLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Could not load appearance settings.",
@@ -673,13 +679,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "sleepTimer": MessageLookupByLibrary.simpleMessage("Sleep timer"),
     "sortBy": MessageLookupByLibrary.simpleMessage("Sort by"),
     "speechModelDescription": MessageLookupByLibrary.simpleMessage(
-      "Choose a model to use it. If needed, it downloads automatically. Audio and generated text stay on this device.",
+      "Manage downloads and choose a model to use. Audio and generated text stay on this device.",
     ),
     "speechModelDownloadFailed": MessageLookupByLibrary.simpleMessage(
       "Could not download the speech model.",
     ),
     "speechModelDownloaded": MessageLookupByLibrary.simpleMessage(
       "Speech model downloaded and ready.",
+    ),
+    "speechModelRemoveFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not remove the speech model.",
+    ),
+    "speechModelRemoved": MessageLookupByLibrary.simpleMessage(
+      "Speech model removed from this device.",
     ),
     "speechModelsLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Could not load speech models.",
@@ -743,7 +755,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timer": MessageLookupByLibrary.simpleMessage("Timer"),
     "timerActive": MessageLookupByLibrary.simpleMessage("Timer active"),
     "titleField": MessageLookupByLibrary.simpleMessage("Title"),
-    "toPosition": m29,
+    "toPosition": m30,
     "trackOrder": MessageLookupByLibrary.simpleMessage("Track order"),
     "transcribeQuote": MessageLookupByLibrary.simpleMessage(
       "Transcribe a quote",
@@ -760,7 +772,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tryAgain": MessageLookupByLibrary.simpleMessage("Try again"),
     "turnOffTimer": MessageLookupByLibrary.simpleMessage("Turn off timer"),
-    "undo": MessageLookupByLibrary.simpleMessage("Undo"),
     "unknown": MessageLookupByLibrary.simpleMessage("Unknown"),
     "unknownAuthor": MessageLookupByLibrary.simpleMessage("Unknown author"),
     "unknownBook": MessageLookupByLibrary.simpleMessage("Unknown book"),
@@ -770,6 +781,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unusedFilesRemoved": MessageLookupByLibrary.simpleMessage(
       "Unused files removed.",
     ),
+    "useModel": MessageLookupByLibrary.simpleMessage("Use"),
     "useProgressStatus": MessageLookupByLibrary.simpleMessage(
       "Use progress status",
     ),

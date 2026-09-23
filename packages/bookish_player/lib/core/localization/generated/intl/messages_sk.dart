@@ -78,13 +78,15 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m25(title) =>
       "„${title}“ bude odstránená z knižnice, pretože jej zvuk už nie je dostupný.";
 
-  static String m26(count) => "o ${count} s skôr";
+  static String m26(model) => "Odstrániť ${model}?";
 
-  static String m27(count) => "o ${count} s neskôr";
+  static String m27(count) => "o ${count} s skôr";
 
-  static String m28(count) => "${count} s";
+  static String m28(count) => "o ${count} s neskôr";
 
-  static String m29(position) => "Do ${position}";
+  static String m29(count) => "${count} s";
+
+  static String m30(position) => "Do ${position}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -201,12 +203,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseAudiobooks": MessageLookupByLibrary.simpleMessage(
       "Vybrať audioknihy",
     ),
-    "chooseSpeechModel": MessageLookupByLibrary.simpleMessage(
-      "Vybrať model reči",
-    ),
-    "chooseSpeechModelDescription": MessageLookupByLibrary.simpleMessage(
-      "Klepnutím vyberte model. Modely, ktoré nie sú v zariadení, sa stiahnu automaticky.",
-    ),
     "clean": MessageLookupByLibrary.simpleMessage("Vyčistiť"),
     "clearDataFailed": MessageLookupByLibrary.simpleMessage(
       "Bookish nedokázal odstrániť všetky dáta aplikácie.",
@@ -282,6 +278,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dictateVoiceNote": MessageLookupByLibrary.simpleMessage(
       "Nadiktovať hlasovú poznámku",
     ),
+    "downloadModel": MessageLookupByLibrary.simpleMessage("Stiahnuť"),
     "duplicateBooks": MessageLookupByLibrary.simpleMessage("Duplicitné knihy"),
     "editAudiobook": MessageLookupByLibrary.simpleMessage("Upraviť audioknihu"),
     "editMetadata": MessageLookupByLibrary.simpleMessage("Upraviť metadáta"),
@@ -496,6 +493,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "localTranscriptionTitle": MessageLookupByLibrary.simpleMessage(
       "Lokálny prepis",
     ),
+    "manageSpeechModels": MessageLookupByLibrary.simpleMessage(
+      "Spravovať modely reči",
+    ),
+    "manageSpeechModelsDescription": MessageLookupByLibrary.simpleMessage(
+      "Stiahnite, používajte alebo odstráňte modely uložené v tomto zariadení.",
+    ),
     "managedStorage": m14,
     "markFinished": MessageLookupByLibrary.simpleMessage(
       "Označiť ako dokončené",
@@ -520,7 +523,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "modelDownloaded": MessageLookupByLibrary.simpleMessage("Stiahnutý"),
     "modelNotDownloaded": MessageLookupByLibrary.simpleMessage("Nestiahnutý"),
-    "modelSelected": MessageLookupByLibrary.simpleMessage("Vybraný"),
     "modelSize": m17,
     "month": MessageLookupByLibrary.simpleMessage("Mesiac"),
     "moveFromFinderDescription": MessageLookupByLibrary.simpleMessage(
@@ -536,6 +538,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noBooksMatchFilters": MessageLookupByLibrary.simpleMessage(
       "Žiadne knihy nezodpovedajú týmto filtrom.",
+    ),
+    "noDownloadedSpeechModel": MessageLookupByLibrary.simpleMessage(
+      "Nie je stiahnutý žiadny model",
     ),
     "noDuplicateBooks": MessageLookupByLibrary.simpleMessage(
       "Nenašli sa duplicitné knihy.",
@@ -596,9 +601,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "playbackDescription": MessageLookupByLibrary.simpleMessage(
       "Prispôsobte rozprávanie, spánok a presné posúvanie.",
     ),
-    "playbackPositionChanged": MessageLookupByLibrary.simpleMessage(
-      "Pozícia prehrávania bola zmenená.",
-    ),
     "playbackResetFailed": MessageLookupByLibrary.simpleMessage(
       "Prehrávanie sa nepodarilo bezpečne obnoviť.",
     ),
@@ -656,6 +658,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeMissingLibraryEntry": MessageLookupByLibrary.simpleMessage(
       "Odstrániť chýbajúci záznam knižnice",
     ),
+    "removeSpeechModelDescription": MessageLookupByLibrary.simpleMessage(
+      "Stiahnutý model sa odstráni z tohto zariadenia. Neskôr ho môžete stiahnuť znova.",
+    ),
+    "removeSpeechModelQuestion": m26,
     "removeUnusedFiles": MessageLookupByLibrary.simpleMessage(
       "Odstrániť nepoužívané súbory",
     ),
@@ -686,9 +692,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveVoiceNote": MessageLookupByLibrary.simpleMessage(
       "Uložiť hlasovú poznámku",
     ),
-    "secondsEarlier": m26,
-    "secondsLater": m27,
-    "secondsShort": m28,
+    "secondsEarlier": m27,
+    "secondsLater": m28,
+    "secondsShort": m29,
     "seriesField": MessageLookupByLibrary.simpleMessage("Séria"),
     "settingsLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Nastavenia vzhľadu sa nepodarilo načítať.",
@@ -707,13 +713,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "sleepTimer": MessageLookupByLibrary.simpleMessage("Časovač spánku"),
     "sortBy": MessageLookupByLibrary.simpleMessage("Zoradiť podľa"),
     "speechModelDescription": MessageLookupByLibrary.simpleMessage(
-      "Vyberte model, ktorý chcete používať. V prípade potreby sa stiahne automaticky. Zvuk aj vytvorený text zostanú v tomto zariadení.",
+      "Spravujte stiahnuté modely a vyberte model na používanie. Zvuk aj vytvorený text zostanú v tomto zariadení.",
     ),
     "speechModelDownloadFailed": MessageLookupByLibrary.simpleMessage(
       "Model reči sa nepodarilo stiahnuť.",
     ),
     "speechModelDownloaded": MessageLookupByLibrary.simpleMessage(
       "Model reči je stiahnutý a pripravený.",
+    ),
+    "speechModelRemoveFailed": MessageLookupByLibrary.simpleMessage(
+      "Model reči sa nepodarilo odstrániť.",
+    ),
+    "speechModelRemoved": MessageLookupByLibrary.simpleMessage(
+      "Model reči bol odstránený z tohto zariadenia.",
     ),
     "speechModelsLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Modely reči sa nepodarilo načítať.",
@@ -777,7 +789,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timer": MessageLookupByLibrary.simpleMessage("Časovač"),
     "timerActive": MessageLookupByLibrary.simpleMessage("Časovač je aktívny"),
     "titleField": MessageLookupByLibrary.simpleMessage("Názov"),
-    "toPosition": m29,
+    "toPosition": m30,
     "trackOrder": MessageLookupByLibrary.simpleMessage("Poradie stôp"),
     "transcribeQuote": MessageLookupByLibrary.simpleMessage("Prepísať citát"),
     "transcribeRange": MessageLookupByLibrary.simpleMessage("Prepísať rozsah"),
@@ -792,7 +804,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tryAgain": MessageLookupByLibrary.simpleMessage("Skúsiť znova"),
     "turnOffTimer": MessageLookupByLibrary.simpleMessage("Vypnúť časovač"),
-    "undo": MessageLookupByLibrary.simpleMessage("Späť"),
     "unknown": MessageLookupByLibrary.simpleMessage("Neznáme"),
     "unknownAuthor": MessageLookupByLibrary.simpleMessage("Neznámy autor"),
     "unknownBook": MessageLookupByLibrary.simpleMessage("Neznáma kniha"),
@@ -802,6 +813,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unusedFilesRemoved": MessageLookupByLibrary.simpleMessage(
       "Nepoužívané súbory boli odstránené.",
     ),
+    "useModel": MessageLookupByLibrary.simpleMessage("Použiť"),
     "useProgressStatus": MessageLookupByLibrary.simpleMessage(
       "Použiť stav podľa priebehu",
     ),

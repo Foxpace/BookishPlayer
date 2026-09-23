@@ -20,7 +20,9 @@ class SpeechModelSelectorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = S.of(context);
-    final working = state.status == SpeechModelsStatus.downloading;
+    final working =
+        state.status == SpeechModelsStatus.downloading ||
+        state.status == SpeechModelsStatus.removing;
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -37,6 +39,7 @@ class SpeechModelSelectorCard extends StatelessWidget {
             const SizedBox(height: 8),
             SpeechModelSelector(
               selectedModel: selectedModel,
+              modelsAvailable: state.models.isNotEmpty,
               onTap: onOpenPicker,
             ),
             if (state.status == SpeechModelsStatus.loading) ...[

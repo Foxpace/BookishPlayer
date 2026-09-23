@@ -108,20 +108,22 @@ class _PlayerScreenRootState extends State<PlayerScreenRoot>
     PlayerState state,
     Duration relative,
   ) async {
-    if (relative == state.chapterPosition) {
+    final target = state.chapterSeekTarget(relative);
+    if (target == state.position) {
       return;
     }
-    final previous = state.position;
     final distance = state.chapterSeekDistance(relative);
     if (state.requiresSeekConfirmation(distance) &&
         !await context.confirmLargeSeek(distance)) {
       return;
     }
-
-    await _cubit.seekWithinChapter(relative);
-    if (context.mounted) {
-      context.showSeekUndo(() => _cubit.seek(previous));
+    if (!context.mounted || _cubit.state.book?.id != state.book?.id) {
+      return;
     }
+    if (_cubit.state.position == target) {
+      return;
+    }
+    await _cubit.seek(target);
   }
 
   Future<void> _exitPlayer(BuildContext context) async {

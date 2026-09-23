@@ -13,6 +13,8 @@ abstract interface class TranscriptionRepository {
     TranscriptionDownloadProgress? onProgress,
   });
 
+  Future<void> removeModel(String slug);
+
   Future<Result<String>> transcribeRange({
     required Audiobook book,
     required Duration start,

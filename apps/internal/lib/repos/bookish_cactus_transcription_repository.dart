@@ -40,6 +40,9 @@ class BookishCactusTranscriptionRepository implements TranscriptionRepository {
   );
 
   @override
+  Future<void> removeModel(String slug) => _cactus.removeModel(slug);
+
+  @override
   Future<Result<String>> transcribeRange({
     required Audiobook book,
     required Duration start,

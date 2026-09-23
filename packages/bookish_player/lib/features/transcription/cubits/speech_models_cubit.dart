@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 
 import '../../../core/foundation/result.dart';
 import '../../../core/presentation/app_message.dart';
-import '../models/speech_model.dart';
 import '../models/transcription_download.dart';
 import '../use_cases/speech_model_application.dart';
 import 'transcription_cubits.dart';
@@ -17,122 +16,141 @@ class SpeechModelsCubit extends Cubit<SpeechModelsState> {
 
   Future<void> load() async {
     emit(state.copyWith(status: SpeechModelsStatus.loading, message: null));
-    await _loadModelsAndEmit();
-  }
-
-  Future<void> _loadModelsAndEmit() async {
-    switch (await _application.load()) {
+    final result = await _application.load();
+    if (isClosed) {
+      return;
+    }
+    switch (result) {
       case ResultSuccess(:final value):
         _emitCatalog(value);
       case ResultFailure():
-        _emitModelsLoadFailure();
+        _emitFailure(AppMessage.speechModelsLoadFailed);
     }
   }
 
-  void _emitCatalog(SpeechModelCatalog catalog) {
-    emit(
-      state.copyWith(
-        status: SpeechModelsStatus.ready,
-        models: catalog.models,
-        selectedModel: catalog.selected,
-      ),
-    );
-  }
-
-  void _emitModelsLoadFailure() => emit(
-    state.copyWith(
-      status: SpeechModelsStatus.failure,
-      message: AppMessage.speechModelsLoadFailed,
-      effectRevision: state.effectRevision + 1,
-    ),
-  );
-
-  Future<void> selectModel(String slug) async {
-    switch (await _application.select(slug)) {
+  Future<bool> selectModel(String slug) async {
+    if (_busy ||
+        !state.models.any(
+          (model) => model.slug == slug && model.isDownloaded,
+        )) {
+      return false;
+    }
+    final result = await _application.select(slug);
+    if (isClosed) {
+      return false;
+    }
+    switch (result) {
       case ResultSuccess():
         emit(state.copyWith(selectedModel: slug, message: null));
+        return true;
       case ResultFailure():
-        _emitModelsLoadFailure();
+        _emitFailure(AppMessage.speechModelsLoadFailed);
+        return false;
     }
   }
 
-  Future<bool> activateModel(SpeechModel model) async {
-    await selectModel(model.slug);
-    if (!model.isDownloaded) {
-      await downloadSelectedModel();
+  Future<void> downloadModel(String slug) async {
+    if (_busy ||
+        !state.models.any(
+          (model) => model.slug == slug && !model.isDownloaded,
+        )) {
+      return;
     }
-    return state.status == SpeechModelsStatus.ready;
-  }
-
-  Future<void> downloadSelectedModel() async {
     emit(
       state.copyWith(
         status: SpeechModelsStatus.downloading,
-        downloadProgress: 0,
+        workingModelSlug: slug,
+        downloadProgress: null,
         message: null,
       ),
     );
-    await _downloadSelectedModelAndEmit();
-  }
-
-  Future<void> _downloadSelectedModelAndEmit() async {
     final result = await _application.download(
-      state.selectedModel,
+      slug,
       onProgress: _emitDownloadProgress,
     );
-    if (result case ResultFailure()) {
-      _emitModelDownloadFailure();
+    if (isClosed) {
       return;
     }
-
-    final models = _markSelectedModelDownloaded();
-    emit(
-      state.copyWith(
-        status: SpeechModelsStatus.ready,
-        models: models,
-        downloadProgress: null,
-        message: AppMessage.speechModelDownloaded,
-        effectRevision: state.effectRevision + 1,
-      ),
-    );
+    switch (result) {
+      case ResultSuccess(:final value):
+        emit(
+          state.copyWith(
+            status: SpeechModelsStatus.ready,
+            models: value,
+            workingModelSlug: null,
+            downloadProgress: null,
+            message: AppMessage.speechModelDownloaded,
+            effectRevision: state.effectRevision + 1,
+          ),
+        );
+      case ResultFailure():
+        _emitFailure(AppMessage.speechModelDownloadFailed);
+    }
   }
 
-  List<SpeechModel> _markSelectedModelDownloaded() => state.models
-      .map(
-        (model) => model.slug == state.selectedModel
-            ? model.copyWith(isDownloaded: true)
-            : model,
-      )
-      .toList();
+  Future<void> removeModel(String slug) async {
+    if (_busy ||
+        !state.models.any(
+          (model) => model.slug == slug && model.isDownloaded,
+        )) {
+      return;
+    }
+    emit(
+      state.copyWith(
+        status: SpeechModelsStatus.removing,
+        workingModelSlug: slug,
+        message: null,
+      ),
+    );
+    final result = await _application.remove(slug);
+    if (isClosed) {
+      return;
+    }
+    switch (result) {
+      case ResultSuccess(:final value):
+        _emitCatalog(value);
+        emit(
+          state.copyWith(
+            message: AppMessage.speechModelRemoved,
+            effectRevision: state.effectRevision + 1,
+          ),
+        );
+      case ResultFailure():
+        _emitFailure(AppMessage.speechModelRemoveFailed);
+    }
+  }
+
+  bool get _busy =>
+      state.status == SpeechModelsStatus.downloading ||
+      state.status == SpeechModelsStatus.removing;
+
+  void _emitCatalog(SpeechModelCatalog catalog) => emit(
+    state.copyWith(
+      status: SpeechModelsStatus.ready,
+      models: catalog.models,
+      selectedModel: catalog.selected,
+      workingModelSlug: null,
+      downloadProgress: null,
+      message: null,
+    ),
+  );
 
   void _emitDownloadProgress(
     double? progress,
     TranscriptionDownloadPhase phase,
   ) {
-    if (isClosed) {
+    if (isClosed || phase != TranscriptionDownloadPhase.downloading) {
       return;
     }
-
-    final failed = phase == TranscriptionDownloadPhase.failure;
-    emit(
-      state.copyWith(
-        status: failed
-            ? SpeechModelsStatus.failure
-            : SpeechModelsStatus.downloading,
-        downloadProgress: progress,
-        message: failed ? AppMessage.speechModelDownloadFailed : null,
-        effectRevision: failed
-            ? state.effectRevision + 1
-            : state.effectRevision,
-      ),
-    );
+    emit(state.copyWith(downloadProgress: progress));
   }
 
-  void _emitModelDownloadFailure() => emit(
+  void _emitFailure(AppMessage message) => emit(
     state.copyWith(
       status: SpeechModelsStatus.failure,
+      workingModelSlug: null,
       downloadProgress: null,
-      message: AppMessage.speechModelDownloadFailed,
+      message: message,
       effectRevision: state.effectRevision + 1,
     ),
   );

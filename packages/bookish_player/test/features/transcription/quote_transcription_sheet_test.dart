@@ -197,6 +197,9 @@ class _Transcription implements TranscriptionRepository {
   Future<bool> isModelDownloaded(String slug) async => true;
 
   @override
+  Future<void> removeModel(String slug) async {}
+
+  @override
   Future<void> downloadModel(
     String slug, {
     TranscriptionDownloadProgress? onProgress,

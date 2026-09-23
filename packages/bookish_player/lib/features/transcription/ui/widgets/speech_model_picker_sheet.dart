@@ -8,12 +8,16 @@ import 'speech_model_tile.dart';
 class SpeechModelPickerSheet extends StatelessWidget {
   const SpeechModelPickerSheet({
     required this.state,
-    required this.onActivate,
+    required this.onSelect,
+    required this.onDownload,
+    required this.onRemove,
     super.key,
   });
 
   final SpeechModelsState state;
-  final ValueChanged<SpeechModel> onActivate;
+  final ValueChanged<SpeechModel> onSelect;
+  final ValueChanged<SpeechModel> onDownload;
+  final ValueChanged<SpeechModel> onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +47,17 @@ class SpeechModelPickerSheet extends StatelessWidget {
                 separatorBuilder: (_, _) => const Divider(height: 1),
                 itemBuilder: (context, index) => SpeechModelTile(
                   model: state.models[index],
-                  selected: state.models[index].slug == state.selectedModel,
-                  working: state.status == SpeechModelsStatus.downloading,
-                  onActivate: onActivate,
+                  selected:
+                      state.models[index].isDownloaded &&
+                      state.models[index].slug == state.selectedModel,
+                  working:
+                      state.status == SpeechModelsStatus.downloading ||
+                      state.status == SpeechModelsStatus.removing,
+                  workingOnModel:
+                      state.workingModelSlug == state.models[index].slug,
+                  onSelect: onSelect,
+                  onDownload: onDownload,
+                  onRemove: onRemove,
                 ),
               ),
             ),
@@ -67,13 +79,13 @@ class _PickerHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            S.of(context).chooseSpeechModel,
+            S.of(context).manageSpeechModels,
             style: Theme.of(context).textTheme.headlineSmall
                 ?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Text(
-            S.of(context).chooseSpeechModelDescription,
+            S.of(context).manageSpeechModelsDescription,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),

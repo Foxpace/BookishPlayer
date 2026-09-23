@@ -14,6 +14,36 @@ import '../../../test_support/features/transcription/transcription_test_builder.
 
 void main() {
   group('Quote transcription cubit', () {
+    test('Given a saved model that is no longer downloaded, When transcribing, Then another downloaded model is used', () async {
+      // GIVEN
+      final transcription = _Transcription()
+        ..models = const [
+          SpeechModel(slug: 'whisper-tiny', isDownloaded: false),
+          SpeechModel(slug: 'whisper-base', isDownloaded: true),
+        ];
+      final application = buildQuoteTranscriptionApplication(
+        transcription: transcription,
+        preferences: _Settings(),
+        sharing: _Sharing(),
+      );
+
+      // WHEN
+      await application.transcribe(
+        book: Audiobook(
+          id: 'book',
+          title: 'Book',
+          filePath: '/book.mp3',
+          durationMs: 60000,
+          addedAt: DateTime(2026),
+        ),
+        start: Duration.zero,
+        end: const Duration(seconds: 5),
+      );
+
+      // THEN
+      expect(transcription.selectedModel, 'whisper-base');
+    });
+
     test('Given the quote transcription cubit, When its behavior is exercised, Then transcription workflow maps range intent and output into state', () async {
       // GIVEN
       final sharing = _Sharing();
@@ -67,6 +97,9 @@ void main() {
 
 class _Transcription implements TranscriptionRepository {
   String? selectedModel;
+  var models = const <SpeechModel>[
+    SpeechModel(slug: 'whisper-base', isDownloaded: true),
+  ];
   @override
   Future<void> downloadModel(
     String slug, {
@@ -74,12 +107,13 @@ class _Transcription implements TranscriptionRepository {
   }) async {}
 
   @override
-  Future<List<SpeechModel>> listModels() async => const [
-    SpeechModel(slug: 'whisper-base', isDownloaded: true),
-  ];
+  Future<List<SpeechModel>> listModels() async => models;
 
   @override
   Future<bool> isModelDownloaded(String slug) async => true;
+
+  @override
+  Future<void> removeModel(String slug) async {}
 
   @override
   Future<Result<String>> transcribeRange({

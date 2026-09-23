@@ -13,6 +13,7 @@ abstract class SpeechModelsState with _$SpeechModelsState {
     @Default(SpeechModelsStatus.initial) SpeechModelsStatus status,
     @Default(<SpeechModel>[]) List<SpeechModel> models,
     @Default('whisper-base') String selectedModel,
+    String? workingModelSlug,
     double? downloadProgress,
     AppMessage? message,
     @Default(0) int effectRevision,

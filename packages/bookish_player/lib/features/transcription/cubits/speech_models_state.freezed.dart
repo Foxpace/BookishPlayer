@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SpeechModelsState {
 
- SpeechModelsStatus get status; List<SpeechModel> get models; String get selectedModel; double? get downloadProgress; AppMessage? get message; int get effectRevision;
+ SpeechModelsStatus get status; List<SpeechModel> get models; String get selectedModel; String? get workingModelSlug; double? get downloadProgress; AppMessage? get message; int get effectRevision;
 /// Create a copy of SpeechModelsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $SpeechModelsStateCopyWith<SpeechModelsState> get copyWith => _$SpeechModelsStat
 @override
 bool operator ==(Object other) {
   final _this = this as SpeechModelsState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpeechModelsState&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.models, _this.models)&&(identical(other.selectedModel, _this.selectedModel) || other.selectedModel == _this.selectedModel)&&(identical(other.downloadProgress, _this.downloadProgress) || other.downloadProgress == _this.downloadProgress)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.effectRevision, _this.effectRevision) || other.effectRevision == _this.effectRevision));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpeechModelsState&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.models, _this.models)&&(identical(other.selectedModel, _this.selectedModel) || other.selectedModel == _this.selectedModel)&&(identical(other.workingModelSlug, _this.workingModelSlug) || other.workingModelSlug == _this.workingModelSlug)&&(identical(other.downloadProgress, _this.downloadProgress) || other.downloadProgress == _this.downloadProgress)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.effectRevision, _this.effectRevision) || other.effectRevision == _this.effectRevision));
 }
 
 
 @override
 int get hashCode {
   final _this = this as SpeechModelsState;
-  return Object.hash(runtimeType,_this.status,const DeepCollectionEquality().hash(_this.models),_this.selectedModel,_this.downloadProgress,_this.message,_this.effectRevision);
+  return Object.hash(runtimeType,_this.status,const DeepCollectionEquality().hash(_this.models),_this.selectedModel,_this.workingModelSlug,_this.downloadProgress,_this.message,_this.effectRevision);
 }
 
 @override
 String toString() {
   final _this = this as SpeechModelsState;
-  return 'SpeechModelsState(status: ${_this.status}, models: ${_this.models}, selectedModel: ${_this.selectedModel}, downloadProgress: ${_this.downloadProgress}, message: ${_this.message}, effectRevision: ${_this.effectRevision})';
+  return 'SpeechModelsState(status: ${_this.status}, models: ${_this.models}, selectedModel: ${_this.selectedModel}, workingModelSlug: ${_this.workingModelSlug}, downloadProgress: ${_this.downloadProgress}, message: ${_this.message}, effectRevision: ${_this.effectRevision})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $SpeechModelsStateCopyWith<$Res>  {
   factory $SpeechModelsStateCopyWith(SpeechModelsState value, $Res Function(SpeechModelsState) _then) = _$SpeechModelsStateCopyWithImpl;
 @useResult
 $Res call({
- SpeechModelsStatus status, List<SpeechModel> models, String selectedModel, double? downloadProgress, AppMessage? message, int effectRevision
+ SpeechModelsStatus status, List<SpeechModel> models, String selectedModel, String? workingModelSlug, double? downloadProgress, AppMessage? message, int effectRevision
 });
 
 
@@ -68,12 +68,13 @@ class _$SpeechModelsStateCopyWithImpl<$Res>
 
 /// Create a copy of SpeechModelsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? models = null,Object? selectedModel = null,Object? downloadProgress = freezed,Object? message = freezed,Object? effectRevision = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? models = null,Object? selectedModel = null,Object? workingModelSlug = freezed,Object? downloadProgress = freezed,Object? message = freezed,Object? effectRevision = null,}) {
   return _then(SpeechModelsState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as SpeechModelsStatus,models: null == models ? _self.models : models // ignore: cast_nullable_to_non_nullable
 as List<SpeechModel>,selectedModel: null == selectedModel ? _self.selectedModel : selectedModel // ignore: cast_nullable_to_non_nullable
-as String,downloadProgress: freezed == downloadProgress ? _self.downloadProgress : downloadProgress // ignore: cast_nullable_to_non_nullable
+as String,workingModelSlug: freezed == workingModelSlug ? _self.workingModelSlug : workingModelSlug // ignore: cast_nullable_to_non_nullable
+as String?,downloadProgress: freezed == downloadProgress ? _self.downloadProgress : downloadProgress // ignore: cast_nullable_to_non_nullable
 as double?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as AppMessage?,effectRevision: null == effectRevision ? _self.effectRevision : effectRevision // ignore: cast_nullable_to_non_nullable
 as int,
@@ -161,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SpeechModelsStatus status,  List<SpeechModel> models,  String selectedModel,  double? downloadProgress,  AppMessage? message,  int effectRevision)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SpeechModelsStatus status,  List<SpeechModel> models,  String selectedModel,  String? workingModelSlug,  double? downloadProgress,  AppMessage? message,  int effectRevision)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SpeechModelsState() when $default != null:
-return $default(_that.status,_that.models,_that.selectedModel,_that.downloadProgress,_that.message,_that.effectRevision);case _:
+return $default(_that.status,_that.models,_that.selectedModel,_that.workingModelSlug,_that.downloadProgress,_that.message,_that.effectRevision);case _:
   return orElse();
 
 }
@@ -182,10 +183,10 @@ return $default(_that.status,_that.models,_that.selectedModel,_that.downloadProg
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SpeechModelsStatus status,  List<SpeechModel> models,  String selectedModel,  double? downloadProgress,  AppMessage? message,  int effectRevision)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SpeechModelsStatus status,  List<SpeechModel> models,  String selectedModel,  String? workingModelSlug,  double? downloadProgress,  AppMessage? message,  int effectRevision)  $default,) {final _that = this;
 switch (_that) {
 case _SpeechModelsState():
-return $default(_that.status,_that.models,_that.selectedModel,_that.downloadProgress,_that.message,_that.effectRevision);case _:
+return $default(_that.status,_that.models,_that.selectedModel,_that.workingModelSlug,_that.downloadProgress,_that.message,_that.effectRevision);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +203,10 @@ return $default(_that.status,_that.models,_that.selectedModel,_that.downloadProg
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SpeechModelsStatus status,  List<SpeechModel> models,  String selectedModel,  double? downloadProgress,  AppMessage? message,  int effectRevision)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SpeechModelsStatus status,  List<SpeechModel> models,  String selectedModel,  String? workingModelSlug,  double? downloadProgress,  AppMessage? message,  int effectRevision)?  $default,) {final _that = this;
 switch (_that) {
 case _SpeechModelsState() when $default != null:
-return $default(_that.status,_that.models,_that.selectedModel,_that.downloadProgress,_that.message,_that.effectRevision);case _:
+return $default(_that.status,_that.models,_that.selectedModel,_that.workingModelSlug,_that.downloadProgress,_that.message,_that.effectRevision);case _:
   return null;
 
 }
@@ -217,7 +218,7 @@ return $default(_that.status,_that.models,_that.selectedModel,_that.downloadProg
 
 
 class _SpeechModelsState extends SpeechModelsState {
-  const _SpeechModelsState({this.status = SpeechModelsStatus.initial,  List<SpeechModel> models = const <SpeechModel>[], this.selectedModel = 'whisper-base', this.downloadProgress, this.message, this.effectRevision = 0}): _models = models,super._();
+  const _SpeechModelsState({this.status = SpeechModelsStatus.initial,  List<SpeechModel> models = const <SpeechModel>[], this.selectedModel = 'whisper-base', this.workingModelSlug, this.downloadProgress, this.message, this.effectRevision = 0}): _models = models,super._();
   
 
 @override@JsonKey() final  SpeechModelsStatus status;
@@ -229,6 +230,7 @@ class _SpeechModelsState extends SpeechModelsState {
 }
 
 @override@JsonKey() final  String selectedModel;
+@override final  String? workingModelSlug;
 @override final  double? downloadProgress;
 @override final  AppMessage? message;
 @override@JsonKey() final  int effectRevision;
@@ -243,18 +245,18 @@ _$SpeechModelsStateCopyWith<_SpeechModelsState> get copyWith => __$SpeechModelsS
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpeechModelsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.models, _models)&&(identical(other.selectedModel, selectedModel) || other.selectedModel == selectedModel)&&(identical(other.downloadProgress, downloadProgress) || other.downloadProgress == downloadProgress)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpeechModelsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.models, _models)&&(identical(other.selectedModel, selectedModel) || other.selectedModel == selectedModel)&&(identical(other.workingModelSlug, workingModelSlug) || other.workingModelSlug == workingModelSlug)&&(identical(other.downloadProgress, downloadProgress) || other.downloadProgress == downloadProgress)&&(identical(other.message, message) || other.message == message)&&(identical(other.effectRevision, effectRevision) || other.effectRevision == effectRevision));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_models),selectedModel,downloadProgress,message,effectRevision);
+    return Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_models),selectedModel,workingModelSlug,downloadProgress,message,effectRevision);
 }
 
 @override
 String toString() {
-    return 'SpeechModelsState(status: $status, models: $models, selectedModel: $selectedModel, downloadProgress: $downloadProgress, message: $message, effectRevision: $effectRevision)';
+    return 'SpeechModelsState(status: $status, models: $models, selectedModel: $selectedModel, workingModelSlug: $workingModelSlug, downloadProgress: $downloadProgress, message: $message, effectRevision: $effectRevision)';
 }
 
 
@@ -265,7 +267,7 @@ abstract mixin class _$SpeechModelsStateCopyWith<$Res> implements $SpeechModelsS
   factory _$SpeechModelsStateCopyWith(_SpeechModelsState value, $Res Function(_SpeechModelsState) _then) = __$SpeechModelsStateCopyWithImpl;
 @override @useResult
 $Res call({
- SpeechModelsStatus status, List<SpeechModel> models, String selectedModel, double? downloadProgress, AppMessage? message, int effectRevision
+ SpeechModelsStatus status, List<SpeechModel> models, String selectedModel, String? workingModelSlug, double? downloadProgress, AppMessage? message, int effectRevision
 });
 
 
@@ -282,12 +284,13 @@ class __$SpeechModelsStateCopyWithImpl<$Res>
 
 /// Create a copy of SpeechModelsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? models = null,Object? selectedModel = null,Object? downloadProgress = freezed,Object? message = freezed,Object? effectRevision = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? models = null,Object? selectedModel = null,Object? workingModelSlug = freezed,Object? downloadProgress = freezed,Object? message = freezed,Object? effectRevision = null,}) {
   return _then(_SpeechModelsState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as SpeechModelsStatus,models: null == models ? _self._models : models // ignore: cast_nullable_to_non_nullable
 as List<SpeechModel>,selectedModel: null == selectedModel ? _self.selectedModel : selectedModel // ignore: cast_nullable_to_non_nullable
-as String,downloadProgress: freezed == downloadProgress ? _self.downloadProgress : downloadProgress // ignore: cast_nullable_to_non_nullable
+as String,workingModelSlug: freezed == workingModelSlug ? _self.workingModelSlug : workingModelSlug // ignore: cast_nullable_to_non_nullable
+as String?,downloadProgress: freezed == downloadProgress ? _self.downloadProgress : downloadProgress // ignore: cast_nullable_to_non_nullable
 as double?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as AppMessage?,effectRevision: null == effectRevision ? _self.effectRevision : effectRevision // ignore: cast_nullable_to_non_nullable
 as int,

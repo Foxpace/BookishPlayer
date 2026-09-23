@@ -37,6 +37,7 @@ class PlayerCubit extends Cubit<PlayerState> {
 
   final PlayerApplication _application;
   final PlayerStateFactory _states;
+  var _pendingSeek = Future<void>.value();
 
   PlayerPlaybackContext get _playbackContext => (
     book: state.book,
@@ -164,30 +165,30 @@ class PlayerCubit extends Cubit<PlayerState> {
   );
 
   Future<void> seek(Duration value) => _applySeek(
-    _application.seek(book: state.book, value: value, duration: state.duration),
-  );
-  Future<void> seekWithinChapter(Duration value) => _applySeek(
-    _application.seekWithinChapter(
+    () => _application.seek(
       book: state.book,
       value: value,
       duration: state.duration,
-      chapterStart: state.chapterStart,
-      chapterDuration: state.chapterDuration,
     ),
   );
-  Future<void> skipBy(Duration delta) async {
-    final target = state.chapterPosition + delta;
-    final reachesChapterEnd =
-        state.chapterDuration > Duration.zero &&
-        target >= state.chapterDuration;
-    if (state.isPlaying && reachesChapterEnd) {
-      await pausePlayback();
-    }
-    await seekWithinChapter(target);
-  }
+  Future<void> seekWithinChapter(Duration value) =>
+      _applySeek(() => _seekWithinCurrentChapter(value));
+
+  Future<void> skipBy(Duration delta) => _applySeek(
+    () => _seekWithinCurrentChapter(state.chapterPosition + delta),
+  );
+
+  Future<Duration> _seekWithinCurrentChapter(Duration value) =>
+      _application.seekWithinChapter(
+        book: state.book,
+        value: value,
+        duration: state.duration,
+        chapterStart: state.chapterStart,
+        chapterDuration: state.chapterDuration,
+      );
 
   Future<void> previousChapter() => _applySeek(
-    _application.seekToPreviousChapter(
+    () => _application.seekToPreviousChapter(
       book: state.book,
       duration: state.duration,
       index: state.currentChapterIndex,
@@ -196,19 +197,26 @@ class PlayerCubit extends Cubit<PlayerState> {
     ),
   );
   Future<void> nextChapter() => _applySeek(
-    _application.seekToNextChapter(
+    () => _application.seekToNextChapter(
       book: state.book,
       duration: state.duration,
       index: state.currentChapterIndex,
     ),
   );
 
-  Future<void> _applySeek(Future<Duration?> operation) async {
-    final position = await operation;
-    if (position != null) {
-      emit(state.copyWith(position: position).projectTimeline());
-      await saveProgress();
-    }
+  Future<void> _applySeek(Future<Duration?> Function() operation) {
+    final next = _pendingSeek.then((_) async {
+      final position = await operation();
+      if (position != null) {
+        emit(state.copyWith(position: position).projectTimeline());
+        await saveProgress();
+      }
+    });
+    _pendingSeek = next.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return next;
   }
 
   Future<void> changeSpeed(double speed) async {
