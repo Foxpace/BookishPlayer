@@ -89,8 +89,10 @@ void main() {
           subject: 'Quote from Book',
         );
       }
-      expect(sharing.text, contains('edited quote'));
-      expect(sharing.text, contains('Chapter'));
+      expect(
+        sharing.text,
+        'edited quote\n\nChapter · 00:30–00:45\n— Book',
+      );
     });
   });
 }

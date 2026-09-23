@@ -45,29 +45,38 @@ CactusTranscriptionOutcome _transcribeLoaded(
   if (usesParakeet) {
     return parseCactusTranscript(native.cactusTranscribe(model, pcm));
   }
-  final languageProbe = native.cactusTranscribe(
-    model,
-    pcm,
-    prompt: '<|startoftranscript|>',
-    maxTokens: 4,
-  );
-  final language = whisperTranscriptionPrompt(languageProbe);
-  return parseCactusTranscript(
-    native.cactusTranscribe(model, pcm, prompt: language),
+  return transcribeWhisperAudio(
+    ({String? prompt, int? maxTokens}) => native.cactusTranscribe(
+      model,
+      pcm,
+      prompt: prompt,
+      maxTokens: maxTokens,
+    ),
   );
 }
 
-String whisperTranscriptionPrompt(String response) {
+CactusTranscriptionOutcome transcribeWhisperAudio(
+  String Function({String? prompt, int? maxTokens}) transcribe,
+) {
+  final languageProbe = transcribe(
+    prompt: '<|startoftranscript|>',
+    maxTokens: 4,
+  );
+  final prompt = whisperTranscriptionPrompt(languageProbe);
+  return parseCactusTranscript(transcribe(prompt: prompt));
+}
+
+String? whisperTranscriptionPrompt(String response) {
   final outcome = parseCactusTranscript(response);
   if (outcome case CactusTranscriptionSucceeded(:final text)) {
-    final language = RegExp(r'^<\|[a-z]{2,3}\|>').firstMatch(text)?.group(0);
+    final language = RegExp(r'^(?:<\|startoftranscript\|>)?(<\|[a-z]{2,3}\|>)')
+        .firstMatch(text)
+        ?.group(1);
     if (language != null) {
       return '<|startoftranscript|>$language<|transcribe|><|notimestamps|>';
     }
   }
-  throw const CactusTranscriptionException(
-    'Could not detect the audio language.',
-  );
+  return null;
 }
 
 CactusTranscriptionOutcome parseCactusTranscript(String response) {

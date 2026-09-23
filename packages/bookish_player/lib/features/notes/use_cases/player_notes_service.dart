@@ -5,6 +5,7 @@ import '../../../core/foundation/id_generator.dart';
 import '../../library/models/library_models.dart';
 import '../../player/models/share_origin.dart';
 import '../../player/repos/quote_share_repository.dart';
+import '../../player/use_cases/quote_for_sharing.dart';
 import '../../portability/repos/local_export_repository.dart';
 import '../models/book_note.dart';
 import '../models/book_note_kind.dart';
@@ -78,12 +79,34 @@ class PlayerNotesService {
     ];
   }
 
-  Future<void> share(Audiobook book, BookNote note, {ShareOrigin? origin}) =>
-      _sharing.share(
-        text: [?note.title, note.text].join('\n\n'),
-        subject: 'Note from ${book.title}',
-        origin: origin,
-      );
+  Future<void> share(Audiobook book, BookNote note, {ShareOrigin? origin}) {
+    final chapter = _chapterAt(book, note);
+    final chapterStart = Duration(milliseconds: chapter?.startMs ?? 0);
+    final end = note.endPosition;
+    return _sharing.share(
+      text: quoteForSharing(
+        book: book,
+        text: note.text,
+        title: note.title,
+        chapterTitle: note.chapterTitle ?? chapter?.title,
+        start: note.position - chapterStart,
+        end: end == null ? null : end - chapterStart,
+      ),
+      subject: 'Note from ${book.title}',
+      origin: origin,
+    );
+  }
+
+  AudioChapter? _chapterAt(Audiobook book, BookNote note) {
+    AudioChapter? chapterAtNote;
+    for (final chapter in book.chapters) {
+      if (chapter.startMs <= note.positionMs &&
+          (chapterAtNote == null || chapter.startMs > chapterAtNote.startMs)) {
+        chapterAtNote = chapter;
+      }
+    }
+    return chapterAtNote;
+  }
 
   Future<bool> export(Audiobook book, List<BookNote> notes) =>
       _exports.exportNotes(book, notes);

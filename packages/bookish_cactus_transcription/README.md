@@ -80,8 +80,9 @@ Other published speech archives have not been verified with this pinned Cactus
 runtime. Models live under `cactus-v2.0.1/models`; users must redownload after
 migrating from the old plugin. Saved tiny selections fall back to base.
 
-FFmpeg decodes the selected passage to 16 kHz mono PCM. Whisper detects the
-language before transcription; Parakeet transcribes directly. Inference runs
+FFmpeg decodes the selected passage to 16 kHz mono PCM. Whisper probes the
+language before transcription and uses the model's configured prompt if the
+probe is inconclusive; Parakeet transcribes directly. Inference runs
 in an isolate, one request at a time. Each request loads and releases its
 model, and temporary audio is removed afterward.
 

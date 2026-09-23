@@ -208,16 +208,63 @@ void main() {
     expect(success, const CactusTranscriptionOutcome.success('hello'));
     expect(failure, const CactusTranscriptionOutcome.failure('failed'));
   });
-  test('Given a v2 Whisper language probe, When constructing a prompt, Then preserves the detected language', () {
+  test('Given a detected Whisper language, When transcribing, Then uses the detected language', () {
+    // GIVEN
+    final calls = <(String?, int?)>[];
+    String transcribe({String? prompt, int? maxTokens}) {
+      calls.add((prompt, maxTokens));
+      return calls.length == 1
+          ? '{"success":true,"response":"<|startoftranscript|><|sk|><|transcribe|>"}'
+          : '{"success":true,"response":"Ahoj"}';
+    }
+
     // WHEN
-    final prompt = whisperTranscriptionPrompt(
-      '{"success":true,"response":"<|sk|><|transcribe|><|notimestamps|>"}',
-    );
+    final outcome = transcribeWhisperAudio(transcribe);
+
     // THEN
-    expect(prompt, '<|startoftranscript|><|sk|><|transcribe|><|notimestamps|>');
+    expect(outcome, const CactusTranscriptionOutcome.success('Ahoj'));
+    expect(calls, [
+      ('<|startoftranscript|>', 4),
+      ('<|startoftranscript|><|sk|><|transcribe|><|notimestamps|>', null),
+    ]);
+  });
+
+  test('Given an inconclusive Whisper language probe, When transcribing, Then uses the model prompt', () {
+    // GIVEN
+    final calls = <(String?, int?)>[];
+    String transcribe({String? prompt, int? maxTokens}) {
+      calls.add((prompt, maxTokens));
+      return calls.length == 1
+          ? '{"success":true,"response":""}'
+          : '{"success":true,"response":"hello"}';
+    }
+
+    // WHEN
+    final outcome = transcribeWhisperAudio(transcribe);
+
+    // THEN
+    expect(outcome, const CactusTranscriptionOutcome.success('hello'));
+    expect(calls, [('<|startoftranscript|>', 4), (null, null)]);
+  });
+
+  test('Given a failed Whisper language probe, When transcribing, Then attempts the model prompt', () {
+    // GIVEN
+    var calls = 0;
+    String transcribe({String? prompt, int? maxTokens}) {
+      calls++;
+      return calls == 1
+          ? '{"success":false,"error":"probe failed"}'
+          : '{"success":false,"error":"transcription failed"}';
+    }
+
+    // WHEN
+    final outcome = transcribeWhisperAudio(transcribe);
+
+    // THEN
+    expect(calls, 2);
     expect(
-      () => whisperTranscriptionPrompt('{"success":false}'),
-      throwsA(isA<CactusTranscriptionException>()),
+      outcome,
+      const CactusTranscriptionOutcome.failure('transcription failed'),
     );
   });
 }

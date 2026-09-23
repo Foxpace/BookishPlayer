@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -36,13 +34,11 @@ Future<void> runBookish({
     },
   );
 
-  final errorHandler = getIt<AppErrorHandler>()..install();
-  await runZonedGuarded(() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    getIt.registerSingleton<PackageInfo>(packageInfo);
-    await getIt<AppBootstrapper>().initialize();
-    runApp(_createAppRoot());
-  }, errorHandler.recordUncaught);
+  getIt<AppErrorHandler>().install();
+  final packageInfo = await PackageInfo.fromPlatform();
+  getIt.registerSingleton<PackageInfo>(packageInfo);
+  await getIt<AppBootstrapper>().initialize();
+  runApp(_createAppRoot());
 }
 
 BookishAppRoot _createAppRoot() => BookishAppRoot(

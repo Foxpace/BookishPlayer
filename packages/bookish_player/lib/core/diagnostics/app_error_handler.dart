@@ -32,7 +32,4 @@ class AppErrorHandler {
       return previousPlatformHandler?.call(error, stackTrace) ?? false;
     };
   }
-
-  Future<void> recordUncaught(Object error, StackTrace stackTrace) =>
-      _diagnostics.record(error, stackTrace, operation: 'app.uncaught');
 }
