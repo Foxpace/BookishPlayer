@@ -1,8 +1,36 @@
 import 'package:bookish_player/features/player/repos/implementations/bookish_audio_handler.dart';
+import 'package:bookish_player/features/library/models/library_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Bookish audio handler', () {
+    test('Given chapters in one audio file, When a chapter ends, Then notification navigation selects the next chapter', () {
+      // GIVEN
+      const chapters = [
+        AudioChapter(title: 'One', startMs: 0),
+        AudioChapter(title: 'Two', startMs: 30000),
+        AudioChapter(title: 'Three', startMs: 60000),
+      ];
+
+      // WHEN / THEN
+      expect(
+        nextChapterPosition(chapters, const Duration(seconds: 30)),
+        const Duration(seconds: 60),
+      );
+      expect(
+        nextChapterPosition(chapters, const Duration(seconds: 60)),
+        isNull,
+      );
+      expect(
+        previousChapterPosition(chapters, const Duration(seconds: 31)),
+        Duration.zero,
+      );
+      expect(
+        previousChapterPosition(chapters, const Duration(seconds: 35)),
+        const Duration(seconds: 30),
+      );
+    });
+
     test('Given the bookish audio handler, When its behavior is exercised, Then moves forward by 15 seconds across a chapter boundary', () {
       // WHEN
       final target = relativeSeekTarget(

@@ -7,6 +7,22 @@ extension AudiobookPlaybackSegments on Audiobook {
       return const [];
     }
 
+    // A single file can contain many chapter markers. Play it as one source
+    // so the decoder keeps running when the position crosses a chapter.
+    if (tracks.length == 1) {
+      final track = tracks.single;
+      return [
+        PlaybackSegment(
+          id: 'track-${track.id}',
+          track: track,
+          title: track.title,
+          globalStartMs: 0,
+          sourceStartMs: 0,
+          durationMs: track.durationMs,
+        ),
+      ];
+    }
+
     final totalDurationMs = tracks.fold(
       0,
       (total, track) => total + track.durationMs,

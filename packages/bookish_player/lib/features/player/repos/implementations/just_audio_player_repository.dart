@@ -111,14 +111,25 @@ class JustAudioPlayerRepository implements AudioPlayerRepository {
   }
 
   MediaItem _buildMediaItem(Audiobook book, PlaybackSegment segment) {
+    final singleFileChapters =
+        _segments.length == 1 && book.chapters.isNotEmpty;
+    final chapters = singleFileChapters
+        ? ([...book.chapters]
+            ..sort((left, right) => left.startMs.compareTo(right.startMs)))
+        : const <AudioChapter>[];
     return MediaItem(
       id: '${book.id}:${segment.id}',
       title: book.title,
       album: book.title,
       artist: book.author.isEmpty ? null : book.author,
       displayTitle: book.title,
-      displaySubtitle: segment.title,
+      displaySubtitle: chapters.isEmpty ? segment.title : chapters.first.title,
       duration: Duration(milliseconds: segment.durationMs),
+      extras: chapters.isEmpty
+          ? null
+          : {
+              'chapters': [for (final chapter in chapters) chapter.toJson()],
+            },
       artUri: switch (book.artworkPath) {
         final path? => Uri.file(path),
         null => null,

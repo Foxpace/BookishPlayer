@@ -162,6 +162,37 @@ void main() {
         expect(sut.state.currentChapter?.title, 'One');
       });
 
+      test('Given a playing single-file book, When playback crosses a chapter boundary, Then the next chapter continues', () async {
+        // GIVEN
+        final book = _book(
+          id: 'book',
+          title: 'Book',
+          details: (
+            durationMs: 90000,
+            series: '',
+            seriesPosition: null,
+            addedAt: null,
+            chapters: const [
+              AudioChapter(title: 'One', startMs: 0),
+              AudioChapter(title: 'Two', startMs: 30000),
+              AudioChapter(title: 'Three', startMs: 60000),
+            ],
+          ),
+        );
+        harness = _PlayerHarness([book]);
+        final sut = await harness.open(book, playing: true);
+
+        // WHEN
+        harness.audio.emitPosition(const Duration(seconds: 30));
+        await Future<void>.delayed(Duration.zero);
+
+        // THEN
+        expect(sut.state.currentChapter?.title, 'Two');
+        expect(sut.state.isPlaying, isTrue);
+        expect(harness.audio.pauseCount, 0);
+        expect((await harness.books.getBook(book.id))?.isFinished, isFalse);
+      });
+
       test('Given rapid next chapter taps, When the first seek is pending, Then each tap advances one chapter', () async {
         // GIVEN
         final book = _book(

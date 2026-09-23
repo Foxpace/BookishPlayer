@@ -51,7 +51,7 @@ void main() {
       expect(item.title, 'Example Book');
     });
 
-    test('Given the just audio player repository, When its behavior is exercised, Then splits a single-file audiobook into chapter notification items', () {
+    test('Given a single-file audiobook with chapters, When playback segments are built, Then the file plays as one continuous source', () {
       // WHEN
       final segments = Audiobook(
         id: 'book',
@@ -67,26 +67,9 @@ void main() {
       ).playbackSegments;
 
       // THEN
-      expect(segments.map((segment) => segment.title), [
-        'Opening',
-        'The road',
-        'Home',
-      ]);
-      expect(segments.map((segment) => segment.globalStartMs), [
-        0,
-        20000,
-        65000,
-      ]);
-      expect(segments.map((segment) => segment.sourceStartMs), [
-        0,
-        20000,
-        65000,
-      ]);
-      expect(segments.map((segment) => segment.durationMs), [
-        20000,
-        45000,
-        25000,
-      ]);
+      expect(segments, hasLength(1));
+      expect(segments.single.sourceStartMs, 0);
+      expect(segments.single.durationMs, 90000);
     });
 
     test('Given the just audio player repository, When its behavior is exercised, Then clips chapter ranges correctly across physical audio tracks', () {

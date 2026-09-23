@@ -5,11 +5,14 @@ import '../../../library/models/library_models.dart';
 import '../../../library/repos/audiobook_catalog_repository.dart';
 import '../../use_cases/playback_command_service.dart';
 
+part 'bookish_audio_handler_chapters.dart';
+
 class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
   BookishAudioHandler(this._player, this._books, this._commands) {
     _player.playerEventStream.listen(_broadcastState);
     _player.sequenceStream.listen((_) => _broadcastQueue());
     _player.currentIndexStream.listen((_) => _broadcastCurrentItem());
+    _player.positionStream.listen((_) => _broadcastCurrentItem());
   }
 
   static const skipInterval = Duration(seconds: 15);
@@ -19,6 +22,8 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
   Duration _rewindInterval = skipInterval;
   Duration _forwardInterval = skipInterval;
   final AudioPlayer _player;
+  MediaItem? _chapterItem;
+  List<AudioChapter>? _chapters;
 
   @override
   Future<List<MediaItem>> getChildren(
@@ -75,6 +80,14 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> skipToNext() async {
+    final chapters = _currentChapters;
+    if (chapters != null) {
+      final target = nextChapterPosition(chapters, _player.position);
+      if (target != null) {
+        await _player.seek(target);
+      }
+      return;
+    }
     if (_player.hasNext) {
       await _player.seek(Duration.zero, index: _player.nextIndex);
     }
@@ -82,6 +95,11 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> skipToPrevious() async {
+    final chapters = _currentChapters;
+    if (chapters != null) {
+      await _player.seek(previousChapterPosition(chapters, _player.position));
+      return;
+    }
     if (_player.hasPrevious) {
       await _player.seek(Duration.zero, index: _player.previousIndex);
     }
@@ -157,18 +175,6 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
     ];
     queue.add(items);
     _broadcastCurrentItem();
-  }
-
-  void _broadcastCurrentItem() {
-    final sequence = _player.sequence;
-    final index = _player.currentIndex;
-    if (index == null || index >= sequence.length) {
-      return;
-    }
-    final tag = sequence[index].tag;
-    if (tag is MediaItem) {
-      mediaItem.add(tag);
-    }
   }
 
   void _broadcastState(PlayerEvent event) {
