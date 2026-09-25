@@ -12,6 +12,7 @@ import '../importing/models/import_route_result.dart';
 import '../importing/repos/audiobook_artwork_extractor.dart';
 import '../importing/repos/file_import_repository.dart';
 import '../player/cubits/player_cubit.dart';
+import '../player/cubits/player_cubits.dart';
 import '../settings/repos/settings_repository.dart';
 import 'cubits/library_cubit.dart';
 import 'cubits/library_intents.dart';
@@ -41,31 +42,56 @@ class LibraryScreenRoot extends StatelessWidget {
           getIt<PlayerCubit>().removeBook,
         ),
       )..load(),
-      child: BlocConsumer<LibraryCubit, LibraryState>(
-        listenWhen: (previous, current) =>
-            current.message != null &&
-            previous.effectRevision != current.effectRevision,
-        listener: _showMessage,
-        builder: (context, state) {
-          final cubit = context.read<LibraryCubit>();
-          return LibraryScreen(
-            state: state,
-            intents: (
-              importBooks: () => importAudiobooks(
-                context,
-                (source) => _openImport(context, cubit, source),
-              ),
-              openNotes: () => context.pushNamed(AppRoutes.notes),
-              openSettings: () => context.pushNamed(AppRoutes.settings),
-              queryChanged: cubit.setQuery,
-              openView: () => _showLibraryView(context, cubit),
-              openBook: (book) => _openBook(context, cubit, book),
-              removeBook: (book) => _removeBook(context, cubit, book),
-              bookAction: (book, action) =>
-                  _handleBookAction(context, cubit, book, action),
-            ),
+      child: BlocListener<PlayerCubit, PlayerState>(
+        listenWhen: (previous, current) {
+          final book = current.book;
+          if (book == null) {
+            return false;
+          }
+          final bookChanged = previous.book?.id != book.id;
+          final progressSecondChanged =
+              previous.position.inSeconds != current.position.inSeconds;
+          return bookChanged || progressSecondChanged;
+        },
+        listener: (context, playerState) {
+          final book = playerState.book;
+          if (book == null) {
+            return;
+          }
+          context.read<LibraryCubit>().showPlaybackProgress(
+            book.id,
+            playerState.position,
           );
         },
+        child: BlocConsumer<LibraryCubit, LibraryState>(
+          listenWhen: (previous, current) {
+            final hasMessage = current.message != null;
+            final effectChanged =
+                previous.effectRevision != current.effectRevision;
+            return hasMessage && effectChanged;
+          },
+          listener: _showMessage,
+          builder: (context, state) {
+            final cubit = context.read<LibraryCubit>();
+            return LibraryScreen(
+              state: state,
+              intents: (
+                importBooks: () => importAudiobooks(
+                  context,
+                  (source) => _openImport(context, cubit, source),
+                ),
+                openNotes: () => context.pushNamed(AppRoutes.notes),
+                openSettings: () => context.pushNamed(AppRoutes.settings),
+                queryChanged: cubit.setQuery,
+                openView: () => _showLibraryView(context, cubit),
+                openBook: (book) => _openBook(context, cubit, book),
+                removeBook: (book) => _removeBook(context, cubit, book),
+                bookAction: (book, action) =>
+                    _handleBookAction(context, cubit, book, action),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

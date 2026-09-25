@@ -59,7 +59,24 @@ class BookCover extends StatelessWidget {
     );
     return switch (heroTag) {
       null => cover,
-      final tag => Hero(tag: tag, child: cover),
+      final tag => Hero(
+        tag: tag,
+        // Keep the portrait-to-square resize steady throughout the flight.
+        createRectTween: (begin, end) => RectTween(begin: begin, end: end),
+        // Match the artwork to those bounds as they change.
+        flightShuttleBuilder: (_, _, _, _, _) => LayoutBuilder(
+          builder: (context, constraints) => BookCover(
+            title: title,
+            artworkPath: artworkPath,
+            layout: (
+              size: constraints.maxWidth,
+              heightFactor: constraints.maxHeight / constraints.maxWidth,
+              imageFit: imageFit,
+            ),
+          ),
+        ),
+        child: cover,
+      ),
     };
   }
 

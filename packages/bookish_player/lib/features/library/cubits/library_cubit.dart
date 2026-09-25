@@ -44,6 +44,23 @@ class LibraryCubit extends Cubit<LibraryState> {
 
   void setSort(LibrarySort sort) => _projectAndEmit(state.copyWith(sort: sort));
 
+  void showPlaybackProgress(String bookId, Duration position) {
+    final index = state.books.indexWhere((book) => book.id == bookId);
+    if (index == -1) {
+      return;
+    }
+
+    final book = state.books[index];
+    final positionMs = position.inMilliseconds.clamp(0, book.durationMs);
+    if (book.positionMs ~/ 1000 == positionMs ~/ 1000) {
+      return;
+    }
+
+    final books = [...state.books];
+    books[index] = book.copyWith(positionMs: positionMs);
+    _projectAndEmit(state.copyWith(books: books));
+  }
+
   Future<void> toggleFavorite(Audiobook book) async {
     await _saveUpdatedBook(book.copyWith(isFavorite: !book.isFavorite));
   }

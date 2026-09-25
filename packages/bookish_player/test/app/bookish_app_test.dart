@@ -1,4 +1,5 @@
 import 'package:bookish_player/app/bookish_app.dart';
+import 'package:bookish_player/core/navigation/app_router.dart';
 import 'package:bookish_player/features/player/ui/widgets/now_playing_bar.dart';
 import 'package:bookish_player/features/settings/cubits/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
@@ -91,6 +92,68 @@ void main() {
 
       router.pop();
       await navigation;
+    },
+  );
+
+  testWidgets(
+    'Given settings opened from the player, When the mini player is tapped, Then it returns to the existing player',
+    (tester) async {
+      // GIVEN
+      final player = await PlayerCubitTestHarness.opened(audiobookFixture());
+      final settings = SettingsCubit(buildSettingsApplication(FakeSettings()));
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('Library')),
+            routes: [
+              GoRoute(
+                path: 'player/:bookId',
+                name: AppRoutes.player,
+                builder: (_, _) => const Scaffold(body: Text('Full player')),
+              ),
+              GoRoute(
+                path: 'settings',
+                name: AppRoutes.settings,
+                builder: (_, _) => const Scaffold(body: Text('Settings')),
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(player.close);
+      addTearDown(settings.close);
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<SettingsCubit>.value(value: settings),
+            BlocProvider<PlayerCubit>.value(value: player.sut),
+          ],
+          child: BookishApp(router: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // WHEN
+      await tester.tap(find.byType(NowPlayingBar));
+      await tester.pumpAndSettle();
+      expect(find.text('Full player'), findsOneWidget);
+      expect(find.byType(NowPlayingBar), findsNothing);
+
+      final settingsNavigation = router.push<void>('/settings');
+      await tester.pumpAndSettle();
+      expect(find.byType(NowPlayingBar), findsOneWidget);
+      await tester.tap(find.byType(NowPlayingBar));
+      await tester.pumpAndSettle();
+      await settingsNavigation;
+
+      // THEN
+      expect(find.text('Full player'), findsOneWidget);
+      expect(find.byType(NowPlayingBar), findsNothing);
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Library'), findsOneWidget);
     },
   );
 

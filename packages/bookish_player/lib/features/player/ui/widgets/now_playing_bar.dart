@@ -7,6 +7,9 @@ import 'now_playing_details.dart';
 import 'now_playing_playback_control.dart';
 
 class NowPlayingBar extends StatelessWidget {
+  // Progress (2) + vertical padding (20) + playback button (48).
+  static const contentHeight = 70.0;
+
   const NowPlayingBar({
     required this.state,
     required this.book,

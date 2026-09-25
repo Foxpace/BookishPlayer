@@ -107,6 +107,57 @@ void main() {
     );
 
     testWidgets(
+      'Given a playing book, When playback advances, Then its library progress updates',
+      (tester) async {
+        // GIVEN
+        books.books = [
+          _book(
+            id: 'playing',
+            title: 'Playing book',
+            progress: (
+              durationMs: 100000,
+              positionMs: 0,
+              isFinished: false,
+              addedAt: null,
+            ),
+          ),
+        ];
+        await sut.load();
+        await tester.pumpWidget(
+          BlocProvider.value(
+            value: sut,
+            child: MaterialApp(
+              localizationsDelegates: const [
+                S.delegate,
+                ...GlobalMaterialLocalizations.delegates,
+              ],
+              supportedLocales: S.delegate.supportedLocales,
+              home: BlocBuilder<LibraryCubit, LibraryState>(
+                builder: (context, state) => _libraryScreen(sut),
+              ),
+            ),
+          ),
+        );
+
+        // WHEN
+        sut.showPlaybackProgress('playing', const Duration(seconds: 20));
+        await tester.pump();
+
+        // THEN
+        expect(sut.state.books.single.positionMs, 20000);
+        expect(
+          tester
+              .widget<LinearProgressIndicator>(
+                find.byType(LinearProgressIndicator),
+              )
+              .value,
+          0.2,
+        );
+        expect(find.textContaining('20%'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
       'Given the library cubit, When its behavior is exercised, Then search stays unfocused after returning from the player',
       (tester) async {
         final robot = LibraryScreenRobot(tester);

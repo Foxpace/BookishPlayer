@@ -44,6 +44,22 @@ class BookishApp extends StatelessWidget {
     if (bookId == null) {
       return;
     }
+
+    final routes = router.routerDelegate.currentConfiguration.matches;
+    final activeRoute = routes.isEmpty ? null : routes.last.route;
+    final previousRoute = routes.length < 2
+        ? null
+        : routes[routes.length - 2].route;
+    final settingsIsOpen =
+        activeRoute is GoRoute && activeRoute.name == AppRoutes.settings;
+    final playerIsBelowSettings =
+        previousRoute is GoRoute && previousRoute.name == AppRoutes.player;
+    if (settingsIsOpen && playerIsBelowSettings) {
+      router.pop();
+      dismissRestoredRouteFocus();
+      return;
+    }
+
     await router.pushNamed<void>(
       AppRoutes.player,
       pathParameters: {'bookId': bookId},

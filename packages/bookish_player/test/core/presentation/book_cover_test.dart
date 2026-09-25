@@ -48,5 +48,76 @@ void main() {
         expect(decoration.color, isNotNull);
       },
     );
+
+    testWidgets(
+      'Given portrait and square covers, When the hero flies, Then its artwork resizes with the flight',
+      (tester) async {
+        // GIVEN
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Column(
+                children: [
+                  const BookCover(
+                    title: 'Dune',
+                    heroTag: 'book-id',
+                    layout: (
+                      size: 64,
+                      heightFactor: 1.22,
+                      imageFit: BoxFit.contain,
+                    ),
+                  ),
+                  Builder(
+                    builder: (context) => TextButton(
+                      onPressed: () => Navigator.of(context).push<void>(
+                        MaterialPageRoute(
+                          builder: (_) => const Scaffold(
+                            body: Center(
+                              child: BookCover(
+                                title: 'Dune',
+                                heroTag: 'book-id',
+                                layout: (
+                                  size: 220,
+                                  heightFactor: 1,
+                                  imageFit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      child: const Text('Open'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        // WHEN
+        await tester.tap(find.text('Open'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 150));
+
+        // THEN
+        final flyingCover = find.byWidgetPredicate(
+          (widget) => widget is BookCover && widget.heroTag == null,
+        );
+        expect(flyingCover, findsOneWidget);
+        final flightSize = tester.getSize(flyingCover);
+        final flightLayout = tester.widget<BookCover>(flyingCover).layout;
+        expect(flightSize.width, greaterThan(64));
+        expect(flightSize.width, lessThan(220));
+        expect(flightLayout.size, flightSize.width);
+        expect(
+          flightLayout.size * flightLayout.heightFactor,
+          flightSize.height,
+        );
+
+        await tester.pumpAndSettle();
+        expect(tester.getSize(find.byType(BookCover)), const Size(220, 220));
+      },
+    );
   });
 }

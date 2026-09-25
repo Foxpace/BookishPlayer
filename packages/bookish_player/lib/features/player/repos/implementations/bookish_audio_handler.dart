@@ -12,7 +12,7 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
     _player.playerEventStream.listen(_broadcastState);
     _player.sequenceStream.listen((_) => _broadcastQueue());
     _player.currentIndexStream.listen((_) => _broadcastCurrentItem());
-    _player.positionStream.listen((_) => _broadcastCurrentItem());
+    _player.positionStream.listen(_handlePosition);
   }
 
   static const skipInterval = Duration(seconds: 15);
@@ -24,6 +24,7 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
   final AudioPlayer _player;
   MediaItem? _chapterItem;
   List<AudioChapter>? _chapters;
+  int? _lastBroadcastSecond;
 
   @override
   Future<List<MediaItem>> getChildren(
@@ -179,6 +180,17 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
 
   void _broadcastState(PlayerEvent event) {
     playbackState.add(_buildPlaybackState(event));
+    _lastBroadcastSecond = _player.position.inSeconds;
+  }
+
+  void _handlePosition(Duration position) {
+    _broadcastCurrentItem();
+    final playbackIsPlaying = _player.playing;
+    final playbackIsReady = _player.processingState == ProcessingState.ready;
+    final progressSecondChanged = position.inSeconds != _lastBroadcastSecond;
+    if (playbackIsPlaying && playbackIsReady && progressSecondChanged) {
+      _broadcastState(_player.playerEvent);
+    }
   }
 
   PlaybackState _buildPlaybackState(PlayerEvent event) => PlaybackState(
@@ -191,10 +203,10 @@ class BookishAudioHandler extends BaseAudioHandler with SeekHandler {
     androidCompactActionIndices: const [1, 2, 3],
     processingState: _audioProcessingState(event.playbackEvent.processingState),
     playing: event.playing,
-    updatePosition: event.playbackEvent.updatePosition,
+    updatePosition: _player.position,
     bufferedPosition: event.playbackEvent.bufferedPosition,
     speed: _player.speed,
-    updateTime: event.playbackEvent.updateTime,
+    updateTime: DateTime.now(),
     queueIndex: event.playbackEvent.currentIndex,
   );
 

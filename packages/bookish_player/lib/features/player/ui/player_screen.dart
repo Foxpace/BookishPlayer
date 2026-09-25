@@ -37,6 +37,7 @@ class PlayerScreen extends StatelessWidget {
     final book = state.book;
     if (book == null) {
       return BookishScaffold(
+        reserveBottomOverlaySpace: false,
         appBar: AppBar(),
         body: state.status == PlayerStatus.failure
             ? DiagnosticFailureView.fromMessage(
@@ -55,6 +56,7 @@ class PlayerScreen extends StatelessWidget {
         }
       },
       child: BookishScaffold(
+        reserveBottomOverlaySpace: false,
         appBar: PlayerAppBar(
           onBack: actions.onBack,
           onOpenSettings: actions.onOpenSettings,
