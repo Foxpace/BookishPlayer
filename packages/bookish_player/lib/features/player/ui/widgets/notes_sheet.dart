@@ -12,7 +12,6 @@ class NotesSheet extends StatelessWidget {
 
   final PlayerState state;
   final ({
-    VoidCallback onAddBookmark,
     VoidCallback onAddNote,
     VoidCallback onAddVoiceNote,
     VoidCallback onExport,
@@ -34,7 +33,6 @@ class NotesSheet extends StatelessWidget {
               PlayerNotesHeader(
                 hasNotes: state.notes.isNotEmpty,
                 actions: (
-                  onAddBookmark: actions.onAddBookmark,
                   onAddVoiceNote: actions.onAddVoiceNote,
                   onAddNote: actions.onAddNote,
                   onExport: actions.onExport,

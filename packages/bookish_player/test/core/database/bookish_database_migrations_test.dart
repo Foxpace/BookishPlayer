@@ -5,6 +5,7 @@ import 'package:sembast/sembast_memory.dart';
 
 void main() {
   final settings = stringMapStoreFactory.store('settings');
+  final notes = stringMapStoreFactory.store('notes');
 
   group('Version-one database with an invalid stored theme', () {
     test('Given a version-one database with an invalid stored theme, When the database is opened by the current application, Then it is migrated transactionally to a safe theme', () async {
@@ -62,6 +63,35 @@ void main() {
         'theme': 'dark',
       });
       await migrated.database.close();
+    });
+  });
+
+  test('Given a version-two database with bookmarks, When it is upgraded, Then bookmarks are removed and notes remain', () async {
+    // GIVEN
+    final factory = newDatabaseFactoryMemory();
+    final legacy = await factory.openDatabase(
+      'bookish-bookmarks.db',
+      version: 2,
+      onVersionChanged: (database, _, _) async {
+        await notes.record('bookmark').put(database, {'kind': 'bookmark'});
+        await notes.record('note').put(database, {'kind': 'note'});
+        await notes.record('voice').put(database, {'kind': 'voice'});
+      },
+    );
+    await legacy.close();
+
+    // WHEN
+    final migrated = await BookishDatabase.openWithFactory(
+      factory,
+      'bookish-bookmarks.db',
+    );
+    addTearDown(migrated.database.close);
+
+    // THEN
+    expect(await notes.record('bookmark').get(migrated.database), isNull);
+    expect(await notes.record('note').get(migrated.database), {'kind': 'note'});
+    expect(await notes.record('voice').get(migrated.database), {
+      'kind': 'voice',
     });
   });
 }

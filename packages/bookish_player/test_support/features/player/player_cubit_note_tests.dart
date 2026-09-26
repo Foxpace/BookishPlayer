@@ -39,7 +39,7 @@ void _registerNoteWidgetTest() {
           ),
         ),
       );
-      await robot.openNotes('Notes and bookmarks');
+      await robot.openNotes('Notes');
 
       // THEN
       final preview = robot.notePreview(_previewText);
@@ -64,7 +64,10 @@ void _registerNoteWidgetTest() {
       await robot.shareNote('Share note');
 
       // THEN
-      expect(harness.sharing.text, 'Key idea\n\nEdited note');
+      expect(
+        harness.sharing.text,
+        'Key idea\n\nEdited note\n\n00:00\n— Book title',
+      );
 
       // WHEN
       await robot.saveNote('Save');
@@ -87,7 +90,7 @@ void _registerNoteCubitTests() {
   );
   tearDown(() => harness.close());
 
-  test('Given an open book, When quote, bookmark, and voice notes are added, Then their typed metadata is stored', () async {
+  test('Given an open book, When quote and voice notes are added, Then their typed metadata is stored', () async {
     // WHEN
     await harness.sut.addNoteAt(
       'A transcribed quote',
@@ -103,12 +106,6 @@ void _registerNoteCubitTests() {
     expect(harness.books.savedNote?.chapterTitle, 'Chapter two');
 
     // WHEN
-    await harness.sut.addBookmark();
-
-    // THEN
-    expect(harness.books.savedNote?.kind, BookNoteKind.bookmark);
-
-    // WHEN
     await harness.sut.addVoiceNote('Remember this idea');
 
     // THEN
@@ -116,7 +113,7 @@ void _registerNoteCubitTests() {
     expect(harness.books.savedNote?.text, 'Remember this idea');
   });
 
-  test('Given a saved note, When it is updated and shared, Then its optional title is persisted and exported', () async {
+  test('Given a saved note, When it is updated and shared, Then its optional title is persisted and shared', () async {
     // GIVEN
     await harness.sut.addNote('Original note');
     final note = harness.sut.state.notes.single;
@@ -134,7 +131,10 @@ void _registerNoteCubitTests() {
 
     // THEN
     expect(harness.sharing.subject, 'Note from Book title');
-    expect(harness.sharing.text, 'Key idea\n\nEdited note');
+    expect(
+      harness.sharing.text,
+      'Key idea\n\nEdited note\n\n00:00\n— Book title',
+    );
   });
 }
 

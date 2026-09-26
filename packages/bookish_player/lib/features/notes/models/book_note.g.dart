@@ -34,6 +34,5 @@ Map<String, dynamic> _$BookNoteToJson(_BookNote instance) => <String, dynamic>{
 
 const _$BookNoteKindEnumMap = {
   BookNoteKind.note: 'note',
-  BookNoteKind.bookmark: 'bookmark',
   BookNoteKind.voice: 'voice',
 };

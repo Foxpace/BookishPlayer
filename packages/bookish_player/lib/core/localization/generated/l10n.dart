@@ -1543,26 +1543,6 @@ class S {
     );
   }
 
-  /// `Add bookmark at current position`
-  String get addBookmarkAtCurrentPosition {
-    return Intl.message(
-      'Add bookmark at current position',
-      name: 'addBookmarkAtCurrentPosition',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Bookmark saved.`
-  String get bookmarkSaved {
-    return Intl.message(
-      'Bookmark saved.',
-      name: 'bookmarkSaved',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Dictate voice note`
   String get dictateVoiceNote {
     return Intl.message(
@@ -1708,14 +1688,9 @@ class S {
     return Intl.message('Sleep timer', name: 'sleepTimer', desc: '', args: []);
   }
 
-  /// `Notes and bookmarks`
-  String get notesAndBookmarks {
-    return Intl.message(
-      'Notes and bookmarks',
-      name: 'notesAndBookmarks',
-      desc: '',
-      args: [],
-    );
+  /// `Accept`
+  String get acceptSleepTimer {
+    return Intl.message('Accept', name: 'acceptSleepTimer', desc: '', args: []);
   }
 
   /// `Audio outputs could not be opened.`
@@ -3140,16 +3115,6 @@ class S {
     return Intl.message(
       'Import MP3, M4A, M4B, AAC, FLAC, WAV, OGG, or Opus files from your device or cloud storage.',
       name: 'quietShelfDescription',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Notes & bookmarks`
-  String get notesAndBookmarksTitle {
-    return Intl.message(
-      'Notes & bookmarks',
-      name: 'notesAndBookmarksTitle',
       desc: '',
       args: [],
     );

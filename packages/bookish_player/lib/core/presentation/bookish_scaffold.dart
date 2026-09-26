@@ -9,6 +9,7 @@ class BookishScaffold extends StatelessWidget {
     this.floatingActionButton,
     this.safeArea = const (enabled: true, top: null),
     this.reserveBottomOverlaySpace = true,
+    this.resizeToAvoidBottomInset = true,
     super.key,
   });
 
@@ -17,6 +18,7 @@ class BookishScaffold extends StatelessWidget {
   final Widget? floatingActionButton;
   final ({bool enabled, bool? top}) safeArea;
   final bool reserveBottomOverlaySpace;
+  final bool resizeToAvoidBottomInset;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class BookishScaffold extends StatelessWidget {
         : body;
 
     return Scaffold(
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       appBar: appBar,
       body: content,
       floatingActionButton: floatingActionButton,

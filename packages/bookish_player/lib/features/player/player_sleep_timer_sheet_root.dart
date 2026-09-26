@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'cubits/player_cubit.dart';
 import 'cubits/player_cubits.dart';
+import 'cubits/sleep_timer_duration_cubit.dart';
 import 'ui/widgets/sleep_timer_sheet.dart';
 
 class PlayerSleepTimerSheetRoot extends StatelessWidget {
@@ -12,8 +13,15 @@ class PlayerSleepTimerSheetRoot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<PlayerCubit>.value(
-      value: cubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<PlayerCubit>.value(value: cubit),
+        BlocProvider<SleepTimerDurationCubit>(
+          create: (_) => SleepTimerDurationCubit(
+            remainingMinutes: cubit.state.sleepRemainingMinutes,
+          ),
+        ),
+      ],
       child: BlocBuilder<PlayerCubit, PlayerState>(
         builder: (context, state) => SleepTimerSheet(
           state: state,

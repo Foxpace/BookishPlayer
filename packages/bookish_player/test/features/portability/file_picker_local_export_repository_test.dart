@@ -18,7 +18,7 @@ void main() {
       sut = FilePickerLocalExportRepository(picker);
     });
 
-    test('Given an isolated local file picker, When notes are exported as Markdown, Then the filename is safe and timestamps remain readable', () async {
+    test('Given an isolated local file picker, When notes are exported, Then the filename is safe and timestamps remain readable', () async {
       // WHEN
       final exported = await sut.exportNotes(
         audiobookFixture().copyWith(title: 'A/B: Story?', author: 'An Author'),
@@ -35,14 +35,14 @@ void main() {
       expect(picker.savedExtensions, ['md']);
       final savedBytes = picker.savedBytes;
       if (savedBytes == null) {
-        fail('Markdown export must provide bytes to the picker.');
+        fail('Note export must provide bytes to the picker.');
       }
-      final markdown = utf8.decode(savedBytes);
-      expect(markdown, contains('# A/B: Story?'));
-      expect(markdown, contains('Author: An Author'));
-      expect(markdown, contains('## 0:01:05'));
-      expect(markdown, contains('## 1:01:01'));
-      expect(markdown, contains('Second note'));
+      final exportedNotes = utf8.decode(savedBytes);
+      expect(exportedNotes, contains('# A/B: Story?'));
+      expect(exportedNotes, contains('Author: An Author'));
+      expect(exportedNotes, contains('## 0:01:05'));
+      expect(exportedNotes, contains('## 1:01:01'));
+      expect(exportedNotes, contains('Second note'));
 
       picker.shouldSave = false;
       expect(await sut.exportNotes(audiobookFixture(), const []), isFalse);
@@ -70,6 +70,22 @@ void main() {
 
       picker.pickedJsonBytes = null;
       expect(await sut.pickBackup(), isNull);
+    });
+
+    test('Given an older backup with a bookmark, When it is selected, Then only notes are restored', () async {
+      // GIVEN
+      final backup = backupFixture().toJson();
+      backup['notes'] = [
+        bookNoteFixture().toJson(),
+        {...bookNoteFixture(id: 'legacy-bookmark').toJson(), 'kind': 'bookmark'},
+      ];
+      picker.pickedJsonBytes = Uint8List.fromList(utf8.encode(jsonEncode(backup)));
+
+      // WHEN
+      final restored = await sut.pickBackup();
+
+      // THEN
+      expect(restored?.notes.map((note) => note.id), ['note-1']);
     });
   });
 }

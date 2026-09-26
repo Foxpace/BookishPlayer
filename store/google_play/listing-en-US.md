@@ -38,7 +38,6 @@ Remember the useful parts
 • Add timestamped text or voice notes while listening
 • Return to the exact position behind any note
 • Edit and share individual notes
-• Export a book's notes as Markdown
 
 See your listening history
 

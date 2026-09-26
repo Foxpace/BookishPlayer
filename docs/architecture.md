@@ -71,7 +71,7 @@ feature/
 | `importing` | File selection, media probing, import processing, cleanup, and source removal |
 | `editing` | Metadata and chapter editing |
 | `player` | Playback, queueing, progress, sessions, completion, sleep timers, and player UI |
-| `notes` | Note capture, detail, gallery, voice notes, sharing, and Markdown export |
+| `notes` | Note capture, detail, gallery, voice notes, and sharing |
 | `transcription` | Quote transcription, speech models, preferences, and clip preparation |
 | `portability` | Backup validation, export, and transactional restore |
 | `storage` | Library inspection, cleanup assistance, and persistent data deletion |

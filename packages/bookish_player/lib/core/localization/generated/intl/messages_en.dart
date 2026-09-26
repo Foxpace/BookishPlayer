@@ -95,11 +95,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "App information, version, and open-source notices.",
     ),
     "aboutTitle": MessageLookupByLibrary.simpleMessage("About"),
+    "acceptSleepTimer": MessageLookupByLibrary.simpleMessage("Accept"),
     "activeDays": MessageLookupByLibrary.simpleMessage("Active days"),
     "add": MessageLookupByLibrary.simpleMessage("Add"),
-    "addBookmarkAtCurrentPosition": MessageLookupByLibrary.simpleMessage(
-      "Add bookmark at current position",
-    ),
     "addChapter": MessageLookupByLibrary.simpleMessage("Add chapter"),
     "addFavorite": MessageLookupByLibrary.simpleMessage("Add favorite"),
     "addNoteAtCurrentPosition": MessageLookupByLibrary.simpleMessage(
@@ -177,7 +175,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "bookUpdateFailed": MessageLookupByLibrary.simpleMessage(
       "The book could not be updated.",
     ),
-    "bookmarkSaved": MessageLookupByLibrary.simpleMessage("Bookmark saved."),
     "booksCompleted": MessageLookupByLibrary.simpleMessage("Books completed"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "changeCover": MessageLookupByLibrary.simpleMessage("Change cover"),
@@ -546,12 +543,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noteTitle": MessageLookupByLibrary.simpleMessage("Note"),
     "notes": MessageLookupByLibrary.simpleMessage("Notes"),
-    "notesAndBookmarks": MessageLookupByLibrary.simpleMessage(
-      "Notes and bookmarks",
-    ),
-    "notesAndBookmarksTitle": MessageLookupByLibrary.simpleMessage(
-      "Notes & bookmarks",
-    ),
     "notesEmptyDescription": MessageLookupByLibrary.simpleMessage(
       "Notes you save while listening will live here.",
     ),

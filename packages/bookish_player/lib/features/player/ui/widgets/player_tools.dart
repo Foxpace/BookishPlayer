@@ -67,7 +67,7 @@ class _PlayerToolsRow extends StatelessWidget {
         Expanded(
           child: PlayerToolButton(
             content: (
-              tooltip: S.of(context).notesAndBookmarks,
+              tooltip: S.of(context).notes,
               icon: Icons.note_alt_outlined,
               label: S.of(context).notes,
             ),

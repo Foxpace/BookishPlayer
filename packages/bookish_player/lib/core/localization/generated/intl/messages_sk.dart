@@ -95,11 +95,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Informácie o aplikácii, verzia a oznámenia o otvorenom softvéri.",
     ),
     "aboutTitle": MessageLookupByLibrary.simpleMessage("O aplikácii"),
+    "acceptSleepTimer": MessageLookupByLibrary.simpleMessage("Potvrdiť"),
     "activeDays": MessageLookupByLibrary.simpleMessage("Aktívne dni"),
     "add": MessageLookupByLibrary.simpleMessage("Pridať"),
-    "addBookmarkAtCurrentPosition": MessageLookupByLibrary.simpleMessage(
-      "Pridať záložku na aktuálnej pozícii",
-    ),
     "addChapter": MessageLookupByLibrary.simpleMessage("Pridať kapitolu"),
     "addFavorite": MessageLookupByLibrary.simpleMessage(
       "Pridať medzi obľúbené",
@@ -181,7 +179,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "bookUpdateFailed": MessageLookupByLibrary.simpleMessage(
       "Knihu sa nepodarilo aktualizovať.",
     ),
-    "bookmarkSaved": MessageLookupByLibrary.simpleMessage("Záložka uložená."),
     "booksCompleted": MessageLookupByLibrary.simpleMessage("Dopočúvané knihy"),
     "cancel": MessageLookupByLibrary.simpleMessage("Zrušiť"),
     "changeCover": MessageLookupByLibrary.simpleMessage("Zmeniť obálku"),
@@ -564,12 +561,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noteTitle": MessageLookupByLibrary.simpleMessage("Poznámka"),
     "notes": MessageLookupByLibrary.simpleMessage("Poznámky"),
-    "notesAndBookmarks": MessageLookupByLibrary.simpleMessage(
-      "Poznámky a záložky",
-    ),
-    "notesAndBookmarksTitle": MessageLookupByLibrary.simpleMessage(
-      "Poznámky a záložky",
-    ),
     "notesEmptyDescription": MessageLookupByLibrary.simpleMessage(
       "Poznámky uložené počas počúvania sa zobrazia tu.",
     ),

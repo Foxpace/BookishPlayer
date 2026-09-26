@@ -41,7 +41,7 @@ class LibraryHeader extends StatelessWidget {
             IconButton(
               tooltip: S.of(context).notesGallery,
               onPressed: onOpenNotes,
-              icon: const Icon(Icons.collections_bookmark_outlined),
+              icon: const Icon(Icons.notes_rounded),
             ),
             const SizedBox(width: 8),
             IconButton(

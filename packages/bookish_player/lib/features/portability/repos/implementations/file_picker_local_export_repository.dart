@@ -49,9 +49,16 @@ class FilePickerLocalExportRepository implements LocalExportRepository {
     if (bytes == null) {
       return null;
     }
-    return BookishBackup.fromJson(
-      Map<String, dynamic>.from(jsonDecode(utf8.decode(bytes)) as Map),
+    final backup = Map<String, dynamic>.from(
+      jsonDecode(utf8.decode(bytes)) as Map,
     );
+    if (backup['notes'] case final List<dynamic> notes) {
+      backup['notes'] = [
+        for (final note in notes)
+          if (note is! Map || note['kind'] != 'bookmark') note,
+      ];
+    }
+    return BookishBackup.fromJson(backup);
   }
 
   Future<bool> _writeExportFile({

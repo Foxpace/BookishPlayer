@@ -28,7 +28,7 @@ class TranscriptionPreviewActions extends StatelessWidget {
                     dimension: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Icon(Icons.bookmark_add_outlined),
+                : const Icon(Icons.note_add_outlined),
             label: Text(S.of(context).saveToNotes),
           ),
         ),

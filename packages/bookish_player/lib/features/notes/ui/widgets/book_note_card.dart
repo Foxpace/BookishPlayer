@@ -21,7 +21,6 @@ class BookNoteCard extends StatelessWidget {
         contentPadding: const EdgeInsets.fromLTRB(16, 10, 8, 10),
         onTap: onOpen,
         leading: Icon(switch (note.kind) {
-          BookNoteKind.bookmark => Icons.bookmark_rounded,
           BookNoteKind.voice => Icons.mic_rounded,
           BookNoteKind.note => Icons.notes_rounded,
         }),

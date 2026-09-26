@@ -2,7 +2,6 @@ part of 'player_cubit.dart';
 
 extension PlayerCubitNotesAndSleep on PlayerCubit {
   Future<void> addNote(String text) => _addMoment(text, BookNoteKind.note);
-  Future<void> addBookmark() => _addMoment('Bookmark', BookNoteKind.bookmark);
   Future<void> addVoiceNote(String text) =>
       _addMoment(text, BookNoteKind.voice);
 

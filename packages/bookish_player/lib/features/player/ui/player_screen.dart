@@ -57,6 +57,7 @@ class PlayerScreen extends StatelessWidget {
       },
       child: BookishScaffold(
         reserveBottomOverlaySpace: false,
+        resizeToAvoidBottomInset: false,
         appBar: PlayerAppBar(
           onBack: actions.onBack,
           onOpenSettings: actions.onOpenSettings,

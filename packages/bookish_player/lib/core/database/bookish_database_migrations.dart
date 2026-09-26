@@ -3,8 +3,9 @@ import 'package:sembast/sembast.dart';
 class BookishDatabaseMigrations {
   const BookishDatabaseMigrations._();
 
-  static const currentVersion = 2;
+  static const currentVersion = 3;
   static final _settings = stringMapStoreFactory.store('settings');
+  static final _notes = stringMapStoreFactory.store('notes');
   static const _supportedThemes = {'system', 'light', 'dark'};
 
   static Future<void> migrate(
@@ -15,6 +16,16 @@ class BookishDatabaseMigrations {
     if (oldVersion < 2 && newVersion >= 2) {
       await _normalizeAppearance(database);
     }
+    if (oldVersion < 3 && newVersion >= 3) {
+      await _removeBookmarks(database);
+    }
+  }
+
+  static Future<void> _removeBookmarks(Database database) async {
+    await _notes.delete(
+      database,
+      finder: Finder(filter: Filter.equals('kind', 'bookmark')),
+    );
   }
 
   static Future<void> _normalizeAppearance(Database database) async {

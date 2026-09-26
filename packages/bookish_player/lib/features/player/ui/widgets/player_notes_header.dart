@@ -11,7 +11,6 @@ class PlayerNotesHeader extends StatelessWidget {
 
   final bool hasNotes;
   final ({
-    VoidCallback onAddBookmark,
     VoidCallback onAddVoiceNote,
     VoidCallback onAddNote,
     VoidCallback onExport,
@@ -24,17 +23,11 @@ class PlayerNotesHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            S.of(context).notesAndBookmarksTitle,
+            S.of(context).notesTitle,
             style: Theme.of(context).textTheme.headlineSmall
                 ?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
-        IconButton.filledTonal(
-          tooltip: S.of(context).addBookmarkAtCurrentPosition,
-          onPressed: actions.onAddBookmark,
-          icon: const Icon(Icons.bookmark_add_rounded),
-        ),
-        const SizedBox(width: 6),
         IconButton.filledTonal(
           tooltip: S.of(context).dictateVoiceNote,
           onPressed: actions.onAddVoiceNote,

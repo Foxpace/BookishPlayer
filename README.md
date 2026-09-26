@@ -38,7 +38,7 @@ Bookish treats an audiobook as a book, not a loose playlist. Import it once, kee
 - Import, organize, and edit audiobooks offline
 - Play by chapter with speed, audio, rewind, and sleep controls
 - Use lock-screen, headset, CarPlay, and Android Auto controls
-- Save text or voice notes and export them as Markdown
+- Save text or voice notes
 - Track listening history and completed books
 - Back up and restore the local library as JSON
 

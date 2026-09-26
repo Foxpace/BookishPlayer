@@ -75,7 +75,6 @@ class _PlayerTestScreenHarnessState extends State<PlayerTestScreenHarness> {
         builder: (_, state) => NotesSheet(
           state: state,
           actions: (
-            onAddBookmark: widget.cubit.addBookmark,
             onAddNote: () {},
             onAddVoiceNote: () {},
             onExport: widget.cubit.exportNotes,

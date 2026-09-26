@@ -112,7 +112,7 @@ class _EmptyGallery extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.collections_bookmark_outlined, size: 56),
+            const Icon(Icons.notes_rounded, size: 56),
             const SizedBox(height: 16),
             Text(S.of(context).notesEmptyDescription),
           ],

@@ -29,7 +29,6 @@ class PlayerNotesSheetRoot extends StatelessWidget {
         builder: (context, state) => NotesSheet(
           state: state,
           actions: (
-            onAddBookmark: () => _addBookmark(context),
             onAddNote: onAddNote,
             onAddVoiceNote: onAddVoiceNote,
             onExport: () => _exportNotes(context),
@@ -39,14 +38,6 @@ class PlayerNotesSheetRoot extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _addBookmark(BuildContext context) async {
-    await cubit.addBookmark();
-    if (context.mounted) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(S.of(context).bookmarkSaved)));
-    }
   }
 
   Future<void> _exportNotes(BuildContext context) async {

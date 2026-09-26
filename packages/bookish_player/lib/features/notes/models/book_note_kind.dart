@@ -1,1 +1,1 @@
-enum BookNoteKind { note, bookmark, voice }
+enum BookNoteKind { note, voice }

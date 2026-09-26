@@ -1,7 +1,10 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
 import '../../cubits/player_cubits.dart';
+import '../../cubits/sleep_timer_duration_cubit.dart';
+import 'sleep_timer_duration_slider.dart';
 
 class SleepTimerSheet extends StatelessWidget {
   const SleepTimerSheet({
@@ -39,7 +42,9 @@ class SleepTimerSheet extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 16),
-            _TimerDurationChoices(onSelected: onSetDuration),
+            const _TimerDurationChoices(),
+            const SizedBox(height: 16),
+            SleepTimerDurationSlider(onSelected: onSetDuration),
             const SizedBox(height: 10),
             ListTile(
               contentPadding: EdgeInsets.zero,
@@ -75,23 +80,27 @@ class SleepTimerSheet extends StatelessWidget {
 }
 
 class _TimerDurationChoices extends StatelessWidget {
-  const _TimerDurationChoices({required this.onSelected});
-
-  final ValueChanged<Duration> onSelected;
+  const _TimerDurationChoices();
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [15, 30, 45, 60]
-          .map(
-            (minutes) => ActionChip(
-              label: Text(S.of(context).minutesShort(minutes)),
-              onPressed: () => onSelected(Duration(minutes: minutes)),
-            ),
-          )
-          .toList(),
+    return BlocBuilder<SleepTimerDurationCubit, int>(
+      builder: (context, selectedMinutes) => Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [15, 30, 45, 60]
+            .map(
+              (minutes) => ChoiceChip(
+                label: Text(S.of(context).minutesShort(minutes)),
+                showCheckmark: false,
+                selected: selectedMinutes == minutes,
+                onSelected: (_) => context
+                    .read<SleepTimerDurationCubit>()
+                    .chooseMinutes(minutes.toDouble()),
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 }
