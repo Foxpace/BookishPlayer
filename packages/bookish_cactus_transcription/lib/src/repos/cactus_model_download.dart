@@ -8,7 +8,9 @@ import '../cactus_models.dart';
 
 const cactusModelRevisions = {
   'whisper-base': '47b87dc9ff4a5e01f002034b2bdd7f5a4895bd8f',
-  'parakeet-tdt-0.6b-v2': '6d51da57ffd417d6418f631e453bdc2f4e29ecff',
+  // Both Parakeet bundles were transpiled for the pinned Cactus v2.0.1.
+  // Later bundles require newer graph operations, even with the same filename.
+  'parakeet-tdt-0.6b-v2': '88c3feb72d82b345ba0514f80acff39221d78224',
   'parakeet-tdt-0.6b-v3': '26fa0fdba867416e6df970c517ac95c9bdce7c4b',
 };
 

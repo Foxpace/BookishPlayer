@@ -17,13 +17,12 @@ void main() {
   setUp(() => directory = Directory.systemTemp.createTempSync('cactus-test-'));
   tearDown(() => directory.deleteSync(recursive: true));
 
-  void prepareModel() {
-    final model = Directory(
-      '${directory.path}/cactus-v2.0.1/models/whisper-base',
-    )..createSync(recursive: true);
+  void prepareModel({String slug = 'whisper-base', String? revision}) {
+    final model = Directory('${directory.path}/cactus-v2.0.1/models/$slug')
+      ..createSync(recursive: true);
     File('${model.path}/config.txt').writeAsStringSync('model_type=whisper');
     File('${model.path}/.complete')
-        .writeAsStringSync(cactusModelRevisions['whisper-base']!);
+        .writeAsStringSync(revision ?? cactusModelRevisions[slug]!);
     File('${model.path}/components/manifest.json')
       ..createSync(recursive: true)
       ..writeAsStringSync('{}');
@@ -62,6 +61,44 @@ void main() {
     // THEN
     expect(models.map((model) => model.isDownloaded), [false, false, false]);
     expect(await sut.isModelDownloaded('../whisper-tiny'), isFalse);
+  });
+
+  test('Given a Parakeet v2 bundle for Cactus v2.2, When listing models, Then requires a compatible download and keeps v3 available', () async {
+    // GIVEN
+    prepareModel(
+      slug: 'parakeet-tdt-0.6b-v2',
+      revision: '6d51da57ffd417d6418f631e453bdc2f4e29ecff',
+    );
+    prepareModel(slug: 'parakeet-tdt-0.6b-v3');
+    final sut = repository(
+      (_, _) async => const CactusTranscriptionOutcome.success(''),
+    );
+
+    // WHEN
+    final models = await sut.listModels();
+
+    // THEN
+    expect(models.map((model) => model.isDownloaded), [false, false, true]);
+  });
+
+  test('Given a Parakeet v2 bundle for Cactus v2.0.1, When transcribing, Then uses the compatible model', () async {
+    // GIVEN
+    prepareModel(slug: 'parakeet-tdt-0.6b-v2');
+    final sut = repository((model, pcm) async {
+      expect(model, endsWith('models/parakeet-tdt-0.6b-v2'));
+      return const CactusTranscriptionOutcome.success('hello');
+    });
+
+    // WHEN
+    final outcome = await sut.transcribeRange(
+      source: source,
+      start: Duration.zero,
+      end: const Duration(seconds: 1),
+      model: 'parakeet-tdt-0.6b-v2',
+    );
+
+    // THEN
+    expect(outcome, const CactusTranscriptionOutcome.success('hello'));
   });
 
   test('Given a downloaded model, When it is removed, Then its files are deleted and the catalog reports it missing', () async {

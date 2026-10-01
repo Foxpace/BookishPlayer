@@ -80,6 +80,14 @@ Other published speech archives have not been verified with this pinned Cactus
 runtime. Models live under `cactus-v2.0.1/models`; users must redownload after
 migrating from the old plugin. Saved tiny selections fall back to base.
 
+Parakeet v2 is pinned to `88c3feb72d82b345ba0514f80acff39221d78224` and
+v3 to `26fa0fdba867416e6df970c517ac95c9bdce7c4b`, both transpiled for Cactus
+v2.0.1. The previously pinned v2 revision `6d51da57ffd417d6418f631e453bdc2f4e29ecff`
+targets Cactus v2.2.0 and fails during graph loading. Its completion marker
+is rejected after this fix, so download Parakeet v2 again in Settings. Existing
+v3 downloads remain valid. Do not select an archive solely by its filename;
+check its target runtime and run native transcription before changing a pin.
+
 FFmpeg decodes the selected passage to 16 kHz mono PCM. Whisper probes the
 language before transcription and uses the model's configured prompt if the
 probe is inconclusive; Parakeet transcribes directly. Inference runs

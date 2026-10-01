@@ -67,9 +67,9 @@ void main() {
         ..addFile(ArchiveFile.string('bundle/components/manifest.json', '{}'));
       final archiveBytes = ZipEncoder().encode(modelArchive);
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-      var requests = 0;
+      final requests = <String>[];
       final responses = server.listen((request) async {
-        requests++;
+        requests.add(request.uri.path);
         request.response.add(archiveBytes);
         await request.response.close();
       });
@@ -86,7 +86,10 @@ void main() {
           );
         }
         // THEN
-        expect(requests, 2);
+        expect(requests, [
+          '/parakeet-tdt-0.6b-v2/88c3feb72d82b345ba0514f80acff39221d78224',
+          '/parakeet-tdt-0.6b-v3/26fa0fdba867416e6df970c517ac95c9bdce7c4b',
+        ]);
         for (final slug in ['parakeet-tdt-0.6b-v2', 'parakeet-tdt-0.6b-v3']) {
           expect(
             File('${directory.path}/$slug/config.txt').existsSync(),
