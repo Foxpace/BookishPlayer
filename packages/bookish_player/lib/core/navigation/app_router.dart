@@ -9,6 +9,7 @@ import '../../features/player/player_screen_root.dart';
 import '../../features/settings/settings_screen_root.dart';
 import '../../features/storage/storage_assistant_screen_root.dart';
 import 'import_source.dart';
+import 'modal_visibility.dart';
 
 abstract final class AppRoutes {
   static const library = 'library';
@@ -24,6 +25,7 @@ abstract final class AppRoutes {
 GoRouter createAppRouter() {
   return GoRouter(
     initialLocation: '/',
+    observers: [ModalVisibility()],
     routes: [
       GoRoute(
         path: '/',

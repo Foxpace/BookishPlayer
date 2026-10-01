@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../core/localization/generated/l10n.dart';
 import '../core/navigation/app_router.dart';
 import '../core/navigation/focus_navigation.dart';
+import '../core/navigation/modal_visibility.dart';
 import '../core/theme/bookish_theme.dart';
 import '../features/player/cubits/player_cubit.dart';
 import '../features/player/cubits/player_cubits.dart';
@@ -166,6 +167,7 @@ class _RouterAwareNowPlayingShellState
   void initState() {
     super.initState();
     widget.router.routerDelegate.addListener(_handleRouteChanged);
+    _modalVisibility(widget.router)?.addListener(_handleRouteChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<PlayerCubit>().offerContinueListening();
@@ -180,7 +182,9 @@ class _RouterAwareNowPlayingShellState
       return;
     }
     oldWidget.router.routerDelegate.removeListener(_handleRouteChanged);
+    _modalVisibility(oldWidget.router)?.removeListener(_handleRouteChanged);
     widget.router.routerDelegate.addListener(_handleRouteChanged);
+    _modalVisibility(widget.router)?.addListener(_handleRouteChanged);
   }
 
   void _handleRouteChanged() {
@@ -201,6 +205,7 @@ class _RouterAwareNowPlayingShellState
   @override
   void dispose() {
     widget.router.routerDelegate.removeListener(_handleRouteChanged);
+    _modalVisibility(widget.router)?.removeListener(_handleRouteChanged);
     super.dispose();
   }
 
@@ -216,6 +221,7 @@ class _RouterAwareNowPlayingShellState
         builder: (context, playerState) => NowPlayingShell(
           state: playerState,
           behavior: (
+            modalIsOpen: _modalVisibility(widget.router)?.isVisible ?? false,
             showMiniPlayer: shouldShowMiniPlayer(
               _activeRouteUri(widget.router),
             ),
@@ -252,6 +258,9 @@ class _RouterAwareNowPlayingShellState
     );
   }
 }
+
+ModalVisibility? _modalVisibility(GoRouter router) =>
+    router.observers?.whereType<ModalVisibility>().firstOrNull;
 
 bool shouldShowMiniPlayer(Uri location) =>
     !location.path.startsWith('/player/');

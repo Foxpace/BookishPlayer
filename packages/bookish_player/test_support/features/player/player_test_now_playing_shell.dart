@@ -22,6 +22,7 @@ class PlayerTestNowPlayingShell extends StatelessWidget {
         state: state,
         behavior: (
           showMiniPlayer: true,
+          modalIsOpen: false,
           onOpenPlayer: () {},
           onTogglePlayback: cubit.togglePlayback,
         ),

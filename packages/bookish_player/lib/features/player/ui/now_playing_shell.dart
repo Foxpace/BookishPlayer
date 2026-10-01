@@ -16,6 +16,7 @@ class NowPlayingShell extends StatelessWidget {
   final PlayerState state;
   final ({
     bool showMiniPlayer,
+    bool modalIsOpen,
     VoidCallback onOpenPlayer,
     VoidCallback onTogglePlayback,
   })
@@ -36,7 +37,7 @@ class NowPlayingShell extends StatelessWidget {
         Positioned.fill(
           child: BottomOverlaySpace(height: bottomOverlayHeight, child: child),
         ),
-        if (miniPlayerBook != null)
+        if (miniPlayerBook != null && !behavior.modalIsOpen)
           Positioned(
             left: 0,
             right: 0,
